@@ -3,39 +3,39 @@ AMCMatlab
 
 Matlab code for projects
 
-# Matlab Code #
+## Matlab Code #
 
-## Requirements ##
-
-- ...
-
-## File sctructure ##
-
-Description here...
-
-## Description ##
-
-Description here...
-
-## Issues/Bugs ##
+### Requirements ##
 
 - ...
 
-## Changelog ##
+### File sctructure ##
+
+Description here...
+
+### Description ##
+
+Description here...
+
+### Issues/Bugs ##
+
+- ...
+
+### Changelog ##
 
 dd/mm/yyyy
 
 Text
 
-## To Do List ##
+### To Do List ##
 
 - ...
 
-## Bugs ##
+### Bugs ##
 
 - ...
 
-## License ##
+### License ##
 
 Copyright (c) 2013 Konrad Zurcher
 
