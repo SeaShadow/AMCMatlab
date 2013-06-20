@@ -9,11 +9,7 @@ Matlab code for projects
 
 - ...
 
-### File sctructure ##
-
-Description here...
-
-### Description ##
+### Expected File Sctructure for DAQ Run Files ##
 
 Description here...
 
