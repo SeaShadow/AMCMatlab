@@ -7,29 +7,23 @@ Matlab code for projects
 
 ### Requirements ##
 
-- ...
+- Matlab Version 2007 or higher
 
 ### Expected File Sctructure for DAQ Run Files ##
 
-Description here...
+|Run files directory
+    |_Matlab
+    |01.run
+    |02.run
+    |03.run
+    |04.run
+    |...
 
-### Issues/Bugs ##
+First batch of Matlab M-files to analyse experimental flow rate data.
 
-- ...
+### To Do ##
 
-### Changelog ##
-
-dd/mm/yyyy
-
-Text
-
-### To Do List ##
-
-- ...
-
-### Bugs ##
-
-- ...
+Code needs to be restructured to adhere to OOP rules.
 
 ### License ##
 
