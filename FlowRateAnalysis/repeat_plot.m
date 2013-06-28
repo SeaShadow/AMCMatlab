@@ -38,6 +38,20 @@
 
 function repeat_plot(timeData,resultsArray,runArray,rpmValue,examineTitle,examineUnit,savename,name)
 
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# Centimeters units
+XPlot = 42.0;                           %# A3 paper size
+YPlot = 29.7;                           %# A3 paper size
+XPlotMargin = 1;                        %# left/right margins from page borders
+YPlotMargin = 1;                        %# bottom/top margins from page borders
+XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
+YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# END DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 %# -------------------------------------------------------------------------
 %# GENERAL SETTINGS
 %# -------------------------------------------------------------------------
@@ -93,6 +107,15 @@ grid on;
 set(h1(1),'linewidth',1);   % Repeat #1
 set(h2(1),'linewidth',2);   % Trendline #1
 
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
 %# Plot: Repeat #2 --------------------------------------------------------
 subplot(3,3,2);
 h1 = plot(x,y2,'-b',x,p22,':k');
@@ -106,6 +129,15 @@ xlim([startData/Fs round(endData/Fs)]);
 grid on;
 set(h1(1),'linewidth',1);   % Repeat #2
 set(h2(1),'linewidth',2);   % Trendline #2
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
 
 %# Plot: Repeat #3 --------------------------------------------------------
 subplot(3,3,3);
@@ -121,6 +153,15 @@ grid on;
 set(h1(1),'linewidth',1);   % Repeat #3
 set(h2(1),'linewidth',2);   % Trendline #3
 
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
 %# Plot: Averaged ---------------------------------------------------------
 subplot(3,1,2);
 h1 = plot(x,avgRepeatData,'-k');
@@ -134,6 +175,15 @@ xlim([startData/Fs round(endData/Fs)]);
 grid on;
 set(h1(1),'linewidth',1);   % Averaged
 set(h2(1),'linewidth',2);   % Averaged trendline
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
 
 %# Plot: Overlayed --------------------------------------------------------
 subplot(3,1,3);
@@ -161,6 +211,15 @@ repLgnd4 = 'Averaged runs';
 hleg1 = legend(repLgnd1,repLgnd2,repLgnd3,repLgnd4);
 set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
 
 %# Set figure to full screen
 %set(f,'Units','Normalized','OuterPosition',[0 0 1 1])  
@@ -206,9 +265,20 @@ if isequal(exist(fPath, 'dir'),7)
 else    
     mkdir(fPath);
 end
-plotsavename = sprintf('_plots/_repeats/RUNS_%s_TO_%s_%s_%s_RPM.png', num2str(runArray(1)), num2str(runArray(3)), savename, num2str(rpmValue));   % Assign save name
-print(gcf, '-djpeg', plotsavename);                                                                                                             % Save plot to _plots
-%close;
+
+%# Repeat directory
+fPath = sprintf('_plots/%s/%s', '_repeats', 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else    
+    mkdir(fPath);
+end
+
+%plotsavenamePDF = sprintf('_plots/_repeats/PDF/RUNS_%s_TO_%s_%s_%s_RPM.pdf', num2str(runArray(1)), num2str(runArray(3)), savename, num2str(rpmValue));
+%saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+plotsavename = sprintf('_plots/_repeats/RUNS_%s_TO_%s_%s_%s_RPM.png', num2str(runArray(1)), num2str(runArray(3)), savename, num2str(rpmValue));     % Assign save name
+print(gcf, '-djpeg', plotsavename);                                                                                                                 % Save plot as PNG
+close;                                                                                                                                              % Close current plot window
 
 %# ------------------------------------------------------------------------
 %# STATISTICS:          Single factor, tepeated measures ANOVA ------------

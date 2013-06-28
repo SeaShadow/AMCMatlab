@@ -32,8 +32,22 @@
 %# ------------------------------------------------------------------------
 
 function fft_plot(timeData,rawData,sampleStart,sampleEnd,savename,name)
-    
-figurename = sprintf('Fast Fourier Transform (FFT): %s', name);
+
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# Centimeters units
+XPlot = 42.0;                           %# A3 paper size
+YPlot = 29.7;                           %# A3 paper size
+XPlotMargin = 1;                        %# left/right margins from page borders
+YPlotMargin = 1;                        %# bottom/top margins from page borders
+XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
+YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# END DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+figurename = sprintf('Fast Fourier Transform (FFT): Run %s', name(2:3));
 f = figure('Name',figurename,'NumberTitle','off');
 
 x   = rawData;
@@ -54,6 +68,15 @@ title('{\bf Raw Data}');
 xlim([0 round(length(x)/Fs)]);
 grid on;
 
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');  
+
 NFFT = 2^nextpow2(L);   % Next power of 2 from length of y
 Y    = fft(x,NFFT)/L;
 f    = Fs/2*linspace(0,1,NFFT/2);
@@ -65,6 +88,15 @@ title('{\bf Single-Sided Amplitude Spectrum of y(t)}')
 xlabel('Frequency (Hz)')
 ylabel('|Y(f)|')
 grid on;
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');  
 
 %# ------------------------------------------------------------------------
 %# Save plots as PNGs -----------------------------------------------------

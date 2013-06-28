@@ -76,8 +76,8 @@ cutSamplesFromEnd = 8000;
 %# START FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-startRun = 9;      % Start at run x
-endRun   = 9;      % Stop at run y
+startRun = 1;      % Start at run x
+endRun   = 86;      % Stop at run y
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# END FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -112,6 +112,20 @@ endRun   = 9;      % Stop at run y
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# END DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS !!!!!!!!!!!!!!!!!!
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# Centimeters units
+XPlot = 42.0;                           %# A3 paper size
+YPlot = 29.7;                           %# A3 paper size
+XPlotMargin = 1;                        %# left/right margins from page borders
+YPlotMargin = 1;                        %# bottom/top margins from page borders
+XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
+YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# END DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -256,14 +270,15 @@ for k=startRun:endRun
     slope2   = slope{1,2}(2);
     
     %# Calulcate flow rate based on trendline
-    flowrate = abs((slope1 * 2) + slope2) - abs((slope1 * 1) + slope2);     % Difference between flow rate at 2 and 1 second
+    %flowrate = abs((slope1 * 2) + slope2) - abs((slope1 * 1) + slope2);     % Difference between flow rate at 2 and 1 second
+    flowrate = abs((slope1 * 1) + slope2) - abs((slope1 * 0) + slope2);     % Difference between flow rate at 1 and 0 second
     
     if plotting_on == true
         
         %# Plotting curves
-        figurename = sprintf('Wave probe: %s', name);
+        figurename = sprintf('Wave probe: Run %s', name(2:3));
         f = figure('Name',figurename,'NumberTitle','off');
-        h = plot(x,y,'x',x,p2,'-r');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Mass flow rate [Kg]}');
+        h = plot(x,y,'-',x,p2,'-.k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Mass flow rate [Kg]}');
         
         %# Line width
         set(h(1),'linewidth',1);
@@ -277,14 +292,38 @@ for k=startRun:endRun
         set(hleg1,'Location','SouthEast');
         set(hleg1,'Interpreter','none');
         %legend boxoff;
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
 
-        %# Save plots as PNG
-        plotsavename = sprintf('_plots/%s/DATAPLOT_CH0_wave_probe.png', name(1:3));
-        saveas(f, plotsavename);    % Save plot as image
-        close;                      % Close current plot window        
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');          
+        
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('_plots/%s/DATAPLOT_CH0_Wave_Probe.pdf', name(1:3));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('_plots/%s/DATAPLOT_CH0_Wave_Probe.png', name(1:3));
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;                                  % Close current plot window        
+    
+        %# Special case for run 51 to 53
+        %# Y = (slope1 * X ) + slope2
+        %if k == 51 || k == 52 || k == 53
+        if slope2 > 0
+            chooseSign = '+';
+            slope2 = slope2;
+        else
+            chooseSign = '-';
+            slope2 = abs(slope2);
+        end
+        disp(sprintf('%s:: Mass flow rate: Y = %s*X %s %s', name(1:3), sprintf('%.4f',slope1), chooseSign, sprintf('%.4f',slope2)));
+        %end
         
     end
-
+        
     % ---------------------------------------------------------------------
     % END: WAVE PROBE ANALYSIS
     % ///////////////////////////////////////////////////////////////////// 
@@ -307,9 +346,9 @@ for k=startRun:endRun
     if plotting_on == true
         
         %# Plotting curves
-        figurename = sprintf('Kiel probe STBD & PORT: %s', name);
+        figurename = sprintf('Kiel probe STBD & PORT: Run %s', name(2:3));
         f = figure('Name',figurename,'NumberTitle','off');    
-        h = plot(x,y1,'x',x,kppolyvalstbd,'-r',x,y2,'x',x,kppolyvalport,'-r');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Output [V]}');
+        h = plot(x,y1,'-',x,kppolyvalstbd,'-.k',x,y2,'-',x,kppolyvalport,'-.k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Output [V]}');
 
         %# Axis limitations
         xlim([x(1) x(end)]);
@@ -326,10 +365,21 @@ for k=startRun:endRun
         set(hleg1,'Interpreter','none');
         %legend boxoff;
         
-        %# Save plots as PNG
-        plotsavename = sprintf('_plots/%s/DATAPLOT_CH1_CH2_kiel_probe.png', name(1:3));
-        saveas(f, plotsavename);   % Save plot as image
-        close;                     % Close current plot window          
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');          
+        
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('_plots/%s/DATAPLOT_CH1_CH2_Kiel_Probe.pdf', name(1:3));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('_plots/%s/DATAPLOT_CH1_CH2_Kiel_Probe.png', name(1:3));
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;                                  % Close current plot window  
         
     end
     
@@ -348,7 +398,7 @@ for k=startRun:endRun
     
     x = timeData(startSamplePos:end-cutSamplesFromEnd);
     y1 = CH_7_ThrustStbd(startSamplePos:end-cutSamplesFromEnd);
-    y2 = CH_8_ThrustPort(startSamplePos:end-cutSamplesFromEnd);
+    y2 = abs(CH_8_ThrustPort(startSamplePos:end-cutSamplesFromEnd)); % Absolute values due to negative output of dyno
     
     %# Trendline
     thrustpolyfitstbd = polyfit(x,y1,1);
@@ -359,9 +409,9 @@ for k=startRun:endRun
     if plotting_on == true
         
         %# Plotting curves
-        figurename = sprintf('Thrust STBD & PORT: %s', name);
+        figurename = sprintf('Thrust STBD & PORT: Run %s', name(2:3));
         f = figure('Name',figurename,'NumberTitle','off');    
-        h = plot(x,y1,'x',x,thrustpolyvalstbd,'-r',x,y2,'x',x,thrustpolyvalport,'-r');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Thrust [g]}');
+        h = plot(x,y1,'-',x,thrustpolyvalstbd,'-.k',x,y2,'-',x,thrustpolyvalport,'-.k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Thrust [g]}');
 
         %# Axis limitations
         xlim([x(1) x(end)]);
@@ -378,10 +428,21 @@ for k=startRun:endRun
         set(hleg1,'Interpreter','none');
         %legend boxoff;
         
-        %# Save plots as PNG
-        plotsavename = sprintf('_plots/%s/DATAPLOT_CH7_CH8_thrust.png', name(1:3));
-        saveas(f, plotsavename);   % Save plot as image
-        close;                     % Close current plot window   
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');          
+
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('_plots/%s/DATAPLOT_CH7_CH8_Thrust.pdf', name(1:3));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('_plots/%s/DATAPLOT_CH7_CH8_Thrust.png', name(1:3));
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;                                  % Close current plot window          
         
     end
     
@@ -400,7 +461,7 @@ for k=startRun:endRun
     
     x = timeData(startSamplePos:end-cutSamplesFromEnd);
     y1 = CH_9_TorqueStbd(startSamplePos:end-cutSamplesFromEnd);
-    y2 = CH_10_TorquePort(startSamplePos:end-cutSamplesFromEnd);
+    y2 = abs(CH_10_TorquePort(startSamplePos:end-cutSamplesFromEnd)); % Absolute values due to negative output of dyno
     
     %# Trendline
     torquepolyfitstbd = polyfit(x,y1,1);
@@ -411,9 +472,9 @@ for k=startRun:endRun
     if plotting_on == true
         
         %# Plotting curves
-        figurename = sprintf('Torque STBD & PORT: %s', name);
+        figurename = sprintf('Torque STBD & PORT: Run %s', name(2:3));
         f = figure('Name',figurename,'NumberTitle','off');        
-        h = plot(x,y1,'x',x,torquepolyvalstbd,'-r',x,y2,'x',x,torquepolyvalport,'-r');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Torque [Nm]}');
+        h = plot(x,y1,'-',x,torquepolyvalstbd,'-.k',x,y2,'-',x,torquepolyvalport,'-.k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Torque [Nm]}');
 
         %# Axis limitations
         xlim([x(1) x(end)]);
@@ -430,10 +491,21 @@ for k=startRun:endRun
         set(hleg1,'Interpreter','none');
         %legend boxoff;
         
-        %# Save plots as PNG
-        plotsavename = sprintf('_plots/%s/DATAPLOT_CH9_CH10_torque.png', name(1:3));
-        saveas(f, plotsavename);   % Save plot as image
-        close;                     % Close current plot window          
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');  
+
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('_plots/%s/DATAPLOT_CH9_CH10_Torque.pdf', name(1:3));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('_plots/%s/DATAPLOT_CH9_CH10_Torque.png', name(1:3));
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;                                  % Close current plot window        
         
     end
     
@@ -506,7 +578,7 @@ for k=startRun:endRun
     
     %# Prepare strings for display
     name = name(1:3);
-    massflowrate     = sprintf('%s:: Mass flow rate: %s [Kg/s]', name, sprintf('%.2f',flowrate));
+    massflowrate     = sprintf('%s:: Mass flow rate: %s [Kg/s]', name, sprintf('%.2f',abs(flowrate)));
     kielprobestbd    = sprintf('%s:: Kiel probe STBD (mean): %s [V]', name, sprintf('%.2f',mean(Raw_CH_1_KPStbd)));
     kielprobeport    = sprintf('%s:: Kiel probe PORT (mean): %s [V]', name, sprintf('%.2f',mean(Raw_CH_2_KPPort)));
     thruststbd       = sprintf('%s:: Thrust STBD (mean): %s [N]', name, sprintf('%.2f',abs(((CH_7_ThrustStbd_Mean/1000)*9.806))));

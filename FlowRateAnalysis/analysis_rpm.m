@@ -38,6 +38,20 @@
 
 function [RPMStbd RPMPort] = analysis_rpm(k,name,Fs,timeData,rawStbdData,rawPortData)
 
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# Centimeters units
+XPlot = 42.0;                           %# A3 paper size
+YPlot = 29.7;                           %# A3 paper size
+XPlotMargin = 1;                        %# left/right margins from page borders
+YPlotMargin = 1;                        %# bottom/top margins from page borders
+XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
+YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# END DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 %# ------------------------------------------------------------------------
 %# Establish RPM values ---------------------------------------------------
 %# ------------------------------------------------------------------------
@@ -117,12 +131,11 @@ end
 %# Plotting curves --------------------------------------------------------
 %# ------------------------------------------------------------------------
 
-figurename = sprintf('RPM Data: %s', name);
+figurename = sprintf('RPM Data: Run %s', name(2:3));
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# PLOT: STARBOARD RPM DATA -----------------------------------------------
-subplot(2,1,1); 
-
+subplot(2,1,1);
 if length(mintabstbd) > 0 && length(maxtabstbd) > 0
     plot(t1plot,y1plot,'-k');
     hold on;
@@ -144,9 +157,17 @@ ylabel('{\bf Output [V]}');
 title('{\bf STARBOARD RPM Data}');
 grid on;
 
-%# PLOT: PORT RPM DATA ----------------------------------------------------
-subplot(2,1,2); 
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
 
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');  
+
+%# PLOT: PORT RPM DATA ----------------------------------------------------
+subplot(2,1,2);
 if length(mintabport) > 0 && length(mintabport) > 0 
     plot(t2plot,y2plot,'-k');
     hold on;
@@ -168,8 +189,17 @@ ylabel('{\bf Output [V]}');
 title('{\bf PORT RPM Data}');
 grid on;  
 
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');  
+
 %# ------------------------------------------------------------------------
-%# Save plots as PNGs -----------------------------------------------------
+%# Save plots as PDF and PNG ----------------------------------------------
 %# ------------------------------------------------------------------------
 
 %# _PLOTS directory
@@ -187,6 +217,9 @@ if isequal(exist(fPath, 'dir'),7)
 else    
     mkdir(fPath);
 end
-plotsavename = sprintf('_plots/%s/RPM_CH5_CH6_PEAKS_stbd_and_port.png', name(1:3)); % Assign save name
-print(gcf, '-djpeg', plotsavename);                                                 % Save plot to _plots
-close;
+
+%plotsavenamePDF = sprintf('_plots/%s/RPM_CH5_CH6_PEAKS_Stbd_and_Port.pdf', name(1:3));
+%saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+plotsavename = sprintf('_plots/%s/RPM_CH5_CH6_PEAKS_Stbd_and_Port.png', name(1:3)); % Assign save name
+print(gcf, '-djpeg', plotsavename);                                                 % Save plot as PNG
+close;                                                                              % Close current plot window
