@@ -40,10 +40,10 @@ x   = rawData;
 t   = timeData(sampleStart:sampleEnd,1);    % Time series
 x   = x(sampleStart:sampleEnd,1);           % Input Data
 
-Fs  = 800;          % Sampling frequency
-T   = 1/Fs;         % Sample time
-L   = length(x);    % Length of signal
-t   = (0:L-1)*T;    % Time vector
+Fs  = 800;              % Sampling frequency
+T   = 1/Fs;             % Sample time
+L   = length(x);        % Length of signal
+t   = (0:L-1)*T;        % Time vector
 
 %# RAW data
 subplot(2,1,1);
@@ -54,7 +54,7 @@ title('{\bf Raw Data}');
 xlim([0 round(length(x)/Fs)]);
 grid on;
 
-NFFT = 2^nextpow2(L); % Next power of 2 from length of y
+NFFT = 2^nextpow2(L);   % Next power of 2 from length of y
 Y    = fft(x,NFFT)/L;
 f    = Fs/2*linspace(0,1,NFFT/2);
 
@@ -85,6 +85,6 @@ if isequal(exist(fPath, 'dir'),7)
 else    
     mkdir(fPath);
 end
-plotsavename = sprintf('_plots/%s/%s_FFT.png', name(1:3), savename);    % Assign save name
+plotsavename = sprintf('_plots/%s/FFT_%s.png', name(1:3), savename);    % Assign save name
 print(gcf, '-djpeg', plotsavename);                                     % Save plot to _plots
 close;

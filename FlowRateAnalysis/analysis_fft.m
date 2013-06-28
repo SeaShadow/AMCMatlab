@@ -131,21 +131,84 @@ for k=startRun:endRun
     CH_10_CF   = ZeroAndCalib(24);
     
     %# -------------------------------------------------------------------------
+    %# TEST ONLY #1
+    %# -------------------------------------------------------------------------    
+    
+	% Data
+%     t       = timeData;
+%     data    = Raw_CH_0_WaveProbe;
+%     
+%     Fs  = 800;          % Samping frequency in Hz
+%     Ts  = 1/Fs;         % Sample time
+%     L   = numel(t);     % Length of signal
+%     y   = data;         % data from signal 
+%     
+%     figurename = sprintf('Fast Fourier Transform (FFT): %s', name);
+%     figure('Name',figurename,'NumberTitle','off');     
+%     
+%     subplot(211);
+%     plot(t,y);
+%     title('{\bf Signal}');
+%     xlabel('Time (s)');
+%     ylabel('Output [V]')
+%     xlim([0 round(length(y)/Fs)]);
+%     grid on;
+%     
+%     NFFT    = 2^nextpow2(L); % Next power of 2 from length of y
+%     Y       = fft(y,NFFT)/L;
+%     f       = Fs/2*linspace(0,1,NFFT/2+1);
+%     
+%     subplot(212);
+%     plot(f,2*abs(Y(1:NFFT/2+1)));
+%     title('{\bf Single-Sided Amplitude Spectrum of y(t)}');
+%     xlabel('Frequency (Hz)');
+%     ylabel('|Y(f)|');
+%     grid on;
+%     
+%     break;
+    
+    %# -------------------------------------------------------------------------
+    %# TEST ONLY #2
+    %# -------------------------------------------------------------------------        
+    
+%     y           = Raw_CH_2_KPPort;
+%     x           = timeData;
+%     
+%     [L,C]       = size(y);
+%     Fs          = 800;          % Samping frequency in Hz
+%     dt          = 1/Fs;         % Sample time
+%     df          = Fs/L;
+%     f           = -(Fs/2):df:Fs/2;
+%     
+%     Xfft        = dt * fft(y);                        % Directly using fft() 
+%     Xfftshift   = dt * fft(fftshift(y));              % Using fftshift() before fft() 
+%     Xfinal      = dt * fftshift(fft(ifftshift(y)));   % Identical with analytical X(f), also note dt     
+%     
+%     figurename = sprintf('Fast Fourier Transform (FFT): %s', name);
+%     figure('Name',figurename,'NumberTitle','off');    
+% 
+%     subplot(311); plot(x,y);grid on;box on;title('{\bf Flow rate vs. Time}');xlabel('Time [s]');ylabel('Output [V]');xlim([0 round(length(x)/Fs)]);
+%     subplot(312); plot(f(2:L+1),real(Xfinal));grid on;box on;title('{\bf Single-Sided Amplitude Spectrum}');xlabel('Frequency [Hz]');ylabel('Magnitude [-]');
+%     subplot(313); plot(f(2:L+1),abs(Xfinal));grid on;box on;title('{\bf ABS (Single-Sided Amplitude Spectrum})');xlabel('Frequency [Hz]');ylabel('Magnitude [-]'); 
+%
+%     break;
+    
+    %# -------------------------------------------------------------------------
     %# Fast Fourier Transform (FFT)
     %# -------------------------------------------------------------------------
     
     %# Create FFT plots and PNG images
-    fft_plot(timeData,Raw_CH_0_WaveProbe,1,length(Raw_CH_0_WaveProbe),'FFT_CH0_wave_probe',name);
-    fft_plot(timeData,Raw_CH_1_KPStbd,1,length(Raw_CH_1_KPStbd),'FFT_CH1_kp_stbd',name);
-    fft_plot(timeData,Raw_CH_2_KPPort,1,length(Raw_CH_2_KPPort),'FFT_CH2_kp_port',name);
-    fft_plot(timeData,Raw_CH_3_StaticStbd,1,length(Raw_CH_3_StaticStbd),'FFT_CH3_static_stbd',name);
-    fft_plot(timeData,Raw_CH_4_StaticPort,1,length(Raw_CH_4_StaticPort),'FFT_CH4_static_port',name);
-    fft_plot(timeData,Raw_CH_5_RPMStbd,1,length(Raw_CH_5_RPMStbd),'FFT_CH5_rpm_stbd',name);
-    fft_plot(timeData,Raw_CH_6_RPMPort,1,length(Raw_CH_6_RPMPort),'FFT_CH6_rpm_port',name);
-    fft_plot(timeData,Raw_CH_7_ThrustStbd,1,length(Raw_CH_7_ThrustStbd),'FFT_CH7_thrust_stbd',name);
-    fft_plot(timeData,Raw_CH_8_ThrustPort,1,length(Raw_CH_8_ThrustPort),'FFT_CH8_thrust_port',name);
-    fft_plot(timeData,Raw_CH_9_TorqueStbd,1,length(Raw_CH_9_TorqueStbd),'FFT_CH9_torque_stbd',name);
-    fft_plot(timeData,Raw_CH_10_TorquePort,1,length(Raw_CH_10_TorquePort),'FFT_CH10_torque_port',name);
+    fft_plot(timeData,Raw_CH_0_WaveProbe,1,length(Raw_CH_0_WaveProbe),'CH0_wave_probe',name);
+    fft_plot(timeData,Raw_CH_1_KPStbd,1,length(Raw_CH_1_KPStbd),'CH1_kp_stbd',name);
+    fft_plot(timeData,Raw_CH_2_KPPort,1,length(Raw_CH_2_KPPort),'CH2_kp_port',name);
+    fft_plot(timeData,Raw_CH_3_StaticStbd,1,length(Raw_CH_3_StaticStbd),'CH3_static_stbd',name);
+    fft_plot(timeData,Raw_CH_4_StaticPort,1,length(Raw_CH_4_StaticPort),'CH4_static_port',name);
+    fft_plot(timeData,Raw_CH_5_RPMStbd,1,length(Raw_CH_5_RPMStbd),'CH5_rpm_stbd',name);
+    fft_plot(timeData,Raw_CH_6_RPMPort,1,length(Raw_CH_6_RPMPort),'CH6_rpm_port',name);
+    fft_plot(timeData,Raw_CH_7_ThrustStbd,1,length(Raw_CH_7_ThrustStbd),'CH7_thrust_stbd',name);
+    fft_plot(timeData,Raw_CH_8_ThrustPort,1,length(Raw_CH_8_ThrustPort),'CH8_thrust_port',name);
+    fft_plot(timeData,Raw_CH_9_TorqueStbd,1,length(Raw_CH_9_TorqueStbd),'CH9_torque_stbd',name);
+    fft_plot(timeData,Raw_CH_10_TorquePort,1,length(Raw_CH_10_TorquePort),'CH10_torque_port',name);
     
     %# -------------------------------------------------------------------------
     %# Fast Fourier Transform (FFT) OLD

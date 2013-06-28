@@ -23,6 +23,7 @@
 %# CHANGES    :  11/06/2013 - Removed RPM results due to 2007 Matlab version
 %#               17/06/2013 - Added switches for plotting and RPM results
 %#               20/06/2013 - Removed Excel related code, save as DAT file
+%#               28/06/2013 - Added tab delimeted saving for plotting
 %#               dd/mm/yyyy - ...
 %#
 %# -------------------------------------------------------------------------
@@ -64,15 +65,19 @@ headerlinesZeroAndCalib = 23;  % Number of headerlines to zero and calibration f
 %# ------------------------------------------------------------------------------
 %# Omit first 10 seconds of data due to acceleration ----------------------------
 %# ------------------------------------------------------------------------------
-%omitaccsamples = 1;	% 0 seconds x sample frequency = 10 x 800 = 8000 samples
-omitaccsamples = 8000;	% 10 seconds x sample frequency = 10 x 800 = 8000 samples
+
+% 10 seconds x sample frequency = 10 x 800 = 8000 samples (from start)
+startSamplePos    = 8000;
+
+% 10 seconds x sample frequency = 10 x 800 = 8000 samples (from end)
+cutSamplesFromEnd = 8000;   
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-startRun = 13;      % Start at run x
-endRun   = 13;      % Stop at run y
+startRun = 9;      % Start at run x
+endRun   = 9;      % Stop at run y
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# END FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -89,6 +94,8 @@ endRun   = 13;      % Stop at run y
 % RunNosStbd = [64:86];        % Starboard propulsion system only
 % RunNosStat = [51:53];        % Static flow rates due to head difference of waterlevels of basin and bucket
 
+% NOTE: If statement bellow is for use in LOOPS only!!!!
+%
 % if any(RunNosTest==k)
 %     disp('TEST');
 % elseif any(RunNosPort==k)
@@ -192,6 +199,18 @@ for k=startRun:endRun
     CH_10_CF   = ZeroAndCalib(24);
    
     
+    %# --------------------------------------------------------------------
+    %# Exception case for cutting samples when sample length is only 20 seconds
+    %# --------------------------------------------------------------------
+    if k == 5 || k == 6 || k == 7 || k == 8
+        %# 2 seconds x sample frequency = 2 x 800 = 1600 samples
+        startSamplePos    = 1600;
+        %# 2 seconds x sample frequency = 2 x 800 = 1600 samples
+        cutSamplesFromEnd = 1600;   
+    end
+    %# --------------------------------------------------------------------
+    
+    
     % /////////////////////////////////////////////////////////////////////
     % START: CREATE PLOTS AND RUN DIRECTORY
     % ---------------------------------------------------------------------
@@ -223,9 +242,9 @@ for k=startRun:endRun
     
     %# Get real units by applying calibration factors and zeros    
     [CH_0_WaveProbe CH_0_WaveProbe_Mean] = analysis_realunits(Raw_CH_0_WaveProbe,CH_0_Zero,CH_0_CF);
-
-    x = timeData(omitaccsamples:end);
-    y = CH_0_WaveProbe(omitaccsamples:end);
+    
+    x = timeData(startSamplePos:end-cutSamplesFromEnd);
+    y = CH_0_WaveProbe(startSamplePos:end-cutSamplesFromEnd);
     
     %# Trendline
     p  = polyfit(x,y,1);
@@ -244,19 +263,14 @@ for k=startRun:endRun
         %# Plotting curves
         figurename = sprintf('Wave probe: %s', name);
         f = figure('Name',figurename,'NumberTitle','off');
-        h = plot(x,y,'x',x,p2,'-r');grid on;box on;xlabel('Time [s]');ylabel('Mass flow rate [Kg]');
+        h = plot(x,y,'x',x,p2,'-r');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Mass flow rate [Kg]}');
         
         %# Line width
         set(h(1),'linewidth',1);
         set(h(2),'linewidth',2);
 
         %# Axis limitations
-        if omitaccsamples == 1
-            startSample = 1;
-        else
-            startSample = omitaccsamples/Fs;
-        end
-        xlim([startSample round(x(end))]);
+        xlim([x(1) x(end)]);
 
         %# Legend
         hleg1 = legend('Wave probe output','Trendline');
@@ -280,9 +294,9 @@ for k=startRun:endRun
     % START: KIEL PROBE
     % ---------------------------------------------------------------------
     
-    x = timeData(omitaccsamples:end);
-    y1 = Raw_CH_1_KPStbd(omitaccsamples:end);   % 5 PSI DPT
-    y2 = Raw_CH_2_KPPort(omitaccsamples:end);   % 5 PSI DPT
+    x = timeData(startSamplePos:end-cutSamplesFromEnd);
+    y1 = Raw_CH_1_KPStbd(startSamplePos:end-cutSamplesFromEnd);   % 5 PSI DPT
+    y2 = Raw_CH_2_KPPort(startSamplePos:end-cutSamplesFromEnd);   % 5 PSI DPT
     
     %# Trendline
     kppolyfitstbd = polyfit(x,y1,1);
@@ -295,15 +309,10 @@ for k=startRun:endRun
         %# Plotting curves
         figurename = sprintf('Kiel probe STBD & PORT: %s', name);
         f = figure('Name',figurename,'NumberTitle','off');    
-        h = plot(x,y1,'x',x,kppolyvalstbd,'-r',x,y2,'x',x,kppolyvalport,'-r');grid on;box on;xlabel('Time [s]');ylabel('Output [V]');
+        h = plot(x,y1,'x',x,kppolyvalstbd,'-r',x,y2,'x',x,kppolyvalport,'-r');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Output [V]}');
 
         %# Axis limitations
-        if omitaccsamples == 1
-            startSample = 1;
-        else
-            startSample = omitaccsamples/Fs;
-        end
-        xlim([startSample round(x(end))]);
+        xlim([x(1) x(end)]);
         
         %# Line width
         set(h(1),'linewidth',1);
@@ -319,7 +328,7 @@ for k=startRun:endRun
         
         %# Save plots as PNG
         plotsavename = sprintf('_plots/%s/DATAPLOT_CH1_CH2_kiel_probe.png', name(1:3));
-        saveas(f, plotsavename);    % Save plot as image
+        saveas(f, plotsavename);   % Save plot as image
         close;                     % Close current plot window          
         
     end
@@ -337,9 +346,9 @@ for k=startRun:endRun
     [CH_7_ThrustStbd CH_7_ThrustStbd_Mean] = analysis_realunits(Raw_CH_7_ThrustStbd,CH_7_Zero,CH_7_CF);
     [CH_8_ThrustPort CH_8_ThrustPort_Mean] = analysis_realunits(Raw_CH_8_ThrustPort,CH_8_Zero,CH_8_CF);
     
-    x = timeData(omitaccsamples:end);
-    y1 = CH_7_ThrustStbd(omitaccsamples:end);
-    y2 = CH_8_ThrustPort(omitaccsamples:end);
+    x = timeData(startSamplePos:end-cutSamplesFromEnd);
+    y1 = CH_7_ThrustStbd(startSamplePos:end-cutSamplesFromEnd);
+    y2 = CH_8_ThrustPort(startSamplePos:end-cutSamplesFromEnd);
     
     %# Trendline
     thrustpolyfitstbd = polyfit(x,y1,1);
@@ -352,15 +361,10 @@ for k=startRun:endRun
         %# Plotting curves
         figurename = sprintf('Thrust STBD & PORT: %s', name);
         f = figure('Name',figurename,'NumberTitle','off');    
-        h = plot(x,y1,'x',x,thrustpolyvalstbd,'-r',x,y2,'x',x,thrustpolyvalport,'-r');grid on;box on;xlabel('Time [s]');ylabel('Thrust [g]');
+        h = plot(x,y1,'x',x,thrustpolyvalstbd,'-r',x,y2,'x',x,thrustpolyvalport,'-r');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Thrust [g]}');
 
         %# Axis limitations
-        if omitaccsamples == 1
-            startSample = 1;
-        else
-            startSample = omitaccsamples/Fs;
-        end
-        xlim([startSample round(x(end))]);
+        xlim([x(1) x(end)]);
         
         %# Line width
         set(h(1),'linewidth',1);
@@ -376,7 +380,7 @@ for k=startRun:endRun
         
         %# Save plots as PNG
         plotsavename = sprintf('_plots/%s/DATAPLOT_CH7_CH8_thrust.png', name(1:3));
-        saveas(f, plotsavename);    % Save plot as image
+        saveas(f, plotsavename);   % Save plot as image
         close;                     % Close current plot window   
         
     end
@@ -394,9 +398,9 @@ for k=startRun:endRun
     [CH_9_TorqueStbd CH_9_TorqueStbd_Mean] = analysis_realunits(Raw_CH_9_TorqueStbd,CH_9_Zero,CH_9_CF);
     [CH_10_TorquePort CH_10_TorquePort_Mean] = analysis_realunits(Raw_CH_10_TorquePort,CH_10_Zero,CH_10_CF);
     
-    x = timeData(omitaccsamples:end);
-    y1 = CH_9_TorqueStbd(omitaccsamples:end);
-    y2 = CH_10_TorquePort(omitaccsamples:end);
+    x = timeData(startSamplePos:end-cutSamplesFromEnd);
+    y1 = CH_9_TorqueStbd(startSamplePos:end-cutSamplesFromEnd);
+    y2 = CH_10_TorquePort(startSamplePos:end-cutSamplesFromEnd);
     
     %# Trendline
     torquepolyfitstbd = polyfit(x,y1,1);
@@ -409,15 +413,10 @@ for k=startRun:endRun
         %# Plotting curves
         figurename = sprintf('Torque STBD & PORT: %s', name);
         f = figure('Name',figurename,'NumberTitle','off');        
-        h = plot(x,y1,'x',x,torquepolyvalstbd,'-r',x,y2,'x',x,torquepolyvalport,'-r');grid on;box on;xlabel('Time [s]');ylabel('Torque [Nm]');
+        h = plot(x,y1,'x',x,torquepolyvalstbd,'-r',x,y2,'x',x,torquepolyvalport,'-r');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Torque [Nm]}');
 
         %# Axis limitations
-        if omitaccsamples == 1
-            startSample = 1;
-        else
-            startSample = omitaccsamples/Fs;
-        end
-        xlim([startSample round(x(end))]);
+        xlim([x(1) x(end)]);
         
         %# Line width
         set(h(1),'linewidth',1);
@@ -433,7 +432,7 @@ for k=startRun:endRun
         
         %# Save plots as PNG
         plotsavename = sprintf('_plots/%s/DATAPLOT_CH9_CH10_torque.png', name(1:3));
-        saveas(f, plotsavename);    % Save plot as image
+        saveas(f, plotsavename);   % Save plot as image
         close;                     % Close current plot window          
         
     end
@@ -554,7 +553,9 @@ end
 % /////////////////////////////////////////////////////////////////////
 % START: Write results to CVS
 % ---------------------------------------------------------------------
-csvwrite('resultsArray.dat',resultsArray)
+M = resultsArray;
+csvwrite('resultsArray.dat', M)                                     % Export matrix M to a file delimited by the comma character      
+dlmwrite('resultsArray.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 % ---------------------------------------------------------------------
 % END: Write results to CVS
 % /////////////////////////////////////////////////////////////////////

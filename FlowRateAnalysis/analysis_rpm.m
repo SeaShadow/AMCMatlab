@@ -139,8 +139,8 @@ else
     xlim([omitaccsamples/800 (omitaccsamples+800)/800]);      
 end
 
-xlabel('Time [s]');
-ylabel('Output [V]');
+xlabel('{\bf Time [s]}');
+ylabel('{\bf Output [V]}');
 title('{\bf STARBOARD RPM Data}');
 grid on;
 
@@ -163,8 +163,8 @@ else
     xlim([omitaccsamples/800 (omitaccsamples+800)/800]);  
 end
 
-xlabel('Time [s]');
-ylabel('Output [V]');
+xlabel('{\bf Time [s]}');
+ylabel('{\bf Output [V]}');
 title('{\bf PORT RPM Data}');
 grid on;  
 
