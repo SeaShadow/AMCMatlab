@@ -143,6 +143,7 @@ plotting_on = true;    %TRUE or FALSE
 %# ////////////////////////////////////////////////////////////////////////
 
 resultsArray = [];
+slopesArray  = [];
 %w = waitbar(0,'Processed run files'); 
 for k=startRun:endRun
     
@@ -309,9 +310,14 @@ for k=startRun:endRun
         saveas(f, plotsavename);                % Save plot as PNG
         close;                                  % Close current plot window        
     
-        %# Special case for run 51 to 53
-        %# Y = (slope1 * X ) + slope2
-        %if k == 51 || k == 52 || k == 53
+        %# Add results to array for comparison and save as TXT and DAT file
+        % Slope of trendline => Y = (slope1 * X ) + slope2
+        slopesArray(k, 1) = k;          % Run number
+        slopesArray(k, 2) = slope1;     % X-constant
+        slopesArray(k, 3) = slope2;     % Value
+        slopesArray(k, 4) = flowrate;   % Flow rate
+        
+        %# For display only
         if slope2 > 0
             chooseSign = '+';
             slope2 = slope2;
@@ -319,8 +325,7 @@ for k=startRun:endRun
             chooseSign = '-';
             slope2 = abs(slope2);
         end
-        disp(sprintf('%s:: Mass flow rate: Y = %s*X %s %s', name(1:3), sprintf('%.4f',slope1), chooseSign, sprintf('%.4f',slope2)));
-        %end
+        disp(sprintf('%s:: Mass flow rate: Y = %s*X %s %s', name(1:3), sprintf('%.4f',slope1), chooseSign, sprintf('%.4f',slope2)));        
         
     end
         
@@ -628,6 +633,9 @@ end
 M = resultsArray;
 csvwrite('resultsArray.dat', M)                                     % Export matrix M to a file delimited by the comma character      
 dlmwrite('resultsArray.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
+M = slopesArray;
+csvwrite('slopesArray.dat', M)                                      % Export matrix M to a file delimited by the comma character      
+dlmwrite('slopesArray.txt', M, 'delimiter', '\t', 'precision', 4)   % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 % ---------------------------------------------------------------------
 % END: Write results to CVS
 % /////////////////////////////////////////////////////////////////////
