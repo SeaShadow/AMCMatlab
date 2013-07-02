@@ -149,27 +149,201 @@ setRPM=2500;startRun=42;endRun=44; [ans] = stats_avg(1,setRPM,startRun,endRun,re
 setRPM=2750;startRun=58;endRun=58; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(32,:) = ans;
 setRPM=3000;startRun=45;endRun=50; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(33,:) = ans;
 
-%# Plot data
-figurename = sprintf('%s', 'Wave probe');
+
+%# ************************************************************************
+%# PLOT DPT vs. FLOW RATE *************************************************
+%# ************************************************************************
+
+figurename = sprintf('%s', 'Plot: Kiel Probe vs. Mass Flow Rate');
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# SEPARATE SYSTEMS: RPM vs. flow rate ------------------------------------
+subplot(1,2,1);
+
+xport = averagedArray(1:11,7);
+yport = averagedArray(1:11,5);
+
+xstbd = averagedArray(12:22,6);
+ystbd = averagedArray(12:22,5);
+
+%# Averaged stbd and port data
+xArray = [];  xArray(:,1) = xport;  xArray(:,2) = xstbd;
+yArray = [];  yArray(:,1) = yport;  yArray(:,2) = ystbd;
+
+avgX = mean(xArray(:,1:2).');  avgX = avgX.';
+avgY = mean(yArray(:,1:2).');  avgY = avgY.';
+
+plot(xstbd,ystbd,'x',xport,yport,'o','LineWidth',2,'MarkerSize',10);    % ,avgX,avgY,'-*k'
+xlabel('{\bf Differential pressure transducer output [V]}');
+ylabel('{\bf Flow rate [Kg/s]}');
+title('{\bf Separate runs for stbd and port waterjet system}');
+xlim([0.9 3.1]);
+grid on;
+axis square;
+
+hleg1 = legend('S:Starboard waterjet','S:Port waterjet');               % ,'S:Averaged'
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# SEPARATE SYSTEMS: RPM vs. flow rate ------------------------------------
+subplot(1,2,2);
+
+% xport = averagedArray(1:11,7);
+yport = averagedArray(1:11,5);
+% 
+% xstbd = averagedArray(12:22,6);
+ystbd = averagedArray(12:22,5);
+
+%# Averaged stbd and port data
+xAvgSepKPArray = [];  xAvgSepKPArray(:,1) = averagedArray(12:22,6);  xAvgSepKPArray(:,2) = averagedArray(1:11,7);
+xAvgComKPArray = [];  xAvgComKPArray(:,1) = averagedArray(23:33,6);  xAvgComKPArray(:,2) = averagedArray(23:33,7);
+
+avgXSep = mean(xAvgSepKPArray(:,1:2).');  avgXSep = avgXSep.';
+avgXCom = mean(xAvgComKPArray(:,1:2).');  avgXCom = avgXCom.';
+
+addUp = [];
+for i=1:length(yport)
+    addUp(i, 1) = yport(i) + ystbd(i); 
+end
+ySep = addUp;
+yCom = averagedArray(23:33,5);
+
+plot(avgXSep,ySep,'+r',avgXCom,yCom,'sk','LineWidth',2,'MarkerSize',10);
+xlabel('{\bf Averaged differential pressure transducer output [V]}');
+ylabel('{\bf Total flow rate [Kg/s]}');
+title('{\bf Total mass flow rate vs. averaged voltage}');
+xlim([0.9 3.1]);
+grid on;
+axis square;
+
+hleg1 = legend('Waterjets run reparately','Waterjets run together');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# SEPARATE SYSTEMS: Differences bar plot ---------------------------------
+
+diffAvg = [];
+for i=1:length(yport)
+    diffAvg(i, 1) = abs(1-(ySep(i)/yCom(i)));
+    diffAvg(i, 2) = abs(1-(avgXSep(i)/avgXCom(i)));
+    diffFr = sprintf('%.1f',diffAvg(i,1) * 100);
+    diffVo = sprintf('%.1f',diffAvg(i,2) * 100);
+    displayText = sprintf('RPM:: %s:: Differences in total flow rates = %s%% and averaged DPT voltages = %s%%',num2str(averagedArray(i,1)),diffFr,diffVo);
+    disp(displayText);
+end
+
+%# Plot percentage differences as bar chart
+% subplot(1,3,3);
+% 
+% FrDiffValues = num2cell(diffAvg(:,1));                                      % Double to cell conversion
+% FrDiffValues  = cellfun(@(y) y*100, FrDiffValues, 'UniformOutput', false);  % Apply functions to cell
+% S = sprintf('%s*', FrDiffValues{:});                                        % Cell to double conversion
+% FrDiffValues = sscanf(S, '%f*');                                            % Cell to double conversion
+% 
+% VoDiffValues = num2cell(diffAvg(:,2));                                      % Double to cell conversion
+% VoDiffValues  = cellfun(@(y) y*100, VoDiffValues, 'UniformOutput', false);  % Apply functions to cell
+% S = sprintf('%s*', VoDiffValues{:});                                        % Cell to double conversion
+% VoDiffValues = sscanf(S, '%f*');                                            % Cell to double conversion
+% 
+% bar(averagedArray(1:11,1),FrDiffValues,'r');
+% hold on;
+% bar(averagedArray(1:11,1),VoDiffValues,'b');
+% xlabel('{\bf Shaft speed [RPM]}');
+% ylabel('{\bf Difference [%]}');
+% title('{\bf Differences in flow rates and averaged voltages}');
+% % xlim([500 3000]);
+% grid on;
+% axis square;
+% 
+% hleg1 = legend('Flow rate','Differential pressure transducer');
+% set(hleg1,'Location','NorthEast');
+% set(hleg1,'Interpreter','none');
+
+%# ------------------------------------------------------------------------
+%# Save plots as PNGs -----------------------------------------------------
+%# ------------------------------------------------------------------------
+
+%# _PLOTS directory
+fPath = '_plots/';
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else    
+    mkdir(fPath);
+end
+
+%# Repeat directory
+fPath = sprintf('_plots/%s', '_averaged_summary');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else    
+    mkdir(fPath);
+end
+
+%# PDF directory
+fPath = sprintf('_plots/%s/%s', '_averaged_summary', 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else    
+    mkdir(fPath);
+end
+
+%# Save figure as PDF and PNG
+plotsavenamePDF = sprintf('_plots/_averaged_summary/PDF/AVERAGED_%s.pdf', 'DPT_vs_FR_data_10s_off_start_and_end');
+saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+plotsavename = sprintf('_plots/_averaged_summary/AVERAGED_%s.png', 'DPT_vs_FR_data_10s_off_start_and_end'); % Assign save name
+print(gcf, '-djpeg', plotsavename);                                                                         % Save plot as PNG
+%close; 
+
+
+%# ************************************************************************
+%# PLOT ALL DATA **********************************************************
+%# ************************************************************************
+
+figurename = sprintf('%s', 'Plot: All Data');
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# SEPARATE SYSTEMS: RPM vs. flow rate ------------------------------------
 subplot(2,3,1);
 
 xport = averagedArray(1:11,7);
-yport = averagedArray(1:11,5);
-xstbd = averagedArray(12:22,6);
-ystbd = averagedArray(12:22,5);
+yport = averagedArray(1:11,9);
 
-plot(xstbd,ystbd,'x',xport,yport,'o','LineWidth',2,'MarkerSize',10);
+xstbd = averagedArray(12:22,6);
+ystbd = averagedArray(12:22,8);
+
+xcombport = averagedArray(23:33,7);
+ycombport = averagedArray(23:33,9);
+
+xcombstbd = averagedArray(23:33,6);
+ycombstbd = averagedArray(23:33,8);
+
+plot(xstbd,ystbd,'x',xport,yport,'o',xcombstbd,ycombstbd,'+',xcombport,ycombport,'^','LineWidth',2,'MarkerSize',10);
 xlabel('{\bf Differential pressure transducer output [V]}');
-ylabel('{\bf Flow rate [Kg/s]}');
+ylabel('{\bf Thrust [N]}');
 %title('{\bf Separate waterjet systems}');
 xlim([0.9 3.1]);
 grid on;
 % axis square;
 
-hleg1 = legend('S:Starboard waterjet','S:Port waterjet');
+hleg1 = legend('S:Starboard waterjet','S:Port waterjet','C:Starboard waterjet','C:Port waterjet');
 set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
 
@@ -387,7 +561,7 @@ else
     mkdir(fPath);
 end
 
-%# Repeat directory
+%# PDF directory
 fPath = sprintf('_plots/%s/%s', '_averaged_summary', 'PDF');
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
@@ -395,8 +569,537 @@ else
     mkdir(fPath);
 end
 
+%# Save figure as PDF and PNG
 plotsavenamePDF = sprintf('_plots/_averaged_summary/PDF/AVERAGED_%s.pdf', 'Stbd_and_port_data_10s_off_start_and_end');
 saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
 plotsavename = sprintf('_plots/_averaged_summary/AVERAGED_%s.png', 'Stbd_and_port_data_10s_off_start_and_end'); % Assign save name
+print(gcf, '-djpeg', plotsavename);                                                                             % Save plot as PNG
+%close; 
+
+
+%# ************************************************************************
+%# PLOT STARBOARD DATA ONLY ***********************************************
+%# ************************************************************************
+
+figurename = sprintf('%s', 'Plot: Starboard Data');
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# SEPARATE SYSTEMS: RPM vs. flow rate ------------------------------------
+subplot(2,3,1);
+
+xport = averagedArray(1:11,7);
+yport = averagedArray(1:11,9);
+
+xstbd = averagedArray(12:22,6);
+ystbd = averagedArray(12:22,8);
+
+xcombport = averagedArray(23:33,7);
+ycombport = averagedArray(23:33,9);
+
+xcombstbd = averagedArray(23:33,6);
+ycombstbd = averagedArray(23:33,8);
+
+plot(xstbd,ystbd,'x',xcombstbd,ycombstbd,'o','LineWidth',2,'MarkerSize',10);
+xlabel('{\bf Differential pressure transducer output [V]}');
+ylabel('{\bf Thrust [N]}');
+%title('{\bf Separate waterjet systems}');
+xlim([0.9 3.1]);
+grid on;
+% axis square;
+
+hleg1 = legend('S:Starboard waterjet','S:Port waterjet');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# COMBINED & SEPARATE SYSTEMS: RPM vs. DPT output ------------------------
+subplot(2,3,2);
+
+xport     = averagedArray(1:11,4);
+yport     = averagedArray(1:11,7);
+
+xstbd     = averagedArray(12:22,3);
+ystbd     = averagedArray(12:22,6);
+
+xcombport = averagedArray(23:33,4);
+ycombport = averagedArray(23:33,7);
+
+xcombstbd = averagedArray(23:33,3);
+ycombstbd = averagedArray(23:33,6);
+
+plot(xstbd,ystbd,'x',xcombstbd,ycombstbd,'+','LineWidth',2,'MarkerSize',10);
+xlabel('{\bf Measured shaft speed [RPM]}');
+ylabel('{\bf Differential pressure transducer output [V]}');
+%title('{\bf Combined and separate waterjet systems}');
+xlim([480 2800]);
+ylim([1 3.1]);
+grid on;
+% axis square;
+
+hleg1 = legend('S:Starboard waterjet','C:Starboard waterjet');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# COMBINED & SEPARATE SYSTEMS: RPM vs. Torque ----------------------------
+subplot(2,3,3);
+
+xport     = averagedArray(1:11,4);
+yport     = averagedArray(1:11,11);
+
+xstbd     = averagedArray(12:22,3);
+ystbd     = averagedArray(12:22,10);
+
+xcombport = averagedArray(23:33,4);
+ycombport = averagedArray(23:33,11);
+
+xcombstbd = averagedArray(23:33,3);
+ycombstbd = averagedArray(23:33,10);
+
+plot(xstbd,ystbd,'x',xcombstbd,ycombstbd,'+','LineWidth',2,'MarkerSize',10);
+xlabel('{\bf Measured shaft speed [RPM]}');
+ylabel('{\bf Torque [Nm]}');
+%title('{\bf Combined and separate waterjet systems}');
+xlim([480 2800]);
+ylim([0 0.4]);
+grid on;
+% axis square;
+
+hleg1 = legend('S:Starboard waterjet','C:Starboard waterjet');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# COMBINED & SEPARATE SYSTEMS: Set RPM vs. Measured RPM ------------------
+subplot(2,3,4);
+
+xport     = averagedArray(1:11,1);
+yport     = averagedArray(1:11,4);
+
+xstbd     = averagedArray(12:22,1);
+ystbd     = averagedArray(12:22,3);
+
+xcombport = averagedArray(23:33,1);
+ycombport = averagedArray(23:33,4);
+
+xcombstbd = averagedArray(23:33,1);
+ycombstbd = averagedArray(23:33,3);
+
+plot(xstbd,ystbd,'x',xcombstbd,ycombstbd,'+','LineWidth',2,'MarkerSize',10);
+xlabel('{\bf Set shaft speed [RPM]}');
+ylabel('{\bf Measured shaft speed [RPM]}');
+%title('{\bf Combined and separate waterjet systems}');
+xlim([500 3000]);
+ylim([480 2800]);
+grid on;
+% axis square;
+
+hleg1 = legend('S:Starboard waterjet','C:Starboard waterjet');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# COMBINED & SEPARATE SYSTEMS: RPM vs. Thrust ------------------
+subplot(2,3,5);
+
+xport     = averagedArray(1:11,4);
+yport     = averagedArray(1:11,9);
+
+xstbd     = averagedArray(12:22,3);
+ystbd     = averagedArray(12:22,8);
+
+xcombport = averagedArray(23:33,4);
+ycombport = averagedArray(23:33,9);
+
+xcombstbd = averagedArray(23:33,3);
+ycombstbd = averagedArray(23:33,8);
+
+plot(xstbd,ystbd,'x',xcombstbd,ycombstbd,'+','LineWidth',2,'MarkerSize',10);
+xlabel('{\bf Measured shaft speed [RPM]}');
+ylabel('{\bf Thrust [N]}');
+%title('{\bf Combined and separate waterjet systems}');
+xlim([480 2800]);
+ylim([0 35]);
+grid on;
+% axis square;
+
+hleg1 = legend('S:Starboard waterjet','C:Starboard waterjet');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# COMBINED & SEPARATE SYSTEMS: RPM vs. Power ------------------
+subplot(2,3,6);
+
+xport     = averagedArray(1:11,4);
+yport     = averagedArray(1:11,13);
+
+xstbd     = averagedArray(12:22,3);
+ystbd     = averagedArray(12:22,12);
+
+xcombport = averagedArray(23:33,4);
+ycombport = averagedArray(23:33,13);
+
+xcombstbd = averagedArray(23:33,3);
+ycombstbd = averagedArray(23:33,12);
+
+plot(xstbd,ystbd,'x',xcombstbd,ycombstbd,'+','LineWidth',2,'MarkerSize',10);
+xlabel('{\bf Measured shaft speed [RPM]}');
+ylabel('{\bf Shaft power [W]}');
+%title('{\bf Combined and separate waterjet systems}');
+xlim([480 2800]);
+ylim([0 112]);
+grid on;
+% axis square;
+
+hleg1 = legend('S:Starboard waterjet','C:Starboard waterjet');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# ------------------------------------------------------------------------
+%# Save plots as PNGs -----------------------------------------------------
+%# ------------------------------------------------------------------------
+
+%# _PLOTS directory
+fPath = '_plots/';
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else    
+    mkdir(fPath);
+end
+
+%# Repeat directory
+fPath = sprintf('_plots/%s', '_averaged_summary');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else    
+    mkdir(fPath);
+end
+
+%# PDF directory
+fPath = sprintf('_plots/%s/%s', '_averaged_summary', 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else    
+    mkdir(fPath);
+end
+
+%# Save figure as PDF and PNG
+plotsavenamePDF = sprintf('_plots/_averaged_summary/PDF/AVERAGED_%s.pdf', 'Stbd_data_10s_off_start_and_end');
+saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+plotsavename = sprintf('_plots/_averaged_summary/AVERAGED_%s.png', 'Stbd_data_10s_off_start_and_end'); % Assign save name
+print(gcf, '-djpeg', plotsavename);                                                                    % Save plot as PNG
+%close;
+
+
+%# ************************************************************************
+%# PLOT PORT DATA ONLY ****************************************************
+%# ************************************************************************
+
+figurename = sprintf('%s', 'Plot: Port Data');
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# SEPARATE SYSTEMS: RPM vs. flow rate ------------------------------------
+subplot(2,3,1);
+
+xport = averagedArray(1:11,7);
+yport = averagedArray(1:11,9);
+
+xstbd = averagedArray(12:22,6);
+ystbd = averagedArray(12:22,8);
+
+xcombport = averagedArray(23:33,7);
+ycombport = averagedArray(23:33,9);
+
+xcombstbd = averagedArray(23:33,6);
+ycombstbd = averagedArray(23:33,8);
+
+plot(xport,yport,'o',xcombport,ycombport,'^','LineWidth',2,'MarkerSize',10);
+xlabel('{\bf Differential pressure transducer output [V]}');
+ylabel('{\bf Thrust [N]}');
+%title('{\bf Separate waterjet systems}');
+xlim([0.9 3.1]);
+grid on;
+% axis square;
+
+hleg1 = legend('S:Port waterjet','C:Port waterjet');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# COMBINED & SEPARATE SYSTEMS: RPM vs. DPT output ------------------------
+subplot(2,3,2);
+
+xport     = averagedArray(1:11,4);
+yport     = averagedArray(1:11,7);
+
+xstbd     = averagedArray(12:22,3);
+ystbd     = averagedArray(12:22,6);
+
+xcombport = averagedArray(23:33,4);
+ycombport = averagedArray(23:33,7);
+
+xcombstbd = averagedArray(23:33,3);
+ycombstbd = averagedArray(23:33,6);
+
+plot(xport,yport,'o',xcombport,ycombport,'^','LineWidth',2,'MarkerSize',10);
+xlabel('{\bf Measured shaft speed [RPM]}');
+ylabel('{\bf Differential pressure transducer output [V]}');
+%title('{\bf Combined and separate waterjet systems}');
+xlim([480 2800]);
+ylim([1 3.1]);
+grid on;
+% axis square;
+
+hleg1 = legend('S:Port waterjet','C:Port waterjet');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# COMBINED & SEPARATE SYSTEMS: RPM vs. Torque ----------------------------
+subplot(2,3,3);
+
+xport     = averagedArray(1:11,4);
+yport     = averagedArray(1:11,11);
+
+xstbd     = averagedArray(12:22,3);
+ystbd     = averagedArray(12:22,10);
+
+xcombport = averagedArray(23:33,4);
+ycombport = averagedArray(23:33,11);
+
+xcombstbd = averagedArray(23:33,3);
+ycombstbd = averagedArray(23:33,10);
+
+plot(xport,yport,'o',xcombport,ycombport,'^','LineWidth',2,'MarkerSize',10);
+xlabel('{\bf Measured shaft speed [RPM]}');
+ylabel('{\bf Torque [Nm]}');
+%title('{\bf Combined and separate waterjet systems}');
+xlim([480 2800]);
+ylim([0 0.4]);
+grid on;
+% axis square;
+
+hleg1 = legend('S:Port waterjet','C:Port waterjet');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# COMBINED & SEPARATE SYSTEMS: Set RPM vs. Measured RPM ------------------
+subplot(2,3,4);
+
+xport     = averagedArray(1:11,1);
+yport     = averagedArray(1:11,4);
+
+xstbd     = averagedArray(12:22,1);
+ystbd     = averagedArray(12:22,3);
+
+xcombport = averagedArray(23:33,1);
+ycombport = averagedArray(23:33,4);
+
+xcombstbd = averagedArray(23:33,1);
+ycombstbd = averagedArray(23:33,3);
+
+plot(xport,yport,'o',xcombport,ycombport,'^','LineWidth',2,'MarkerSize',10);
+xlabel('{\bf Set shaft speed [RPM]}');
+ylabel('{\bf Measured shaft speed [RPM]}');
+%title('{\bf Combined and separate waterjet systems}');
+xlim([500 3000]);
+ylim([480 2800]);
+grid on;
+% axis square;
+
+hleg1 = legend('S:Port waterjet','C:Port waterjet');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# COMBINED & SEPARATE SYSTEMS: RPM vs. Thrust ------------------
+subplot(2,3,5);
+
+xport     = averagedArray(1:11,4);
+yport     = averagedArray(1:11,9);
+
+xstbd     = averagedArray(12:22,3);
+ystbd     = averagedArray(12:22,8);
+
+xcombport = averagedArray(23:33,4);
+ycombport = averagedArray(23:33,9);
+
+xcombstbd = averagedArray(23:33,3);
+ycombstbd = averagedArray(23:33,8);
+
+plot(xport,yport,'o',xcombport,ycombport,'^','LineWidth',2,'MarkerSize',10);
+xlabel('{\bf Measured shaft speed [RPM]}');
+ylabel('{\bf Thrust [N]}');
+%title('{\bf Combined and separate waterjet systems}');
+xlim([480 2800]);
+ylim([0 35]);
+grid on;
+% axis square;
+
+hleg1 = legend('S:Port waterjet','C:Port waterjet');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# COMBINED & SEPARATE SYSTEMS: RPM vs. Power ------------------
+subplot(2,3,6);
+
+xport     = averagedArray(1:11,4);
+yport     = averagedArray(1:11,13);
+
+xstbd     = averagedArray(12:22,3);
+ystbd     = averagedArray(12:22,12);
+
+xcombport = averagedArray(23:33,4);
+ycombport = averagedArray(23:33,13);
+
+xcombstbd = averagedArray(23:33,3);
+ycombstbd = averagedArray(23:33,12);
+
+plot(xport,yport,'o',xcombport,ycombport,'^','LineWidth',2,'MarkerSize',10);
+xlabel('{\bf Measured shaft speed [RPM]}');
+ylabel('{\bf Shaft power [W]}');
+%title('{\bf Combined and separate waterjet systems}');
+xlim([480 2800]);
+ylim([0 112]);
+grid on;
+% axis square;
+
+hleg1 = legend('S:Port waterjet''C:Port waterjet');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# ------------------------------------------------------------------------
+%# Save plots as PNGs -----------------------------------------------------
+%# ------------------------------------------------------------------------
+
+%# _PLOTS directory
+fPath = '_plots/';
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else    
+    mkdir(fPath);
+end
+
+%# Repeat directory
+fPath = sprintf('_plots/%s', '_averaged_summary');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else    
+    mkdir(fPath);
+end
+
+%# PDF directory
+fPath = sprintf('_plots/%s/%s', '_averaged_summary', 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else    
+    mkdir(fPath);
+end
+
+%# Save figure as PDF and PNG
+plotsavenamePDF = sprintf('_plots/_averaged_summary/PDF/AVERAGED_%s.pdf', 'Port_data_10s_off_start_and_end');
+saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+plotsavename = sprintf('_plots/_averaged_summary/AVERAGED_%s.png', 'Port_data_10s_off_start_and_end'); % Assign save name
 print(gcf, '-djpeg', plotsavename);                                                                             % Save plot as PNG
 %close; 
