@@ -31,18 +31,49 @@
 
 function [averagedArray] = stats_avg(propSys,setRPM,startRun,endRun,results)
 
-flowRate    = results(:,5);
-kpStbd      = results(:,6);
-kpPort      = results(:,7);
-thrustStbd  = results(:,8);
-thrustPort  = results(:,9);
-torqueStbd  = results(:,10);
-torquePort  = results(:,11);
-speedStbd   = results(:,12);
-speedPort   = results(:,13);
-powerStbd   = results(:,14);
-powerPort   = results(:,15);
+%# Constants
+scalingFactor = 21.6;                       % Full scale to model scale ratio
+impellerDia    = (1200/scalingFactor)/1000; % Scaled impeller diameter (m)      
+                                            % NOTE: 1200 mm = Inlet diameter not impeller diameter
+fwDensity      = 1000;                      % Fresh water density      (Kg/m3)
 
+nozzleDiaFs    = 720;                       % Full scale nozzle diameter (mm)
+nozzleDiaMs    = nozzleDiaFs/scalingFactor; % Model scale nozzle diameter (mm)
+nozzleAreaMs   = ((nozzleDiaMs/2)^2)*pi;    % Model scale nozzle area (mm2)
+nozzleAreaMs   = nozzleAreaMs/10^6;         % Model scale nozzle area (m2)
+
+%# Columns to variables
+flowRate    = results(:,5);         % Flow rate                 (Kg/s)
+kpStbd      = results(:,6);         % Stbd: Kiel probe          (V)
+kpPort      = results(:,7);         % Port: Kiel probe          (V)
+thrustStbd  = results(:,8);         % Stbd: Thrust              (N)
+thrustPort  = results(:,9);         % Port: Thrust              (N)
+torqueStbd  = results(:,10);        % Stbd: Torque              (Nm)
+torquePort  = results(:,11);        % Port: Torque              (Nm)
+speedStbd   = results(:,12);        % Stbd: Shaft speed         (PRM)
+speedPort   = results(:,13);        % Port: Shaft speed         (RPM)
+powerStbd   = results(:,14);        % Stbd: Shaft power         (W)
+powerPort   = results(:,15);        % Port: Shaft power         (W)
+
+%# Averaged array columns: 
+    %[1]  Set motor RPM      (RPM)
+    %[2]  Prop. system       >> 1 = Port, 2 = Stbd, 3 = Combined
+    %[3]  Shaft Speed STBD   (RPM)
+    %[4]  Shaft Speed PORT   (RPM)
+    %[5]  Flow rate          (Kg/s)
+    %[6]  Kiel probe STBD    (V)
+    %[7]  Kiel probe PORT    (V)
+    %[8]  Thrust STBD        (N)
+    %[9]  Thrust PORT        (N)
+    %[10] Torque STBD        (Nm)
+    %[11] Torque PORT        (Nm)
+    %[12] Power STBD         (W)
+    %[13] Power PORT         (W)
+    %[14] Flow coefficient   (-)
+    %[15] Flow rate          (m3/s)
+    %[16] Jet velocity       (m/s)
+    %[17] Gross thrust       (m3/s)     >> Using Allisons equation
+    
 averagedArray = [];
 averagedArray(:,1)  = setRPM;
 averagedArray(:,2)  = propSys;
@@ -57,3 +88,25 @@ averagedArray(:,10) = mean(torqueStbd(startRun:endRun));
 averagedArray(:,11) = mean(torquePort(startRun:endRun));
 averagedArray(:,12) = mean(powerStbd(startRun:endRun));
 averagedArray(:,13) = mean(powerPort(startRun:endRun));
+%# Flow coefficient = Q / (n*D^3)
+%# Where:   Q (m3/s)
+%#          n (1/s)
+%#          D (m)
+if propSys == 1
+    averagedArray(:,14) = (averagedArray(:,5)/fwDensity)/((averagedArray(:,4)/60)*(impellerDia^3));
+elseif propSys == 2
+    averagedArray(:,14) = (averagedArray(:,5)/fwDensity)/((averagedArray(:,3)/60)*(impellerDia^3));    
+else
+    averagedArray(:,14) = 0;
+end
+averagedArray(:,15) = averagedArray(:,5)/fwDensity;
+if propSys == 1 || propSys == 2
+    averagedArray(:,16) = averagedArray(:,15)/nozzleAreaMs;
+else
+    averagedArray(:,16) = 0;
+end
+if propSys == 1 || propSys == 2
+    averagedArray(:,17) = averagedArray(:,5)*averagedArray(:,16);
+else
+    averagedArray(:,17) = 0;
+end

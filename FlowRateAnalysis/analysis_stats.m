@@ -45,7 +45,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 %# -------------------------------------------------------------------------
-%# Read DAT file
+%# Read results DAT file
 %# -------------------------------------------------------------------------
 if exist('resultsArray_copy.dat', 'file') == 2
     %# Results array columns: 
@@ -94,7 +94,7 @@ speedPort   = results(:,13);
 powerStbd   = results(:,14);
 powerPort   = results(:,15);
 
-%# Results array columns: 
+%# averagedArray columns, for referencing purposes: 
     %[1]  Set motor RPM      (RPM)
     %[2]  Prop. system       >> 1 = Port, 2 = Stbd, 3 = Combined
     %[3]  Shaft Speed STBD   (RPM)
@@ -108,7 +108,11 @@ powerPort   = results(:,15);
     %[11] Torque PORT        (Nm)
     %[12] Power STBD         (W)
     %[13] Power PORT         (W)
-
+    %[14] Flow coefficient   (-)
+    %[15] Flow rate          (m3/s)
+    %[16] Jet velocity       (m/s)
+    %[17] Gross thrust       (m3/s)     >> Using Allisons equation
+    
 averagedArray = [];
 % Port Side
 setRPM=500; startRun=9; endRun=11; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(1,:) = ans;
@@ -123,31 +127,31 @@ setRPM=2500;startRun=21;endRun=23; [ans] = stats_avg(1,setRPM,startRun,endRun,re
 setRPM=2750;startRun=63;endRun=63; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(10,:) = ans;
 setRPM=3000;startRun=24;endRun=29; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(11,:) = ans;
 
-% Port Side
-setRPM=500; startRun=64;endRun=66; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(12,:) = ans;
-setRPM=750; startRun=67;endRun=67; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(13,:) = ans;
-setRPM=1000;startRun=68;endRun=70; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(14,:) = ans;
-setRPM=1250;startRun=71;endRun=71; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(15,:) = ans;
-setRPM=1500;startRun=72;endRun=74; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(16,:) = ans;
-setRPM=1750;startRun=75;endRun=75; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(17,:) = ans;
-setRPM=2000;startRun=76;endRun=78; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(18,:) = ans;
-setRPM=2250;startRun=79;endRun=79; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(19,:) = ans;
-setRPM=2500;startRun=80;endRun=82; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(20,:) = ans;
-setRPM=2750;startRun=83;endRun=83; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(21,:) = ans;
-setRPM=3000;startRun=84;endRun=86; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(22,:) = ans;
+% Starboard Side
+setRPM=500; startRun=64;endRun=66; [ans] = stats_avg(2,setRPM,startRun,endRun,results); averagedArray(12,:) = ans;
+setRPM=750; startRun=67;endRun=67; [ans] = stats_avg(2,setRPM,startRun,endRun,results); averagedArray(13,:) = ans;
+setRPM=1000;startRun=68;endRun=70; [ans] = stats_avg(2,setRPM,startRun,endRun,results); averagedArray(14,:) = ans;
+setRPM=1250;startRun=71;endRun=71; [ans] = stats_avg(2,setRPM,startRun,endRun,results); averagedArray(15,:) = ans;
+setRPM=1500;startRun=72;endRun=74; [ans] = stats_avg(2,setRPM,startRun,endRun,results); averagedArray(16,:) = ans;
+setRPM=1750;startRun=75;endRun=75; [ans] = stats_avg(2,setRPM,startRun,endRun,results); averagedArray(17,:) = ans;
+setRPM=2000;startRun=76;endRun=78; [ans] = stats_avg(2,setRPM,startRun,endRun,results); averagedArray(18,:) = ans;
+setRPM=2250;startRun=79;endRun=79; [ans] = stats_avg(2,setRPM,startRun,endRun,results); averagedArray(19,:) = ans;
+setRPM=2500;startRun=80;endRun=82; [ans] = stats_avg(2,setRPM,startRun,endRun,results); averagedArray(20,:) = ans;
+setRPM=2750;startRun=83;endRun=83; [ans] = stats_avg(2,setRPM,startRun,endRun,results); averagedArray(21,:) = ans;
+setRPM=3000;startRun=84;endRun=86; [ans] = stats_avg(2,setRPM,startRun,endRun,results); averagedArray(22,:) = ans;
 
 % Combined
-setRPM=500; startRun=30;endRun=32; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(23,:) = ans;
-setRPM=750; startRun=54;endRun=54; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(24,:) = ans;
-setRPM=1000;startRun=33;endRun=35; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(25,:) = ans;
-setRPM=1250;startRun=55;endRun=55; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(26,:) = ans;
-setRPM=1500;startRun=36;endRun=38; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(27,:) = ans;
-setRPM=1750;startRun=56;endRun=56; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(28,:) = ans;
-setRPM=2000;startRun=39;endRun=41; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(29,:) = ans;
-setRPM=2250;startRun=57;endRun=57; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(30,:) = ans;
-setRPM=2500;startRun=42;endRun=44; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(31,:) = ans;
-setRPM=2750;startRun=58;endRun=58; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(32,:) = ans;
-setRPM=3000;startRun=45;endRun=50; [ans] = stats_avg(1,setRPM,startRun,endRun,results); averagedArray(33,:) = ans;
+setRPM=500; startRun=30;endRun=32; [ans] = stats_avg(3,setRPM,startRun,endRun,results); averagedArray(23,:) = ans;
+setRPM=750; startRun=54;endRun=54; [ans] = stats_avg(3,setRPM,startRun,endRun,results); averagedArray(24,:) = ans;
+setRPM=1000;startRun=33;endRun=35; [ans] = stats_avg(3,setRPM,startRun,endRun,results); averagedArray(25,:) = ans;
+setRPM=1250;startRun=55;endRun=55; [ans] = stats_avg(3,setRPM,startRun,endRun,results); averagedArray(26,:) = ans;
+setRPM=1500;startRun=36;endRun=38; [ans] = stats_avg(3,setRPM,startRun,endRun,results); averagedArray(27,:) = ans;
+setRPM=1750;startRun=56;endRun=56; [ans] = stats_avg(3,setRPM,startRun,endRun,results); averagedArray(28,:) = ans;
+setRPM=2000;startRun=39;endRun=41; [ans] = stats_avg(3,setRPM,startRun,endRun,results); averagedArray(29,:) = ans;
+setRPM=2250;startRun=57;endRun=57; [ans] = stats_avg(3,setRPM,startRun,endRun,results); averagedArray(30,:) = ans;
+setRPM=2500;startRun=42;endRun=44; [ans] = stats_avg(3,setRPM,startRun,endRun,results); averagedArray(31,:) = ans;
+setRPM=2750;startRun=58;endRun=58; [ans] = stats_avg(3,setRPM,startRun,endRun,results); averagedArray(32,:) = ans;
+setRPM=3000;startRun=45;endRun=50; [ans] = stats_avg(3,setRPM,startRun,endRun,results); averagedArray(33,:) = ans;
 
 
 %# ************************************************************************
@@ -238,45 +242,6 @@ set(gcf, 'PaperSize',[XPlot YPlot]);
 set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
 set(gcf, 'PaperOrientation','portrait');
 
-%# SEPARATE SYSTEMS: Differences bar plot ---------------------------------
-
-diffAvg = [];
-for i=1:length(yport)
-    diffAvg(i, 1) = abs(1-(ySep(i)/yCom(i)));
-    diffAvg(i, 2) = abs(1-(avgXSep(i)/avgXCom(i)));
-    diffFr = sprintf('%.1f',diffAvg(i,1) * 100);
-    diffVo = sprintf('%.1f',diffAvg(i,2) * 100);
-    displayText = sprintf('RPM:: %s:: Differences in total flow rates = %s%% and averaged DPT voltages = %s%%',num2str(averagedArray(i,1)),diffFr,diffVo);
-    disp(displayText);
-end
-
-%# Plot percentage differences as bar chart
-% subplot(1,3,3);
-% 
-% FrDiffValues = num2cell(diffAvg(:,1));                                      % Double to cell conversion
-% FrDiffValues  = cellfun(@(y) y*100, FrDiffValues, 'UniformOutput', false);  % Apply functions to cell
-% S = sprintf('%s*', FrDiffValues{:});                                        % Cell to double conversion
-% FrDiffValues = sscanf(S, '%f*');                                            % Cell to double conversion
-% 
-% VoDiffValues = num2cell(diffAvg(:,2));                                      % Double to cell conversion
-% VoDiffValues  = cellfun(@(y) y*100, VoDiffValues, 'UniformOutput', false);  % Apply functions to cell
-% S = sprintf('%s*', VoDiffValues{:});                                        % Cell to double conversion
-% VoDiffValues = sscanf(S, '%f*');                                            % Cell to double conversion
-% 
-% bar(averagedArray(1:11,1),FrDiffValues,'r');
-% hold on;
-% bar(averagedArray(1:11,1),VoDiffValues,'b');
-% xlabel('{\bf Shaft speed [RPM]}');
-% ylabel('{\bf Difference [%]}');
-% title('{\bf Differences in flow rates and averaged voltages}');
-% % xlim([500 3000]);
-% grid on;
-% axis square;
-% 
-% hleg1 = legend('Flow rate','Differential pressure transducer');
-% set(hleg1,'Location','NorthEast');
-% set(hleg1,'Interpreter','none');
-
 %# ------------------------------------------------------------------------
 %# Save plots as PNGs -----------------------------------------------------
 %# ------------------------------------------------------------------------
@@ -312,6 +277,186 @@ plotsavename = sprintf('_plots/_averaged_summary/AVERAGED_%s.png', 'DPT_vs_FR_da
 print(gcf, '-djpeg', plotsavename);                                                                         % Save plot as PNG
 %close; 
 
+
+%# -------------------------------------------------------------------------
+%# DISPLAY: Differences between STBD and PORT measurements for FRs and DPTs
+%# -------------------------------------------------------------------------
+
+diffAvg = [];
+for i=1:length(yport)
+    diffAvg(i, 1) = abs(1-(ySep(i)/yCom(i)));
+    diffAvg(i, 2) = abs(1-(avgXSep(i)/avgXCom(i)));
+    diffFr = sprintf('%.1f',diffAvg(i,1) * 100);
+    diffVo = sprintf('%.1f',diffAvg(i,2) * 100);
+    displayText = sprintf('RPM:: %s:: Differences in total flow rates = %s%% and averaged DPT voltages = %s%%',num2str(averagedArray(i,1)),diffFr,diffVo);
+    disp(displayText);
+end
+
+
+%# -------------------------------------------------------------------------
+%# Read benchmark data and plot shaft speed vs. flow rate
+%# -------------------------------------------------------------------------
+if exist('wj_benchmark_data.csv', 'file') == 2
+    %# Results array columns: 
+        %[1]  Shaft Speed       (RPM)
+        %[2]  Prop. eff = 0.855
+        %[3]  Prop. eff = 0.8725
+        %[4]  Prop. eff = 0.888
+        %[5]  Prop. eff = 0.892
+        %[6]  Prop. eff = 0.894
+        %[7]  Prop. eff = 0.881
+        %[8]  Prop. eff = 0.855
+        %[9]  Prop. eff = 0.825
+        %[10] Prop. eff = 0.65    
+    resultsBMData = csvread('wj_benchmark_data.csv');
+    
+    rpmval = resultsBMData(2:9,1);
+    eff1   = resultsBMData(2:9,2);
+    eff2   = resultsBMData(2:9,3);
+    eff3   = resultsBMData(2:9,4);    
+    eff4   = resultsBMData(2:9,5);
+    eff5   = resultsBMData(2:9,6);
+    eff6   = resultsBMData(2:9,7);
+    eff7   = resultsBMData(2:9,8);
+    eff8   = resultsBMData(2:9,9);
+    eff9   = resultsBMData(2:9,10);
+    
+    %# Plot benchmark data
+    figurename = sprintf('%s', 'Plot: Wartsila waterjet benchmark data vs. flow rate test data');
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    xport = averagedArray(1:11,4);
+    yport = averagedArray(1:11,5);
+
+    xstbd = averagedArray(12:22,3);
+    ystbd = averagedArray(12:22,5);
+    
+    %# Averaged stbd and port data
+    xArray = [];  xArray(:,1) = xport;  xArray(:,2) = xstbd;
+    yArray = [];  yArray(:,1) = yport;  yArray(:,2) = ystbd;
+
+    avgX = mean(xArray(:,1:2).');  avgX = avgX.';
+    avgY = mean(yArray(:,1:2).');  avgY = avgY.';    
+    
+    plot(rpmval,eff1,'-.x',rpmval,eff2,'-.o',rpmval,eff3,'-.*',rpmval,eff4,'-.v',rpmval,eff5,'-.<','LineWidth',1,'MarkerSize',10);
+    hold on;
+    plot(rpmval,eff6,'-.s',rpmval,eff7,'-.d',rpmval,eff8,'-.^',rpmval,eff9,'-.>','LineWidth',1,'MarkerSize',10);
+    hold on;
+    plot(xstbd,ystbd,'ok',xport,yport,'xk','LineWidth',2,'MarkerSize',10);  % ,'MarkerEdgeColor','k','MarkerFaceColor',[.49 1 .63]
+    hold on;
+    plot(avgX,avgY,'-k','LineWidth',2,'MarkerSize',10);    
+    xlabel('{\bf Shaft speed [RPM]}');
+    ylabel('{\bf Mass flow rate [Kg/s]}');
+    title('{\bf Wartsila waterjet benchmark data vs. measured flow rate test data}');
+    xlim([500 3000]);
+    set(gca, 'XTick',[500:500:3000]);   % X-axis increments: start:increment:end
+    set(gca, 'YTick',[0:1:12]);         % Y-axis increments: start:increment:end
+    grid on;
+    axis square;
+    
+    hleg1 = legend('Benchmark:0.855','Benchmark:0.8725','Benchmark:0.888','Benchmark:0.892','Benchmark:0.894','Benchmark:0.881','Benchmark:0.855','Benchmark:0.825','Benchmark:0.65','Test:Starboard waterjet','Test:Port waterjet','Test:Averaged');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+    %# Figure size printed on paper
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');    
+    
+    %# Save figure as PDF and PNG
+    plotsavenamePDF = sprintf('_plots/_averaged_summary/PDF/AVERAGED_%s.pdf', 'Benchmark_data_vs_measured_flow_rates');
+    saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+    plotsavename = sprintf('_plots/_averaged_summary/AVERAGED_%s.png', 'Benchmark_data_vs_measured_flow_rates'); % Assign save name
+    print(gcf, '-djpeg', plotsavename);                                                                          % Save plot as PNG
+    %close;     
+    
+else
+    disp('---------------------------------------------------------------------------------------');
+    disp('File wj_benchmark_data.csv does not exist!');
+    disp('---------------------------------------------------------------------------------------');
+    break;
+end
+
+
+%# -------------------------------------------------------------------------
+%# PLOT FLOW COEFFICIENT VS. VOLUME FLOW RATE STBD AND PORT (separate wj systems)
+%# -------------------------------------------------------------------------
+
+enableFCPlot = 2;   % Enable flow coefficient plot. 1 = ON and 2 = OFF
+
+if enableFCPlot == 1
+    
+    %# Plot benchmark data
+    figurename = sprintf('%s', 'Plot: Flow coefficient vs. volume flow rate');
+    f = figure('Name',figurename,'NumberTitle','off');
+
+    xport = averagedArray(1:11,14);
+    yport = averagedArray(1:11,15);
+
+    xstbd = averagedArray(12:22,14);
+    ystbd = averagedArray(12:22,15);
+
+    plot(xstbd,ystbd,'x',xport,yport,'o','LineWidth',2,'MarkerSize',10);
+    xlabel('{\bf Flow coefficient [-]}');
+    ylabel('{\bf Volume flow rate [m^3/s]}');
+    title('{\bf Flow coefficient vs. volume flow rate}');
+    xlim([0 1]);
+    grid on;
+    axis square;
+
+    hleg1 = legend('S:Starboard waterjet','S:Port waterjet');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+    %# Figure size printed on paper
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+
+    %# ------------------------------------------------------------------------
+    %# Save plots as PNGs -----------------------------------------------------
+    %# ------------------------------------------------------------------------
+
+    %# _PLOTS directory
+    fPath = '_plots/';
+    if isequal(exist(fPath, 'dir'),7)
+        % Do nothing as directory exists
+    else    
+        mkdir(fPath);
+    end
+
+    %# Repeat directory
+    fPath = sprintf('_plots/%s', '_averaged_summary');
+    if isequal(exist(fPath, 'dir'),7)
+        % Do nothing as directory exists
+    else    
+        mkdir(fPath);
+    end
+
+    %# PDF directory
+    fPath = sprintf('_plots/%s/%s', '_averaged_summary', 'PDF');
+    if isequal(exist(fPath, 'dir'),7)
+        % Do nothing as directory exists
+    else    
+        mkdir(fPath);
+    end
+
+    %# Save figure as PDF and PNG
+    plotsavenamePDF = sprintf('_plots/_averaged_summary/PDF/AVERAGED_%s.pdf', 'Flow_coefficient_vs_volume_flow_rate');
+    saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+    plotsavename = sprintf('_plots/_averaged_summary/AVERAGED_%s.png', 'Flow_coefficient_vs_volume_flow_rate'); % Assign save name
+    print(gcf, '-djpeg', plotsavename);                                                                         % Save plot as PNG
+    %close; 
+
+end
 
 %# ************************************************************************
 %# PLOT ALL DATA **********************************************************

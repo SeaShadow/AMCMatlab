@@ -69,6 +69,7 @@ The expected run files names in the run directories are as follows:
 1. Code needs to be restructured to adhere to OOP rules.
 2. Functions should be moved in common directory
 
+<!---
 ### License ##
 
 Copyright (c) 2013 Konrad Zurcher
@@ -90,3 +91,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+-->
