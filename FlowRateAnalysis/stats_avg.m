@@ -73,6 +73,7 @@ powerPort   = results(:,15);        % Port: Shaft power         (W)
     %[15] Flow rate          (m3/s)
     %[16] Jet velocity       (m/s)
     %[17] Gross thrust       (m3/s)     >> Using Allisons equation
+    %[18] Thrust coefficient (-)        >> Baseed on gross thrust
     
 averagedArray = [];
 averagedArray(:,1)  = setRPM;
@@ -109,4 +110,11 @@ if propSys == 1 || propSys == 2
     averagedArray(:,17) = averagedArray(:,5)*averagedArray(:,16);
 else
     averagedArray(:,17) = 0;
+end
+if propSys == 1
+    averagedArray(:,18) = averagedArray(:,17)/(fwDensity*((averagedArray(:,4)/60)^2)*impellerDia^4);
+elseif propSys == 2    
+    averagedArray(:,18) = averagedArray(:,17)/(fwDensity*((averagedArray(:,3)/60)^2)*impellerDia^4);
+else
+    averagedArray(:,18) = 0;
 end

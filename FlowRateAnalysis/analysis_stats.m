@@ -64,6 +64,7 @@ if exist('resultsArray_copy.dat', 'file') == 2
         %[13] Shaft Speed PORT  (RPM)
         %[14] Power STBD        (W)
         %[15] Power PORT        (W)
+        
     results = csvread('resultsArray_copy.dat');
     
     %# Remove zero rows
@@ -112,6 +113,7 @@ powerPort   = results(:,15);
     %[15] Flow rate          (m3/s)
     %[16] Jet velocity       (m/s)
     %[17] Gross thrust       (m3/s)     >> Using Allisons equation
+    %[18] Thrust coefficient (-)        >> Baseed on gross thrust
     
 averagedArray = [];
 % Port Side
@@ -338,23 +340,24 @@ if exist('wj_benchmark_data.csv', 'file') == 2
     avgX = mean(xArray(:,1:2).');  avgX = avgX.';
     avgY = mean(yArray(:,1:2).');  avgY = avgY.';    
     
-    plot(rpmval,eff1,'-.x',rpmval,eff2,'-.o',rpmval,eff3,'-.*',rpmval,eff4,'-.v',rpmval,eff5,'-.<','LineWidth',1,'MarkerSize',10);
+    plot(rpmval,eff1,'x',rpmval,eff2,'o',rpmval,eff3,'*',rpmval,eff4,'v',rpmval,eff5,'<','LineWidth',1,'MarkerSize',10);
     hold on;
-    plot(rpmval,eff6,'-.s',rpmval,eff7,'-.d',rpmval,eff8,'-.^',rpmval,eff9,'-.>','LineWidth',1,'MarkerSize',10);
+    plot(rpmval,eff6,'s',rpmval,eff7,'d',rpmval,eff8,'^',rpmval,eff9,'>','LineWidth',1,'MarkerSize',10);
     hold on;
     plot(xstbd,ystbd,'ok',xport,yport,'xk','LineWidth',2,'MarkerSize',10);  % ,'MarkerEdgeColor','k','MarkerFaceColor',[.49 1 .63]
-    hold on;
-    plot(avgX,avgY,'-k','LineWidth',2,'MarkerSize',10);    
+    %hold on;
+    %plot(avgX,avgY,'-k','LineWidth',2,'MarkerSize',10);    
     xlabel('{\bf Shaft speed [RPM]}');
     ylabel('{\bf Mass flow rate [Kg/s]}');
-    title('{\bf Wartsila waterjet benchmark data vs. measured flow rate test data}');
+    %title('{\bf Wartsila waterjet benchmark data vs. measured flow rate test data}');
+    title({'{\bf Wartsila waterjet benchmark data vs. mass flow rate}';'{\bf at different propulsive efficiencies ranging from 0.65 to 0.894}'});
     xlim([500 3000]);
     set(gca, 'XTick',[500:500:3000]);   % X-axis increments: start:increment:end
     set(gca, 'YTick',[0:1:12]);         % Y-axis increments: start:increment:end
     grid on;
     axis square;
     
-    hleg1 = legend('Benchmark:0.855','Benchmark:0.8725','Benchmark:0.888','Benchmark:0.892','Benchmark:0.894','Benchmark:0.881','Benchmark:0.855','Benchmark:0.825','Benchmark:0.65','Test:Starboard waterjet','Test:Port waterjet','Test:Averaged');
+    hleg1 = legend('Benchmark:0.855','Benchmark:0.8725','Benchmark:0.888','Benchmark:0.892','Benchmark:0.894','Benchmark:0.881','Benchmark:0.855','Benchmark:0.825','Benchmark:0.65','Test:Starboard waterjet','Test:Port waterjet'); % ,'Test:Averaged'
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
 
@@ -381,6 +384,87 @@ else
     break;
 end
 
+
+%# -------------------------------------------------------------------------
+%# Read benchmark data and plot shaft speed vs. flow rate at different propulsive efficiencies
+%# -------------------------------------------------------------------------
+if exist('wj_benchmark_data_rpm_vs_np.csv', 'file') == 2
+    %# Results array columns: 
+        %[1]  Shaft Speed           (RPM)
+        %[2]  Mass flow rate        (Kg/s)
+        %[3]  Propulsive efficiency (-)
+
+    resultsBMData = csvread('wj_benchmark_data_rpm_vs_np.csv');
+    
+    rpm500  = resultsBMData(1:9,1);    fr500   = resultsBMData(1:9,2);
+    rpm1000 = resultsBMData(10:18,1);  fr1000  = resultsBMData(10:18,2);
+    rpm1500 = resultsBMData(19:27,1);  fr1500  = resultsBMData(19:27,2);
+    rpm2000 = resultsBMData(28:36,1);  fr2000  = resultsBMData(28:36,2);
+    rpm2500 = resultsBMData(37:45,1);  fr2500  = resultsBMData(37:45,2);
+    rpm3000 = resultsBMData(46:54,1);  fr3000  = resultsBMData(46:54,2);
+    rpm3500 = resultsBMData(55:63,1);  fr3500  = resultsBMData(55:63,2);
+    rpm4000 = resultsBMData(64:72,1);  fr4000  = resultsBMData(64:72,2);
+    
+    %# Plot benchmark data
+    figurename = sprintf('%s', 'Plot: Wartsila waterjet benchmark data vs. mass flow rate');
+    f = figure('Name',figurename,'NumberTitle','off');    
+
+    xport = averagedArray(1:11,4);
+    yport = averagedArray(1:11,5);
+
+    xstbd = averagedArray(12:22,3);
+    ystbd = averagedArray(12:22,5);
+    
+    %# Averaged stbd and port data
+    xArray = [];  xArray(:,1) = xport;  xArray(:,2) = xstbd;
+    yArray = [];  yArray(:,1) = yport;  yArray(:,2) = ystbd;
+
+    avgX = mean(xArray(:,1:2).');  avgX = avgX.';
+    avgY = mean(yArray(:,1:2).');  avgY = avgY.';
+    
+    plot(rpm500,fr500,'x',rpm1000,fr1000,'o',rpm1500,fr1500,'*',rpm2000,fr2000,'v',rpm2500,fr2500,'<','LineWidth',1,'MarkerSize',10);
+    hold on;
+    plot(rpm3000,fr3000,'s','LineWidth',1,'MarkerSize',10);
+    hold on;
+    plot(xstbd,ystbd,'ok',xport,yport,'xk','LineWidth',2,'MarkerSize',10);  % ,'MarkerEdgeColor','k','MarkerFaceColor',[.49 1 .63]
+    %hold on;
+    %plot(avgX,avgY,'-k','LineWidth',2,'MarkerSize',10);
+    xlabel('{\bf Shaft speed [RPM]}');
+    ylabel('{\bf Mass flow rate [Kg/s]}');
+    %title('{\bf Wartsila waterjet benchmark data vs. mass flow rate at different propulsive efficiencies}');
+    title({'{\bf Wartsila waterjet benchmark data vs. mass flow rate}';'{\bf at different propulsive efficiencies ranging from 0.65 to 0.894}'});
+    xlim([500 3000]);
+    set(gca, 'XTick',[500:500:3000]);   % X-axis increments: start:increment:end
+    set(gca, 'YTick',[0:1:12]);         % Y-axis increments: start:increment:end
+    grid on;
+    axis square;
+    
+    hleg1 = legend('Benchmark:500 RPM','Benchmark:1,000 RPM','Benchmark:1,500 RPM','Benchmark:2,000 RPM','Benchmark:2,500 RPM','Benchmark:3,000 RPM','Test:Starboard waterjet','Test:Port waterjet'); % ,'Test:Averaged'
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');    
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+    %# Figure size printed on paper
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');        
+    
+    %# Save figure as PDF and PNG
+    plotsavenamePDF = sprintf('_plots/_averaged_summary/PDF/AVERAGED_%s.pdf', 'Benchmark_data_vs_measured_flow_rates_diff_np');
+    saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+    plotsavename = sprintf('_plots/_averaged_summary/AVERAGED_%s.png', 'Benchmark_data_vs_measured_flow_rates_diff_np'); % Assign save name
+    print(gcf, '-djpeg', plotsavename);                                                                                  % Save plot as PNG
+    %close;    
+    
+else
+    disp('---------------------------------------------------------------------------------------');
+    disp('File wj_benchmark_data_rpm_vs_np.csv does not exist!');
+    disp('---------------------------------------------------------------------------------------');
+    break;
+end
 
 %# -------------------------------------------------------------------------
 %# PLOT FLOW COEFFICIENT VS. VOLUME FLOW RATE STBD AND PORT (separate wj systems)
