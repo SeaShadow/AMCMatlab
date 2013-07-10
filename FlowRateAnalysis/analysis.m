@@ -114,6 +114,7 @@ endRun   = 9;      % Stop at run y
 %# END DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS !!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -267,11 +268,11 @@ for k=startRun:endRun
         
     % Slope of trendline => Y = (slope1 * X ) + slope2
     slope{i} = polyfit(x,y,1);
-    slope1   = slope{1,2}(1);
-    slope2   = slope{1,2}(2);
+    slope1   = slope{1,2}(1);   % Slope
+    slope2   = slope{1,2}(2);   % Intercept
     
     %# Calulcate flow rate based on trendline
-    %flowrate = abs((slope1 * 2) + slope2) - abs((slope1 * 1) + slope2);     % Difference between flow rate at 2 and 1 second
+    %flowrate = abs((slope1 * 2) + slope2) - abs((slope1 * 1) + slope2);    % Difference between flow rate at 2 and 1 second
     flowrate = abs((slope1 * 1) + slope2) - abs((slope1 * 0) + slope2);     % Difference between flow rate at 1 and 0 second
     
     if plotting_on == true
@@ -279,7 +280,7 @@ for k=startRun:endRun
         %# Plotting curves
         figurename = sprintf('Wave probe: Run %s', name(2:3));
         f = figure('Name',figurename,'NumberTitle','off');
-        h = plot(x,y,'-',x,p2,'-.k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Mass flow rate [Kg]}');
+        h = plot(x,y,'-',x,p2,'-.k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Mass flow rate [Kg]}');axis square;
         
         %# Line width
         set(h(1),'linewidth',1);
@@ -353,7 +354,7 @@ for k=startRun:endRun
         %# Plotting curves
         figurename = sprintf('Kiel probe STBD & PORT: Run %s', name(2:3));
         f = figure('Name',figurename,'NumberTitle','off');    
-        h = plot(x,y1,'-',x,kppolyvalstbd,'-.k',x,y2,'-',x,kppolyvalport,'-.k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Output [V]}');
+        h = plot(x,y1,'-',x,kppolyvalstbd,'-.k',x,y2,'-',x,kppolyvalport,'-.k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Output [V]}');axis square;
 
         %# Axis limitations
         xlim([x(1) x(end)]);
@@ -416,7 +417,7 @@ for k=startRun:endRun
         %# Plotting curves
         figurename = sprintf('Thrust STBD & PORT: Run %s', name(2:3));
         f = figure('Name',figurename,'NumberTitle','off');    
-        h = plot(x,y1,'-',x,thrustpolyvalstbd,'-.k',x,y2,'-',x,thrustpolyvalport,'-.k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Thrust [g]}');
+        h = plot(x,y1,'-',x,thrustpolyvalstbd,'-.k',x,y2,'-',x,thrustpolyvalport,'-.k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Thrust [g]}');axis square;
 
         %# Axis limitations
         xlim([x(1) x(end)]);
@@ -479,7 +480,7 @@ for k=startRun:endRun
         %# Plotting curves
         figurename = sprintf('Torque STBD & PORT: Run %s', name(2:3));
         f = figure('Name',figurename,'NumberTitle','off');        
-        h = plot(x,y1,'-',x,torquepolyvalstbd,'-.k',x,y2,'-',x,torquepolyvalport,'-.k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Torque [Nm]}');
+        h = plot(x,y1,'-',x,torquepolyvalstbd,'-.k',x,y2,'-',x,torquepolyvalport,'-.k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Torque [Nm]}');axis square;
 
         %# Axis limitations
         xlim([x(1) x(end)]);

@@ -156,6 +156,7 @@ xlabel('{\bf Time [s]}');
 ylabel('{\bf Output [V]}');
 title('{\bf STARBOARD RPM Data}');
 grid on;
+%axis square;
 
 %# Figure size on screen (50% scaled, but same aspect ratio)
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -188,6 +189,7 @@ xlabel('{\bf Time [s]}');
 ylabel('{\bf Output [V]}');
 title('{\bf PORT RPM Data}');
 grid on;  
+%axis square;
 
 %# Figure size on screen (50% scaled, but same aspect ratio)
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
