@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  July9, 2013
+%# Date       :  July 9, 2013
 %#
 %# Test date  :  June 5-14, 2013
 %# Facility   :  AMC, Model Test Basin (MTB)
