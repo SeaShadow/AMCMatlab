@@ -1,3 +1,71 @@
+%# ************************************************************************
+%# General testing bits, things & stuff :)
+%# ************************************************************************
+
+%# ------------------------------------------------------------------------
+%# Graphs I am interested in
+%# ------------------------------------------------------------------------
+
+subplot(1,3,1);
+h = plot(0,0); %
+xlabel('{\bf Thrust [N]}');
+ylabel('{\bf Towing force [N]}');
+grid on;
+box on;
+axis square;
+
+%# Line width
+% set(h(1),'linewidth',1);
+% set(h(2),'linewidth',2);
+
+%# Axis limitations
+xlim([1 30]);
+ylim([1 30]);
+set(gca, 'XTick',[0:5:30]);   % X-axis increments: start:increment:end
+set(gca, 'YTick',[0:5:30]);   % Y-axis increments: start:increment:end
+
+subplot(1,3,2);
+h = plot(0,0); %
+xlabel('{\bf Towing force [N]}');
+ylabel('{\bf Thrust deduction [-]}');
+grid on;
+box on;
+axis square;
+
+%# Line width
+% set(h(1),'linewidth',1);
+% set(h(2),'linewidth',2);
+
+%# Axis limitations
+xlim([1 30]);
+ylim([1 30]);
+set(gca, 'XTick',[0:5:30]);   % X-axis increments: start:increment:end
+set(gca, 'YTick',[0:5:30]);   % Y-axis increments: start:increment:end
+
+subplot(1,3,3);
+h = plot(0,0); %
+xlabel('{\bf Overall proulsive efficiency [-]}');
+ylabel('{\bf Froude length number [-]}');
+grid on;
+box on;
+axis square;
+
+%# Line width
+% set(h(1),'linewidth',1);
+% set(h(2),'linewidth',2);
+
+%# Axis limitations
+xlim([1 30]);
+ylim([1 30]);
+set(gca, 'XTick',[0:5:30]);   % X-axis increments: start:increment:end
+set(gca, 'YTick',[0:5:30]);   % Y-axis increments: start:increment:end
+
+break;
+
+%# ------------------------------------------------------------------------
+%# Older stuff
+%# ------------------------------------------------------------------------
+
 xxx = {1, 2, 3, 4, 5};
 yyy = {1; 2; 3; 4; 5};
 

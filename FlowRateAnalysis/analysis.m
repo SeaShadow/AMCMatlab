@@ -326,7 +326,7 @@ for k=startRun:endRun
             chooseSign = '-';
             slope2 = abs(slope2);
         end
-        disp(sprintf('%s:: Mass flow rate: Y = %s*X %s %s', name(1:3), sprintf('%.4f',slope1), chooseSign, sprintf('%.4f',slope2)));        
+        disp(sprintf('%s:: Mass flow rate (slope): Y = %s*X %s %s', name(1:3), sprintf('%.4f',slope1), chooseSign, sprintf('%.4f',slope2)));        
         
     end
         
