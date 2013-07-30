@@ -100,8 +100,8 @@ cutSamplesFromEnd = 0;
 %# START FILE LOOP FOR RUNS startRun to endRun
 %# ------------------------------------------------------------------------
 
-startRun = 1;      % Start at run x
-endRun   = 1;      % Stop at run y
+startRun = 1;     % Start at run x
+endRun   = 25;    % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
