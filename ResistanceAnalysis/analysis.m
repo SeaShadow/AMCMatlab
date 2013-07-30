@@ -8,13 +8,13 @@
 %# Test date  :  August 19-25, 2013
 %# Facility   :  AMC, Towing Tank (TT)
 %#
-%# Runs TSI   :  1-xx   Turbulence Stud Investigation   (TSI)
-%# Runs TTI   :  1-xx   Trim Tab Investigation          (TTI)
-%# Runs RT    :  1-xx   Resistance Test                 (RT)
+%# Runs TSI   :  1-30   Turbulence Studs Investigation   (TSI)
+%# Runs TTI   :  1-25   Trim Tab Optimisation            (TTI)
+%# Runs RT    :  1-120  Resistance Test                  (RT)
 %#
 %# Speeds (FR):  0.2-0.5 (11.7-27.4 knots)
 %#
-%# Description:  Turbulence stud ionvestigation, trim tab optimisation and
+%# Description:  Turbulence studs investigation, trim tab optimisation and
 %#               standard resistance test using a single catamaran demihull.
 %#
 %# -------------------------------------------------------------------------
@@ -101,7 +101,7 @@ cutSamplesFromEnd = 0;
 %# ------------------------------------------------------------------------
 
 startRun = 1;      % Start at run x
-endRun   = 1;     % Stop at run y
+endRun   = 1;      % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
