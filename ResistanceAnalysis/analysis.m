@@ -24,7 +24,7 @@
 %#
 %# -------------------------------------------------------------------------
 %#
-%# CHANGES    :  30/07/2013 - Adjusted analysis file for resistance test data
+%# CHANGES    :  31/07/2013 - Adjusted analysis file for resistance test data
 %#               dd/mm/yyyy - ...
 %#
 %# -------------------------------------------------------------------------
@@ -101,7 +101,7 @@ cutSamplesFromEnd = 0;
 %# ------------------------------------------------------------------------
 
 startRun = 1;     % Start at run x
-endRun   = 25;    % Stop at run y
+endRun   = 2;    % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
@@ -355,7 +355,7 @@ for k=startRun:endRun
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/Run%s_CH0_to_CH3_Raw_Data_Real_Units.pdf', name(1:3));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/Run%s_CH0_to_CH3_Raw_Data_Real_Units.png', name(1:3));
+    plotsavename = sprintf('_plots/RUN_%s_Raw_Data_Real_Units.png', name(1:3));
     saveas(f, plotsavename);                % Save plot as PNG
     close;
     
