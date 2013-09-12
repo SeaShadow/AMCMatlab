@@ -90,7 +90,7 @@ FStoMSratio        = 21.6;              % Full scale to model scale ratio
 %# ------------------------------------------------------------------------
 MSlwl1500          = 4.30;                              % Model length waterline          (m)
 MSwsa1500          = 1.501;                             % Model scale wetted surface area (m2)
-MSdraft1500        = 0.133;                            % Model draft                     (m)
+MSdraft1500        = 0.133;                             % Model draft                     (m)
 FSlwl1500          = MSlwl1500*FStoMSratio;             % Full scale length waterline     (m)
 FSwsa1500          = MSwsa1500*FStoMSratio^2;           % Full scale wetted surface area  (m2)
 FSdraft1500        = MSdraft1500*FStoMSratio;           % Full scale draft                (m)
@@ -115,12 +115,12 @@ FSdraft1500bystern  = MSdraft1500bystern*FStoMSratio;   % Full scale draft      
 %# ------------------------------------------------------------------------
 %# CONDITION: 1,500 tonnes, deep transom for prohaska runs, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
-MSlwl1500prohaska    = 3.78;                              % Model length waterline          (m)
-MSwsa1500prohaska    = 1.49;                              % Model scale wetted surface area (m2)
-MSdraft1500prohaska  = 0.133;                             % Model draft                     (m)
-FSlwl1500prohaska    = MSlwl1500prohaska*FStoMSratio;     % Full scale length waterline     (m)
-FSwsa1500prohaska    = MSwsa1500prohaska*FStoMSratio^2;   % Full scale wetted surface area  (m2)
-FSdraft1500prohaska  = MSdraft1500prohaska*FStoMSratio;   % Full scale draft                (m)
+MSlwl1500prohaska    = 3.78;                            % Model length waterline          (m)
+MSwsa1500prohaska    = 1.49;                            % Model scale wetted surface area (m2)
+MSdraft1500prohaska  = 0.133;                           % Model draft                     (m)
+FSlwl1500prohaska    = MSlwl1500prohaska*FStoMSratio;   % Full scale length waterline     (m)
+FSwsa1500prohaska    = MSwsa1500prohaska*FStoMSratio^2; % Full scale wetted surface area  (m2)
+FSdraft1500prohaska  = MSdraft1500prohaska*FStoMSratio; % Full scale draft                (m)
 %# ////////////////////////////////////////////////////////////////////////
 
 %# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -184,7 +184,7 @@ cutSamplesFromEnd = 400;    % Cut last 2 seconds
 %# ------------------------------------------------------------------------
 
 startRun = 1;  % Start at run x
-endRun   = 231;  % Stop at run y
+endRun   = 249;  % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
@@ -653,7 +653,6 @@ for k=startRun:endRun
     end
     disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');    
     
-    %# Add results to dedicated array for simple export
     %# Results array columns: 
     %[1]  Run No.                                                                  (-)
     %[2]  FS                                                                       (Hz)
@@ -670,6 +669,7 @@ for k=startRun:endRun
     %[13] Model Trim                                                               (Degrees)
     %[14] Equivalent full scale speed                                              (m/s)
     %[15] Equivalent full scale speed                                              (knots)
+    
     % ---------------------------------------------------------------------
     % Additional values added: 10/09/2013
     % ---------------------------------------------------------------------        
@@ -686,7 +686,27 @@ for k=startRun:endRun
     %[26] Full Scale (PEs) Model Effective Power                                   (W)
     %[27] Full Scale (PBs) Model Brake Power (using 50% prop. efficiency estimate) (W)
     %[28] Run condition                                                            (-)
-
+    
+    % ---------------------------------------------------------------------
+    % Additional values added: 12/09/2013
+    % ---------------------------------------------------------------------    
+    %[29] SPEED: Minimum value                                                      (m/s)
+    %[30] SPEED: Maximum value                                                      (m/s)
+    %[31] SPEED: Average value                                                      (m/s)
+    %[32] SPEED: Percentage (max.-avg.) to max. value (exp. 3%)                     (m/s)
+    %[33] LVDT (FWD): Minimum value                                                 (mm)
+    %[34] LVDT (FWD): Maximum value                                                 (mm)
+    %[35] LVDT (FWD): Average value                                                 (mm)
+    %[36] LVDT (FWD): Percentage (max.-avg.) to max. value (exp. 3%)                (mm)
+    %[37] LVDT (AFT): Minimum value                                                 (mm)
+    %[38] LVDT (AFT): Maximum value                                                 (mm)
+    %[39] LVDT (AFT): Average value                                                 (mm)
+    %[40] LVDT (AFT): Percentage (max.-avg.) to max. value (exp. 3%)                (mm)
+    %[41] DRAG: Minimum value                                                       (g)
+    %[42] DRAG: Maximum value                                                       (g)
+    %[43] DRAG: Average value                                                       (g)
+    %[44] DRAG: Percentage (max.-avg.) to max. value (exp. 3%)                      (g)
+    
     % Write data to array -------------------------------------------------
     resultsArray(k, 1)  = k;                                                        % Run No.
     resultsArray(k, 2)  = round(length(timeData) / timeData(end));                  % FS (Hz)    
@@ -699,7 +719,7 @@ for k=startRun:endRun
     resultsArray(k, 8)  = CH_3_Drag_Mean;                                           % Model Averaged drag (g)
     resultsArray(k, 9)  = (resultsArray(k, 8) / 1000) * gravconst;                  % Model Averaged drag (Rtm) (N)
     resultsArray(k, 10) = resultsArray(k, 9) / (0.5*freshwaterdensity*MSwsa*resultsArray(k, 5)^2); % Model Averaged drag (Ctm) (-)
-    %resultsArray(k, 11) = resultsArray(k, 5) / sqrt(gravconst*MSlwl);            % Froude length number (-)
+    %resultsArray(k, 11) = resultsArray(k, 5) / sqrt(gravconst*MSlwl);              % Froude length number (-)
     modelfrrounded = str2num(sprintf('%.2f',resultsArray(k, 5) / sqrt(gravconst*MSlwl)));
     resultsArray(k, 11) = modelfrrounded;                                           % Froude length number (-)
     resultsArray(k, 12) = (resultsArray(k, 6)+resultsArray(k, 7))/2;                % Model Heave (mm)
@@ -709,7 +729,7 @@ for k=startRun:endRun
     % ---------------------------------------------------------------------
     % Additional values added: 10/09/2013
     % ---------------------------------------------------------------------  
-    resultsArray(k, 16) = (resultsArray(k, 5)*MSlwl)/modelkinvi;                 % Model Reynolds Number (-)
+    resultsArray(k, 16) = (resultsArray(k, 5)*MSlwl)/modelkinvi;                    % Model Reynolds Number (-)
     resultsArray(k, 17) = 0.075/(log10(resultsArray(k, 16))-2)^2;                   % Model Frictional Resistance Coefficient (ITTC'57) (-)
     if resultsArray(k, 16) < 10000000
         resultsArray(k, 18) = 10^(2.98651-10.8843*(log10(log10(resultsArray(k, 16))))+5.15283*(log10(log10(resultsArray(k, 16))))^2); % Model Frictional Resistance Coefficient (Grigson) (-)   
@@ -726,7 +746,30 @@ for k=startRun:endRun
     resultsArray(k, 26) = resultsArray(k, 14)*resultsArray(k, 25);           % Full Scale (PEs) Model Effective Power (W)
     resultsArray(k, 27) = resultsArray(k, 26)/0.5;                           % Full Scale (PBs) Model Brake Power (using 50% prop. efficiency estimate) (W)
     resultsArray(k, 28) = testcond;                                          % Run condition (-)
-    
+    % ---------------------------------------------------------------------
+    % Additional values added: 12/09/2013
+    % ---------------------------------------------------------------------
+    sdata               = CH_0_Speed(startSamplePos:end-cutSamplesFromEnd);
+    tfwddata            = CH_1_LVDTFwd(startSamplePos:end-cutSamplesFromEnd);
+    taftdata            = CH_2_LVDTAft(startSamplePos:end-cutSamplesFromEnd);
+    ddata               = CH_3_Drag(startSamplePos:end-cutSamplesFromEnd);    
+    resultsArray(k, 29) = min(sdata);                                           % SPEED: Minimum value (m/s)
+    resultsArray(k, 30) = max(sdata);                                           % SPEED: Maximum value (m/s)
+    resultsArray(k, 31) = mean(sdata);                                          % SPEED: Average value (m/s)
+    resultsArray(k, 32) = (max(sdata) - mean(sdata)) / max(sdata);              % SPEED: Percentage (max.-avg.) to max. value (exp. 3% (m/s)
+    resultsArray(k, 33) = min(tfwddata);                                        % LVDT (FWD): Minimum value (mm)
+    resultsArray(k, 34) = max(tfwddata);                                        % LVDT (FWD): Maximum value (mm)
+    resultsArray(k, 35) = mean(tfwddata);                                       % LVDT (FWD): Average value (mm)
+    resultsArray(k, 36) = abs(max(tfwddata) - mean(tfwddata)) / abs(max(tfwddata)-min(tfwddata));     % LVDT (FWD): Percentage (max.-avg.) to max. value (exp. 3%) (mm)
+    resultsArray(k, 37) = min(taftdata);                                        % LVDT (AFT): Minimum vaue (mm)
+    resultsArray(k, 38) = max(taftdata);                                        % LVDT (AFT): Maximum value (mm)
+    resultsArray(k, 39) = mean(taftdata);                                       % LVDT (AFT): Average value (mm)
+    resultsArray(k, 40) = abs(max(taftdata) - mean(taftdata)) / abs(max(taftdata)-min(taftdata));     % LVDT (AFT): Percentage (max.-avg.) to max. value (exp. 3%) (mm)
+    resultsArray(k, 41) = min(ddata);                                           % DRAG: Minimum value (g)
+    resultsArray(k, 42) = max(ddata);                                           % DRAG: Maximum value (g)
+    resultsArray(k, 43) = mean(ddata);                                          % DRAG: Average value (g)
+    resultsArray(k, 44) = (max(ddata) - mean(ddata)) / max(ddata);              % DRAG: Percentage (max.-avg.) to max. value (exp. 3%) (g)
+        
     %# Prepare strings for display ----------------------------------------
     if k > 99
        name = name(2:5);

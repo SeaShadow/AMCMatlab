@@ -93,7 +93,24 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %[26] Full Scale (PEs) Model Effective Power                                   (W)
 %[27] Full Scale (PBs) Model Brake Power (using 50% prop. efficiency estimate) (W)
 %[28] Run condition                                                            (-)
-
+%# ERROR ANALYSIS ------------------------------------------------------------------
+%[29] SPEED: Minimum value                                                     (m/s)
+%[30] SPEED: Maximum value                                                     (m/s)
+%[31] SPEED: Average value                                                     (m/s)
+%[32] SPEED: Percentage (max.-avg.) to max. value (exp. 3%)                    (m/s)
+%[33] LVDT (FWD): Minimum value                                                (mm)
+%[34] LVDT (FWD): Maximum value                                                (mm)
+%[35] LVDT (FWD): Average value                                                (mm)
+%[36] LVDT (FWD): Percentage (max.-avg.) to max. value (exp. 3%)               (mm)
+%[37] LVDT (AFT): Minimum value                                                (mm)
+%[38] LVDT (AFT): Maximum value                                                (mm)
+%[39] LVDT (AFT): Average value                                                (mm)
+%[40] LVDT (AFT): Percentage (max.-avg.) to max. value (exp. 3%)               (mm)
+%[41] DRAG: Minimum value                                                      (g)
+%[42] DRAG: Maximum value                                                      (g)
+%[43] DRAG: Average value                                                      (g)
+%[44] DRAG: Percentage (max.-avg.) to max. value (exp. 3%)                     (g)
+    
 %# ------------------------------------------------------------------------
 %# Read results DAT file
 %# ------------------------------------------------------------------------
@@ -181,12 +198,12 @@ testName = 'Resistance Test Summary';
 %# *********************************************************************
 %# Calculate averages for conditions
 %# *********************************************************************
-[avgcond1] = stats_avg(1:15,results);
-[avgcond2] = stats_avg(16:25,results);
-[avgcond3] = stats_avg(26:35,results);
-[avgcond4] = stats_avg(36:44,results);
-[avgcond5] = stats_avg(45:53,results);
-[avgcond6] = stats_avg(54:62,results);
+[avgcond1]  = stats_avg(1:15,results);
+[avgcond2]  = stats_avg(16:25,results);
+[avgcond3]  = stats_avg(26:35,results);
+[avgcond4]  = stats_avg(36:44,results);
+[avgcond5]  = stats_avg(45:53,results);
+[avgcond6]  = stats_avg(54:62,results);
 [avgcond7]  = stats_avg(63:141,results);
 [avgcond8]  = stats_avg(142:156,results);
 [avgcond9]  = stats_avg(157:171,results);
@@ -194,6 +211,13 @@ testName = 'Resistance Test Summary';
 [avgcond11] = stats_avg(202:216,results);
 [avgcond12] = stats_avg(217:231,results);
 [avgcond13] = stats_avg(232:249,results);
+
+%# ------------------------------------------------------------------------   
+%# Set plot background (see: http://www.mathworks.com.au/help/matlab/ref/colorspec.html)
+%# ------------------------------------------------------------------------   
+%whitebg('w');
+%whitebg([1 1 1]);
+%# ------------------------------------------------------------------------
 
 % *********************************************************************
 % TURBULENCE STIMULATOR CONDITIONS
@@ -204,7 +228,7 @@ if length(cond1) ~= 0 || length(cond2) ~= 0 || length(cond3) ~= 0
     endRun   = 35;
     
     figurename = sprintf('%s:: Turbulence Stimulator Investigation, Run %s to %s', testName, num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');   
+    f = figure('Name',figurename,'NumberTitle','off');
     
     %# Plot repeat data ---------------------------------------------------
     subplot(1,2,1)
@@ -247,6 +271,10 @@ if length(cond1) ~= 0 || length(cond2) ~= 0 || length(cond3) ~= 0
     box on;
     axis square;
 
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
     %# Axis limitations
     xlim([0.2 0.45]);
     set(gca,'XTick',[0.20 0.25 0.30 0.35 0.40 0.45]);
@@ -256,7 +284,7 @@ if length(cond1) ~= 0 || length(cond2) ~= 0 || length(cond3) ~= 0
     ylim([setminy setmaxy]); 
 
     %# Legend
-    hleg1 = legend('Cond. 1; 1,500t (Barehull)','Cond. 2; 1,500t (1st row)','Cond. 3; 1,500t (1st and 2nd row)');
+    hleg1 = legend('Cond. 1: 1,500t (Barehull)','Cond. 2: 1,500t (1st row)','Cond. 3: 1,500t (1st and 2nd row)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     legend boxoff;
@@ -311,7 +339,7 @@ if length(cond1) ~= 0 || length(cond2) ~= 0 || length(cond3) ~= 0
     ylim([setminy setmaxy]); 
     
     %# Legend
-    hleg1 = legend('Cond. 1; 1,500t (Barehull)','Cond. 2; 1,500t (1st row)','Cond. 3; 1,500t (1st and 2nd row)');
+    hleg1 = legend('Cond. 1: 1,500t (Barehull)','Cond. 2: 1,500t (1st row)','Cond. 3: 1,500t (1st and 2nd row)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');    
     legend boxoff;
@@ -334,8 +362,8 @@ if length(cond1) ~= 0 || length(cond2) ~= 0 || length(cond3) ~= 0
         'HorizontalAlignment', 'center');  
 
     %# Save plots as PDF and PNG
-    plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Repeats_Turbulence_Stimulator_Resistance_Data_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
-    saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Repeats_Turbulence_Stimulator_Resistance_Data_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
+    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Repeats_Turbulence_Stimulator_Resistance_Data_Plots.png', '_averaged', num2str(startRun), num2str(endRun));
     saveas(f, plotsavename);                % Save plot as PNG
     %close;
@@ -394,6 +422,10 @@ if length(cond4) ~= 0 || length(cond5) ~= 0 || length(cond6) ~= 0
     box on;
     axis square;
 
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
     %# Axis limitations
     xlim([0.42 0.48]);
     set(gca,'XTick',[0.42 0.43 0.44 0.45 0.46 0.47 0.48]);
@@ -403,7 +435,7 @@ if length(cond4) ~= 0 || length(cond5) ~= 0 || length(cond6) ~= 0
     ylim([setminy setmaxy]);
 
     %# Legend
-    hleg1 = legend('Cond. 4; 1,500t (5 degrees)','Cond. 5; 1,500t (0 degrees)','Cond. 6; 1,500t (10 degrees)');
+    hleg1 = legend('Cond. 4: 1,500t (5 degrees)','Cond. 5: 1,500t (0 degrees)','Cond. 6: 1,500t (10 degrees)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     legend boxoff;
@@ -458,7 +490,7 @@ if length(cond4) ~= 0 || length(cond5) ~= 0 || length(cond6) ~= 0
     ylim([setminy setmaxy]);
     
     %# Legend
-    hleg1 = legend('Cond. 4; 1,500t (5 degrees)','Cond. 5; 1,500t (0 degrees)','Cond. 6; 1,500t (10 degrees)');
+    hleg1 = legend('Cond. 4: 1,500t (5 degrees)','Cond. 5: 1,500t (0 degrees)','Cond. 6: 1,500t (10 degrees)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');    
     legend boxoff;
@@ -481,8 +513,8 @@ if length(cond4) ~= 0 || length(cond5) ~= 0 || length(cond6) ~= 0
         'HorizontalAlignment', 'center');  
 
     %# Save plots as PDF and PNG
-    plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Repeats_Trim_Tab_Resistance_Data_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
-    saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Repeats_Trim_Tab_Resistance_Data_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
+    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Repeats_Trim_Tab_Resistance_Data_Plots.png', '_averaged', num2str(startRun), num2str(endRun));
     saveas(f, plotsavename);                % Save plot as PNG
     %close;       
@@ -573,13 +605,17 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     grid on;
     box on;
     axis square;
-
+        
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);    
+    
     %# Axis limitations
     xlim([0.1 0.5]);
     set(gca,'XTick',[0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
 
     %# Legend
-    hleg1 = legend('1,500t (0 deg)','1,500t (-0.5 deg)','1,500t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)','1,804t (0.5 deg)');
+    hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     legend boxoff;
@@ -635,7 +671,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %ylim([0 setmaxy]);
 
     %# Legend
-    hleg1 = legend('1,500t (0 deg)','1,500t (-0.5 deg)','1,500t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)','1,804t (0.5 deg)');
+    hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     legend boxoff;
@@ -689,7 +725,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gca,'XTick',[0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
 
     %# Legend
-    hleg1 = legend('1,500t (0 deg)','1,500t (-0.5 deg)','1,500t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)','1,804t (0.5 deg)');
+    hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
     legend boxoff;
@@ -743,7 +779,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gca,'XTick',[0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
 
     %# Legend
-    hleg1 = legend('1,500t (0 deg)','1,500t (-0.5 deg)','1,500t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)','1,804t (0.5 deg)');
+    hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     legend boxoff;
@@ -766,8 +802,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         'HorizontalAlignment', 'center');  
 
     %# Save plots as PDF and PNG
-    plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Repeats_Resistance_Data_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
-    saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Repeats_Resistance_Data_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
+    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Repeats_Resistance_Data_Plots.png', '_averaged', num2str(startRun), num2str(endRun));
     saveas(f, plotsavename);                % Save plot as PNG
     %close;    
@@ -852,12 +888,16 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         x12 = 0; y12 = 0;
     end
     
-    h = plot(x7,y7,'-*',x8,y8,'-+',x9,y9,'-+',x10,y10,'--o',x11,y11,'--s',x12,y12,'--d','MarkerSize',7);
+    h = plot(x7,y7,'-*',x8,y8,'-+',x9,y9,'-+',x10,y10,'--o',x11,y11,'--s',x12,y12,'--d','MarkerSize',5);
     xlabel('{\bf Froude length number [-]}');
     ylabel('{\bf Total resistance coefficient C_{tm}*1000 [-]}');
     grid on;
     box on;
     axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);    
     
     %# Line width
     %set(h(1),'linewidth',2);
@@ -872,7 +912,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gca,'XTick',[0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
 
     %# Legend
-    hleg1 = legend('1,500t (0 deg)','1,500t (-0.5 deg)','1,500t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)','1,804t (0.5 deg)');
+    hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     legend boxoff;
@@ -914,7 +954,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         x12 = 0; y12 = 0;
     end    
     
-    h = plot(x7,y7,'-*',x8,y8,'-+',x9,y9,'-+',x10,y10,'--o',x11,y11,'--s',x12,y12,'--d','MarkerSize',7);
+    h = plot(x7,y7,'-*',x8,y8,'-+',x9,y9,'-+',x10,y10,'--o',x11,y11,'--s',x12,y12,'--d','MarkerSize',5);
     xlabel('{\bf Full scale speed [knots]}');
     ylabel('{\bf Full scale effective power [W]}');
     grid on;
@@ -928,7 +968,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %ylim([0 setmaxy]);
 
     %# Legend
-    hleg1 = legend('1,500t (0 deg)','1,500t (-0.5 deg)','1,500t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)','1,804t (0.5 deg)');
+    hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     legend boxoff;
@@ -970,7 +1010,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         x12 = 0; y12 = 0;
     end    
     
-    h = plot(x7,y7,'-*',x8,y8,'-+',x9,y9,'-+',x10,y10,'--o',x11,y11,'--s',x12,y12,'--d','MarkerSize',7);
+    h = plot(x7,y7,'-*',x8,y8,'-+',x9,y9,'-+',x10,y10,'--o',x11,y11,'--s',x12,y12,'--d','MarkerSize',5);
     xlabel('{\bf Froude length number [-]}');
     ylabel('{\bf Heave [mm]}');
     grid on;
@@ -982,7 +1022,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gca,'XTick',[0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
 
     %# Legend
-    hleg1 = legend('1,500t (0 deg)','1,500t (-0.5 deg)','1,500t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)','1,804t (0.5 deg)');
+    hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
     legend boxoff;
@@ -1024,7 +1064,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         x12 = 0; y12 = 0;
     end     
 
-    h = plot(x7,y7,'-*',x8,y8,'-+',x9,y9,'-+',x10,y10,'--o',x11,y11,'--s',x12,y12,'--d','MarkerSize',7);
+    h = plot(x7,y7,'-*',x8,y8,'-+',x9,y9,'-+',x10,y10,'--o',x11,y11,'--s',x12,y12,'--d','MarkerSize',5);
     xlabel('{\bf Froude length number [-]}');
     ylabel('{\bf Running trim [Degrees]}');
     grid on;
@@ -1036,7 +1076,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gca,'XTick',[0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
 
     %# Legend
-    hleg1 = legend('1,500t (0 deg)','1,500t (-0.5 deg)','1,500t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)','1,804t (0.5 deg)');
+    hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     legend boxoff;
@@ -1059,8 +1099,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         'HorizontalAlignment', 'center');  
 
     %# Save plots as PDF and PNG
-    plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Averaged_Resistance_Data_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
-    saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Averaged_Resistance_Data_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
+    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Averaged_Resistance_Data_Plots.png', '_averaged', num2str(startRun), num2str(endRun));
     saveas(f, plotsavename);                % Save plot as PNG
     %close;    
@@ -1078,8 +1118,151 @@ end
 % DEEP TRANSOM PROHASKA CONDITION
 % *********************************************************************   
 if length(cond13) ~= 0
-    disp('Condition 13 available');
     
-    % Prohaska plot
+    startRun = 232;
+    endRun   = 249;
+    
+    % Array dimensions
+    [m,n]    = size(cond13);
+    
+    %# --------------------------------------------------------------------
+    %# Prohaska array columns ---------------------------------------------
+    %# --------------------------------------------------------------------
+    %  [1]  X-Axis; Fr^4/Cfm (Using ITTC 1957 for Cfm)
+    %  [2]  Y-Axis; Ctm/Cfm  (Using ITTC 1957 for Cfm)
+    %  [3]  X-Axis; Fr^4/Cfm (Using Grigson for Cfm)
+    %  [4]  Y-Axis; Ctm/Cfm  (Using Grigson for Cfm)
+    %# --------------------------------------------------------------------
+    
+    %# Fr^4/Cfm
+    ittcprohaskadata = [];
+    for q=1:m
+        ittcprohaskadata(q,1) = (cond13(q,11)^4)/cond13(q,17);
+        ittcprohaskadata(q,2) = cond13(q,10)/cond13(q,17);
+        ittcprohaskadata(q,3) = (cond13(q,11)^4)/cond13(q,18);
+        ittcprohaskadata(q,4) = cond13(q,10)/cond13(q,18);
+    end
+    
+    figurename = sprintf('%s:: Prohaska Runs for Form Factor Estimate with Deep Transom, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Plot repeat data ---------------------------------------------------
+    %subplot(1,2,1)
+    
+    %# ITTC 1957 Friction Line
+    x1 = ittcprohaskadata(:,1);
+    y1 = ittcprohaskadata(:,2);
+    %# Grigson Friction Line
+    x2 = ittcprohaskadata(:,3);
+    y2 = ittcprohaskadata(:,4);
+    
+    %# START: Trendline for ITTC 1957 Friction Line -----------------------
+    
+    polyf1 = polyfit(x1,y1,1);
+    polyv1 = polyval(polyf1,x1);
+    % Slope of trendline => Y = (slope1 * X ) + slope2
+    slopeITTC     = polyf1(1,1);    % Slope
+    interceptITTC = polyf1(1,2);    % Intercept
+    if interceptITTC > 0
+        chooseSign = '+';
+        interceptITTC = interceptITTC;
+    else
+        chooseSign = '-';
+        interceptITTC = abs(interceptITTC);
+    end
+    slopeTextITTC = sprintf('y = %s*x %s %s', sprintf('%.3f',slopeITTC), chooseSign, sprintf('%.3f',interceptITTC));
+    
+    %# Use CC1(1,2)
+    %# NOTE: A correlation coefficient with a magnitude near 1 (as in this case) 
+    %#       represents a good fit.  As the fit gets worse, the correlation 
+    %#       coefficient approaches zero.
+    CC1    = corrcoef(x1,y1);
+    
+    %# END: Trendline for ITTC 1957 Friction Line -------------------------
+    
+    %# START: Trendline for Grigson Friction Line -------------------------
+    
+    polyf2 = polyfit(x2,y2,1);
+    polyv2 = polyval(polyf2,x2);
+    % Slope of trendline => Y = (slope1 * X ) + slope2
+    slopeGrigson     = polyf2(1,1);    % Slope
+    interceptGrigson = polyf2(1,2);    % Intercept
+    if interceptGrigson > 0
+        chooseSign = '+';
+        interceptGrigson = interceptGrigson;
+    else
+        chooseSign = '-';
+        interceptGrigson = abs(interceptGrigson);
+    end
+    slopeTextGrigson = sprintf('y = %s*x %s %s', sprintf('%.3f',slopeGrigson), chooseSign, sprintf('%.3f',interceptGrigson));
+    
+    %# Use CC2(1,2)
+    %# NOTE: A correlation coefficient with a magnitude near 1 (as in this case) 
+    %#       represents a good fit.  As the fit gets worse, the correlation 
+    %#       coefficient approaches zero.    
+    CC2    = corrcoef(x2,y2);
+    
+    %# END: Trendline for Grigson Friction Line ---------------------------
+    
+    h = plot(x1,y1,'*b',x2,y2,'xg',x1,polyv1,'-b',x2,polyv2,'-g','MarkerSize',10);
+    xlabel('{\bf F_{r}^4/C_{fm} [-]}');
+    ylabel('{\bf C_{tm}/C_{fm} [-]}');
+    grid on;
+    box on;
+    axis square;
+    
+    %# Annotations
+    text(0.42,1.08,slopeTextITTC,'FontSize',12,'color','b','FontWeight','normal');
+    text(0.42,1.22,slopeTextGrigson,'FontSize',12,'color','g','FontWeight','normal');
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Line width
+    set(h(3),'linewidth',2);
+    set(h(4),'linewidth',2);
+    
+    %# Axis limitations
+    xlim([0 0.7]);
+    set(gca,'XTick',[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7]);
+    ylim([1 1.4]);
+    set(gca,'YTick',[1 1.05 1.1 1.15 1.2 1.25 1.3 1.35 1.4]);
+
+    %# Legend
+    hleg1 = legend('Cond. 13: ITTC 1957','Cond. 13: Grigson','Cond. 13: ITTC 1957','Cond. 13: Grigson');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
+    
+    %# Save plot as PNG -------------------------------------------------------
+
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+    %# Figure size printed on paper
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');   
+
+    %# Plot title -------------------------------------------------------------
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');  
+
+    %# Save plots as PDF and PNG
+    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Repeats_Prohaska_Form_Factor_Resistance_Data_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
+    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+    plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Repeats_Prohaska_Form_Factor_Resistance_Data_Plots.png', '_averaged', num2str(startRun), num2str(endRun));
+    saveas(f, plotsavename);                % Save plot as PNG
+    %close;    
     
 end
+
+% *************************************************************************
+% SUMMARY OF MIN, MAC, AVG AND PERCENT VALUES FOR COMPARISONS
+% *************************************************************************
+
+% Do something here...
