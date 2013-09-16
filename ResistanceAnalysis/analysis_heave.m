@@ -65,7 +65,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# -------------------------------------------------------------------------
 %# Read results DAT file
 %# -------------------------------------------------------------------------
-if exist('resultsArray_copy.dat', 'file') == 2
+if exist('full_resistance_data.dat', 'file') == 2
     %# Results array columns: 
     %# Results array columns: 
     %[1]  Run No.                                                                  (-)
@@ -97,13 +97,13 @@ if exist('resultsArray_copy.dat', 'file') == 2
     %[27] Full Scale (PBs) Model Brake Power (using 50% prop. efficiency estimate) (W)
     %[28] Run condition                                                            (-)
         
-    results = csvread('resultsArray_copy.dat');
+    results = csvread('full_resistance_data.dat');
     
     %# Remove zero rows
     results(all(results==0,2),:)=[];
 else
     disp('---------------------------------------------------------------------------------------');
-    disp('File resultsArray_copy.dat does not exist!');
+    disp('File full_resistance_data.dat does not exist!');
     disp('---------------------------------------------------------------------------------------');
     break;
 end

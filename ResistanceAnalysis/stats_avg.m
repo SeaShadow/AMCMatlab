@@ -78,8 +78,24 @@ A = arrayfun(@(x) RA(RA(:,11) == x, :), unique(RA(:,11)), 'uniformoutput', false
     %[25] Full Scale (Rts) Total resistance (Rt)                                   (N)
     %[26] Full Scale (PEs) Model Effective Power                                   (W)
     %[27] Full Scale (PBs) Model Brake Power (using 50% prop. efficiency estimate) (W)
-    %[28] Run condition  
-
+    %[28] Run condition                                                            (-)
+    %[29] SPEED: Minimum value                                                     (m/s)
+    %[30] SPEED: Maximum value                                                     (m/s)
+    %[31] SPEED: Average value                                                     (m/s)
+    %[32] SPEED: Percentage (max.-avg.) to max. value (exp. 3%)                    (m/s)
+    %[33] LVDT (FWD): Minimum value                                                (mm)
+    %[34] LVDT (FWD): Maximum value                                                (mm)
+    %[35] LVDT (FWD): Average value                                                (mm)
+    %[36] LVDT (FWD): Percentage (max.-avg.) to max. value (exp. 3%)               (mm)
+    %[37] LVDT (AFT): Minimum value                                                (mm)
+    %[38] LVDT (AFT): Maximum value                                                (mm)
+    %[39] LVDT (AFT): Average value                                                (mm)
+    %[40] LVDT (AFT): Percentage (max.-avg.) to max. value (exp. 3%)               (mm)
+    %[41] DRAG: Minimum value                                                      (g)
+    %[42] DRAG: Maximum value                                                      (g)
+    %[43] DRAG: Average value                                                      (g)
+    %[44] DRAG: Percentage (max.-avg.) to max. value (exp. 3%)                     (g)
+    
 for m=1:ma
     %[mrn,nrn] = size(A{m});
     
@@ -111,6 +127,22 @@ for m=1:ma
     averagedArray(m,26) = mean(A{m}(:,26));
     averagedArray(m,27) = mean(A{m}(:,27));
     averagedArray(m,28) = mean(A{m}(:,28));
+    averagedArray(m,29) = mean(A{m}(:,29));
+    averagedArray(m,30) = mean(A{m}(:,30));
+    averagedArray(m,31) = mean(A{m}(:,31));
+    averagedArray(m,32) = mean(A{m}(:,32));
+    averagedArray(m,33) = mean(A{m}(:,33));
+    averagedArray(m,34) = mean(A{m}(:,34));
+    averagedArray(m,35) = mean(A{m}(:,35));
+    averagedArray(m,36) = mean(A{m}(:,36));
+    averagedArray(m,37) = mean(A{m}(:,37));
+    averagedArray(m,38) = mean(A{m}(:,38));
+    averagedArray(m,39) = mean(A{m}(:,39));
+    averagedArray(m,40) = mean(A{m}(:,40));
+    averagedArray(m,41) = mean(A{m}(:,41));
+    averagedArray(m,42) = mean(A{m}(:,42));
+    averagedArray(m,43) = mean(A{m}(:,43));
+    averagedArray(m,44) = mean(A{m}(:,44));
     
     %A{m}(:,1)
     
