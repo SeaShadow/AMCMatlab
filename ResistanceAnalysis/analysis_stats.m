@@ -110,7 +110,11 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %[42] DRAG: Maximum value                                                      (g)
 %[43] DRAG: Average value                                                      (g)
 %[44] DRAG: Percentage (max.-avg.) to max. value (exp. 3%)                     (g)
-    
+%[45] SPEED: Standard deviation                                                (m/s)
+%[46] LVDT (FWD): Standard deviation                                           (mm)
+%[47] LVDT (AFT): Standard deviation                                           (mm)
+%[48] DRAG: Standard deviation                                                 (g)
+
 %# ------------------------------------------------------------------------
 %# Read results DAT file
 %# ------------------------------------------------------------------------
@@ -316,7 +320,7 @@ if length(cond1) ~= 0 || length(cond2) ~= 0 || length(cond3) ~= 0
         x3 = 0; y3 = 0;
     end
     
-    h = plot(x1,y1,'-*',x2,y2,'-+',x3,y3,'-x','MarkerSize',10);
+    h = plot(x1,y1,'-*',x2,y2,'-+',x3,y3,'-x','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
     ylabel('{\bf Total resistance coefficient C_{tm}*1000 [-]}');
     grid on;
@@ -467,7 +471,7 @@ if length(cond4) ~= 0 || length(cond5) ~= 0 || length(cond6) ~= 0
         x6 = 0; y6 = 0;
     end
     
-    h = plot(x4,y4,'-*',x5,y5,'-+',x6,y6,'-x','MarkerSize',10);
+    h = plot(x4,y4,'-*',x5,y5,'-+',x6,y6,'-x','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
     ylabel('{\bf Total resistance coefficient C_{tm}*1000 [-]}');
     grid on;
@@ -594,7 +598,7 @@ if length(cond4) ~= 0 || length(cond5) ~= 0 || length(cond6) ~= 0
     fr043 = sortrows(fr043);
     
     %h = plot(fr043(:,1),fr043(:,2),'-*k','MarkerSize',7);
-    h = plot(fr043(:,1),fr043(:,2),'*',fr043l(:,1),fr043l(:,2),'+',fr041b(:,1),fr041b(:,2),'x',fr041s(:,1),fr041s(:,2),'o','MarkerSize',10);
+    h = plot(fr043(:,1),fr043(:,2),'*',fr043l(:,1),fr043l(:,2),'+',fr041b(:,1),fr041b(:,2),'x',fr041s(:,1),fr041s(:,2),'o','MarkerSize',7);
     xlabel('{\bf Trim [deg]}');
     ylabel('{\bf Residual resistance coefficient C_{rm}*1000 [-]}');
     grid on;
@@ -649,8 +653,6 @@ end
 % *************************************************************************     
 if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0
     
-    %startRun = R(1:1);
-    %endRun   = R(end, 1);
     startRun = 81;
     endRun   = 231;
     
@@ -745,10 +747,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Full scale speed vs. full scale effective power -------------------------
     subplot(2,2,2)
-
-    %x = R(:,15);
-    %y = R(:,26);
-
+    
     if length(cond7) ~= 0
         x7 = cond7(:,15); y7 = cond7(:,26);
     else
@@ -802,9 +801,6 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(2,2,3)
 
-    %x = R(:,11);
-    %y = R(:,12);
-
     if length(cond7) ~= 0
         x7 = cond7(:,11); y7 = cond7(:,12);
     else
@@ -855,9 +851,6 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Model speed vs. model trim (degrees) ------------------------------------
     subplot(2,2,4)
-
-    %x = R(:,11);
-    %y = R(:,13);
     
     if length(cond7) ~= 0
         x7 = cond7(:,11); y7 = cond7(:,13);
@@ -1376,7 +1369,7 @@ if length(cond13) ~= 0
     
     %# END: Trendline for Grigson Friction Line ---------------------------
     
-    h = plot(x1,y1,'*b',x2,y2,'xg',x1,polyv1,'-b',x2,polyv2,'-g','MarkerSize',10);
+    h = plot(x1,y1,'*b',x2,y2,'xg',x1,polyv1,'-b',x2,polyv2,'-g','MarkerSize',7);
     xlabel('{\bf F_{r}^4/C_{fm} [-]}');
     ylabel('{\bf C_{tm}/C_{fm} [-]}');
     grid on;
@@ -1432,7 +1425,7 @@ if length(cond13) ~= 0
         y134 = 0;
     end
 
-    h = plot(x13,y131,'*',x13,y132,'+',x13,y133,'x',x13,y134,'o','MarkerSize',10);
+    h = plot(x13,y131,'*',x13,y132,'+',x13,y133,'x',x13,y134,'o','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
     ylabel('{\bf Error to average [percent]}');
     grid on;

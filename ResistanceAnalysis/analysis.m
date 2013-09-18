@@ -689,7 +689,7 @@ for k=startRun:endRun
     
     % ---------------------------------------------------------------------
     % Additional values added: 12/09/2013
-    % ---------------------------------------------------------------------    
+    % ---------------------------------------------------------------------
     %[29] SPEED: Minimum value                                                      (m/s)
     %[30] SPEED: Maximum value                                                      (m/s)
     %[31] SPEED: Average value                                                      (m/s)
@@ -707,6 +707,14 @@ for k=startRun:endRun
     %[43] DRAG: Average value                                                       (g)
     %[44] DRAG: Percentage (max.-avg.) to max. value (exp. 3%)                      (g)
     
+    % ---------------------------------------------------------------------
+    % Additional values added: 18/09/2013
+    % ---------------------------------------------------------------------
+    %[45] SPEED: Standard deviation                                                 (m/s)
+    %[46] LVDT (FWD): Standard deviation                                            (mm)
+    %[47] LVDT (AFT): Standard deviation                                            (mm)
+    %[48] DRAG: Standard deviation                                                  (g)
+        
     % Write data to array -------------------------------------------------
     resultsArray(k, 1)  = k;                                                        % Run No.
     resultsArray(k, 2)  = round(length(timeData) / timeData(end));                  % FS (Hz)    
@@ -769,7 +777,14 @@ for k=startRun:endRun
     resultsArray(k, 42) = max(ddata);                                           % DRAG: Maximum value (g)
     resultsArray(k, 43) = mean(ddata);                                          % DRAG: Average value (g)
     resultsArray(k, 44) = (max(ddata) - mean(ddata)) / max(ddata);              % DRAG: Percentage (max.-avg.) to max. value (exp. 3%) (g)
-        
+    % ---------------------------------------------------------------------
+    % Additional values added: 18/09/2013
+    % --------------------------------------------------------------------- 
+    resultsArray(k, 45) = std(sdata);                                           % SPEED: Standard deviation (-)
+    resultsArray(k, 46) = std(tfwddata);                                        % LVDT (FWD): Standard deviation (-)
+    resultsArray(k, 47) = std(taftdata);                                        % LVDT (AFT): Standard deviation (-)
+    resultsArray(k, 48) = std(ddata);                                           % DRAG: Standard deviation (-)
+
     %# Prepare strings for display ----------------------------------------
     if k > 99
        name = name(2:5);

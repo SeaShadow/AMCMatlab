@@ -25,13 +25,16 @@
 
 function [averagedArray] = stats_avg(repeatrunnos,results)
 
+% Variables and array dimensions
 R       = results;
 [mr,nr] = size(repeatrunnos);   % Array dimensions
 [m,n]   = size(results);        % Array dimensions
 
+% Empty arrays
 runArray      = [];
 averagedArray = [];
 
+% Filer resultsArray for specific run numbers as specified in repeatrunnos
 for j=1:m
     for l=1:nr
         if repeatrunnos(1,l) == results(j,1)
@@ -40,6 +43,7 @@ for j=1:m
     end
 end
 
+% Shorten variable name
 RA = runArray;
 
 % Stop execution if RA is empty
@@ -47,10 +51,13 @@ if length(RA) == 0
     return;
 end
 
+% Split results array based on column 11 (Froude Length Number)
 A = arrayfun(@(x) RA(RA(:,11) == x, :), unique(RA(:,11)), 'uniformoutput', false);
-[ma,na] = size(A);              % Array dimensions
 
-%# Averaged array columns: 
+% Array dimensions of split down array
+[ma,na] = size(A);
+
+%# Array columns: 
     %[1]  Run No.                                                                  (-)
     %[2]  FS                                                                       (Hz)
     %[3]  No. of samples                                                           (-)
@@ -95,9 +102,12 @@ A = arrayfun(@(x) RA(RA(:,11) == x, :), unique(RA(:,11)), 'uniformoutput', false
     %[42] DRAG: Maximum value                                                      (g)
     %[43] DRAG: Average value                                                      (g)
     %[44] DRAG: Percentage (max.-avg.) to max. value (exp. 3%)                     (g)
+    %[45] SPEED: Standard deviation                                                (m/s)
+    %[46] LVDT (FWD): Standard deviation                                           (mm)
+    %[47] LVDT (AFT): Standard deviation                                           (mm)
+    %[48] DRAG: Standard deviation                                                 (g)
     
 for m=1:ma
-    %[mrn,nrn] = size(A{m});
     
     averagedArray(m,1)  = 0;
     averagedArray(m,2)  = 0;
@@ -143,12 +153,9 @@ for m=1:ma
     averagedArray(m,42) = mean(A{m}(:,42));
     averagedArray(m,43) = mean(A{m}(:,43));
     averagedArray(m,44) = mean(A{m}(:,44));
+    averagedArray(m,45) = std(A{m}(:,45));
+    averagedArray(m,46) = std(A{m}(:,46));
+    averagedArray(m,47) = std(A{m}(:,47));
+    averagedArray(m,48) = std(A{m}(:,48));
     
-    %A{m}(:,1)
-    
-    %averagedArray(:,1) = mean(A{m}(1:mrn));
-%     for o=1:mrn
-%         averagedArray(:,5)  = mean(flowRate(startRun:endRun));
-%         %A{m}(1,1)
-%     end
 end
