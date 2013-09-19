@@ -106,8 +106,15 @@ A = arrayfun(@(x) RA(RA(:,11) == x, :), unique(RA(:,11)), 'uniformoutput', false
     %[46] LVDT (FWD): Standard deviation                                           (mm)
     %[47] LVDT (AFT): Standard deviation                                           (mm)
     %[48] DRAG: Standard deviation                                                 (g)
+    %[49] SPEED: Mean of standard deviation                                        (-)
+    %[50] LVDT (FWD): Mean of standard deviation                                   (-)
+    %[51] LVDT (AFT): Mean of standard deviation                                   (-)
+    %[52] DRAG: Mean of standard deviation                                         (-)
+    %[53] Number how many times run has been repeated                              (-)
     
 for m=1:ma
+    
+    [mcond,ncond] = size(A{m});
     
     averagedArray(m,1)  = 0;
     averagedArray(m,2)  = 0;
@@ -157,5 +164,10 @@ for m=1:ma
     averagedArray(m,46) = std(A{m}(:,46));
     averagedArray(m,47) = std(A{m}(:,47));
     averagedArray(m,48) = std(A{m}(:,48));
+    averagedArray(m,49) = averagedArray(m,45)/sqrt(mcond);
+    averagedArray(m,50) = averagedArray(m,46)/sqrt(mcond);
+    averagedArray(m,51) = averagedArray(m,47)/sqrt(mcond);
+    averagedArray(m,52) = averagedArray(m,48)/sqrt(mcond);
+    averagedArray(m,53) = mcond;
     
 end

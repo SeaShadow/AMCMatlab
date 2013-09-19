@@ -1130,6 +1130,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',7);
     xlabel('{\bf Heave [mm]}');
     ylabel('{\bf Residual resistance coefficient C_{rm}*1000 [-]}');
+    title('{\bf Heave vs. C_{rm} for highest heave values only (Fr~0.42)}');
     grid on;
     box on;
     axis square;
@@ -1177,6 +1178,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
     ylabel('{\bf Residual resistance coefficient C_{rm}*1000 [-]}');
+    title('{\bf C_{rm} plot for conditions 7 to 12}');
     grid on;
     box on;
     axis square;

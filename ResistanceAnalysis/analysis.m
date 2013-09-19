@@ -77,8 +77,14 @@ Fs = 200;                               % DAQ sampling frequency = 200Hz
 %# START CONSTANTS AND PARTICULARS
 %# ------------------------------------------------------------------------
 
-gravconst          = 9.806;             % Gravitational constant          (m/s2)
-modelkinvi         = 0.00000106784125;  % Model scale kinetic viscosity at 17.5 degrees following ITTC (m2/s)
+% On test date
+ttwatertemp        = 17.5;              % Towing Tank: Water temperature   (degrees C)
+ttwaterdepth       = 1.45;              % Towing Tank: Water depth         (m)
+
+% General constants
+gravconst          = 9.806;             % Gravitational constant           (m/s2)
+%modelkinviscosity  = 0.00000106784125;  % Model scale kinetic viscosity at X (see ttwatertemp) degrees following ITTC (m2/s)
+modelkinviscosity  = (((0.585*10^(-3))*(ttwatertemp-12)-0.03361)*(ttwatertemp-12)+1.235)*10^(-6); % Model scale kinetic viscosity at X (see ttwatertemp) degrees following ITTC (m2/s)
 fullscalekinvi     = 0.000001034;       % Full scale kinetic viscosity     (m2/s)
 freshwaterdensity  = 1000;              % Model scale water density        (Kg/m3)
 saltwaterdensity   = 1025;              % Salt water scale water density   (Kg/m3)
@@ -183,7 +189,7 @@ cutSamplesFromEnd = 400;    % Cut last 2 seconds
 %# START FILE LOOP FOR RUNS startRun to endRun
 %# ------------------------------------------------------------------------
 
-startRun = 1;  % Start at run x
+startRun = 1;    % Start at run x
 endRun   = 249;  % Stop at run y
 
 %# ------------------------------------------------------------------------
@@ -714,7 +720,7 @@ for k=startRun:endRun
     %[46] LVDT (FWD): Standard deviation                                            (mm)
     %[47] LVDT (AFT): Standard deviation                                            (mm)
     %[48] DRAG: Standard deviation                                                  (g)
-        
+
     % Write data to array -------------------------------------------------
     resultsArray(k, 1)  = k;                                                        % Run No.
     resultsArray(k, 2)  = round(length(timeData) / timeData(end));                  % FS (Hz)    
@@ -737,7 +743,7 @@ for k=startRun:endRun
     % ---------------------------------------------------------------------
     % Additional values added: 10/09/2013
     % ---------------------------------------------------------------------  
-    resultsArray(k, 16) = (resultsArray(k, 5)*MSlwl)/modelkinvi;                    % Model Reynolds Number (-)
+    resultsArray(k, 16) = (resultsArray(k, 5)*MSlwl)/modelkinviscosity;                    % Model Reynolds Number (-)
     resultsArray(k, 17) = 0.075/(log10(resultsArray(k, 16))-2)^2;                   % Model Frictional Resistance Coefficient (ITTC'57) (-)
     if resultsArray(k, 16) < 10000000
         resultsArray(k, 18) = 10^(2.98651-10.8843*(log10(log10(resultsArray(k, 16))))+5.15283*(log10(log10(resultsArray(k, 16))))^2); % Model Frictional Resistance Coefficient (Grigson) (-)   
