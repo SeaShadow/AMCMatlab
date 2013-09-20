@@ -2049,7 +2049,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     grid on;
     box on;
     axis square;
-        
+
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);    
@@ -2062,7 +2062,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    %legend boxoff;    
+    %legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
 

@@ -78,54 +78,62 @@ Fs = 200;                               % DAQ sampling frequency = 200Hz
 %# ------------------------------------------------------------------------
 
 % On test date
-ttwatertemp        = 17.5;              % Towing Tank: Water temperature   (degrees C)
-ttwaterdepth       = 1.45;              % Towing Tank: Water depth         (m)
+ttlength           = 100;                    % Towing Tank: Length            (m)
+ttwidth            = 3.5;                    % Towing Tank: Width             (m)
+ttwaterdepth       = 1.45;                   % Towing Tank: Water depth       (m)
+ttcsa              = ttwidth * ttwaterdepth; % Towing Tank: Sectional area    (m^2)
+ttwatertemp        = 17.5;                   % Towing Tank: Water temperature (degrees C)
 
 % General constants
-gravconst          = 9.806;             % Gravitational constant           (m/s2)
-%modelkinviscosity  = 0.00000106784125;  % Model scale kinetic viscosity at X (see ttwatertemp) degrees following ITTC (m2/s)
+gravconst          = 9.806;             % Gravitational constant           (m/s^2)
 modelkinviscosity  = (((0.585*10^(-3))*(ttwatertemp-12)-0.03361)*(ttwatertemp-12)+1.235)*10^(-6); % Model scale kinetic viscosity at X (see ttwatertemp) degrees following ITTC (m2/s)
-fullscalekinvi     = 0.000001034;       % Full scale kinetic viscosity     (m2/s)
-freshwaterdensity  = 1000;              % Model scale water density        (Kg/m3)
-saltwaterdensity   = 1025;              % Salt water scale water density   (Kg/m3)
+fullscalekinvi     = 0.000001034;       % Full scale kinetic viscosity     (m^2/s)
+freshwaterdensity  = 1000;              % Model scale water density        (Kg/m^3)
+saltwaterdensity   = 1025;              % Salt water scale water density   (Kg/m^3)
 distbetwposts      = 1150;              % Distance between carriage posts  (mm)
-FStoMSratio        = 21.6;              % Full scale to model scale ratio
+FStoMSratio        = 21.6;              % Full scale to model scale ratio  (-)
 
 %# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 %# CONDITION: 1,500 tonnes, level static trim, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
 MSlwl1500          = 4.30;                              % Model length waterline          (m)
-MSwsa1500          = 1.501;                             % Model scale wetted surface area (m2)
+MSwsa1500          = 1.501;                             % Model scale wetted surface area (m^2)
 MSdraft1500        = 0.133;                             % Model draft                     (m)
+MSAx1500           = 0.024;                             % Model area of max. transverse section (m^2)
+BlockCoeff1500     = 0.592;                             % Mode block coefficient          (-)
 FSlwl1500          = MSlwl1500*FStoMSratio;             % Full scale length waterline     (m)
-FSwsa1500          = MSwsa1500*FStoMSratio^2;           % Full scale wetted surface area  (m2)
+FSwsa1500          = MSwsa1500*FStoMSratio^2;           % Full scale wetted surface area  (m^2)
 FSdraft1500        = MSdraft1500*FStoMSratio;           % Full scale draft                (m)
 %# ------------------------------------------------------------------------
 %# CONDITION: 1,500 tonnes, -0.5 degrees by bow, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
 MSlwl1500bybow     = 4.328;                             % Model length waterline          (m)
-MSwsa1500bybow     = 1.48;                              % Model scale wetted surface area (m2)
+MSwsa1500bybow     = 1.48;                              % Model scale wetted surface area (m^2)
 MSdraft1500bybow   = 0.138;                             % Model draft                     (m)
+MSAx1500bybow      = 0.025;                             % Model area of max. transverse section (m^2)
+BlockCoeff1500bybow = 0.570;                            % Mode block coefficient          (-)
 FSlwl1500bybow     = MSlwl1500bybow*FStoMSratio;        % Full scale length waterline     (m)
-FSwsa1500bybow     = MSwsa1500bybow*FStoMSratio^2;      % Full scale wetted surface area  (m2)
+FSwsa1500bybow     = MSwsa1500bybow*FStoMSratio^2;      % Full scale wetted surface area  (m^2)
 FSdraft1500bybow   = MSdraft1500bybow*FStoMSratio;      % Full scale draft                (m)
 %# ------------------------------------------------------------------------
 %# CONDITION: 1,500 tonnes, 0.5 degrees by stern, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
 MSlwl1500bystern    = 4.216;                            % Model length waterline          (m)
-MSwsa1500bystern    = 1.52;                             % Model scale wetted surface area (m2)
+MSwsa1500bystern    = 1.52;                             % Model scale wetted surface area (m^2)
 MSdraft1500bystern  = 0.131;                            % Model draft                     (m)
+MSAx1500bystern     = 0.024;                            % Model area of max. transverse section (m^2)
+BlockCoeff1500bystern = 0.614;                          % Mode block coefficient          (-)
 FSlwl1500bystern    = MSlwl1500bystern*FStoMSratio;     % Full scale length waterline     (m)
-FSwsa1500bystern    = MSwsa1500bystern*FStoMSratio^2;   % Full scale wetted surface area  (m2)
+FSwsa1500bystern    = MSwsa1500bystern*FStoMSratio^2;   % Full scale wetted surface area  (m^2)
 FSdraft1500bystern  = MSdraft1500bystern*FStoMSratio;   % Full scale draft                (m)
 %# ------------------------------------------------------------------------
 %# CONDITION: 1,500 tonnes, deep transom for prohaska runs, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
 MSlwl1500prohaska    = 3.78;                            % Model length waterline          (m)
-MSwsa1500prohaska    = 1.49;                            % Model scale wetted surface area (m2)
+MSwsa1500prohaska    = 1.49;                            % Model scale wetted surface area (m^2)
 MSdraft1500prohaska  = 0.133;                           % Model draft                     (m)
 FSlwl1500prohaska    = MSlwl1500prohaska*FStoMSratio;   % Full scale length waterline     (m)
-FSwsa1500prohaska    = MSwsa1500prohaska*FStoMSratio^2; % Full scale wetted surface area  (m2)
+FSwsa1500prohaska    = MSwsa1500prohaska*FStoMSratio^2; % Full scale wetted surface area  (m^2)
 FSdraft1500prohaska  = MSdraft1500prohaska*FStoMSratio; % Full scale draft                (m)
 %# ////////////////////////////////////////////////////////////////////////
 
@@ -133,28 +141,34 @@ FSdraft1500prohaska  = MSdraft1500prohaska*FStoMSratio; % Full scale draft      
 %# CONDITION: 1,804 tonnes, level static trim, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
 MSlwl1804          = 4.222;                             % Model length waterline          (m)
-MSwsa1804          = 1.68;                              % Model scale wetted surface area (m2)
+MSwsa1804          = 1.68;                              % Model scale wetted surface area (m^2)
 MSdraft1804        = 0.153;                             % Model draft                     (m)
+MSAx1804           = 0.028;                             % Model area of max. transverse section (m^2)
+BlockCoeff1804     = 0.631;                             % Mode block coefficient          (-)
 FSlwl1804          = MSlwl1804*FStoMSratio;             % Full scale length waterline     (m)
-FSwsa1804          = MSwsa1804*FStoMSratio^2;           % Full scale wetted surface area  (m2)
+FSwsa1804          = MSwsa1804*FStoMSratio^2;           % Full scale wetted surface area  (m^2)
 FSdraft1804        = MSdraft1804*FStoMSratio;           % Full scale draft                (m)
 %# ------------------------------------------------------------------------
 %# CONDITION: 1,804 tonnes, -0.5 degrees by bow, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
-MSlwl1804bybow     = 4.306;                             % Model length waterline          (m)4.107
-MSwsa1804bybow     = 1.66;                              % Model scale wetted surface area (m2)1.70
-MSdraft1804bybow   = 0.157;                             % Model draft                     (m)0.151
+MSlwl1804bybow     = 4.306;                             % Model length waterline          (m)
+MSwsa1804bybow     = 1.66;                              % Model scale wetted surface area (m^2)
+MSdraft1804bybow   = 0.157;                             % Model draft                     (m)
+MSA1804bybow      = 0.030;                              % Model area of max. transverse section (m^2)
+BlockCoeff1804bybow = 0.603;                            % Mode block coefficient          (-)
 FSlwl1804bybow     = MSlwl1804bybow*FStoMSratio;        % Full scale length waterline     (m)
-FSwsa1804bybow     = MSwsa1804bybow*FStoMSratio^2;      % Full scale wetted surface area  (m2)
+FSwsa1804bybow     = MSwsa1804bybow*FStoMSratio^2;      % Full scale wetted surface area  (m^2)
 FSdraft1804bybow   = MSdraft1804bybow*FStoMSratio;      % Full scale draft                (m)
 %# ------------------------------------------------------------------------
 %# CONDITION: 1,804 tonnes, 0.5 degrees by stern, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
-MSlwl1804bystern   = 4.107;                             % Model length waterline          (m)4.306
-MSwsa1804bystern   = 1.70;                              % Model scale wetted surface area (m2)1.66
-MSdraft1804bystern = 0.151;                             % Model draft                     (m)0.157
+MSlwl1804bystern   = 4.107;                             % Model length waterline          (m)
+MSwsa1804bystern   = 1.70;                              % Model scale wetted surface area (m^2)
+MSdraft1804bystern = 0.151;                             % Model draft                     (m)
+MSA1804bystern     = 0.028;                             % Model area of max. transverse section (m^2)
+BlockCoeff1804bystern = 0.657;                          % Mode block coefficient          (-)
 FSlwl1804bystern   = MSlwl1804bystern*FStoMSratio;      % Full scale length waterline     (m)
-FSwsa1804bystern   = MSwsa1804bystern*FStoMSratio^2;    % Full scale wetted surface area  (m2)
+FSwsa1804bystern   = MSwsa1804bystern*FStoMSratio^2;    % Full scale wetted surface area  (m^2)
 FSdraft1804bystern = MSdraft1804bystern*FStoMSratio;    % Full scale draft                (m)
 %# ////////////////////////////////////////////////////////////////////////
 
@@ -735,7 +749,7 @@ for k=startRun:endRun
     resultsArray(k, 10) = resultsArray(k, 9) / (0.5*freshwaterdensity*MSwsa*resultsArray(k, 5)^2); % Model Averaged drag (Ctm) (-)
     %resultsArray(k, 11) = resultsArray(k, 5) / sqrt(gravconst*MSlwl);              % Froude length number (-)
     modelfrrounded = str2num(sprintf('%.2f',resultsArray(k, 5) / sqrt(gravconst*MSlwl)));
-    resultsArray(k, 11) = modelfrrounded;                                           % Froude length number (-)
+    resultsArray(k, 11) = modelfrrounded;                                           % Froude length number (adjusted for Lwl change at different conditions) (-)
     resultsArray(k, 12) = (resultsArray(k, 6)+resultsArray(k, 7))/2;                % Model Heave (mm)
     resultsArray(k, 13) = atand((resultsArray(k, 6)-resultsArray(k, 7))/distbetwposts); % Model Trim (Degrees)
     resultsArray(k, 14) = resultsArray(k, 5) * sqrt(FStoMSratio);                   % Full scale speed (m/s)
