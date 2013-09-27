@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date:         September 11, 2013
+%# Date:         September 24, 2013
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -31,7 +31,7 @@
 %#
 %# -------------------------------------------------------------------------
 %#
-%# CHANGES    :  11/09/2013 - Created new script
+%# CHANGES    :  24/09/2013 - Created new script
 %#               dd/mm/yyyy - ...
 %#
 %# -------------------------------------------------------------------------
@@ -99,7 +99,7 @@ cutSamplesFromEnd = 0;
 %# ------------------------------------------------------------------------
 
 startRun = 81;  % Start at run x
-endRun   = 83;  % Stop at run y
+endRun   = 81;  % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
@@ -206,6 +206,19 @@ for k=startRun:endRun
     %# END: Columns as variables (RAW DATA)
     % /////////////////////////////////////////////////////////////////////  
    
+    % /////////////////////////////////////////////////////////////////////
+    % START: REAL UNITS COVNERSION
+    % ---------------------------------------------------------------------    
+    
+    [CH_0_Speed CH_0_Speed_Mean]     = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
+    [CH_1_LVDTFwd CH_1_LVDTFwd_Mean] = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
+    [CH_2_LVDTAft CH_2_LVDTAft_Mean] = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
+    [CH_3_Drag CH_3_Drag_Mean]       = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);    
+    
+    % ---------------------------------------------------------------------
+    % END: REAL UNITS COVNERSION
+    % /////////////////////////////////////////////////////////////////////       
+    
     %# -------------------------------------------------------------------------
     %# Fast Fourier Transform (FFT)
     %# -------------------------------------------------------------------------
@@ -218,8 +231,134 @@ for k=startRun:endRun
        runno = name(3:4);
        name  = name(2:5);
     end
+    
+    [m,n] = size(timeData); % Array dimensions
+    
+    heaveData = [];
+    for j=1:m
+        heaveData(j,1) = (CH_1_LVDTFwd(j)+CH_2_LVDTAft(j))/2;
+    end
+
+    figurename = sprintf('%s (averaged):: 1,500 and 1,804 tonnes, level, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    f = figure('Name',figurename,'NumberTitle','off');    
+    
+    Fs = 200;                     % Sampling frequency
+    T = 1/Fs;                     % Sample time
+    L = m;                        % Length of signal
+    t = (0:L-1)*T;                % Time vector
+    % Sum of a 50 Hz sinusoid and a 120 Hz sinusoid
+    %x = 0.7*sin(2*pi*50*t) + sin(2*pi*120*t); 
+    %y = x + 2*randn(size(t));    % Sinusoids plus noise
+    x = timeData;
+    n = 0.7*sin(2*pi*50*t) + sin(2*pi*120*t);
+    
+    heaveData = heaveData.';      % Flip a matrix about its main diagonal, turning row vectors into column vectors and vice versa.
+    
+    y = n + heaveData;            % Plot (WITH noise)
+    y = heaveData;               % Plot (NO noise)
+    
+    subplot(1,2,1)
+
+    plot(x,y)
+    title('{\bf Signal}')
+    xlabel('{\bf Time (seconds)}')
+    ylabel('{\bf Output (mm)}')
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]); 
+    
+    % Plot single-sided amplitude spectrum.
+    NFFT = 2^nextpow2(L); % Next power of 2 from length of y
+    Y = fft(y,NFFT)/L;
+    f = Fs/2*linspace(0,1,NFFT/2+1);
+
+    subplot(1,2,2)
+
+    plot(f,2*abs(Y(1:NFFT/2+1))) 
+    title('{\bf Single-Sided Amplitude Spectrum of y(t)}')
+    xlabel('{\bf Frequency (Hz)}')
+    ylabel('{\bf |Y(f)|}')
+    grid on;
+    box on;
+    axis square;
+
+    %# Save plot as PNG -------------------------------------------------------
+
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+    %# Figure size printed on paper
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');    
+    
+    %# Plot title -------------------------------------------------------------
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');    
+    
+    break;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    % Fwd LVDT data
     filename = sprintf('Run_%s_LVDT_Fwd', runno);
-    fft_plot(Fs,timeData,Raw_CH_1_LVDTFwd,1,length(Raw_CH_1_LVDTFwd),filename,name);
+    fft_plot(Fs,timeData,CH_1_LVDTFwd,1,length(CH_1_LVDTFwd),filename,name);
+
+    % Heave
+    filename = sprintf('Run_%s_Heave', runno);
+    fft_plot(Fs,timeData,CH_2_LVDTAft,1,length(CH_2_LVDTAft),filename,name);    
+    
+    % Aft LVDT data
     filename = sprintf('Run_%s_LVDT_Aft', runno);
-    fft_plot(Fs,timeData,Raw_CH_2_LVDTAft,1,length(Raw_CH_2_LVDTAft),filename,name);
+    fft_plot(Fs,timeData,CH_2_LVDTAft,1,length(CH_2_LVDTAft),filename,name);
+    
+    % ---------------------------------------------------------------------
+    % Plot data -----------------------------------------------------------
+    % ---------------------------------------------------------------------
+    figurename = sprintf('%s (averaged):: 1,500 and 1,804 tonnes, level, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    h = plot(timeData,CH_1_LVDTFwd,'*',timeData,heaveData,'+',timeData,CH_2_LVDTAft,'x');
+    xlabel('{\bf Time series [s]}');
+    ylabel('{\bf Output [mm]}');
+    grid on;
+    box on;
+    axis square;
+
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    % Colors and markers
+     set(h(1),'Color',[0 0 1],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1); %,'LineStyle','-','linewidth',1
+     set(h(2),'Color',[0 0.5 0],'Marker','+','MarkerSize',1,'LineStyle','-.','linewidth',1); %,'LineStyle','-','linewidth',1
+     set(h(3),'Color',[1 0 0],'Marker','x','MarkerSize',1,'LineStyle',':','linewidth',1); %,'LineStyle','-','linewidth',1
+    
+    %# Axis limitations
+    set(gca,'XLim',[timeData(1) timeData(end)]);
+    set(gca,'XTick',[timeData(1):5:timeData(end)]);
+    
+    %# Legend
+    hleg1 = legend('Fwd LVDT','Heave','Aft LVDT');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    %legend boxoff;      
+    
 end

@@ -232,10 +232,23 @@ testName = 'Heave Investigation';
 [avgcond12] = stats_avg(217:231,results);
 [avgcond13] = stats_avg(232:249,results);
 
+
 % *************************************************************************
-% 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
+% START: PLOT SWITCHES: 1 = ENABLED 
+%                       0 = DISABLED
+% -------------------------------------------------------------------------
+
+enableHeaveMinMaxAvgPlot    = 1; % Heave, min, max and averaged values
+
+% -------------------------------------------------------------------------
+% END: PLOT SWITCHES
+% *************************************************************************  
+
+
+% *************************************************************************
+% 1,500 AND 1,804 TONNES: Heave, min, max and averages
 % *************************************************************************     
-if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0
+if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
     
     startRun = 81;
     endRun   = 231;
@@ -322,7 +335,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend([h(1) h(3) h(5) h(7) h(9) h(11)],'Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
-    %legend boxoff;
+    legend boxoff;
     
     % Model speed vs. model heave (mm) ------------------------------------
     subplot(1,2,2)
@@ -388,7 +401,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
-    %legend boxoff;   
+    legend boxoff;   
     
     %# Save plot as PNG -------------------------------------------------------
 
@@ -466,7 +479,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 7: 1,500t (0 deg) min/max','Cond. 7: 1,500t (0 deg) All repeats','Cond. 10: 1,804t (0 deg) min/max','Cond. 10: 1,804t (0 deg) All repeats');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
-    %legend boxoff;
+    legend boxoff;
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(3,2,2)
@@ -507,7 +520,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 7: 1,500t (0 deg) Min','Cond. 10: 1,804t (0 deg) Min');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
-    %legend boxoff;
+    legend boxoff;
 
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(3,2,3)
@@ -546,8 +559,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gcf,'Color',[1,1,1]);    
     
     %# Axis limitations
-    set(gca,'XLim',[0.1 0.5]);
-    set(gca,'XTick',[0.1:0.05:0.5]);
+    set(gca,'XLim',[0.2 0.5]);
+    set(gca,'XTick',[0.2:0.05:0.5]);
     set(gca,'YLim',[-14 0]);
     set(gca,'YTick',[-14:2:0]);
     
@@ -555,7 +568,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) min/max','Cond. 8: 1,500t (-0.5 deg) All repeats','Cond. 11: 1,804t (-0.5 deg) min/max','Cond. 11: 1,804t (-0.5 deg) All repeats');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
-    %legend boxoff;
+    legend boxoff;
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(3,2,4)
@@ -587,8 +600,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gcf,'Color',[1,1,1]);    
     
     %# Axis limitations
-    set(gca,'XLim',[0.1 0.5]);
-    set(gca,'XTick',[0.1:0.05:0.5]);
+    set(gca,'XLim',[0.2 0.5]);
+    set(gca,'XTick',[0.2:0.05:0.5]);
     set(gca,'YLim',[-14 0]);
     set(gca,'YTick',[-14:2:0]);
     
@@ -596,7 +609,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) Min','Cond. 11: 1,804t (-0.5 deg) Min');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
-    %legend boxoff;     
+    legend boxoff;     
    
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(3,2,5)
@@ -635,8 +648,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gcf,'Color',[1,1,1]);    
     
     %# Axis limitations
-    set(gca,'XLim',[0.1 0.5]);
-    set(gca,'XTick',[0.1:0.05:0.5]);
+    set(gca,'XLim',[0.2 0.5]);
+    set(gca,'XTick',[0.2:0.05:0.5]);
     set(gca,'YLim',[-10 0]);
     set(gca,'YTick',[-10:2:0]);
     
@@ -644,7 +657,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) min/max','Cond. 9: 1,500t (0.5 deg) All repeats','Cond. 12: 1,804t (0.5 deg) min/max','Cond. 12: 1,804t (0.5 deg) All repeats');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
-    %legend boxoff;
+    legend boxoff;
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(3,2,6)
@@ -676,8 +689,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gcf,'Color',[1,1,1]);    
     
     %# Axis limitations
-    set(gca,'XLim',[0.1 0.5]);
-    set(gca,'XTick',[0.1:0.05:0.5]);
+    set(gca,'XLim',[0.2 0.5]);
+    set(gca,'XTick',[0.2:0.05:0.5]);
     set(gca,'YLim',[-10 0]);
     set(gca,'YTick',[-10:2:0]);
     
@@ -685,7 +698,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) Min','Cond. 12: 1,804t (0.5 deg) Min');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
-    %legend boxoff;    
+    legend boxoff;    
     
     %# Save plot as PNG -------------------------------------------------------
 
@@ -769,7 +782,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 7: 1,500t (0 deg) min/max','Cond. 7: 1,500t (0 deg) All repeats','Cond. 7: 1,500t Curve fitting','Cond. 10: 1,804t (0 deg) min/max','Cond. 10: 1,804t (0 deg) All repeats','Cond. 10: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
-    %legend boxoff;    
+    legend boxoff;    
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,2)
@@ -814,7 +827,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 7: 1,500t (0 deg) Min','Cond. 7: 1,500t Curve fitting','Cond. 10: 1,804t (0 deg) Min','Cond. 10: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
-    %legend boxoff;    
+    legend boxoff;    
     
     %# Save plot as PNG -------------------------------------------------------
 
@@ -898,7 +911,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) min/max','Cond. 8: 1,500t (-0.5 deg) All repeats','Cond. 8: 1,500t Curve fitting','Cond. 11: 1,804t (-0.5 deg) min/max','Cond. 11: 1,804t (-0.5 deg) All repeats','Cond. 11: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
-    %legend boxoff;    
+    legend boxoff;    
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,2)
@@ -943,7 +956,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) Min','Cond. 8: 1,500t Curve fitting','Cond. 11: 1,804t (-0.5 deg) Min','Cond. 11: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
-    %legend boxoff;    
+    legend boxoff;    
     
     %# Save plot as PNG -------------------------------------------------------
 
@@ -1031,7 +1044,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) min/max','Cond. 9: 1,500t (0.5 deg) All repeats','Cond. 9: 1,500t Curve fitting','Cond. 12: 1,804t (0.5 deg) min/max','Cond. 12: 1,804t (0.5 deg) All repeats','Cond. 12: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
-    %legend boxoff;    
+    legend boxoff;    
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,2)
@@ -1079,7 +1092,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) Min','Cond. 9: 1,500t Curve fitting','Cond. 12: 1,804t (0.5 deg) Min','Cond. 12: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');    
-    %legend boxoff;    
+    legend boxoff;    
     
     %# Save plot as PNG -------------------------------------------------------
 
@@ -1112,100 +1125,203 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     f = figure('Name',figurename,'NumberTitle','off');   
 
     % Heave vs. Crm ----------------------------------------
-    subplot(1,2,1)    
+    subplot(2,3,1)    
     
     x7  = minmaxcond7(20,5);
     y7  = minmaxcond7(20,6);
+    
     x8  = minmaxcond8(4,5);
     y8  = minmaxcond8(4,6);
+    
     x9  = minmaxcond9(5,5);
     y9  = minmaxcond9(5,6);
+    
     x10 = minmaxcond10(8,5);
     y10 = minmaxcond10(8,6);
+    
     x11 = minmaxcond11(4,5);
     y11 = minmaxcond11(4,6);
+    
     x12 = minmaxcond12(5,5);
     y12 = minmaxcond12(5,6);
     
-    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',7);
+    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',10);
     xlabel('{\bf Heave [mm]}');
     ylabel('{\bf Residual resistance coefficient C_{rm}*1000 [-]}');
-    title('{\bf Heave vs. C_{rm} for highest heave values only (Fr~0.42)}');
+    title('{\bf Heave vs. C_{rm} at Fr=0.42 for conditions 7-12}');
     grid on;
     box on;
     axis square;
-
-    % Colors and markers
-    %set(h(1),'Color',[0 0 1],'Marker','*','LineStyle',':','linewidth',1);
-    %set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle',':','linewidth',1);
-    %set(h(3),'Color',[1 0 0],'Marker','x','LineStyle',':','linewidth',1);
-    %set(h(4),'Color',[0 0.75 0.75],'Marker','o','LineStyle',':','linewidth',1);
-    %set(h(5),'Color',[0.75 0 0.75],'Marker','s','LineStyle',':','linewidth',1);
-    %set(h(6),'Color',[0.75 0.75 0],'Marker','d','LineStyle',':','linewidth',1);
 
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);    
     
-    %# Axis limitations
-    %set(gca,'XLim',[0.2 0.5]);
-    %set(gca,'XTick',[0.2:0.05:0.5]);
-    %set(gca,'YLim',[-14 0]);
-    %set(gca,'YTick',[-14:2:0]);
-    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
-    set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
-    %legend boxoff;      
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',9);
+    legend boxoff;      
+    
+    % Trim vs. Crm ----------------------------------------
+    subplot(2,3,2)    
+    
+    x7  = minmaxcond7(20,10);
+    y7  = minmaxcond7(20,6);
+    
+    x8  = minmaxcond8(4,10)-0.5;
+    y8  = minmaxcond8(4,6);
+    
+    x9  = minmaxcond9(5,10)+0.5;
+    y9  = minmaxcond9(5,6);
+    
+    x10 = minmaxcond10(8,10);
+    y10 = minmaxcond10(8,6);
+    
+    x11 = minmaxcond11(4,10)-0.5;
+    y11 = minmaxcond11(4,6);
+    
+    x12 = minmaxcond12(5,10)+0.5;
+    y12 = minmaxcond12(5,6);
+    
+    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',10);
+    xlabel('{\bf Trim [deg]}');
+    ylabel('{\bf Residual resistance coefficient C_{rm}*1000 [-]}');
+    title('{\bf Trim vs. C_{rm} at Fr=0.42 for conditions 7-12}');
+    grid on;
+    box on;
+    axis square;
+
+    %# Legend
+    hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',9);
+    legend boxoff;    
     
     % Fr vs. Crm ----------------------------------------
-    subplot(1,2,2)    
+    %subplot(2,2,3:4)    
+    subplot(2,3,3) 
     
     x7  = minmaxcond7(:,7);
     y7  = minmaxcond7(:,6);
+    
     x8  = minmaxcond8(:,7);
     y8  = minmaxcond8(:,6);
+    
     x9  = minmaxcond9(:,7);
     y9  = minmaxcond9(:,6);
+    
     x10 = minmaxcond10(:,7);
     y10 = minmaxcond10(:,6);
+    
     x11 = minmaxcond11(:,7);
     y11 = minmaxcond11(:,6);
+    
     x12 = minmaxcond12(:,7);
     y12 = minmaxcond12(:,6);
     
     h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
     ylabel('{\bf Residual resistance coefficient C_{rm}*1000 [-]}');
-    title('{\bf C_{rm} plot for conditions 7 to 12}');
+    title('{\bf C_{rm} plot for conditions 7-12}');
     grid on;
     box on;
     axis square;
 
     % Colors and markers
     set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
-    set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','-.','linewidth',1);
+    set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
     set(h(3),'Color',[1 0 0],'Marker','x','LineStyle','-.','linewidth',1);
     set(h(4),'Color',[0 0.75 0.75],'Marker','o','LineStyle','-','linewidth',1);
-    set(h(5),'Color',[0.75 0 0.75],'Marker','s','LineStyle',':','linewidth',1);
-    set(h(6),'Color',[0.75 0.75 0],'Marker','d','LineStyle',':','linewidth',1);
-
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(h(5),'Color',[0.75 0 0.75],'Marker','s','LineStyle','--','linewidth',1);
+    set(h(6),'Color',[0.75 0.75 0],'Marker','d','LineStyle','-.','linewidth',1);
     
     %# Axis limitations
-    %set(gca,'XLim',[0.2 0.5]);
-    %set(gca,'XTick',[0.2:0.05:0.5]);
-    %set(gca,'YLim',[-14 0]);
-    %set(gca,'YTick',[-14:2:0]);
+    set(gca,'XLim',[0.2 0.5]);
+    set(gca,'XTick',[0.2:0.05:0.5]);
+    set(gca,'YLim',[1.5 5]);
+    set(gca,'YTick',[1.5:0.5:5]);
     
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
-    set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
-    %legend boxoff;     
+    set(hleg1,'Location','SouthEast');
+    set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',9);
+    legend boxoff;     
+    
+    % Heave vs. Crm ----------------------------------------
+    subplot(2,3,4)    
+    
+    x7  = minmaxcond7(10,5);
+    y7  = minmaxcond7(10,6);
+    
+    x8  = minmaxcond8(2,5);
+    y8  = minmaxcond8(2,6);
+    
+    x9  = minmaxcond9(2,5);
+    y9  = minmaxcond9(2,6);
+    
+    x10 = minmaxcond10(4,5);
+    y10 = minmaxcond10(4,6);
+    
+    x11 = minmaxcond11(2,5);
+    y11 = minmaxcond11(2,6);
+    
+    x12 = minmaxcond12(3,5);
+    y12 = minmaxcond12(3,6);
+    
+    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',10);
+    xlabel('{\bf Heave [mm]}');
+    ylabel('{\bf Residual resistance coefficient C_{rm}*1000 [-]}');
+    title('{\bf Heave vs. C_{rm} at Fr=0.29 for conditions 7-12}');
+    grid on;
+    box on;
+    axis square;
+
+    %# Legend
+    hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',9);
+    legend boxoff;    
+    
+    % Trim vs. Crm ----------------------------------------
+    subplot(2,3,5)    
+    
+    x7  = minmaxcond7(10,10);
+    y7  = minmaxcond7(10,6);
+    
+    x8  = minmaxcond8(2,10)-0.5;
+    y8  = minmaxcond8(2,6);
+    
+    x9  = minmaxcond9(2,10)+0.5;
+    y9  = minmaxcond9(2,6);
+    
+    x10 = minmaxcond10(4,10);
+    y10 = minmaxcond10(4,6);
+    
+    x11 = minmaxcond11(2,10)-0.5;
+    y11 = minmaxcond11(2,6);
+    
+    x12 = minmaxcond12(3,10)+0.5;
+    y12 = minmaxcond12(3,6);
+    
+    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',10);
+    xlabel('{\bf Trim [deg]}');
+    ylabel('{\bf Residual resistance coefficient C_{rm}*1000 [-]}');
+    title('{\bf Trim vs. C_{rm} at Fr=0.29 for conditions 7-12}');
+    grid on;
+    box on;
+    axis square;
+
+    %# Legend
+    hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
+    set(hleg1,'Location','SouthEast');
+    set(hleg1,'Interpreter','none');  
+    set(hleg1,'FontSize',9);
+    legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
 
@@ -1216,7 +1332,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...

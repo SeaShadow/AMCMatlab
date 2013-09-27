@@ -224,10 +224,30 @@ testName = 'Resistance Test Summary';
 [avgcond12] = stats_avg(217:231,results);
 [avgcond13] = stats_avg(232:249,results);
 
+
+% *************************************************************************
+% START: PLOT SWITCHES: 1 = ENABLED 
+%                       0 = DISABLED
+% -------------------------------------------------------------------------
+
+enableTurbStimPlot          = 0; % Turbulence stimulator investigation
+enableTrimTabPlot           = 0; % Trim tab investigation
+enableResistancePlot        = 0; % Resistance plots, Ctm, power, heave and trim
+enableProhaskaPlot          = 0; % Prohaska plot, form factor at deep transom
+enableErrorPlot             = 0; % Error plots (% of max-avg to magnitude)
+enableMeanStdPlot           = 0; % Fr vs. mean of standard deviation
+enableStdPlot               = 0; % Fr vs. standard deviation
+%enableHeaveRtmHeaveTrimPlot = 1; % Heave vs. Rtm and Trim vs. Rtm for times series data at ONE speed
+
+% -------------------------------------------------------------------------
+% END: PLOT SWITCHES
+% *************************************************************************  
+
+
 % *************************************************************************
 % TURBULENCE STIMULATOR CONDITIONS
 % *************************************************************************     
-if length(cond1) ~= 0 || length(cond2) ~= 0 || length(cond3) ~= 0
+if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || length(cond3) ~= 0)
 
     startRun = 1;
     endRun   = 35;
@@ -378,7 +398,7 @@ end
 % *************************************************************************
 % TRIM TAB CONDITIONS
 % *************************************************************************     
-if length(cond4) ~= 0 || length(cond5) ~= 0 || length(cond6) ~= 0
+if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length(cond6) ~= 0)
 
     startRun = 36;
     endRun   = 62;
@@ -659,7 +679,7 @@ end
 % *************************************************************************
 % 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
 % *************************************************************************     
-if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0
+if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
     
     startRun = 81;
     endRun   = 231;
@@ -961,7 +981,7 @@ end
 % *************************************************************************
 % AVERAGED: 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
 % *************************************************************************
-if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0
+if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
     
     %startRun = R(1:1);
     %endRun   = R(end, 1);
@@ -1289,7 +1309,7 @@ end
 % *************************************************************************
 % DEEP TRANSOM PROHASKA CONDITION
 % *************************************************************************   
-if length(cond13) ~= 0
+if enableProhaskaPlot == 1 && length(cond13) ~= 0
     
     startRun = 232;
     endRun   = 249;
@@ -1483,14 +1503,14 @@ if length(cond13) ~= 0
 end
 
 % *************************************************************************
-% ERRORS: 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
+% ERRORS (REPEATS): 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
 % *************************************************************************
-if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0
+if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
 
     startRun = 81;
     endRun   = 231;
     
-    figurename = sprintf('%s:: 1,500 and 1,804 tonnes, Run %s to %s', 'Errors to Average for Resistance Tests', num2str(startRun), num2str(endRun));
+    figurename = sprintf('%s:: 1,500 and 1,804 tonnes, Run %s to %s', 'Errors to Average for Resistance Tests using Repeated Runs', num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');   
 
     % COND 7: Fr vs. Errors -----------------------------------------------
@@ -1542,7 +1562,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 7: Speed','Cond. 7: Fwd LVDT','Cond. 7: Aft LVDT','Cond. 7: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    %legend boxoff;
+    legend boxoff;
     
     % COND 8: Fr vs. Errors -----------------------------------------------
     subplot(2,3,2)
@@ -1593,7 +1613,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 8: Speed','Cond. 8: Fwd LVDT','Cond. 8: Aft LVDT','Cond. 8: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    %legend boxoff;    
+    legend boxoff;    
     
     % COND 9: Fr vs. Errors -----------------------------------------------
     subplot(2,3,3)
@@ -1644,7 +1664,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 9: Speed','Cond. 9: Fwd LVDT','Cond. 9: Aft LVDT','Cond. 9: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    %legend boxoff;    
+    legend boxoff;    
     
     % COND 10: Fr vs. Errors -----------------------------------------------
     subplot(2,3,4)
@@ -1695,7 +1715,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 10: Speed','Cond. 10: Fwd LVDT','Cond. 10: Aft LVDT','Cond. 10: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    %legend boxoff;
+    legend boxoff;
     
     % COND 11: Fr vs. Errors -----------------------------------------------
     subplot(2,3,5)
@@ -1746,7 +1766,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 11: Speed','Cond. 11: Fwd LVDT','Cond. 11: Aft LVDT','Cond. 11: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    %legend boxoff;    
+    legend boxoff;    
     
     % COND 12: Fr vs. Errors -----------------------------------------------
     subplot(2,3,6)
@@ -1797,7 +1817,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 12: Speed','Cond. 12: Fwd LVDT','Cond. 12: Aft LVDT','Cond. 12: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    %legend boxoff;
+    legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
 
@@ -1826,36 +1846,45 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
 end
 
 % *************************************************************************
-% ERRORS: 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
+% ERRORS (AVERAGED): 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
 % *************************************************************************
-if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0
+if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
 
     startRun = 81;
     endRun   = 231;
     
-    figurename = sprintf('%s:: 1,500 and 1,804 tonnes, Run %s to %s', 'Mean of standard deviation', num2str(startRun), num2str(endRun));
+    figurename = sprintf('%s:: 1,500 and 1,804 tonnes, Run %s to %s', 'Errors to Average for Resistance Tests using Averaged Runs', num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');   
 
-    % Fr vs. Mean of Standard Deviation -----------------------------------
+    % COND 7: Fr vs. Errors -----------------------------------------------
     subplot(2,3,1)
-    
-    x7 = []; y7 = [];
-    if length(avgcond7) ~= 0
-        x7(:,1) = avgcond7(:,11);
-        x7(:,2) = avgcond7(:,11);
-        x7(:,3) = avgcond7(:,11);
-        x7(:,4) = avgcond7(:,11);
-        y7(:,1) = avgcond7(:,49);
-        y7(:,2) = avgcond7(:,50);
-        y7(:,3) = avgcond7(:,51);
-        y7(:,4) = avgcond7(:,52);
+
+    if length(cond7) ~= 0
+        xavgcond7 = avgcond7(:,11); 
+        
+        %# Multiply resistance data by 1000 for better readibility
+        yavgcond71 = avgcond7(:,32); Raw_Data = num2cell(yavgcond71); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond71 = cell2mat(Raw_Data);
+        yavgcond72 = avgcond7(:,36); Raw_Data = num2cell(yavgcond72); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond72 = cell2mat(Raw_Data);
+        yavgcond73 = avgcond7(:,40); Raw_Data = num2cell(yavgcond73); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond73 = cell2mat(Raw_Data);
+        yavgcond74 = avgcond7(:,44); Raw_Data = num2cell(yavgcond74); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond74 = cell2mat(Raw_Data);
+        
+        x7  = xavgcond7;
+        y71 = yavgcond71;
+        y72 = yavgcond72;
+        y73 = yavgcond73;
+        y74 = yavgcond74;
+    else
+        x7  = 0;
+        y71 = 0;
+        y72 = 0;
+        y73 = 0;
+        y74 = 0;
     end
     
-    % Plot bar chart
-    bar(x7,y7);
+    h = plot(x7,y71,'-*',x7,y72,'-+',x7,y73,'-x',x7,y74,'-o','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Mean of standard deviation [-]}');
-    title('{\bf Condition 7: 1,500 tonnes, level}');
+    ylabel('{\bf Error to average [percent]}');
+    title('{\bf Condition 7: 1,804 tonnes, level}');
     grid on;
     box on;
     axis square;
@@ -1863,37 +1892,54 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);    
+    
+    %# Line width
+    set(h(1),'linewidth',1);
+    set(h(2),'linewidth',1);
+    set(h(3),'linewidth',1);    
+    set(h(4),'linewidth',1);    
     
     %# Axis limitations
     set(gca,'XLim',[0.1 0.5]); 
     set(gca,'XTick',[0.1:0.05:0.5]);
+    set(gca,'YLim',[0 75]);   
+    set(gca,'YTick',[0:5:75]);
 
     %# Legend
-    hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
-    set(hleg1,'Location','NorthWest');
+    hleg1 = legend('Cond. 7: Speed','Cond. 7: Fwd LVDT','Cond. 7: Aft LVDT','Cond. 7: Drag');
+    set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    %legend boxoff;
+    legend boxoff;
     
-    % Fr vs. Mean of Standard Deviation -----------------------------------
+    % COND 8: Fr vs. Errors -----------------------------------------------
     subplot(2,3,2)
-    
-    x8 = []; y8 = [];
-    if length(avgcond8) ~= 0
-        x8(:,1) = avgcond8(:,11);
-        x8(:,2) = avgcond8(:,11);
-        x8(:,3) = avgcond8(:,11);
-        x8(:,4) = avgcond8(:,11);
-        y8(:,1) = avgcond8(:,49);
-        y8(:,2) = avgcond8(:,50);
-        y8(:,3) = avgcond8(:,51);
-        y8(:,4) = avgcond8(:,52);
+
+    if length(cond8) ~= 0
+        xavgcond8 = avgcond8(:,11); 
+        
+        %# Multiply resistance data by 1000 for better readibility
+        yavgcond81 = avgcond8(:,32); Raw_Data = num2cell(yavgcond81); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond81 = cell2mat(Raw_Data);
+        yavgcond82 = avgcond8(:,36); Raw_Data = num2cell(yavgcond82); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond82 = cell2mat(Raw_Data);
+        yavgcond83 = avgcond8(:,40); Raw_Data = num2cell(yavgcond83); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond83 = cell2mat(Raw_Data);
+        yavgcond84 = avgcond8(:,44); Raw_Data = num2cell(yavgcond84); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond84 = cell2mat(Raw_Data);
+        
+        x8  = xavgcond8;
+        y81 = yavgcond81;
+        y82 = yavgcond82;
+        y83 = yavgcond83;
+        y84 = yavgcond84;
+    else
+        x8  = 0;
+        y81 = 0;
+        y82 = 0;
+        y83 = 0;
+        y84 = 0;
     end
     
-    % Plot bar chart
-    bar(x8,y8);
+    h = plot(x8,y81,'-*',x8,y82,'-+',x8,y83,'-x',x8,y84,'-o','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Mean of standard deviation [-]}');
-    title('{\bf Condition 8: 1,500 tonnes, -0.5 degrees by bow}');
+    ylabel('{\bf Error to average [percent]}');
+    title('{\bf Condition 8: 1,804 tonnes, -0.5 by bow}');
     grid on;
     box on;
     axis square;
@@ -1902,36 +1948,53 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);    
     
+    %# Line width
+    set(h(1),'linewidth',1);
+    set(h(2),'linewidth',1);
+    set(h(3),'linewidth',1);    
+    set(h(4),'linewidth',1);    
+    
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);   
     set(gca,'XTick',[0.2:0.05:0.5]);
+    set(gca,'YLim',[0 75]);   
+    set(gca,'YTick',[0:5:75]);
 
     %# Legend
-    hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
-    set(hleg1,'Location','NorthWest');
+    hleg1 = legend('Cond. 8: Speed','Cond. 8: Fwd LVDT','Cond. 8: Aft LVDT','Cond. 8: Drag');
+    set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    %legend boxoff;    
+    legend boxoff;    
     
-    % Fr vs. Mean of Standard Deviation -----------------------------------
+    % COND 9: Fr vs. Errors -----------------------------------------------
     subplot(2,3,3)
-    
-    x9 = []; y9 = [];
-    if length(avgcond9) ~= 0
-        x9(:,1) = avgcond9(:,11);
-        x9(:,2) = avgcond9(:,11);
-        x9(:,3) = avgcond9(:,11);
-        x9(:,4) = avgcond9(:,11);
-        y9(:,1) = avgcond9(:,49);
-        y9(:,2) = avgcond9(:,50);
-        y9(:,3) = avgcond9(:,51);
-        y9(:,4) = avgcond9(:,52);
+
+    if length(cond9) ~= 0
+        xavgcond9 = avgcond9(:,11); 
+        
+        %# Multiply resistance data by 1000 for better readibility
+        yavgcond91 = avgcond9(:,32); Raw_Data = num2cell(yavgcond91); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond91 = cell2mat(Raw_Data);
+        yavgcond92 = avgcond9(:,36); Raw_Data = num2cell(yavgcond92); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond92 = cell2mat(Raw_Data);
+        yavgcond93 = avgcond9(:,40); Raw_Data = num2cell(yavgcond93); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond93 = cell2mat(Raw_Data);
+        yavgcond94 = avgcond9(:,44); Raw_Data = num2cell(yavgcond94); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond94 = cell2mat(Raw_Data);
+        
+        x9  = xavgcond9;
+        y91 = yavgcond91;
+        y92 = yavgcond92;
+        y93 = yavgcond93;
+        y94 = yavgcond94;
+    else
+        x9  = 0;
+        y91 = 0;
+        y92 = 0;
+        y93 = 0;
+        y94 = 0;
     end
     
-    % Plot bar chart
-    bar(x9,y9);
+    h = plot(x9,y91,'-*',x9,y92,'-+',x9,y93,'-x',x9,y94,'-o','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Mean of standard deviation [-]}');
-    title('{\bf Condition 9: 1,500 tonnes, 0.5 degrees by stern}');
+    ylabel('{\bf Error to average [percent]}');
+    title('{\bf Condition 9: 1,500 tonnes, 0.5 by stern}');
     grid on;
     box on;
     axis square;
@@ -1940,35 +2003,52 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);    
     
+    %# Line width
+    set(h(1),'linewidth',1);
+    set(h(2),'linewidth',1);
+    set(h(3),'linewidth',1);    
+    set(h(4),'linewidth',1);    
+    
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);   
     set(gca,'XTick',[0.2:0.05:0.5]);
+    set(gca,'YLim',[0 75]);   
+    set(gca,'YTick',[0:5:75]);
 
     %# Legend
-    hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
-    set(hleg1,'Location','NorthWest');
+    hleg1 = legend('Cond. 9: Speed','Cond. 9: Fwd LVDT','Cond. 9: Aft LVDT','Cond. 9: Drag');
+    set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    %legend boxoff;
+    legend boxoff;    
     
-    % Fr vs. Mean of Standard Deviation -----------------------------------
+    % COND 10: Fr vs. Errors -----------------------------------------------
     subplot(2,3,4)
-    
-    x10 = []; y10 = [];
-    if length(avgcond10) ~= 0
-        x10(:,1) = avgcond10(:,11);
-        x10(:,2) = avgcond10(:,11);
-        x10(:,3) = avgcond10(:,11);
-        x10(:,4) = avgcond10(:,11);
-        y10(:,1) = avgcond10(:,49);
-        y10(:,2) = avgcond10(:,50);
-        y10(:,3) = avgcond10(:,51);
-        y10(:,4) = avgcond10(:,52);
+
+    if length(cond10) ~= 0
+        xavgcond10 = avgcond10(:,11); 
+        
+        %# Multiply resistance data by 1000 for better readibility
+        yavgcond101 = avgcond10(:,32); Raw_Data = num2cell(yavgcond101); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond101 = cell2mat(Raw_Data);
+        yavgcond102 = avgcond10(:,36); Raw_Data = num2cell(yavgcond102); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond102 = cell2mat(Raw_Data);
+        yavgcond103 = avgcond10(:,40); Raw_Data = num2cell(yavgcond103); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond103 = cell2mat(Raw_Data);
+        yavgcond104 = avgcond10(:,44); Raw_Data = num2cell(yavgcond104); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond104 = cell2mat(Raw_Data);
+        
+        x10  = xavgcond10;
+        y101 = yavgcond101;
+        y102 = yavgcond102;
+        y103 = yavgcond103;
+        y104 = yavgcond104;
+    else
+        x10  = 0;
+        y101 = 0;
+        y102 = 0;
+        y103 = 0;
+        y104 = 0;
     end
     
-    % Plot bar chart
-    bar(x10,y10);
+    h = plot(x10,y101,'-*',x10,y102,'-+',x10,y103,'-x',x10,y104,'-o','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Mean of standard deviation [-]}');
+    ylabel('{\bf Error to average [percent]}');
     title('{\bf Condition 10: 1,804 tonnes, level}');
     grid on;
     box on;
@@ -1978,36 +2058,53 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);    
     
+    %# Line width
+    set(h(1),'linewidth',1);
+    set(h(2),'linewidth',1);
+    set(h(3),'linewidth',1);    
+    set(h(4),'linewidth',1);    
+    
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);   
     set(gca,'XTick',[0.2:0.05:0.5]);
+    set(gca,'YLim',[0 75]);   
+    set(gca,'YTick',[0:5:75]);
 
     %# Legend
-    hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
-    set(hleg1,'Location','NorthWest');
+    hleg1 = legend('Cond. 10: Speed','Cond. 10: Fwd LVDT','Cond. 10: Aft LVDT','Cond. 10: Drag');
+    set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    %legend boxoff;    
+    legend boxoff;
     
-    % Fr vs. Mean of Standard Deviation -----------------------------------
+    % COND 11: Fr vs. Errors -----------------------------------------------
     subplot(2,3,5)
-    
-    x11 = []; y11 = [];
-    if length(avgcond11) ~= 0
-        x11(:,1) = avgcond11(:,11);
-        x11(:,2) = avgcond11(:,11);
-        x11(:,3) = avgcond11(:,11);
-        x11(:,4) = avgcond11(:,11);
-        y11(:,1) = avgcond11(:,49);
-        y11(:,2) = avgcond11(:,50);
-        y11(:,3) = avgcond11(:,51);
-        y11(:,4) = avgcond11(:,52);
+
+    if length(cond11) ~= 0
+        xavgcond11 = avgcond11(:,11); 
+        
+        %# Multiply resistance data by 1100 for better readibility
+        yavgcond111 = avgcond11(:,32); Raw_Data = num2cell(yavgcond111); Raw_Data = cellfun(@(y) y*110, Raw_Data, 'UniformOutput', false); yavgcond111 = cell2mat(Raw_Data);
+        yavgcond112 = avgcond11(:,36); Raw_Data = num2cell(yavgcond112); Raw_Data = cellfun(@(y) y*110, Raw_Data, 'UniformOutput', false); yavgcond112 = cell2mat(Raw_Data);
+        yavgcond113 = avgcond11(:,40); Raw_Data = num2cell(yavgcond113); Raw_Data = cellfun(@(y) y*110, Raw_Data, 'UniformOutput', false); yavgcond113 = cell2mat(Raw_Data);
+        yavgcond114 = avgcond11(:,44); Raw_Data = num2cell(yavgcond114); Raw_Data = cellfun(@(y) y*110, Raw_Data, 'UniformOutput', false); yavgcond114 = cell2mat(Raw_Data);
+        
+        x11  = xavgcond11;
+        y111 = yavgcond111;
+        y112 = yavgcond112;
+        y113 = yavgcond113;
+        y114 = yavgcond114;
+    else
+        x11  = 0;
+        y111 = 0;
+        y112 = 0;
+        y113 = 0;
+        y114 = 0;
     end
     
-    % Plot bar chart
-    bar(x11,y11);
+    h = plot(x11,y111,'-*',x11,y112,'-+',x11,y113,'-x',x11,y114,'-o','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Mean of standard deviation [-]}');
-    title('{\bf Condition 11: 1,804 tonnes, -0.5 degrees by bow}');
+    ylabel('{\bf Error to average [percent]}');
+    title('{\bf Condition 11: 1,804 tonnes, -0.5 by bow}');
     grid on;
     box on;
     axis square;
@@ -2016,53 +2113,78 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);    
     
+    %# Line width
+    set(h(1),'linewidth',1);
+    set(h(2),'linewidth',1);
+    set(h(3),'linewidth',1);    
+    set(h(4),'linewidth',1);    
+    
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);   
     set(gca,'XTick',[0.2:0.05:0.5]);
+    set(gca,'YLim',[0 75]);   
+    set(gca,'YTick',[0:5:75]);
 
     %# Legend
-    hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
-    set(hleg1,'Location','NorthWest');
+    hleg1 = legend('Cond. 11: Speed','Cond. 11: Fwd LVDT','Cond. 11: Aft LVDT','Cond. 11: Drag');
+    set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    %legend boxoff;    
+    legend boxoff;    
     
-    % Fr vs. Mean of Standard Deviation -----------------------------------
+    % COND 12: Fr vs. Errors -----------------------------------------------
     subplot(2,3,6)
-    
-    x12 = []; y12 = [];
-    if length(avgcond12) ~= 0
-        x12(:,1) = avgcond12(:,11);
-        x12(:,2) = avgcond12(:,11);
-        x12(:,3) = avgcond12(:,11);
-        x12(:,4) = avgcond12(:,11);
-        y12(:,1) = avgcond12(:,49);
-        y12(:,2) = avgcond12(:,50);
-        y12(:,3) = avgcond12(:,51);
-        y12(:,4) = avgcond12(:,52);
+
+    if length(cond12) ~= 0
+        xavgcond12 = avgcond12(:,11); 
+        
+        %# Multiply resistance data by 100 for better readibility
+        yavgcond121 = avgcond12(:,32); Raw_Data = num2cell(yavgcond121); Raw_Data = cellfun(@(y) y*120, Raw_Data, 'UniformOutput', false); yavgcond121 = cell2mat(Raw_Data);
+        yavgcond122 = avgcond12(:,36); Raw_Data = num2cell(yavgcond122); Raw_Data = cellfun(@(y) y*120, Raw_Data, 'UniformOutput', false); yavgcond122 = cell2mat(Raw_Data);
+        yavgcond123 = avgcond12(:,40); Raw_Data = num2cell(yavgcond123); Raw_Data = cellfun(@(y) y*120, Raw_Data, 'UniformOutput', false); yavgcond123 = cell2mat(Raw_Data);
+        yavgcond124 = avgcond12(:,44); Raw_Data = num2cell(yavgcond124); Raw_Data = cellfun(@(y) y*120, Raw_Data, 'UniformOutput', false); yavgcond124 = cell2mat(Raw_Data);
+        
+        x12  = xavgcond12;
+        y121 = yavgcond121;
+        y122 = yavgcond122;
+        y123 = yavgcond123;
+        y124 = yavgcond124;
+    else
+        x12  = 0;
+        y121 = 0;
+        y122 = 0;
+        y123 = 0;
+        y124 = 0;
     end
     
-    % Plot bar chart
-    bar(x12,y12);
+    h = plot(x12,y121,'-*',x12,y122,'-+',x12,y123,'-x',x12,y124,'-o','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Mean of standard deviation [-]}');
-    title('{\bf Condition 12: 1,804 tonnes, 0.5 degrees by stern}');
+    ylabel('{\bf Error to average [percent]}');
+    title('{\bf Condition 12: 1,804 tonnes, 0.5 by stern}');
     grid on;
     box on;
     axis square;
-
+        
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);    
     
+    %# Line width
+    set(h(1),'linewidth',1);
+    set(h(2),'linewidth',1);
+    set(h(3),'linewidth',1);    
+    set(h(4),'linewidth',1);    
+    
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);   
     set(gca,'XTick',[0.2:0.05:0.5]);
+    set(gca,'YLim',[0 75]);   
+    set(gca,'YTick',[0:5:75]);
 
     %# Legend
-    hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
-    set(hleg1,'Location','NorthWest');
+    hleg1 = legend('Cond. 12: Speed','Cond. 12: Fwd LVDT','Cond. 12: Aft LVDT','Cond. 12: Drag');
+    set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    %legend boxoff;
+    legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
 
@@ -2082,9 +2204,587 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         'HorizontalAlignment', 'center');      
       
     %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Mean_of_Standard_Deviation_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
+    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Errors_Resistance_Data_Plots_Averaged.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Mean_of_Standard_Deviation_Plots.png', '_averaged', num2str(startRun), num2str(endRun));
+    plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Errors_Resistance_Data_Plots_Averaged.png', '_averaged', num2str(startRun), num2str(endRun));
+    saveas(f, plotsavename);                % Save plot as PNG
+    %close;
+    
+end
+
+% *************************************************************************
+% MEAN STANDARD DEVIATION: 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
+% *************************************************************************
+if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
+
+    startRun = 81;
+    endRun   = 231;
+    
+    figurename = sprintf('%s:: 1,500 and 1,804 tonnes, Run %s to %s', 'Averaged Mean of Standard Deviation', num2str(startRun), num2str(endRun));
+    f = figure('Name',figurename,'NumberTitle','off');   
+
+    % Fr vs. Mean of Standard Deviation -----------------------------------
+    subplot(2,3,1)
+    
+    x7 = []; y7 = [];
+    if length(avgcond7) ~= 0
+        x7(:,1) = avgcond7(:,11);
+        x7(:,2) = avgcond7(:,11);
+        x7(:,3) = avgcond7(:,11);
+        x7(:,4) = avgcond7(:,11);
+        y7(:,1) = avgcond7(:,49);
+        y7(:,2) = avgcond7(:,50);
+        y7(:,3) = avgcond7(:,51);
+        y7(:,4) = avgcond7(:,52);
+    end
+    
+    % Plot bar chart
+    bar(x7,y7,0.5);
+    xlabel('{\bf Froude length number [-]}');
+    ylabel('{\bf Mean of standard deviation [-]}');
+    title('{\bf Condition 7: 1,500 tonnes, level}');
+    grid on;
+    box on;
+    axis square;
+        
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);    
+    
+    %# Axis limitations
+    set(gca,'XLim',[0.1 0.5]); 
+    set(gca,'XTick',[0.1:0.05:0.5]);
+
+    %# Legend
+    hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
+    
+    % Fr vs. Mean of Standard Deviation -----------------------------------
+    subplot(2,3,2)
+    
+    x8 = []; y8 = [];
+    if length(avgcond8) ~= 0
+        x8(:,1) = avgcond8(:,11);
+        x8(:,2) = avgcond8(:,11);
+        x8(:,3) = avgcond8(:,11);
+        x8(:,4) = avgcond8(:,11);
+        y8(:,1) = avgcond8(:,49);
+        y8(:,2) = avgcond8(:,50);
+        y8(:,3) = avgcond8(:,51);
+        y8(:,4) = avgcond8(:,52);
+    end
+    
+    % Plot bar chart
+    bar(x8,y8,0.5);
+    xlabel('{\bf Froude length number [-]}');
+    ylabel('{\bf Mean of standard deviation [-]}');
+    title('{\bf Condition 8: 1,500 tonnes, -0.5 degrees by bow}');
+    grid on;
+    box on;
+    axis square;
+        
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);    
+    
+    %# Axis limitations
+    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XTick',[0.2:0.05:0.5]);
+
+    %# Legend
+    hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;    
+    
+    % Fr vs. Mean of Standard Deviation -----------------------------------
+    subplot(2,3,3)
+    
+    x9 = []; y9 = [];
+    if length(avgcond9) ~= 0
+        x9(:,1) = avgcond9(:,11);
+        x9(:,2) = avgcond9(:,11);
+        x9(:,3) = avgcond9(:,11);
+        x9(:,4) = avgcond9(:,11);
+        y9(:,1) = avgcond9(:,49);
+        y9(:,2) = avgcond9(:,50);
+        y9(:,3) = avgcond9(:,51);
+        y9(:,4) = avgcond9(:,52);
+    end
+    
+    % Plot bar chart
+    bar(x9,y9,0.5);
+    xlabel('{\bf Froude length number [-]}');
+    ylabel('{\bf Mean of standard deviation [-]}');
+    title('{\bf Condition 9: 1,500 tonnes, 0.5 degrees by stern}');
+    grid on;
+    box on;
+    axis square;
+        
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);    
+    
+    %# Axis limitations
+    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XTick',[0.2:0.05:0.5]);
+
+    %# Legend
+    hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
+    
+    % Fr vs. Mean of Standard Deviation -----------------------------------
+    subplot(2,3,4)
+    
+    x10 = []; y10 = [];
+    if length(avgcond10) ~= 0
+        x10(:,1) = avgcond10(:,11);
+        x10(:,2) = avgcond10(:,11);
+        x10(:,3) = avgcond10(:,11);
+        x10(:,4) = avgcond10(:,11);
+        y10(:,1) = avgcond10(:,49);
+        y10(:,2) = avgcond10(:,50);
+        y10(:,3) = avgcond10(:,51);
+        y10(:,4) = avgcond10(:,52);
+    end
+    
+    % Plot bar chart
+    bar(x10,y10,0.5);
+    xlabel('{\bf Froude length number [-]}');
+    ylabel('{\bf Mean of standard deviation [-]}');
+    title('{\bf Condition 10: 1,804 tonnes, level}');
+    grid on;
+    box on;
+    axis square;
+        
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);    
+    
+    %# Axis limitations
+    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XTick',[0.2:0.05:0.5]);
+
+    %# Legend
+    hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;    
+    
+    % Fr vs. Mean of Standard Deviation -----------------------------------
+    subplot(2,3,5)
+    
+    x11 = []; y11 = [];
+    if length(avgcond11) ~= 0
+        x11(:,1) = avgcond11(:,11);
+        x11(:,2) = avgcond11(:,11);
+        x11(:,3) = avgcond11(:,11);
+        x11(:,4) = avgcond11(:,11);
+        y11(:,1) = avgcond11(:,49);
+        y11(:,2) = avgcond11(:,50);
+        y11(:,3) = avgcond11(:,51);
+        y11(:,4) = avgcond11(:,52);
+    end
+    
+    % Plot bar chart
+    bar(x11,y11,0.5);
+    xlabel('{\bf Froude length number [-]}');
+    ylabel('{\bf Mean of standard deviation [-]}');
+    title('{\bf Condition 11: 1,804 tonnes, -0.5 degrees by bow}');
+    grid on;
+    box on;
+    axis square;
+        
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);    
+    
+    %# Axis limitations
+    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XTick',[0.2:0.05:0.5]);
+
+    %# Legend
+    hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;    
+    
+    % Fr vs. Mean of Standard Deviation -----------------------------------
+    subplot(2,3,6)
+    
+    x12 = []; y12 = [];
+    if length(avgcond12) ~= 0
+        x12(:,1) = avgcond12(:,11);
+        x12(:,2) = avgcond12(:,11);
+        x12(:,3) = avgcond12(:,11);
+        x12(:,4) = avgcond12(:,11);
+        y12(:,1) = avgcond12(:,49);
+        y12(:,2) = avgcond12(:,50);
+        y12(:,3) = avgcond12(:,51);
+        y12(:,4) = avgcond12(:,52);
+    end
+    
+    % Plot bar chart
+    bar(x12,y12,0.5);
+    xlabel('{\bf Froude length number [-]}');
+    ylabel('{\bf Mean of standard deviation [-]}');
+    title('{\bf Condition 12: 1,804 tonnes, 0.5 degrees by stern}');
+    grid on;
+    box on;
+    axis square;
+
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);    
+    
+    %# Axis limitations
+    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XTick',[0.2:0.05:0.5]);
+
+    %# Legend
+    hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
+    
+    %# Save plot as PNG -------------------------------------------------------
+
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+    %# Figure size printed on paper
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');    
+    
+    %# Plot title -------------------------------------------------------------
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');      
+      
+    %# Save plots as PDF and PNG
+    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Fr_vs_Standard_Deviation_Mean_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
+    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+    plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Fr_vs_Standard_Deviation_Mean_Plots.png', '_averaged', num2str(startRun), num2str(endRun));
+    saveas(f, plotsavename);                % Save plot as PNG
+    %close;
+    
+end
+
+% *************************************************************************
+% STANDARD DEVIATION: 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
+% *************************************************************************
+if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
+
+    startRun = 81;
+    endRun   = 231;
+    
+    figurename = sprintf('%s:: 1,500 and 1,804 tonnes, Run %s to %s', 'Averaged Standard Deviation', num2str(startRun), num2str(endRun));
+    f = figure('Name',figurename,'NumberTitle','off');   
+
+    % Fr vs. Standard Deviation -------------------------------------------
+    subplot(2,3,1)
+    
+    if length(avgcond7) ~= 0
+        x7sp = avgcond7(:,11);
+        x7fl = avgcond7(:,11);
+        x7al = avgcond7(:,11);
+        x7dr = avgcond7(:,11);
+        
+        y7sp = avgcond7(:,45);
+        Raw_Data = num2cell(y7sp); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); y7sp = cell2mat(Raw_Data);
+        y7fl = avgcond7(:,46);
+        y7al = avgcond7(:,47);
+        y7dr = avgcond7(:,48);
+        Raw_Data = num2cell(y7dr); Raw_Data = cellfun(@(y) y/100, Raw_Data, 'UniformOutput', false); y7dr = cell2mat(Raw_Data);
+    end
+    
+    % Plot bar chart
+    h = plot(x7sp,y7sp,'*',x7fl,y7fl,'+',x7al,y7al,'x',x7dr,y7dr,'o','MarkerSize',7);
+    xlabel('{\bf Froude length number [-]}');
+    ylabel('{\bf Standard deviation [-]}');
+    title('{\bf Condition 7: 1,500 tonnes, level}');
+    grid on;
+    box on;
+    axis square;
+        
+    % Colors and markers    
+    set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
+    set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
+    set(h(3),'Color',[1 0 0],'Marker','x','LineStyle','-.','linewidth',1);
+    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);     
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);    
+    
+    %# Axis limitations
+    set(gca,'XLim',[0.1 0.5]); 
+    set(gca,'XTick',[0.1:0.05:0.5]);
+
+    %# Legend
+    hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
+    
+    % Fr vs. Standard Deviation -------------------------------------------
+    subplot(2,3,2)
+    
+    if length(avgcond8) ~= 0
+        x8sp = avgcond8(:,11);
+        x8fl = avgcond8(:,11);
+        x8al = avgcond8(:,11);
+        x8dr = avgcond8(:,11);
+        
+        y8sp = avgcond8(:,45);
+        Raw_Data = num2cell(y8sp); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); y8sp = cell2mat(Raw_Data);
+        y8fl = avgcond8(:,46);
+        y8al = avgcond8(:,47);
+        y8dr = avgcond8(:,48);
+        Raw_Data = num2cell(y8dr); Raw_Data = cellfun(@(y) y/100, Raw_Data, 'UniformOutput', false); y8dr = cell2mat(Raw_Data);
+    end
+    
+    % Plot bar chart
+    h = plot(x8sp,y8sp,'*',x8fl,y8fl,'+',x8al,y8al,'x',x8dr,y8dr,'o','MarkerSize',7);
+    xlabel('{\bf Froude length number [-]}');
+    ylabel('{\bf Standard deviation [-]}');
+    title('{\bf Condition 8: 1,500 tonnes, -0.5 degrees by bow}');
+    grid on;
+    box on;
+    axis square;
+        
+    % Colors and markers    
+    set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
+    set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
+    set(h(3),'Color',[1 0 0],'Marker','x','LineStyle','-.','linewidth',1);
+    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);     
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);    
+    
+    %# Axis limitations
+    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XTick',[0.2:0.05:0.5]);
+
+    %# Legend
+    hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;    
+    
+    % Fr vs. Standard Deviation -------------------------------------------
+    subplot(2,3,3)
+    
+    if length(avgcond9) ~= 0
+        x9sp = avgcond9(:,11);
+        x9fl = avgcond9(:,11);
+        x9al = avgcond9(:,11);
+        x9dr = avgcond9(:,11);
+        
+        y9sp = avgcond9(:,45);
+        Raw_Data = num2cell(y9sp); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); y9sp = cell2mat(Raw_Data);
+        y9fl = avgcond9(:,46);
+        y9al = avgcond9(:,47);
+        y9dr = avgcond9(:,48);
+        Raw_Data = num2cell(y9dr); Raw_Data = cellfun(@(y) y/100, Raw_Data, 'UniformOutput', false); y9dr = cell2mat(Raw_Data);
+    end
+    
+    % Plot bar chart
+    h = plot(x9sp,y9sp,'*',x9fl,y9fl,'+',x9al,y9al,'x',x9dr,y9dr,'o','MarkerSize',7);
+    xlabel('{\bf Froude length number [-]}');
+    ylabel('{\bf Standard deviation [-]}');
+    title('{\bf Condition 9: 1,500 tonnes, 0.5 degrees by stern}');
+    grid on;
+    box on;
+    axis square;
+        
+    % Colors and markers    
+    set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
+    set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
+    set(h(3),'Color',[1 0 0],'Marker','x','LineStyle','-.','linewidth',1);
+    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);     
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);    
+    
+    %# Axis limitations
+    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XTick',[0.2:0.05:0.5]);
+
+    %# Legend
+    hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
+    
+    % Fr vs. Standard Deviation -------------------------------------------
+    subplot(2,3,4)
+    
+    if length(avgcond10) ~= 0
+        x10sp = avgcond10(:,11);
+        x10fl = avgcond10(:,11);
+        x10al = avgcond10(:,11);
+        x10dr = avgcond10(:,11);
+        
+        y10sp = avgcond10(:,45);
+        Raw_Data = num2cell(y10sp); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); y10sp = cell2mat(Raw_Data);
+        y10fl = avgcond10(:,46);
+        y10al = avgcond10(:,47);
+        y10dr = avgcond10(:,48);
+        Raw_Data = num2cell(y10dr); Raw_Data = cellfun(@(y) y/100, Raw_Data, 'UniformOutput', false); y10dr = cell2mat(Raw_Data);
+    end
+    
+    % Plot bar chart
+    h = plot(x10sp,y10sp,'*',x10fl,y10fl,'+',x10al,y10al,'x',x10dr,y10dr,'o','MarkerSize',7);
+    xlabel('{\bf Froude length number [-]}');
+    ylabel('{\bf Standard deviation [-]}');
+    title('{\bf Condition 10: 1,804 tonnes, level}');
+    grid on;
+    box on;
+    axis square;
+        
+    % Colors and markers
+    set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
+    set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
+    set(h(3),'Color',[1 0 0],'Marker','x','LineStyle','-.','linewidth',1);
+    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);     
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XTick',[0.2:0.05:0.5]);
+
+    %# Legend
+    hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;    
+    
+    % Fr vs. Standard Deviation -------------------------------------------
+    subplot(2,3,5)
+    
+    if length(avgcond11) ~= 0
+        x11sp = avgcond11(:,11);
+        x11fl = avgcond11(:,11);
+        x11al = avgcond11(:,11);
+        x11dr = avgcond11(:,11);
+        
+        y11sp = avgcond11(:,45);
+        Raw_Data = num2cell(y11sp); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); y11sp = cell2mat(Raw_Data);
+        y11fl = avgcond11(:,46);
+        y11al = avgcond11(:,47);
+        y11dr = avgcond11(:,48);
+        Raw_Data = num2cell(y11dr); Raw_Data = cellfun(@(y) y/100, Raw_Data, 'UniformOutput', false); y11dr = cell2mat(Raw_Data);
+    end
+    
+    % Plot bar chart
+    h = plot(x11sp,y11sp,'*',x11fl,y11fl,'+',x11al,y11al,'x',x11dr,y11dr,'o','MarkerSize',7);
+    xlabel('{\bf Froude length number [-]}');
+    ylabel('{\bf Standard deviation [-]}');
+    title('{\bf Condition 11: 1,804 tonnes, -0.5 degrees by bow}');
+    grid on;
+    box on;
+    axis square;
+
+    % Colors and markers    
+    set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
+    set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
+    set(h(3),'Color',[1 0 0],'Marker','x','LineStyle','-.','linewidth',1);
+    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);     
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XTick',[0.2:0.05:0.5]);
+
+    %# Legend
+    hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;    
+    
+    % Fr vs. Standard Deviation -------------------------------------------
+    subplot(2,3,6)
+    
+    if length(avgcond12) ~= 0
+        x12sp = avgcond12(:,11);
+        x12fl = avgcond12(:,11);
+        x12al = avgcond12(:,11);
+        x12dr = avgcond12(:,11);
+        
+        y12sp = avgcond12(:,45);
+        Raw_Data = num2cell(y12sp); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); y12sp = cell2mat(Raw_Data);
+        y12fl = avgcond12(:,46);
+        y12al = avgcond12(:,47);
+        y12dr = avgcond12(:,48);
+        Raw_Data = num2cell(y12dr); Raw_Data = cellfun(@(y) y/100, Raw_Data, 'UniformOutput', false); y12dr = cell2mat(Raw_Data);
+    end
+    
+    % Plot bar chart
+    h = plot(x12sp,y12sp,'*',x12fl,y12fl,'+',x12al,y12al,'x',x12dr,y12dr,'o','MarkerSize',7);
+    xlabel('{\bf Froude length number [-]}');
+    ylabel('{\bf Standard deviation [-]}');
+    title('{\bf Condition 12: 1,804 tonnes, 0.5 degrees by stern}');
+    grid on;
+    box on;
+    axis square;
+
+    % Colors and markers    
+    set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
+    set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
+    set(h(3),'Color',[1 0 0],'Marker','x','LineStyle','-.','linewidth',1);
+    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);     
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XTick',[0.2:0.05:0.5]);
+
+    %# Legend
+    hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
+    
+    %# Save plot as PNG -------------------------------------------------------
+
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+    %# Figure size printed on paper
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');    
+    
+    %# Plot title -------------------------------------------------------------
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');      
+      
+    %# Save plots as PDF and PNG
+    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Fr_vs_Standard_Deviation_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
+    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+    plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Fr_vs_Standard_Deviation_Plots.png', '_averaged', num2str(startRun), num2str(endRun));
     saveas(f, plotsavename);                % Save plot as PNG
     %close;
     

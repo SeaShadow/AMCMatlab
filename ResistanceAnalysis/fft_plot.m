@@ -56,8 +56,8 @@ figurename = sprintf('Fast Fourier Transform (FFT): Run %s %s', name(2:3));
 f = figure('Name',figurename,'NumberTitle','off');
 
 x   = rawData;
-t   = timeData(sampleStart:sampleEnd,1);    % Time series
-x   = x(sampleStart:sampleEnd,1);           % Input Data
+t   = timeData(sampleStart:sampleEnd);      % Time series
+x   = x(sampleStart:sampleEnd);             % Input Data
 
 Fs  = samplefreq;                           % Sampling frequency
 T   = 1/Fs;                                 % Sample time
@@ -70,8 +70,10 @@ plot(t,x);
 xlabel('Time (s)');
 ylabel('Output (V)');
 title('{\bf Raw Data}');
-xlim([0 round(length(x)/Fs)]);
+%xlim([0 round(length(x)/Fs)]);
 grid on;
+box on;
+axis square;
 
 %# Figure size on screen (50% scaled, but same aspect ratio)
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -93,6 +95,8 @@ title('{\bf Single-Sided Amplitude Spectrum of y(t)}')
 xlabel('Frequency (Hz)')
 ylabel('|Y(f)|')
 grid on;
+box on;
+axis square;
 
 %# Figure size on screen (50% scaled, but same aspect ratio)
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)

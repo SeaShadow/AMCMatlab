@@ -23,6 +23,16 @@
 %#
 %# ITTC Guidelines:  7.5-02-02-01
 %#                   7.5-02-02-02
+%# ------------------------------------------------------------------------
+%#
+%# SCRIPTS  :    1 => analysis.m         Real units, save date to result array
+%#
+%#               -> Copy data from resultsArray.dat to full_resistance_data.dat
+%#
+%#               2 => analysis_stats.m    Resistance and error plots
+%#               3 => analysis_heave.m    Heave investigation related plots
+%#               4 => analysis_lvdts.m    Fr vs. fwd, aft and heave plots
+%#               5 => analysis_custom.m   Fr vs. Rtm/(VolDisp*p*g)*(1/Fr^2)
 %#
 %# ------------------------------------------------------------------------
 %#
@@ -203,22 +213,35 @@ cutSamplesFromEnd = 400;    % Cut last 2 seconds
 %# START FILE LOOP FOR RUNS startRun to endRun
 %# ------------------------------------------------------------------------
 
+% All runs
 startRun = 1;    % Start at run x
 endRun   = 249;  % Stop at run y
+
+% Custom range
+%startRun = 1;    % Start at run x
+%endRun   = 249;  % Stop at run y
+
+% Single runs
+%startRun = 102;    % Start at run x
+%endRun   = 104;    % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START PLOT REAL DATA SWITCH
-%# ------------------------------------------------------------------------
 
-plotrealdata = 0;   % 1 = plotting ENABLED and 0 =  plotting DISABLED
+% *************************************************************************
+% START: PLOT SWITCHES: 1 = ENABLED 
+%                       0 = DISABLED
+% -------------------------------------------------------------------------
 
-%# ------------------------------------------------------------------------
-%# END PLOT REAL DATA SWITCH
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+enableRawDataPlot      = 0; % Raw data plots of speed, fwd and aft LVDT and drag
+enableHvsRtmTvsRtmPlot = 0; % Heave vs. Rtm and trim vs. Rtm
+
+% -------------------------------------------------------------------------
+% END: PLOT SWITCHES
+% *************************************************************************  
+
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START DEFINE RUN NUMBERS BY TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -332,9 +355,16 @@ for k=startRun:endRun
     fPath = '_plots/';
     if isequal(exist(fPath, 'dir'),7)
         % Do nothing as directory exists
-    else    
+    else
         mkdir(fPath);
-    end    
+    end
+    
+    fPath = '_time_series_data/';
+    if isequal(exist(fPath, 'dir'),7)
+        % Do nothing as directory exists
+    else
+        mkdir(fPath);
+    end
     
     %# RUN directory (i.e. R01 for run 1)
 %     fPath = sprintf('_plots/%s', name(2:4));
@@ -343,7 +373,15 @@ for k=startRun:endRun
 %     else    
 %         mkdir(fPath);
 %     end
-    
+
+    %# Have directory
+    fPath = sprintf('_plots/%s', '_heave');
+    if isequal(exist(fPath, 'dir'),7)
+        % Do nothing as directory exists
+    else    
+        mkdir(fPath);
+    end
+
     %# Averaged directory
     fPath = sprintf('_plots/%s', '_averaged');
     if isequal(exist(fPath, 'dir'),7)
@@ -393,16 +431,41 @@ for k=startRun:endRun
     [CH_2_LVDTAft CH_2_LVDTAft_Mean] = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
     [CH_3_Drag CH_3_Drag_Mean]       = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);    
     
+    % Time series data array
+        %[1] Time           (s)
+        %[2] Speed          (m/s)
+        %[3] Forward LVDT   (mm)
+        %[4] Aft LVDT       (mm)
+        %[5] Drag           (g)
+    tsArray = [];
+    tsArray(:,1) = timeData;
+    tsArray(:,2) = CH_0_Speed;
+    tsArray(:,3) = CH_1_LVDTFwd;
+    tsArray(:,4) = CH_2_LVDTAft;
+    tsArray(:,5) = CH_3_Drag;
+    
+    if k > 99
+        runnumber = name(3:5);
+    else
+        runnumber = name(3:4);
+    end    
+    
+    tsA = tsArray;
+    filenameDat = sprintf('_time_series_data/R%s.dat',runnumber);
+    csvwrite(filenameDat, tsA)                                     % Export matrix tsA to a file delimited by the comma character      
+    %filenameTxt = sprintf('_time_series_data/R%s.txt',runnumber);
+    %dlmwrite(filenameTxt, tsA, 'delimiter', '\t', 'precision', 4)  % Export matrix tsA to a file delimited by the tab character and using a precision of four significant digits
+
     % ---------------------------------------------------------------------
     % END: REAL UNITS COVNERSION
     % /////////////////////////////////////////////////////////////////////     
    
     
     % *********************************************************************
-    % START: PLOTTING RAW DATA
-    % *********************************************************************     
+    % START: Plotting RAW data
+    % ---------------------------------------------------------------------
     
-    if plotrealdata == 1
+    if enableRawDataPlot == 1
     
         if k > 99
            runnumber = name(3:5);
@@ -540,10 +603,228 @@ for k=startRun:endRun
     
     end
     
-    % *********************************************************************
-    % END: PLOTTING RAW DATA
+    % ---------------------------------------------------------------------
+    % END: Plotting RAW data
     % *********************************************************************     
     
+    
+    % *********************************************************************
+    % START: Plotting heave vs. Rtm and trim vs. Rtm
+    % ---------------------------------------------------------------------
+    
+    if enableHvsRtmTvsRtmPlot == 1
+    
+        if k > 99
+           runnumber = name(3:5);
+        else
+           runnumber = name(3:4);
+        end    
+        
+        if any(RunNosCond1==k)
+            MSlwl    = MSlwl1500;      
+        elseif any(RunNosCond2==k)
+            MSlwl    = MSlwl1500;       
+        elseif any(RunNosCond3==k)
+            MSlwl    = MSlwl1500;
+        elseif any(RunNosCond4==k)
+            MSlwl    = MSlwl1500;
+        elseif any(RunNosCond5==k)
+            MSlwl    = MSlwl1500;
+        elseif any(RunNosCond6==k)
+            MSlwl    = MSlwl1500;
+        elseif any(RunNosCond7==k)
+            MSlwl    = MSlwl1500;      
+        elseif any(RunNosCond8==k)
+            MSlwl    = MSlwl1500bybow;
+        elseif any(RunNosCond9==k)
+            MSlwl    = MSlwl1500bystern;
+        elseif any(RunNosCond10==k)
+            MSlwl    = MSlwl1804;
+        elseif any(RunNosCond11==k)
+            MSlwl    = MSlwl1804bybow;
+        elseif any(RunNosCond12==k)
+            MSlwl    = MSlwl1804bystern;     
+        elseif any(RunNosCond13==k)
+            MSlwl    = MSlwl1500prohaska;
+        end
+        
+        tData     = timeData(startSamplePos:end-cutSamplesFromEnd);
+        speedData = CH_0_Speed(startSamplePos:end-cutSamplesFromEnd);
+        fLVDTData = CH_1_LVDTFwd(startSamplePos:end-cutSamplesFromEnd); 
+        aLVDTData = CH_2_LVDTAft(startSamplePos:end-cutSamplesFromEnd);
+        dragData  = CH_3_Drag(startSamplePos:end-cutSamplesFromEnd); 
+
+        modelFroudeNo = sprintf('%.2f',mean(speedData) / sqrt(gravconst*MSlwl));        
+        
+        % Array size
+        [m,n] = size(tData);        
+        
+        % Populate custom array
+        tsArray = [];
+        %# Results tsArray columns:
+            %[1]  Time          (s)
+            %[2]  Heave         (mm)
+            %[3]  Trim          (degrees)        
+            %[4]  Rtm           (N)
+        for j=1:m
+            tsArray(j,1) = tData(j);
+            tsArray(j,2) = (fLVDTData(j) + aLVDTData(j)) / 2;
+            tsArray(j,3) = atand((fLVDTData(j) - aLVDTData(j)) / distbetwposts);
+            tsArray(j,4) = (dragData(j) / 1000) * gravconst;
+        end
+  
+        % PLOTTING
+        figurename = sprintf('%s:: Heave vs. Rtm and trim vs. Rtm Plots, Run %s, Fr=%s', testName, runnumber, modelFroudeNo);
+        f = figure('Name',figurename,'NumberTitle','off');       
+
+        %# Time vs. Heave -----------------------------------------------------
+        subplot(2,3,1);
+
+        x = tsArray(:,1);
+        y = tsArray(:,2);
+        
+        h = plot(x,y,'*','MarkerSize',7);
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Heave [mm]}');
+        title('{\bf Time vs. Heave}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+
+        %# Axis limitations
+        xlim([round(x(1)) round(x(end))]);        
+        
+        % Colors and markers
+        set(h(1),'Color',[0 0 0],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);   
+        
+        %# Time vs. Trim -----------------------------------------------------
+        subplot(2,3,2);        
+        
+        x = tsArray(:,1);
+        y = tsArray(:,3);
+        
+        h = plot(x,y,'*','MarkerSize',7);
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Trim [deg]}');
+        title('{\bf Time vs. Trim}');
+        grid on;
+        box on;
+        axis square;
+
+        %# Axis limitations
+        xlim([round(x(1)) round(x(end))]);
+        
+        % Colors and markers
+        set(h(1),'Color',[0 0 0],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);         
+        
+        %# Time vs. Trim -----------------------------------------------------
+        subplot(2,3,2);        
+        
+        x = tsArray(:,1);
+        y = tsArray(:,3);
+        
+        h = plot(x,y,'*','MarkerSize',7);
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Trim [deg]}');
+        title('{\bf Time vs. Trim}');
+        grid on;
+        box on;
+        axis square;
+
+        %# Axis limitations
+        xlim([round(x(1)) round(x(end))]);
+        
+        % Colors and markers
+        set(h(1),'Color',[0 0 0],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);         
+        
+        %# Time vs. Rtm -----------------------------------------------------
+        subplot(2,3,3);
+
+        x = tsArray(:,1);
+        y = tsArray(:,4);
+        
+        h = plot(x,y,'*','MarkerSize',7);
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf R_{tm} [N]}');
+        title('{\bf Time vs. R_{tm}}');
+        grid on;
+        box on;
+        axis square;
+
+        %# Axis limitations
+        xlim([round(x(1)) round(x(end))]);
+        
+        % Colors and markers
+        set(h(1),'Color',[0 0 0],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);        
+        
+        %# Heave vs. Rtm -----------------------------------------------------
+        subplot(2,3,4);
+
+        x = tsArray(:,2);
+        y = tsArray(:,4);
+        
+        h = plot(x,y,'*','MarkerSize',7);
+        xlabel('{\bf Heave [mm]}');
+        ylabel('{\bf Total resistance R_{tm} [N]}');
+        title('{\bf Heave vs. R_{tm}}');
+        grid on;
+        box on;
+        axis square;
+
+        % Colors and markers
+        set(h(1),'Color',[0 0 1],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);   
+
+        %# Trim vs. Rtm -----------------------------------------------------
+        subplot(2,3,5);        
+        
+        x = tsArray(:,3);
+        y = tsArray(:,4);
+        
+        h = plot(x,y,'*','MarkerSize',7);
+        xlabel('{\bf Trim [deg]}');
+        ylabel('{\bf Total resistance R_{tm} [N]}');
+        title('{\bf Trim vs. R_{tm}}');
+        grid on;
+        box on;
+        axis square;        
+
+        % Colors and markers
+        set(h(1),'Color',[0 0 1],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);             
+        
+        %# Save plot as PNG -------------------------------------------------------
+
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');   
+
+        %# Plot title -------------------------------------------------------------
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('_plots/%s/R%s_Heave_vs_Rtm_and_Trim_vs_Rtm.pdf', '_heave', runnumber);
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('_plots/%s/R%s_Heave_vs_Rtm_and_Trim_vs_Rtm.png', '_heave', runnumber);
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;        
+        
+    end
+    
+    % ---------------------------------------------------------------------
+    % END: Plotting heave vs. Rtm and trim vs. Rtm
+    % *********************************************************************
+
     
     % /////////////////////////////////////////////////////////////////////
     % COLLECT AND DISPLAY RESULTS
@@ -757,7 +1038,7 @@ for k=startRun:endRun
     % ---------------------------------------------------------------------
     % Additional values added: 10/09/2013
     % ---------------------------------------------------------------------  
-    resultsArray(k, 16) = (resultsArray(k, 5)*MSlwl)/modelkinviscosity;                    % Model Reynolds Number (-)
+    resultsArray(k, 16) = (resultsArray(k, 5)*MSlwl)/modelkinviscosity;             % Model Reynolds Number (-)
     resultsArray(k, 17) = 0.075/(log10(resultsArray(k, 16))-2)^2;                   % Model Frictional Resistance Coefficient (ITTC'57) (-)
     if resultsArray(k, 16) < 10000000
         resultsArray(k, 18) = 10^(2.98651-10.8843*(log10(log10(resultsArray(k, 16))))+5.15283*(log10(log10(resultsArray(k, 16))))^2); % Model Frictional Resistance Coefficient (Grigson) (-)   
@@ -887,97 +1168,6 @@ dlmwrite('resultsArray.txt', M, 'delimiter', '\t', 'precision', 4)  % Export mat
 % ---------------------------------------------------------------------
 % END: Write results to CVS
 % /////////////////////////////////////////////////////////////////////
-
-% *************************************************************************
-% START: PLOTTING AVERAGED DATA
-% *************************************************************************
-
-break;
-
-R = resultsArray;    % Results array
-R(all(R==0,2),:)=[]; % Remove Zero rows from array
-
-figurename = sprintf('%s:: Averaged Data Plots, Run %s to %s', testName, num2str(startRun), num2str(endRun));
-f = figure('Name',figurename,'NumberTitle','off');   
-
-% Fr vs. Rtm (#9) or Ctm (#10) ---------------------------------------------------------
-%subplot(2,2,1:2) % Merged plot over two columns
-subplot(2,2,1)
-
-x = R(:,11);
-y = R(:,10);
-
-h = plot(x,y,'*b','MarkerSize',7);xlabel('{\bf Froude length number [-]}');ylabel('{\bf Total resistance coefficient [-]}');grid on;box on;%axis square;
-
-%# Axis limitations
-xlim([0 0.5]);
-%ylim([0 y(end)]);
-set(gca,'XTick',[0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-
-% Full scale speed vs. full scale effective power -------------------------
-subplot(2,2,2)
-
-x = R(:,15);
-y = R(:,26);
-
-h = plot(x,y,'*b','MarkerSize',7);xlabel('{\bf Full scale speed [knots]}');ylabel('{\bf Full scale effective power [W]}');grid on;box on;%axis square;
-
-%# Axis limitations
-xlim([10 30]);
-ylim([0 y(end)]);
-%set(gca,'XTick',[0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-
-% Model speed vs. model heave (mm) ----------------------------------------
-subplot(2,2,3)
-
-x = R(:,11);
-y = R(:,12);
-
-h = plot(x,y,'*b','MarkerSize',7);xlabel('{\bf Froude length number [-]}');ylabel('{\bf Heave [mm]}');grid on;box on;%axis square;
-
-%# Axis limitations
-xlim([0 0.5]);
-set(gca,'XTick',[0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-
-% Model speed vs. model trim (degrees) ------------------------------------
-subplot(2,2,4)
-
-x = R(:,11);
-y = R(:,13);
-
-h = plot(x,y,'*b','MarkerSize',7);xlabel('{\bf Froude length number [-]}');ylabel('{\bf Trim [Degrees]}');grid on;box on;%axis square;
-
-%# Axis limitations
-xlim([0 0.5]);
-set(gca,'XTick',[0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-
-%# Save plot as PNG -------------------------------------------------------
-
-%# Figure size on screen (50% scaled, but same aspect ratio)
-set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-%# Figure size printed on paper
-set(gcf, 'PaperUnits','centimeters');
-set(gcf, 'PaperSize',[XPlot YPlot]);
-set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-set(gcf, 'PaperOrientation','portrait');   
-
-%# Plot title -------------------------------------------------------------
-annotation('textbox', [0 0.9 1 0.1], ...
-    'String', strcat('{\bf ', figurename, '}'), ...
-    'EdgeColor', 'none', ...
-    'HorizontalAlignment', 'center');  
-
-%# Save plots as PDF and PNG
-%plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Resistance_Data_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
-%saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Resistance_Data_Plots.png', '_averaged', num2str(startRun), num2str(endRun));
-saveas(f, plotsavename);                % Save plot as PNG
-%close;
-
-% *************************************************************************
-% END:  PLOTTING AVERAGED DATA
-% *************************************************************************
 
 % -------------------------------------------------------------------------
 % View profile
