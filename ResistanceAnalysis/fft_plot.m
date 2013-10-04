@@ -65,7 +65,7 @@ L   = length(x);                            % Length of signal
 t   = (0:L-1)*T;                            % Time vector
 
 %# Plot RAW data ----------------------------------------------------------
-subplot(2,1,1);
+subplot(1,2,1);
 plot(t,x);
 xlabel('Time (s)');
 ylabel('Output (V)');
@@ -74,6 +74,10 @@ title('{\bf Raw Data}');
 grid on;
 box on;
 axis square;
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
 
 %# Figure size on screen (50% scaled, but same aspect ratio)
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -89,7 +93,7 @@ Y    = fft(x,NFFT)/L;
 f    = Fs/2*linspace(0,1,NFFT/2);
 
 % Plot single-sided amplitude spectrum ------------------------------------
-subplot(2,1,2);
+subplot(1,2,2);
 plot(f,2*abs(Y(1:NFFT/2))) 
 title('{\bf Single-Sided Amplitude Spectrum of y(t)}')
 xlabel('Frequency (Hz)')
@@ -97,6 +101,10 @@ ylabel('|Y(f)|')
 grid on;
 box on;
 axis square;
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
 
 %# Figure size on screen (50% scaled, but same aspect ratio)
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -138,4 +146,4 @@ else
 end
 plotsavename = sprintf('_plots/%s/FFT_%s.png', '_fft', savename);   % Assign save name
 print(gcf, '-djpeg', plotsavename);                                 % Save plot to _plots
-close;
+%close;

@@ -239,6 +239,27 @@ for k=startRun:endRun
         heaveData(j,1) = (CH_1_LVDTFwd(j)+CH_2_LVDTAft(j))/2;
     end
 
+    Fs = 200;                     % Sampling frequency
+    T = 1/Fs;                     % Sample time
+    L = m;                        % Length of signal
+    t = (0:L-1)*T;                % Time vector
+    
+    heaveData = heaveData.';
+    
+    n = 0.7*sin(2*pi*50*t) + sin(2*pi*120*t);
+    y = n + heaveData;            % Plot (WITH noise)
+    
+    filename = sprintf('Run_%s_LVDT_Fwd_Noise', runno);
+    fft_plot(Fs,timeData,y,1,length(y),filename,name);
+    
+    y = heaveData;                % Plot (NO noise)
+    
+    filename = sprintf('Run_%s_LVDT_Fwd', runno);
+    fft_plot(Fs,timeData,y,1,length(y),filename,name);    
+
+    break;
+    
+    %# MANUAL FFT FOR CHECKING --------------------------------------------
     figurename = sprintf('%s (averaged):: 1,500 and 1,804 tonnes, level, Run %s to %s', testName, num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');    
     
@@ -246,16 +267,18 @@ for k=startRun:endRun
     T = 1/Fs;                     % Sample time
     L = m;                        % Length of signal
     t = (0:L-1)*T;                % Time vector
+    
     % Sum of a 50 Hz sinusoid and a 120 Hz sinusoid
     %x = 0.7*sin(2*pi*50*t) + sin(2*pi*120*t); 
     %y = x + 2*randn(size(t));    % Sinusoids plus noise
+    
     x = timeData;
     n = 0.7*sin(2*pi*50*t) + sin(2*pi*120*t);
     
     heaveData = heaveData.';      % Flip a matrix about its main diagonal, turning row vectors into column vectors and vice versa.
     
     y = n + heaveData;            % Plot (WITH noise)
-    y = heaveData;               % Plot (NO noise)
+    %y = heaveData;               % Plot (NO noise)
     
     subplot(1,2,1)
 
@@ -301,64 +324,6 @@ for k=startRun:endRun
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');    
-    
-    break;
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    % Fwd LVDT data
-    filename = sprintf('Run_%s_LVDT_Fwd', runno);
-    fft_plot(Fs,timeData,CH_1_LVDTFwd,1,length(CH_1_LVDTFwd),filename,name);
-
-    % Heave
-    filename = sprintf('Run_%s_Heave', runno);
-    fft_plot(Fs,timeData,CH_2_LVDTAft,1,length(CH_2_LVDTAft),filename,name);    
-    
-    % Aft LVDT data
-    filename = sprintf('Run_%s_LVDT_Aft', runno);
-    fft_plot(Fs,timeData,CH_2_LVDTAft,1,length(CH_2_LVDTAft),filename,name);
-    
-    % ---------------------------------------------------------------------
-    % Plot data -----------------------------------------------------------
-    % ---------------------------------------------------------------------
-    figurename = sprintf('%s (averaged):: 1,500 and 1,804 tonnes, level, Run %s to %s', testName, num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');
-    
-    h = plot(timeData,CH_1_LVDTFwd,'*',timeData,heaveData,'+',timeData,CH_2_LVDTAft,'x');
-    xlabel('{\bf Time series [s]}');
-    ylabel('{\bf Output [mm]}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    % Colors and markers
-     set(h(1),'Color',[0 0 1],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1); %,'LineStyle','-','linewidth',1
-     set(h(2),'Color',[0 0.5 0],'Marker','+','MarkerSize',1,'LineStyle','-.','linewidth',1); %,'LineStyle','-','linewidth',1
-     set(h(3),'Color',[1 0 0],'Marker','x','MarkerSize',1,'LineStyle',':','linewidth',1); %,'LineStyle','-','linewidth',1
-    
-    %# Axis limitations
-    set(gca,'XLim',[timeData(1) timeData(end)]);
-    set(gca,'XTick',[timeData(1):5:timeData(end)]);
-    
-    %# Legend
-    hleg1 = legend('Fwd LVDT','Heave','Aft LVDT');
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    %legend boxoff;      
+        'HorizontalAlignment', 'center');   
     
 end

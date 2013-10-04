@@ -230,13 +230,13 @@ testName = 'Resistance Test Summary';
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
-enableTurbStimPlot          = 0; % Turbulence stimulator investigation
-enableTrimTabPlot           = 0; % Trim tab investigation
-enableResistancePlot        = 0; % Resistance plots, Ctm, power, heave and trim
-enableProhaskaPlot          = 0; % Prohaska plot, form factor at deep transom
-enableErrorPlot             = 0; % Error plots (% of max-avg to magnitude)
-enableMeanStdPlot           = 0; % Fr vs. mean of standard deviation
-enableStdPlot               = 0; % Fr vs. standard deviation
+enableTurbStimPlot          = 1; % Turbulence stimulator investigation
+enableTrimTabPlot           = 1; % Trim tab investigation
+enableResistancePlot        = 1; % Resistance plots, Ctm, power, heave and trim
+enableProhaskaPlot          = 1; % Prohaska plot, form factor at deep transom
+enableErrorPlot             = 1; % Error plots (% of max-avg to magnitude)
+enableMeanStdPlot           = 1; % Fr vs. mean of standard deviation
+enableStdPlot               = 1; % Fr vs. standard deviation
 %enableHeaveRtmHeaveTrimPlot = 1; % Heave vs. Rtm and Trim vs. Rtm for times series data at ONE speed
 
 % -------------------------------------------------------------------------
@@ -677,8 +677,8 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
 end
 
 % *************************************************************************
-% 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
-% *************************************************************************     
+% REPEATS: 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
+% ************************************************************************* 
 if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
     
     startRun = 81;
@@ -1299,6 +1299,193 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
 end
     
+% *************************************************************************
+% REPEATS: 1,500 AND 1,804, Fr vs. Ctm and Fr vs. Crm
+% ************************************************************************* 
+if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
+    
+    startRun = 81;
+    endRun   = 231;
+    
+    figurename = sprintf('%s:: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    f = figure('Name',figurename,'NumberTitle','off');   
+
+    % Fr vs. Ctm ----------------------------------------------------------
+    subplot(1,2,1)
+
+    if length(avgcond7) ~= 0
+        xavgcond7 = avgcond7(:,11); yavgcond7 = avgcond7(:,10);
+        Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);    
+        x7 = xavgcond7; y7 = yavgcond7;
+    else
+        x7 = 0; y7 = 0;
+    end
+    if length(avgcond8) ~= 0
+        xavgcond8 = avgcond8(:,11); yavgcond8 = avgcond8(:,10);
+        Raw_Data = num2cell(yavgcond8); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond8 = cell2mat(Raw_Data);
+        x8 = xavgcond8; y8 = yavgcond8;
+    else
+        x8 = 0; y8 = 0;
+    end
+    if length(avgcond9) ~= 0
+        xavgcond9 = avgcond9(:,11); yavgcond9 = avgcond9(:,10);
+        Raw_Data = num2cell(yavgcond9); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond9 = cell2mat(Raw_Data);
+        x9 = xavgcond9; y9 = yavgcond9;
+    else
+        x9 = 0; y9 = 0;
+    end    
+    if length(avgcond10) ~= 0
+        xavgcond10 = avgcond10(:,11); yavgcond10 = avgcond10(:,10);
+        Raw_Data = num2cell(yavgcond10); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond10 = cell2mat(Raw_Data);
+        x10 = xavgcond10; y10 = yavgcond10;
+    else
+        x10 = 0; y10 = 0;
+    end
+    if length(avgcond11) ~= 0
+        xavgcond11 = avgcond11(:,11); yavgcond11 = avgcond11(:,10);
+        Raw_Data = num2cell(yavgcond11); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond11 = cell2mat(Raw_Data);
+        x11 = xavgcond11; y11 = yavgcond11;
+    else
+        x11 = 0; y11 = 0;
+    end
+    if length(avgcond12) ~= 0
+        xavgcond12 = avgcond12(:,11); yavgcond12 = avgcond12(:,10);
+        Raw_Data = num2cell(yavgcond12); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond12 = cell2mat(Raw_Data);
+        x12 = xavgcond12; y12 = yavgcond12;
+    else
+        x12 = 0; y12 = 0;
+    end
+    
+    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'+',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',5);
+    xlabel('{\bf Froude length number [-]}');
+    ylabel('{\bf Total resistance coefficient C_{tm}*1000 [-]}');
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);    
+    
+    %# Line width
+    set(h(1),'Color',[0 0 1],'LineStyle','-','linewidth',1);
+    set(h(2),'Color',[0 0.5 0],'LineStyle','--','linewidth',1);
+    set(h(3),'Color',[1 0 0],'LineStyle','-.','linewidth',1);
+    set(h(4),'Color',[0 0.75 0.75],'LineStyle','-','linewidth',1);
+    set(h(5),'Color',[0.75 0 0.75],'LineStyle','--','linewidth',1);
+    set(h(6),'Color',[0.75 0.75 0],'LineStyle','-.','linewidth',1);
+    
+    %# Axis limitations
+    set(gca,'XLim',[[0.1 0.5]]);
+    set(gca,'XTick',[0.1:0.05:0.5]);
+
+    %# Legend
+    hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;    
+    
+    % Fr vs. Ctm ----------------------------------------------------------
+    subplot(1,2,2)
+
+    if length(avgcond7) ~= 0
+        xavgcond7 = avgcond7(:,11); yavgcond7 = avgcond7(:,19);
+        Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);    
+        x7 = xavgcond7; y7 = yavgcond7;
+    else
+        x7 = 0; y7 = 0;
+    end
+    if length(avgcond8) ~= 0
+        xavgcond8 = avgcond8(:,11); yavgcond8 = avgcond8(:,19);
+        Raw_Data = num2cell(yavgcond8); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond8 = cell2mat(Raw_Data);
+        x8 = xavgcond8; y8 = yavgcond8;
+    else
+        x8 = 0; y8 = 0;
+    end
+    if length(avgcond9) ~= 0
+        xavgcond9 = avgcond9(:,11); yavgcond9 = avgcond9(:,19);
+        Raw_Data = num2cell(yavgcond9); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond9 = cell2mat(Raw_Data);
+        x9 = xavgcond9; y9 = yavgcond9;
+    else
+        x9 = 0; y9 = 0;
+    end    
+    if length(avgcond10) ~= 0
+        xavgcond10 = avgcond10(:,11); yavgcond10 = avgcond10(:,19);
+        Raw_Data = num2cell(yavgcond10); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond10 = cell2mat(Raw_Data);
+        x10 = xavgcond10; y10 = yavgcond10;
+    else
+        x10 = 0; y10 = 0;
+    end
+    if length(avgcond11) ~= 0
+        xavgcond11 = avgcond11(:,11); yavgcond11 = avgcond11(:,19);
+        Raw_Data = num2cell(yavgcond11); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond11 = cell2mat(Raw_Data);
+        x11 = xavgcond11; y11 = yavgcond11;
+    else
+        x11 = 0; y11 = 0;
+    end
+    if length(avgcond12) ~= 0
+        xavgcond12 = avgcond12(:,11); yavgcond12 = avgcond12(:,19);
+        Raw_Data = num2cell(yavgcond12); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond12 = cell2mat(Raw_Data);
+        x12 = xavgcond12; y12 = yavgcond12;
+    else
+        x12 = 0; y12 = 0;
+    end
+    
+    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'+',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',5);
+    xlabel('{\bf Froude length number [-]}');
+    ylabel('{\bf Total resistance coefficient C_{tm}*1000 [-]}');
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);    
+    
+    %# Line width
+    set(h(1),'Color',[0 0 1],'LineStyle','-','linewidth',1);
+    set(h(2),'Color',[0 0.5 0],'LineStyle','--','linewidth',1);
+    set(h(3),'Color',[1 0 0],'LineStyle','-.','linewidth',1);
+    set(h(4),'Color',[0 0.75 0.75],'LineStyle','-','linewidth',1);
+    set(h(5),'Color',[0.75 0 0.75],'LineStyle','--','linewidth',1);
+    set(h(6),'Color',[0.75 0.75 0],'LineStyle','-.','linewidth',1);
+    
+    %# Axis limitations
+    set(gca,'XLim',[[0.1 0.5]]);
+    set(gca,'XTick',[0.1:0.05:0.5]);
+
+    %# Legend
+    hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    legend boxoff;    
+    
+    %# Save plot as PNG -------------------------------------------------------
+
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+    %# Figure size printed on paper
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');   
+
+    %# Plot title -------------------------------------------------------------
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');  
+
+    %# Save plots as PDF and PNG
+    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Resistance_Data_Plots_Fr_vs_Ctm_and_Crm_Averaged.pdf', '_averaged', num2str(startRun), num2str(endRun));
+    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+    plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Resistance_Data_Plots_Fr_vs_Ctm_and_Crm_Averaged.png', '_averaged', num2str(startRun), num2str(endRun));
+    saveas(f, plotsavename);                % Save plot as PNG
+    %close;    
+    
+end
+
 % *************************************************************************
 % 1,804 TONNES RESISTANCE CONDITIONS
 % *************************************************************************     

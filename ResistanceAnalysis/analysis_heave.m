@@ -238,7 +238,7 @@ testName = 'Heave Investigation';
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
-enableHeaveMinMaxAvgPlot    = 1; % Heave, min, max and averaged values
+enableHeaveMinMaxAvgPlot = 1; % Heave, min, max and averaged values
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
