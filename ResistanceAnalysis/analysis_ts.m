@@ -269,7 +269,14 @@ for j=1:ml
         
         % Set general filename
         filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
+        
+        if exist('full_resistance_data.dat', 'file') == 0
+           disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+           disp(sprintf('WARNING: Required time series data file _time_series_data/R%s.dat does not exist!',runnumber));
+           disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');           
+           break;
+        end
+        
         % Read DAT file
         if exist(filename, 'file') == 2
             timeSeriesData = csvread(filename);

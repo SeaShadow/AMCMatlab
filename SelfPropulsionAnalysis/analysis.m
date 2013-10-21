@@ -1,39 +1,38 @@
 %# ------------------------------------------------------------------------
-%# Resistance Test Analysis
+%# Self-Propulsion Test Analysis
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  September 9, 2013
+%# Date       :  October 21, 2013
 %#
-%# Test date  :  August 27 to September 6, 2013
+%# Test date  :  November 5 to November 15, 2013
 %# Facility   :  AMC, Towing Tank (TT)
 %#
-%# Runs TSI   :  01-35   Turbulence Studs Investigation               (TSI)
-%# Runs TTI   :  36-62   Trim Tab Optimisation                        (TTI)
-%# Runs FF1   :  63-80   Form Factor Estimation using Prohaska Method (FF)
-%# Runs RT    :  81-231  Resistance Test                              (RT)
-%# Runs FF2   :  231-249 Form Factor Estimation using Prohaska Method (FF)
+%# Runs RT    :  xx-yy Resistance Test / Transom Streamlines    (RT)
+%# Runs BLM   :  xx-yy Boundary Layer Measurements              (BLM)
+%# Runs SPP   :  xx-yy Self-Propulsion Points                   (SPP)
+%# Runs SPT   :  xx-yy Self-Propulsion Test                     (SPT)
 %#
-%# Speeds (FR)    :  0.1-0.47 (5.9-27.6 knots)
+%# Speeds (FR)    :  0.3-0.4 (18-24 knots)
 %#
-%# Description    :  Turbulence studs investigation, trim tab optimisation and
-%#                   standard resistance test using a single catamaran demihull.
-%#                   Form factor estimation has been carried out using prohaska 
-%#                   method as described by ITTC 7.2-02-02-01.
+%# Description    :  Waterjet self-propulsion test based on test setups
+%#                   using literature and ITTC.
 %#
-%# ITTC Guidelines:  7.5-02-02-01
-%#                   7.5-02-02-02
+%# ITTC Guidelines:  7.5-02-02-03.1
+%#                   7.5-02-02-03.2
+%#                   7.5-02-02-03.3
+%#
 %# ------------------------------------------------------------------------
 %#
 %# SCRIPTS  :    1 => analysis.m          Real units, save date to result array
-%#
-%#               => Copy data from resultsArray.dat to full_resistance_data.dat
-%#
-%#               2 => analysis_stats.m    Resistance and error plots
-%#               3 => analysis_heave.m    Heave investigation related plots
-%#               4 => analysis_lvdts.m    Fr vs. fwd, aft and heave plots
-%#               5 => analysis_custom.m   Fr vs. Rtm/(VolDisp*p*g)*(1/Fr^2)
-%#               6 => analysis_ts.m       Time series data for cond 7-12
+%#               2 => analysis_ts.m       Time series investigation
+%#               3 => analysis_rt.m       Resistance test analysis
+%#               4 => analysis_bl.m       Boundary layer investigation
+%#               5 => analysis_spp.m      Self-propulsion points
+%#               6 => analysis_spt.m      Self-propulsion test
+%#               7 => analysis_fft.m      Fast-Fourier transfoms (FFT)
+%#               8 => ...                 ...
+%#               9 => ...                 ...
 %#
 %# ------------------------------------------------------------------------
 %#
@@ -42,8 +41,7 @@
 %#
 %# ------------------------------------------------------------------------
 %#
-%# CHANGES    :  31/07/2013 - Adjusted analysis file for resistance test data
-%#               09/09/2013 - Adjusted analysis file for resistance test data
+%# CHANGES    :  21/10/2013 - Created new script
 %#               dd/mm/yyyy - ...
 %#
 %# ------------------------------------------------------------------------
@@ -76,9 +74,19 @@ runfilespath = '..\\';      % Relative path from Matlab directory
 %# ------------------------------------------------------------------------
 
 %# Test name --------------------------------------------------------------
-% testName = 'Turbulence Stud Investigation';
-% testName = 'Trim Tab Optimistation';
-testName = 'Resistance Test';
+% testName = 'Resistance Test';
+% testName = 'Boundary Layer Investigation';
+% testName = 'Waterjet Self-Propulsion Points';
+testName = 'Waterjet Self-Propulsion Test';
+
+
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# CODE NEEDS TO BE REVISED FOR SELF_PROPULSION TEST FROM HERE ONWARDS !!!!
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+break;
+
+
+
 
 %# DAQ related settings ----------------------------------------------------
 Fs = 200;                               % DAQ sampling frequency = 200Hz
@@ -1179,6 +1187,23 @@ dlmwrite('resultsArray.txt', M, 'delimiter', '\t', 'precision', 4)  % Export mat
 % ---------------------------------------------------------------------
 % END: Write results to CVS
 % /////////////////////////////////////////////////////////////////////
+
+
+% /////////////////////////////////////////////////////////////////////
+% START: Run additional scrips (m-files)
+% ---------------------------------------------------------------------
+
+% run(analysis_ts)       % Time series investigation
+% run(analysis_rt)       % Resistance test analysis
+% run(analysis_bl)       % Boundary layer investigation
+% run(analysis_spp)      % Self-propulsion points
+% run(analysis_spt)      % Self-propulsion test
+% run(analysis_fft)      % Fast-Fourier transfoms (FFT)
+
+% ---------------------------------------------------------------------
+% END: Run additional scrips (m-files)
+% /////////////////////////////////////////////////////////////////////
+
 
 % -------------------------------------------------------------------------
 % View profile
