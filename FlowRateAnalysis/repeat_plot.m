@@ -70,176 +70,8 @@ endData     = length(timeData);
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-%# Variables
-x  = timeData(startData:endData);
-y1 = resultsArray(1,startData:endData).';
-y2 = resultsArray(2,startData:endData).';
-y3 = resultsArray(3,startData:endData).';
-
-%# Averaged data
-avgRepeatData = mean(resultsArray(1:3,startData:endData)).';
-
-%# Plot data
-figurename = sprintf('%s: Runs %s to %s // %s RPM', examineTitle, num2str(runArray(1)), num2str(runArray(3)), num2str(rpmValue));
-f = figure('Name',figurename,'NumberTitle','off');
-
-%# Trendline
-p11 = polyfit(x,y1,1);
-p12 = polyval(p11,x);
-p21 = polyfit(x,y2,1);
-p22 = polyval(p21,x);
-p31 = polyfit(x,y3,1);
-p32 = polyval(p31,x);
-p41 = polyfit(x,avgRepeatData,1);
-p42 = polyval(p41,x);
-
-%# Plot: Repeat #1 --------------------------------------------------------
-subplot(3,3,1);
-h1 = plot(x,y1,'-r');
-hold on;
-h2 = plot(x,p12,'-k');
-xlabel('{\bf Time [s]}');
-combinedStr = strcat('{\bf', sprintf('Output [%s]', examineUnit),'}');
-ylabel(combinedStr);
-title('{\bf Real Units Data: Repeat 1}');
-xlim([startData/Fs round(endData/Fs)]);
-grid on;
-set(h1(1),'linewidth',1);   % Repeat #1
-set(h2(1),'linewidth',2);   % Trendline #1
-
-%# Figure size on screen (50% scaled, but same aspect ratio)
-set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-%# Figure size printed on paper
-set(gcf, 'PaperUnits','centimeters');
-set(gcf, 'PaperSize',[XPlot YPlot]);
-set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-set(gcf, 'PaperOrientation','portrait');
-
-%# Plot: Repeat #2 --------------------------------------------------------
-subplot(3,3,2);
-h1 = plot(x,y2,'-b',x,p22,':k');
-hold on;
-h2 = plot(x,p22,'-k');
-xlabel('{\bf Time [s]}');
-combinedStr = strcat('{\bf', sprintf('Output [%s]', examineUnit),'}');
-ylabel(combinedStr);
-title('{\bf Real Units Data: Repeat 2}');
-xlim([startData/Fs round(endData/Fs)]);
-grid on;
-set(h1(1),'linewidth',1);   % Repeat #2
-set(h2(1),'linewidth',2);   % Trendline #2
-
-%# Figure size on screen (50% scaled, but same aspect ratio)
-set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-%# Figure size printed on paper
-set(gcf, 'PaperUnits','centimeters');
-set(gcf, 'PaperSize',[XPlot YPlot]);
-set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-set(gcf, 'PaperOrientation','portrait');
-
-%# Plot: Repeat #3 --------------------------------------------------------
-subplot(3,3,3);
-h1 = plot(x,y3,'-g');
-hold on;
-h2 = plot(x,p32,'-k');
-xlabel('{\bf Time [s]}');
-combinedStr = strcat('{\bf', sprintf('Output [%s]', examineUnit),'}');
-ylabel(combinedStr);
-title('{\bf Real Units Data: Repeat 3}');
-xlim([startData/Fs round(endData/Fs)]);
-grid on;
-set(h1(1),'linewidth',1);   % Repeat #3
-set(h2(1),'linewidth',2);   % Trendline #3
-
-%# Figure size on screen (50% scaled, but same aspect ratio)
-set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-%# Figure size printed on paper
-set(gcf, 'PaperUnits','centimeters');
-set(gcf, 'PaperSize',[XPlot YPlot]);
-set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-set(gcf, 'PaperOrientation','portrait');
-
-%# Plot: Averaged ---------------------------------------------------------
-subplot(3,1,2);
-h1 = plot(x,avgRepeatData,'-k');
-hold on;
-h2 = plot(x,p42,'-r');
-xlabel('{\bf Time [s]}');
-combinedStr = strcat('{\bf', sprintf('Output [%s]', examineUnit),'}');
-ylabel(combinedStr);
-title('{\bf Real Units Data: Averaged}');
-xlim([startData/Fs round(endData/Fs)]);
-grid on;
-set(h1(1),'linewidth',1);   % Averaged
-set(h2(1),'linewidth',2);   % Averaged trendline
-
-%# Figure size on screen (50% scaled, but same aspect ratio)
-set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-%# Figure size printed on paper
-set(gcf, 'PaperUnits','centimeters');
-set(gcf, 'PaperSize',[XPlot YPlot]);
-set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-set(gcf, 'PaperOrientation','portrait');
-
-%# Plot: Overlayed --------------------------------------------------------
-subplot(3,1,3);
-h1 = plot(x,y1,'-r',x,y2,'-b',x,y3,'-g',x,avgRepeatData,'-k');
-%hold on;
-%h2 = plot(x,p12,'--k',x,p22,':k',x,p32,'-.k',x,p42,'-r');
-xlabel('{\bf Time [s]}');
-combinedStr = strcat('{\bf', sprintf('Output [%s]', examineUnit),'}');
-ylabel(combinedStr);
-title('{\bf Overlayed of Real Units Data}');
-xlim([startData/Fs round(endData/Fs)]);
-grid on;
-set(h1(1),'linewidth',1);   % Repeat #1
-set(h1(2),'linewidth',1);   % Repeat #2
-set(h1(3),'linewidth',1);   % Repeat #3
-% set(h2(1),'linewidth',2);   % Trendline #1
-% set(h2(2),'linewidth',2);   % Trendline #2
-% set(h2(3),'linewidth',2);   % Trendline #3
-
-%# Legend
-repLgnd1 = sprintf('Repeat #1: Run %s', num2str(runArray(1)));
-repLgnd2 = sprintf('Repeat #2: Run %s', num2str(runArray(2)));
-repLgnd3 = sprintf('Repeat #3: Run %s', num2str(runArray(3)));
-repLgnd4 = 'Averaged runs';
-hleg1 = legend(repLgnd1,repLgnd2,repLgnd3,repLgnd4);
-set(hleg1,'Location','NorthWest');
-set(hleg1,'Interpreter','none');
-
-%# Figure size on screen (50% scaled, but same aspect ratio)
-set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-%# Figure size printed on paper
-set(gcf, 'PaperUnits','centimeters');
-set(gcf, 'PaperSize',[XPlot YPlot]);
-set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-set(gcf, 'PaperOrientation','portrait');
-
-%# Set figure to full screen
-%set(f,'Units','Normalized','OuterPosition',[0 0 1 1])  
-
 %# ------------------------------------------------------------------------
-%# Mean values -----------------------------------------------------
-%# ------------------------------------------------------------------------
-runString = sprintf('Runs %s, %s, %s // RPM = %s',num2str(runArray(1)),num2str(runArray(2)),num2str(runArray(3)), num2str(rpmValue));
-disp(sprintf('>> %s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<',examineTitle));
-if strcmp(examineTitle(1:4),'CH_0') == 0
-    disp(sprintf('Run %s: Mean repeat #1 = %s %s', num2str(runArray(1)), sprintf('%.2f',abs(mean(y1))), examineUnit));
-    disp(sprintf('Run %s: Mean repeat #2 = %s %s', num2str(runArray(2)), sprintf('%.2f',abs(mean(y2))), examineUnit));
-    disp(sprintf('Run %s: Mean repeat #3 = %s %s', num2str(runArray(3)), sprintf('%.2f',abs(mean(y3))), examineUnit));
-    disp(sprintf('%s:: Average mean = %s %s', runString, sprintf('%.2f', abs(mean(avgRepeatData))), examineUnit));
-else
-    disp('Wave probe, slope used instead of mean.');
-end
-
-%# ------------------------------------------------------------------------
-%# Save plots as PNGs -----------------------------------------------------
+%# Create directories if not available ------------------------------------
 %# ------------------------------------------------------------------------
 
 %# _PLOTS directory
@@ -273,6 +105,162 @@ if isequal(exist(fPath, 'dir'),7)
 else    
     mkdir(fPath);
 end
+
+%# Variables
+x  = timeData(startData:endData);
+y1 = resultsArray(1,startData:endData).';
+y2 = resultsArray(2,startData:endData).';
+y3 = resultsArray(3,startData:endData).';
+
+%# Averaged data
+avgRepeatData = mean(resultsArray(1:3,startData:endData)).';
+
+%# Plot data
+figurename = sprintf('%s: Runs %s to %s // %s RPM', examineTitle, num2str(runArray(1)), num2str(runArray(3)), num2str(rpmValue));
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Trendline
+p11 = polyfit(x,y1,1);
+p12 = polyval(p11,x);
+p21 = polyfit(x,y2,1);
+p22 = polyval(p21,x);
+p31 = polyfit(x,y3,1);
+p32 = polyval(p31,x);
+p41 = polyfit(x,avgRepeatData,1);
+p42 = polyval(p41,x);
+
+%# Plot: Repeat #1 --------------------------------------------------------
+subplot(3,3,1);
+
+h1 = plot(x,y1,'-r');
+hold on;
+h2 = plot(x,p12,'-k');
+xlabel('{\bf Time [s]}');
+combinedStr = strcat('{\bf', sprintf('Output [%s]', examineUnit),'}');
+ylabel(combinedStr);
+title('{\bf Real Units Data: Repeat 1}');
+xlim([startData/Fs round(endData/Fs)]);
+grid on;
+
+set(h1(1),'linewidth',1);   % Repeat #1
+set(h2(1),'linewidth',2);   % Trendline #1
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Plot: Repeat #2 --------------------------------------------------------
+subplot(3,3,2);
+
+h1 = plot(x,y2,'-b',x,p22,':k');
+hold on;
+h2 = plot(x,p22,'-k');
+xlabel('{\bf Time [s]}');
+combinedStr = strcat('{\bf', sprintf('Output [%s]', examineUnit),'}');
+ylabel(combinedStr);
+title('{\bf Real Units Data: Repeat 2}');
+xlim([startData/Fs round(endData/Fs)]);
+grid on;
+
+set(h1(1),'linewidth',1);   % Repeat #2
+set(h2(1),'linewidth',2);   % Trendline #2
+
+%# Plot: Repeat #3 --------------------------------------------------------
+subplot(3,3,3);
+
+h1 = plot(x,y3,'-g');
+hold on;
+h2 = plot(x,p32,'-k');
+xlabel('{\bf Time [s]}');
+combinedStr = strcat('{\bf', sprintf('Output [%s]', examineUnit),'}');
+ylabel(combinedStr);
+title('{\bf Real Units Data: Repeat 3}');
+xlim([startData/Fs round(endData/Fs)]);
+grid on;
+
+set(h1(1),'linewidth',1);   % Repeat #3
+set(h2(1),'linewidth',2);   % Trendline #3
+
+%# Plot: Averaged ---------------------------------------------------------
+subplot(3,1,2);
+
+h1 = plot(x,avgRepeatData,'-k');
+hold on;
+h2 = plot(x,p42,'-r');
+xlabel('{\bf Time [s]}');
+combinedStr = strcat('{\bf', sprintf('Output [%s]', examineUnit),'}');
+ylabel(combinedStr);
+title('{\bf Real Units Data: Averaged}');
+xlim([startData/Fs round(endData/Fs)]);
+grid on;
+
+set(h1(1),'linewidth',1);   % Averaged
+set(h2(1),'linewidth',2);   % Averaged trendline
+
+%# Plot: Overlayed --------------------------------------------------------
+subplot(3,1,3);
+
+h1 = plot(x,y1,'-r',x,y2,'-b',x,y3,'-g',x,avgRepeatData,'-k');
+%hold on;
+%h2 = plot(x,p12,'--k',x,p22,':k',x,p32,'-.k',x,p42,'-r');
+xlabel('{\bf Time [s]}');
+combinedStr = strcat('{\bf', sprintf('Output [%s]', examineUnit),'}');
+ylabel(combinedStr);
+title('{\bf Overlayed of Real Units Data}');
+xlim([startData/Fs round(endData/Fs)]);
+grid on;
+
+set(h1(1),'linewidth',1);   % Repeat #1
+set(h1(2),'linewidth',1);   % Repeat #2
+set(h1(3),'linewidth',1);   % Repeat #3
+% set(h2(1),'linewidth',2);   % Trendline #1
+% set(h2(2),'linewidth',2);   % Trendline #2
+% set(h2(3),'linewidth',2);   % Trendline #3
+
+%# Legend
+repLgnd1 = sprintf('Repeat #1: Run %s', num2str(runArray(1)));
+repLgnd2 = sprintf('Repeat #2: Run %s', num2str(runArray(2)));
+repLgnd3 = sprintf('Repeat #3: Run %s', num2str(runArray(3)));
+repLgnd4 = 'Averaged runs';
+hleg1 = legend(repLgnd1,repLgnd2,repLgnd3,repLgnd4);
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+
+%# Set figure to full screen
+%set(f,'Units','Normalized','OuterPosition',[0 0 1 1])  
+
+%# ------------------------------------------------------------------------
+%# Mean values -----------------------------------------------------
+%# ------------------------------------------------------------------------
+runString = sprintf('Runs %s, %s, %s // RPM = %s',num2str(runArray(1)),num2str(runArray(2)),num2str(runArray(3)), num2str(rpmValue));
+disp(sprintf('>> %s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<',examineTitle));
+if strcmp(examineTitle(1:4),'CH_0') == 0
+    disp(sprintf('Run %s: Mean repeat #1 = %s %s', num2str(runArray(1)), sprintf('%.2f',abs(mean(y1))), examineUnit));
+    disp(sprintf('Run %s: Mean repeat #2 = %s %s', num2str(runArray(2)), sprintf('%.2f',abs(mean(y2))), examineUnit));
+    disp(sprintf('Run %s: Mean repeat #3 = %s %s', num2str(runArray(3)), sprintf('%.2f',abs(mean(y3))), examineUnit));
+    disp(sprintf('%s:: Average mean = %s %s', runString, sprintf('%.2f', abs(mean(avgRepeatData))), examineUnit));
+else
+    disp('Wave probe, slope used instead of mean.');
+end
+
+%# ------------------------------------------------------------------------
+%# Save plots as PNGs -----------------------------------------------------
+%# ------------------------------------------------------------------------
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# Plot title -------------------------------------------------------------
+annotation('textbox', [0 0.9 1 0.1], ...
+    'String', strcat('{\bf ', figurename, '}'), ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center');
 
 %plotsavenamePDF = sprintf('_plots/_repeats/PDF/RUNS_%s_TO_%s_%s_%s_RPM.pdf', num2str(runArray(1)), num2str(runArray(3)), savename, num2str(rpmValue));
 %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF

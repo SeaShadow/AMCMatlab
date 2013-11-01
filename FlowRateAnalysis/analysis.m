@@ -13,12 +13,36 @@
 %# Description:  Analyse flow rate measurement data and save results as
 %#               array and DAT file for further analysis.
 %#
-%# -------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
+%#
+%# SCRIPTS  :    => analysis.m                Real units, save date to result array
+%#
+%#               ==> Copy data from resultsArray.dat to resultsArray_copy.dat
+%#
+%#               => analysis_compare.m        Compare repeats of repeated runs and plot data
+%#                                            NOTE: Time plots of repeats
+%#
+%#               => analysis_curvefit.m       Curve fitting and error estimate
+%#                                            NOTE: Creates cfArray.dat showing curve fitting data
+%#
+%#               => analysis_fft.m            Fast Fourier Transform (FFT)
+%#                                            NOTE: Created FFT plots for all channels
+%#
+%#               => analysis_plot.m           Plotting V vs. Q
+%#                                            NOTE: Plot data directly from resultsArray
+%#
+%#               => analysis_stats.m          Averaged plots V vs. Q
+%#                                            NOTE: Create averaged flow rate plots
+%#
+%#               => analysis_statistics.m     Statistics
+%#                                            NOTE: Creates statisticsArray.dat which includes STDEV, etc.
+%#
+%# ------------------------------------------------------------------------
 %#
 %# IMPORTANT  :  Change runfilespath and do not forget to substitute \ => \\
 %#               Make use "_plots" directory has been created in folder
 %#
-%# -------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
 %#
 %# CHANGES    :  11/06/2013 - Removed RPM results due to 2007 Matlab version
 %#               17/06/2013 - Added switches for plotting and RPM results
@@ -79,6 +103,9 @@ cutSamplesFromEnd = 8000;
 startRun = 9;      % Start at run x
 endRun   = 9;      % Stop at run y
 
+%startRun = 1;      % Start at run x
+%endRun   = 86;      % Stop at run y
+
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# END FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -133,7 +160,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# PLOTTING & SAVING SWITCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-plotting_on = true;    %TRUE or FALSE
+plotting_on = false;    %TRUE or FALSE
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# PLOTTING & SAVING SWITCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
