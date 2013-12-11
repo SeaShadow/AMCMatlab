@@ -8,11 +8,11 @@
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
 %#
-%# Runs CT    :  xx-yy PST + DPT Calibration Test               (CT)
-%# Runs RT    :  xx-yy Resistance Test / Transom Streamlines    (RT)
-%# Runs BLM   :  xx-yy Boundary Layer Measurements              (BLM)
-%# Runs SPP   :  xx-yy Self-Propulsion Points                   (SPP)
-%# Runs SPT   :  xx-yy Self-Propulsion Test                     (SPT)
+%# Runs CT    :  1-15    PST + DPT Calibration Test               (CT)
+%# Runs RT    :  16-28   Resistance Test / Transom Streamlines    (RT)
+%# Runs BLM   :  29-69   Boundary Layer Measurements              (BLM)
+%# Runs SPP   :  70-110  Self-Propulsion Points                   (SPP)
+%# Runs SPT   :  111-180 Self-Propulsion Test                     (SPT)
 %#
 %# Speeds (FR)    :  0.3-0.4 (18-24 knots)
 %#
