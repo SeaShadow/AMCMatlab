@@ -46,6 +46,7 @@
 %#
 %# ITTC Guidelines:  7.5-02-02-01
 %#                   7.5-02-02-02
+%#
 %# ------------------------------------------------------------------------
 %#
 %# SCRIPTS  :    1 => analysis.m          >> Real units, save date to result array
@@ -70,6 +71,10 @@
 %#                    |__> RESULTS:       "resultsAveragedArray.dat" and "*.txt"
 %#
 %#               6 => analysis_ts.m       >> Time series data for cond 7-12
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
+%#               7 => analysis_ua.m       >> Resistance uncertainty analysis
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#

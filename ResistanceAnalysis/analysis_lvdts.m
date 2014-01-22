@@ -74,6 +74,10 @@
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
+%#               7 => analysis_ua.m       >> Resistance uncertainty analysis
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
 %# ------------------------------------------------------------------------
 %#
 %# IMPORTANT  :  Change runfilespath and do not forget to substitute \ => \\
