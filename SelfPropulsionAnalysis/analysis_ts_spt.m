@@ -107,10 +107,10 @@ cutSamplesFromEnd = 0;
 %# START FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-%startRun = 119;      % Start at run x
-%endRun   = 119;      % Stop at run y
+%startRun = 124;      % Start at run x
+%endRun   = 124;      % Stop at run y
 
-startRun = 111;      % Start at run x
+startRun = 124;      % Start at run x
 endRun   = 180;      % Stop at run y
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -118,13 +118,54 @@ endRun   = 180;      % Stop at run y
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+%# ************************************************************************
+%# START: START CONSTANTS AND PARTICULARS
+%# ------------------------------------------------------------------------
+
+% On test date
+ttlength            = 100;                    % Towing Tank: Length            (m)
+ttwidth             = 3.5;                    % Towing Tank: Width             (m)
+ttwaterdepth        = 1.45;                   % Towing Tank: Water depth       (m)
+ttcsa               = ttwidth * ttwaterdepth; % Towing Tank: Sectional area    (m^2)
+ttwatertemp         = 17.5;                   % Towing Tank: Water temperature (degrees C)
+
+% General constants
+gravconst           = 9.806;                  % Gravitational constant           (m/s^2)
+modelkinviscosity   = (((0.585*10^(-3))*(ttwatertemp-12)-0.03361)*(ttwatertemp-12)+1.235)*10^(-6); % Model scale kinetic viscosity at X (see ttwatertemp) degrees following ITTC (m2/s)
+fullscalekinvi      = 0.000001034;            % Full scale kinetic viscosity     (m^2/s)
+freshwaterdensity   = 1000;                   % Model scale water density        (Kg/m^3)
+saltwaterdensity    = 1025;                   % Salt water scale water density   (Kg/m^3)
+distbetwposts       = 1150;                   % Distance between carriage posts  (mm)
+FStoMSratio         = 21.6;                   % Full scale to model scale ratio  (-)
+
+%# ------------------------------------------------------------------------
+%# CONDITION: 1,500 tonnes, level static trim, trim tab at 5 degrees
+%# ------------------------------------------------------------------------
+MSlwl1500           = 4.30;                              % Model length waterline          (m)
+MSwsa1500           = 1.501;                             % Model scale wetted surface area (m^2)
+MSdraft1500         = 0.133;                             % Model draft                     (m)
+MSAx1500            = 0.024;                             % Model area of max. transverse section (m^2)
+BlockCoeff1500      = 0.592;                             % Mode block coefficient          (-)
+FSlwl1500           = MSlwl1500*FStoMSratio;             % Full scale length waterline     (m)
+FSwsa1500           = MSwsa1500*FStoMSratio^2;           % Full scale wetted surface area  (m^2)
+FSdraft1500         = MSdraft1500*FStoMSratio;           % Full scale draft                (m)
+
+%# ------------------------------------------------------------------------
+%# END: START CONSTANTS AND PARTICULARS
+%# ************************************************************************
+
+
+% *************************************************************************
+
+
 % *************************************************************************
 % START: PLOT SWITCHES: 1 = ENABLED 
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
-enableTSPlot = 1; % TS plot
-enableDISP   = 1; % Enable or disable values in command window
+enableTSPlot   = 0; % Time series plot and save as PNG
+enableDISP     = 0; % Enable or disable values in command window
+enableSaveData = 1; % Enable saving of statistics data as .DAT and .TXT
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
@@ -143,6 +184,57 @@ resultsArrayTSPressure = [];
 
 %w = waitbar(0,'Processed run files'); 
 for k=startRun:endRun
+
+    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    %# START DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS !!!!!!!!!!!!!!!!
+    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    % NOTE: If statement bellow is for use in LOOPS only!!!!
+    
+    % Runs at respective speeds
+    RunsAtFr24 = [124 125 126 127];         % i.e. Fr=0.24
+    RunsAtFr26 = [128 129 130 131];         % i.e. Fr=0.26
+    RunsAtFr28 = [132 133 134 135 136 179]; % i.e. Fr=0.28
+    RunsAtFr30 = [180 137 138 139 140];     % i.e. Fr=0.30
+    RunsAtFr32 = [141 142 143 144];         % i.e. Fr=0.32
+    RunsAtFr34 = [145 146 147 148];         % i.e. Fr=0.34
+    RunsAtFr36 = [149 150 151 152];         % i.e. Fr=0.36
+    RunsAtFr38 = [153 154 155 156];         % i.e. Fr=0.38
+    RunsAtFr40 = [157 158 159 160 ];        % i.e. Fr=0.40
+
+    RunsStaticUnlocked = [161 162 163 164 165 166 167 168 169];   % i.e. Static test in middle of towing tank at every RPM with unlocked posts
+    RunsStaticLocked   = [170 171 172 173 174 175 176 177 178];   % i.e. Static test in middle of towing tank at every RPM with locked posts (bollard condition)
+    
+    % SPEED: IF, ELSE statement
+    if any(RunsAtFr24==k)
+        setSpeedCond = 1;
+    elseif any(RunsAtFr26==k)
+        setSpeedCond = 2;
+    elseif any(RunsAtFr28==k)
+        setSpeedCond = 3;
+    elseif any(RunsAtFr30==k)
+        setSpeedCond = 4;
+    elseif any(RunsAtFr32==k)
+        setSpeedCond = 5;
+    elseif any(RunsAtFr34==k)
+        setSpeedCond = 6;
+    elseif any(RunsAtFr36==k)
+        setSpeedCond = 7;
+    elseif any(RunsAtFr38==k)
+        setSpeedCond = 8;
+    elseif any(RunsAtFr40==k)
+        setSpeedCond = 9;
+    elseif any(RunsStaticUnlocked==k)
+        setSpeedCond = 10;
+    elseif any(RunsStaticLocked==k)
+        setSpeedCond = 11;         
+    else
+        %disp('OTHER');
+    end
+    
+    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    %# END DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS !!!!!!!!!!!!!!!!!!
+    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!    
     
     %# Allow for 1 to become 01 for run numbers
     if k < 10
@@ -297,148 +389,181 @@ for k=startRun:endRun
     %# Speed (CWR Setup): Time Series Output
     %# ********************************************************************
     
-    figurename = sprintf('%s:: Speed Time Series Plot, Run %s', testName, num2str(runno));
-    f = figure('Name',figurename,'NumberTitle','off');    
+    %# ********************************************************************
+    %# PLOTTING
+    %# ********************************************************************
+    if enableTSPlot == 1    
     
-    % SPEED ---------------------------------------------------------------
-    subplot(2,2,1);
+        figurename = sprintf('%s:: Speed Time Series Plot, Run %s', testName, num2str(runno));
+        f = figure('Name',figurename,'NumberTitle','off');
+        
+        % SPEED ---------------------------------------------------------------
+        subplot(2,2,1);
+        
+        % Axis data
+        x = timeData;
+        y = CH_0_Speed;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-b',x,polyv,'-k');
+        title('{\bf Speed}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Speed (m/s)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        % FWD LVDT ------------------------------------------------------------
+        subplot(2,2,2);
+        
+        % Axis data
+        x = timeData;
+        y = CH_1_LVDTFwd;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-g',x,polyv,'-k');
+        title('{\bf Fwd LVDT}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf FWD LVDT (mm)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        % AFT LVDT ------------------------------------------------------------
+        subplot(2,2,3);
+        
+        % Axis data
+        x = timeData;
+        y = CH_2_LVDTAft;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-r',x,polyv,'-k');
+        title('{\bf Aft LVDT}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf AFT LVDT (mm)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        % Drag ----------------------------------------------------------------
+        subplot(2,2,4);
+        
+        % Axis data
+        x = timeData;
+        y = CH_3_Drag;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-m',x,polyv,'-k');
+        title('{\bf Drag}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Drag (g)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        %# ********************************************************************
+        %# Save plot as PNG
+        %# ********************************************************************
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        
+        %# Plot title ---------------------------------------------------------
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('_plots/%s/Run_%s_CH_0-3_Speed_LVDT_Drag.pdf', 'TS', num2str(runno));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('_plots/%s/Run_%s_CH_0-3_Speed_LVDT_Drag.png', 'TS', num2str(runno));
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;
     
-    % Axis data
-    x = timeData;
-    y = CH_0_Speed;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-b',x,polyv,'-k');
-    title('{\bf Speed}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Speed (m/s)}');
-    grid on;
-    box on;
-    %axis square;
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
-    
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    
-    % FWD LVDT ------------------------------------------------------------
-    subplot(2,2,2);
-    
-    % Axis data
-    x = timeData;
-    y = CH_1_LVDTFwd;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-g',x,polyv,'-k');
-    title('{\bf Fwd LVDT}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf FWD LVDT (mm)}');
-    grid on;
-    box on;
-    %axis square;
-    
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');    
-    
-    % AFT LVDT ------------------------------------------------------------
-    subplot(2,2,3);
-    
-    % Axis data
-    x = timeData;
-    y = CH_2_LVDTAft;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-r',x,polyv,'-k');
-    title('{\bf Aft LVDT}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf AFT LVDT (mm)}');
-    grid on;
-    box on;
-    %axis square;
-    
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    
-    % Drag ----------------------------------------------------------------
-    subplot(2,2,4);
-    
-    % Axis data
-    x = timeData;
-    y = CH_3_Drag;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-m',x,polyv,'-k');
-    title('{\bf Drag}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Drag (g)}');
-    grid on;
-    box on;
-    %axis square;
-    
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');    
+    end
     
     %# ********************************************************************
     %# Command Window Output
@@ -528,11 +653,11 @@ for k=startRun:endRun
         %[1]  Run No.
         
         %[2]  Channel
-        %[3]  SPEED: Averaged           (m/s)
-        %[4]  SPEED: Minimum            (m/s)
-        %[5]  SPEED: Maximum            (m/s)    
-        %[6]  SPEED: Diff. min to avg   (percent) 
-        %[7]  SPEED: Standard deviation (m/s)
+        %[3]  SPEED: Averaged              (m/s)
+        %[4]  SPEED: Minimum               (m/s)
+        %[5]  SPEED: Maximum               (m/s)    
+        %[6]  SPEED: Diff. min to avg      (percent) 
+        %[7]  SPEED: Standard deviation    (m/s)
         
         %[8]  Channel
         %[9]  FWD LVDT: Averaged           (mm)
@@ -549,18 +674,21 @@ for k=startRun:endRun
         %[19] AFT LVDT: Standard deviation (mm)         
         
         %[20] Channel
-        %[21] DRAG: Averaged           (g)
-        %[22] DRAG: Minimum            (g)
-        %[23] DRAG: Maximum            (g)    
-        %[24] DRAG: Diff. min to avg   (percent) 
-        %[25] DRAG: Standard deviation (g)         
+        %[21] DRAG: Averaged               (g)
+        %[22] DRAG: Minimum                (g)
+        %[23] DRAG: Maximum                (g)    
+        %[24] DRAG: Diff. min to avg       (percent) 
+        %[25] DRAG: Standard deviation     (g)         
+        
+        %[26]  Froude length Number                     (-)
+        %[27]  Speed no. (i.e. 1=0.24, 2=0.26, 3=0.28)  (-)                
         
     % General data
     resultsArrayTSBasic(k, 1)  = k;
-    
+        
     % Speed
     MeanData = CH_0_Speed_Mean;
-    CHData   = CH_0_Speed;    
+    CHData   = CH_0_Speed;
     
     resultsArrayTSBasic(k, 2)  = 0;
     resultsArrayTSBasic(k, 3)  = MeanData;
@@ -602,190 +730,206 @@ for k=startRun:endRun
     resultsArrayTSBasic(k, 24) = abs(1-(min(CHData)/MeanData));    
     resultsArrayTSBasic(k, 25) = std(CHData);      
     
-    %# ********************************************************************
-    %# Save plot as PNG
-    %# ********************************************************************
+    % Froude length number
+    roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
+    modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number
+    resultsArrayTSBasic(k, 26)  = modelfrrounded;
     
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    % Speed and depth number
+    resultsArrayTSBasic(k, 27)  = setSpeedCond;
     
-    %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-    
-    %# Plot title ---------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-    
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('_plots/%s/Run_%s_CH_0-3_Speed_LVDT_Drag.pdf', 'TS', num2str(runno));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Run_%s_CH_0-3_Speed_LVDT_Drag.png', 'TS', num2str(runno));
-    saveas(f, plotsavename);                % Save plot as PNG
-    close;
     
     %# ********************************************************************
     %# Dyno: Time Series Output
     %# ********************************************************************    
     
-    figurename = sprintf('%s:: Dyno Time Series Plot, Run %s', testName, num2str(runno));
-    f = figure('Name',figurename,'NumberTitle','off');    
+    %# ********************************************************************
+    %# PLOTTING
+    %# ********************************************************************
+    if enableTSPlot == 1
     
-    % PORT: Thrust --------------------------------------------------------    
-    subplot(2,2,1);
+        figurename = sprintf('%s:: Dyno Time Series Plot, Run %s', testName, num2str(runno));
+        f = figure('Name',figurename,'NumberTitle','off');
+        
+        % PORT: Thrust --------------------------------------------------------
+        subplot(2,2,1);
+        
+        % Axis data
+        x = timeData;
+        y = CH_6_PortThrust;
+        %     y = CH_7_PortTorque;
+        %     y = CH_8_StbdThrust;
+        %     y = CH_9_StbdTorque;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-b',x,polyv,'-k');
+        title('{\bf Port Thrust}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Thrust (N)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        % PORT: Torque --------------------------------------------------------
+        subplot(2,2,2);
+        
+        % Axis data
+        x = timeData;
+        %     y = CH_6_PortThrust;
+        y = CH_7_PortTorque;
+        %     y = CH_8_StbdThrust;
+        %     y = CH_9_StbdTorque;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-b',x,polyv,'-k');
+        title('{\bf Port Torque}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Torque (Nm)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        % STBD: Thrust --------------------------------------------------------
+        subplot(2,2,3);
+        
+        % Axis data
+        x = timeData;
+        %     y = CH_6_PortThrust;
+        %     y = CH_7_PortTorque;
+        y = CH_8_StbdThrust;
+        %     y = CH_9_StbdTorque;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-g',x,polyv,'-k');
+        title('{\bf Starboard Thrust}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Thrust (N)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        % STBD: Torque --------------------------------------------------------
+        subplot(2,2,4);
+        
+        % Axis data
+        x = timeData;
+        %     y = CH_6_PortThrust;
+        %     y = CH_7_PortTorque;
+        %     y = CH_8_StbdThrust;
+        y = CH_9_StbdTorque;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-g',x,polyv,'-k');
+        title('{\bf Starboard Torque}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Torque (Nm)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        %# ********************************************************************
+        %# Save plot as PNG
+        %# ********************************************************************
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        
+        %# Plot title ---------------------------------------------------------
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('_plots/%s/Run_%s_CH_6-9_Dynamometer.pdf', 'TS', num2str(runno));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('_plots/%s/Run_%s_CH_6-9_Dynamometer.png', 'TS', num2str(runno));
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;
     
-    % Axis data
-    x = timeData;
-    y = CH_6_PortThrust;
-%     y = CH_7_PortTorque;
-%     y = CH_8_StbdThrust;
-%     y = CH_9_StbdTorque;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-b',x,polyv,'-k');
-    title('{\bf Port Thrust}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Thrust (N)}');
-    grid on;
-    box on;
-    %axis square;
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
-    
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    
-    % PORT: Torque --------------------------------------------------------
-    subplot(2,2,2);
-    
-    % Axis data
-    x = timeData;
-%     y = CH_6_PortThrust;
-    y = CH_7_PortTorque;
-%     y = CH_8_StbdThrust;
-%     y = CH_9_StbdTorque;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-b',x,polyv,'-k');
-    title('{\bf Port Torque}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Torque (Nm)}');
-    grid on;
-    box on;
-    %axis square;
-
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');    
-    
-    % STBD: Thrust --------------------------------------------------------    
-    subplot(2,2,3);
-    
-    % Axis data
-    x = timeData;
-%     y = CH_6_PortThrust;
-%     y = CH_7_PortTorque;
-    y = CH_8_StbdThrust;
-%     y = CH_9_StbdTorque;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-g',x,polyv,'-k');
-    title('{\bf Starboard Thrust}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Thrust (N)}');
-    grid on;
-    box on;
-    %axis square;
-    
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    
-    % STBD: Torque --------------------------------------------------------
-    subplot(2,2,4);
-    
-    % Axis data
-    x = timeData;
-%     y = CH_6_PortThrust;
-%     y = CH_7_PortTorque;
-%     y = CH_8_StbdThrust;
-     y = CH_9_StbdTorque;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-g',x,polyv,'-k');
-    title('{\bf Starboard Torque}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Torque (Nm)}');
-    grid on;
-    box on;
-    %axis square;
-
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');    
+    end
     
     %# ********************************************************************
     %# Command Window Output
@@ -902,6 +1046,9 @@ for k=startRun:endRun
         %[24]  STBD (Torque): Diff. min to avg   (percent) 
         %[25]  STBD (Torque): Standard deviation (Nm)
         
+        %[26]  Froude length Number                     (-)
+        %[27]  Speed no. (i.e. 1=0.24, 2=0.26, 3=0.28)  (-)        
+        
     % General data
     resultsArrayTSDyno(k, 1)  = k;
     
@@ -949,110 +1096,126 @@ for k=startRun:endRun
     resultsArrayTSDyno(k, 24) = abs(1-(min(CHData)/MeanData));    
     resultsArrayTSDyno(k, 25) = std(CHData);    
     
-    %# ********************************************************************
-    %# Save plot as PNG
-    %# ********************************************************************
+    % Froude length number
+    roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
+    modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number
+    resultsArrayTSDyno(k, 26)  = modelfrrounded;
     
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    % Speed and depth number
+    resultsArrayTSDyno(k, 27)  = setSpeedCond;    
     
-    %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-    
-    %# Plot title ---------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-    
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('_plots/%s/Run_%s_CH_6-9_Dynamometer.pdf', 'TS', num2str(runno));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Run_%s_CH_6-9_Dynamometer.png', 'TS', num2str(runno));
-    saveas(f, plotsavename);                % Save plot as PNG
-    close;    
     
     %# ********************************************************************
     %# Kiel Probe: Time Series Output
     %# ********************************************************************    
     
-    figurename = sprintf('%s:: Kiel Probe Time Series Plot, Run %s', testName, num2str(runno));
-    f = figure('Name',figurename,'NumberTitle','off');    
+    %# ********************************************************************
+    %# PLOTTING
+    %# ********************************************************************
+    if enableTSPlot == 1    
     
-    % PORT: Thrust --------------------------------------------------------    
-    subplot(2,1,1);
+        figurename = sprintf('%s:: Kiel Probe Time Series Plot, Run %s', testName, num2str(runno));
+        f = figure('Name',figurename,'NumberTitle','off');
+        
+        % PORT: Thrust --------------------------------------------------------
+        subplot(2,1,1);
+        
+        % Axis data
+        x = timeData;
+        y = CH_10_PortKP;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-b',x,polyv,'-k');
+        title('{\bf Port Kiel Probe}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Kiel Probe (V)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        % PORT: Torque --------------------------------------------------------
+        subplot(2,1,2);
+        
+        % Axis data
+        x = timeData;
+        y = CH_11_StbdKP;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-g',x,polyv,'-k');
+        title('{\bf Stbd Kiel Probe}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Kiel Probe (V)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        %# ********************************************************************
+        %# Save plot as PNG
+        %# ********************************************************************
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        
+        %# Plot title ---------------------------------------------------------
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('_plots/%s/Run_%s_CH_10-11_Kiel_Probe.pdf', 'TS', num2str(runno));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('_plots/%s/Run_%s_CH_10-11_Kiel_Probe.png', 'TS', num2str(runno));
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;
     
-    % Axis data
-    x = timeData;
-    y = CH_10_PortKP;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-b',x,polyv,'-k');
-    title('{\bf Port Kiel Probe}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Kiel Probe (V)}');
-    grid on;
-    box on;
-    %axis square;
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
-    
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    
-    % PORT: Torque --------------------------------------------------------
-    subplot(2,1,2);
-    
-    % Axis data
-    x = timeData;
-    y = CH_11_StbdKP;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-g',x,polyv,'-k');
-    title('{\bf Stbd Kiel Probe}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Kiel Probe (V)}');
-    grid on;
-    box on;
-    %axis square;
-
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');      
+    end
     
     %# ********************************************************************
     %# Command Window Output
@@ -1119,6 +1282,9 @@ for k=startRun:endRun
         %[12] STBD Kiel Probe: Diff. min to avg   (percent) 
         %[13] STBD Kiel Probe: Standard deviation (V)
 
+        %[14]  Froude length Number                     (-)
+        %[15]  Speed no. (i.e. 1=0.24, 2=0.26, 3=0.28)  (-)        
+        
     % General data
     resultsArrayTSKp(k, 1)  = k;
     
@@ -1144,280 +1310,296 @@ for k=startRun:endRun
     resultsArrayTSKp(k, 12) = abs(1-(min(CHData)/MeanData));    
     resultsArrayTSKp(k, 13) = std(CHData);  
     
-    %# ********************************************************************
-    %# Save plot as PNG
-    %# ********************************************************************
+    % Froude length number
+    roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
+    modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number
+    resultsArrayTSKp(k, 14)  = modelfrrounded;
     
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    % Speed and depth number
+    resultsArrayTSKp(k, 15)  = setSpeedCond;
     
-    %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-    
-    %# Plot title ---------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-    
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('_plots/%s/Run_%s_CH_10-11_Kiel_Probe.pdf', 'TS', num2str(runno));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Run_%s_CH_10-11_Kiel_Probe.png', 'TS', num2str(runno));
-    saveas(f, plotsavename);                % Save plot as PNG
-    close;    
     
     %# ********************************************************************
     %# Pressures: Time Series Output
     %# ********************************************************************    
     
-    figurename = sprintf('%s:: Pressures Time Series Plot, Run %s', testName, num2str(runno));
-    f = figure('Name',figurename,'NumberTitle','off');    
+    %# ********************************************************************
+    %# PLOTTING
+    %# ********************************************************************
+    if enableTSPlot == 1    
     
-    % PORT: Station 6 -----------------------------------------------------    
-    subplot(5,2,9);
+        figurename = sprintf('%s:: Pressures Time Series Plot, Run %s', testName, num2str(runno));
+        f = figure('Name',figurename,'NumberTitle','off');
+        
+        % PORT: Station 6 -----------------------------------------------------
+        subplot(5,2,9);
+        
+        % Axis data
+        x = timeData;
+        y = CH_12_Port_Stat_6;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-b',x,polyv,'-k');
+        title('{\bf Port Station 6 Static Pressure}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Pressue (mmH20)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        % STBD: Station 6 -----------------------------------------------------
+        subplot(5,2,10);
+        
+        % Axis data
+        x = timeData;
+        y = CH_13_Stbd_Stat_6;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-g',x,polyv,'-k');
+        title('{\bf Stbd Station 6 Static Pressure}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Pressue (mmH20)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        % STBD: Station 5 -----------------------------------------------------
+        subplot(5,2,8);
+        
+        % Axis data
+        x = timeData;
+        y = CH_14_Stbd_Stat_5;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-g',x,polyv,'-k');
+        title('{\bf Stbd Station 5 Static Pressure}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Pressue (mmH20)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        % STBD: Station 4 -----------------------------------------------------
+        subplot(5,2,6);
+        
+        % Axis data
+        x = timeData;
+        y = CH_15_Stbd_Stat_4;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-g',x,polyv,'-k');
+        title('{\bf Stbd Station 4 Static Pressure}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Pressue (mmH20)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        % STBD: Station 3 -----------------------------------------------------
+        subplot(5,2,4);
+        
+        % Axis data
+        x = timeData;
+        y = CH_16_Stbd_Stat_3;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-g',x,polyv,'-k');
+        title('{\bf Stbd Station 3 Static Pressure}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Pressue (mmH20)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        % PORT: Station 1a -----------------------------------------------------
+        subplot(5,2,1);
+        
+        % Axis data
+        x = timeData;
+        y = CH_17_Port_Stat_1a;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-b',x,polyv,'-k');
+        title('{\bf Port Station 1a Static Pressure}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Pressue (mmH20)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        % STBD: Station 4 -----------------------------------------------------
+        subplot(5,2,2);
+        
+        % Axis data
+        x = timeData;
+        y = CH_18_Stbd_Stat_1a;
+        
+        %# Trendline
+        polyf = polyfit(x,y,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y,'-g',x,polyv,'-k');
+        title('{\bf Stbd Station 1a Static Pressure}');
+        xlabel('{\bf Time (seconds)}');
+        ylabel('{\bf Pressue (mmH20)}');
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Axis limitations
+        xlim([min(x) max(x)]);
+        %set(gca,'XTick',[min(x):0.2:max(x)]);
+        %set(gca,'YLim',[0 75]);
+        %set(gca,'YTick',[0:5:75]);
+        
+        %# Line width
+        set(h(1),'linewidth',1);
+        set(h(2),'linewidth',2);
+        
+        %# Legend
+        hleg1 = legend('Output (real units)','Trendline');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        
+        %# ********************************************************************
+        %# Save plot as PNG
+        %# ********************************************************************
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        
+        %# Plot title ---------------------------------------------------------
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('_plots/%s/Run_%s_CH_12-18_Pressures.pdf', 'TS', num2str(runno));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('_plots/%s/Run_%s_CH_12-18_Pressures.png', 'TS', num2str(runno));
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;
     
-    % Axis data
-    x = timeData;
-    y = CH_12_Port_Stat_6;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-b',x,polyv,'-k');
-    title('{\bf Port Station 6 Static Pressure}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Pressue (mmH20)}');
-    grid on;
-    box on;
-    %axis square;
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
-    
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    
-    % STBD: Station 6 ----------------------------------------------------- 
-    subplot(5,2,10);
-    
-    % Axis data
-    x = timeData;
-    y = CH_13_Stbd_Stat_6;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-g',x,polyv,'-k');
-    title('{\bf Stbd Station 6 Static Pressure}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Pressue (mmH20)}');
-    grid on;
-    box on;
-    %axis square;
-
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');    
-    
-    % STBD: Station 5 -----------------------------------------------------  
-    subplot(5,2,8);
-    
-    % Axis data
-    x = timeData;
-    y = CH_14_Stbd_Stat_5;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-g',x,polyv,'-k');
-    title('{\bf Stbd Station 5 Static Pressure}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Pressue (mmH20)}');
-    grid on;
-    box on;
-    %axis square;
-    
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    
-    % STBD: Station 4 -----------------------------------------------------  
-    subplot(5,2,6);
-    
-    % Axis data
-    x = timeData;
-    y = CH_15_Stbd_Stat_4;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-g',x,polyv,'-k');
-    title('{\bf Stbd Station 4 Static Pressure}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Pressue (mmH20)}');
-    grid on;
-    box on;
-    %axis square;
-
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    
-    % STBD: Station 3 ----------------------------------------------------- 
-    subplot(5,2,4);
-    
-    % Axis data
-    x = timeData;
-    y = CH_16_Stbd_Stat_3;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-g',x,polyv,'-k');
-    title('{\bf Stbd Station 3 Static Pressure}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Pressue (mmH20)}');
-    grid on;
-    box on;
-    %axis square;
-
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');    
-    
-    % PORT: Station 1a -----------------------------------------------------  
-    subplot(5,2,1);
-    
-    % Axis data
-    x = timeData;
-    y = CH_17_Port_Stat_1a;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-b',x,polyv,'-k');
-    title('{\bf Port Station 1a Static Pressure}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Pressue (mmH20)}');
-    grid on;
-    box on;
-    %axis square;
-    
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    
-    % STBD: Station 4 -----------------------------------------------------  
-    subplot(5,2,2);
-    
-    % Axis data
-    x = timeData;
-    y = CH_18_Stbd_Stat_1a;
-    
-    %# Trendline
-    polyf = polyfit(x,y,1);
-    polyv = polyval(polyf,x);
-    
-    h = plot(x,y,'-g',x,polyv,'-k');
-    title('{\bf Stbd Station 1a Static Pressure}');
-    xlabel('{\bf Time (seconds)}');
-    ylabel('{\bf Pressue (mmH20)}');
-    grid on;
-    box on;
-    %axis square;
-
-    %# Axis limitations
-    xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Output (real units)','Trendline');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');    
+    end
     
     %# ********************************************************************
     %# Command Window Output
@@ -1492,7 +1674,7 @@ for k=startRun:endRun
         disp(minstbdstation4);
         disp(maxstbdstation4);
         disp(ptastbdstation4);
-        disp(stdstbdstation4);        
+        disp(stdstbdstation4);
         
         disp('-------------------------------------------------');
         
@@ -1510,8 +1692,8 @@ for k=startRun:endRun
         disp(minstbdstation3);
         disp(maxstbdstation3);
         disp(ptastbdstation3);
-        disp(stdstbdstation3);        
-
+        disp(stdstbdstation3);
+        
         disp('-------------------------------------------------');
         
         % PORT Station 1a Static Pressue
@@ -1609,6 +1791,9 @@ for k=startRun:endRun
         %[42] STBD Station 1a Static Pressue: Diff. min to avg   (percent) 
         %[43] STBD Station 1a Static Pressue: Standard deviation (mmH2O)       
         
+        %[44]  Froude length Number                     (-)
+        %[45]  Speed no. (i.e. 1=0.24, 2=0.26, 3=0.28)  (-)        
+        
 	% General data
     resultsArrayTSPressure(k, 1)  = k;
     
@@ -1689,31 +1874,14 @@ for k=startRun:endRun
     resultsArrayTSPressure(k, 42) = abs(1-(min(CHData)/MeanData));    
     resultsArrayTSPressure(k, 43) = std(CHData);
 
-    %# ********************************************************************
-    %# Save plot as PNG
-    %# ********************************************************************
+    % Froude length number
+    roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
+    modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number
+    resultsArrayTSPressure(k, 44)  = modelfrrounded;
     
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    % Speed and depth number
+    resultsArrayTSPressure(k, 45)  = setSpeedCond;    
     
-    %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-    
-    %# Plot title ---------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-    
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('_plots/%s/Run_%s_CH_12-18_Pressures.pdf', 'TS', num2str(runno));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Run_%s_CH_12-18_Pressures.png', 'TS', num2str(runno));
-    saveas(f, plotsavename);                % Save plot as PNG
-    close;    
     
     %wtot = endRun - startRun;
     %w = waitbar(k/wtot,w,['iteration: ',num2str(k)]);
@@ -1731,21 +1899,25 @@ end
 M = resultsArrayTSBasic;
 M = M(any(M,2),:);                            % Remove zero rows
 csvwrite('resultsArrayTSBasic.dat', M)        % Export matrix M to a file delimited by the comma character  
+disp('Saved: resultsArrayTSBasic.dat');       % Display message in command window
 
 % Dynamometer data: Thrust and Torque
 M = resultsArrayTSDyno;
 M = M(any(M,2),:);                            % Remove zero rows
 csvwrite('resultsArrayTSDyno.dat', M)         % Export matrix M to a file delimited by the comma character
+disp('Saved: resultsArrayTSDyno.dat');        % Display message in command window
 
 % Kiel probe data
 M = resultsArrayTSKp;
 M = M(any(M,2),:);                            % Remove zero rows
 csvwrite('resultsArrayTSKp.dat', M)           % Export matrix M to a file delimited by the comma character
+disp('Saved: resultsArrayTSKp.dat');          % Display message in command window
 
 % Pressure related data
 M = resultsArrayTSPressure;
 M = M(any(M,2),:);                            % Remove zero rows
 csvwrite('resultsArrayTSPressure.dat', M)     % Export matrix M to a file delimited by the comma character
+disp('Saved: resultsArrayTSPressure.dat');    % Display message in command window
 
 %dlmwrite('resultsArrayTS.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 
