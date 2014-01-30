@@ -108,6 +108,38 @@ runfilespath = '..\\';      % Relative path from Matlab directory
 %# -------------------------------------------------------------------------
 Fs = 800;       % Sampling frequency = 800Hz
 
+%# ************************************************************************
+%# START CONSTANTS AND PARTICULARS
+%# ------------------------------------------------------------------------
+
+% On test date
+ttlength            = 100;                    % Towing Tank: Length            (m)
+ttwidth             = 3.5;                    % Towing Tank: Width             (m)
+ttwaterdepth        = 1.45;                   % Towing Tank: Water depth       (m)
+ttcsa               = ttwidth * ttwaterdepth; % Towing Tank: Sectional area    (m^2)
+ttwatertemp         = 17.5;                   % Towing Tank: Water temperature (degrees C)
+
+% General constants
+gravconst           = 9.806;                  % Gravitational constant           (m/s^2)
+modelkinviscosity   = (((0.585*10^(-3))*(ttwatertemp-12)-0.03361)*(ttwatertemp-12)+1.235)*10^(-6); % Model scale kinetic viscosity at X (see ttwatertemp) degrees following ITTC (m2/s)
+fullscalekinvi      = 0.000001034;            % Full scale kinetic viscosity     (m^2/s)
+freshwaterdensity   = 1000;                   % Model scale water density        (Kg/m^3)
+saltwaterdensity    = 1025;                   % Salt water scale water density   (Kg/m^3)
+distbetwposts       = 1150;                   % Distance between carriage posts  (mm)
+FStoMSratio         = 21.6;                   % Full scale to model scale ratio  (-)
+
+%# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+%# CONDITION: 1,500 tonnes, level static trim, trim tab at 5 degrees
+%# ------------------------------------------------------------------------
+MSlwl1500           = 4.30;                              % Model length waterline          (m)
+MSwsa1500           = 1.501;                             % Model scale wetted surface area (m^2)
+MSdraft1500         = 0.133;                             % Model draft                     (m)
+MSAx1500            = 0.024;                             % Model area of max. transverse section (m^2)
+BlockCoeff1500      = 0.592;                             % Mode block coefficient          (-)
+FSlwl1500           = MSlwl1500*FStoMSratio;             % Full scale length waterline     (m)
+FSwsa1500           = MSwsa1500*FStoMSratio^2;           % Full scale wetted surface area  (m^2)
+FSdraft1500         = MSdraft1500*FStoMSratio;           % Full scale draft                (m)
+
 %# -------------------------------------------------------------------------
 %# Number of headerlines in DAT file
 %# -------------------------------------------------------------------------
@@ -311,18 +343,19 @@ for k=startRun:endRun
         %[2]  FS                (Hz)
         %[3]  No. of samples    (-)
         %[4]  Record time       (s)
-        %[5]  Speed             (m/s)
-        %[6]  Forward LVDT      (mm)
-        %[7]  Aft LVDT          (mm)
-        %[8]  Drag              (g)
-        %[9]  Shaft Speed PORT  (RPM)
-        %[10] Shaft Speed STBD  (RPM)
-        %[11] Thrust PORT       (N)
-        %[12] Torque PORT       (Nm)
-        %[13] Thrust STBD       (N)
-        %[14] Torque STBD       (Nm)        
-        %[15] Kiel probe PORT   (V)
-        %[16] Kiel probe STBD   (V)   
+        %[5]  Froude length number (-)
+        %[6]  Speed             (m/s)
+        %[7]  Forward LVDT      (mm)
+        %[8]  Aft LVDT          (mm)
+        %[9]  Drag              (g)
+        %[10]  Shaft Speed PORT  (RPM)
+        %[11] Shaft Speed STBD  (RPM)
+        %[12] Thrust PORT       (N)
+        %[13] Torque PORT       (Nm)
+        %[14] Thrust STBD       (N)
+        %[15] Torque STBD       (Nm)        
+        %[16] Kiel probe PORT   (V)
+        %[17] Kiel probe STBD   (V)   
         
     % General data
     resultsArraySPP(k, 1)  = k;                                                     % Run No.
@@ -331,25 +364,29 @@ for k=startRun:endRun
     recordTime = length(timeData) / (round(length(timeData) / timeData(end)));
     resultsArraySPP(k, 4)  = round(recordTime);                                     % Record time in seconds
     
+    roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                      % Round averaged speed to two (2) decimals only
+    modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number
+    resultsArraySPP(k, 5) = modelfrrounded;                                         % Froude length number (adjusted for Lwl change at different conditions) (-)
+    
     % Resistance data
-    resultsArraySPP(k, 5)  = CH_0_Speed_Mean;                                       % Speed (m/s)
-    resultsArraySPP(k, 6)  = CH_1_LVDTFwd_Mean;                                     % Forward LVDT (mm)
-    resultsArraySPP(k, 7)  = CH_2_LVDTAft_Mean;                                     % Aft LVDT (mm)
-    resultsArraySPP(k, 8)  = CH_3_Drag_Mean;                                        % Drag (g)
+    resultsArraySPP(k, 6)  = CH_0_Speed_Mean;                                       % Speed (m/s)
+    resultsArraySPP(k, 7)  = CH_1_LVDTFwd_Mean;                                     % Forward LVDT (mm)
+    resultsArraySPP(k, 8)  = CH_2_LVDTAft_Mean;                                     % Aft LVDT (mm)
+    resultsArraySPP(k, 9)  = CH_3_Drag_Mean;                                        % Drag (g)
 
     % RPM data
-    resultsArraySPP(k, 9)  = RPMPort;                                               % Shaft Speed PORT (RPM)
-    resultsArraySPP(k, 10) = RPMStbd;                                               % Shaft Speed STBD (RPM)
+    resultsArraySPP(k, 10) = RPMPort;                                               % Shaft Speed PORT (RPM)
+    resultsArraySPP(k, 11) = RPMStbd;                                               % Shaft Speed STBD (RPM)
 
     % Thrust and torque data
-    resultsArraySPP(k, 11) = abs(CH_6_PortThrust_Mean/1000)*9.806;                  % Thrust PORT (N)
-    resultsArraySPP(k, 12) = CH_7_PortTorque_Mean;                                  % Torque PORT (Nm)
-    resultsArraySPP(k, 13) = abs(CH_8_StbdThrust_Mean/1000)*9.806;                  % Thrust STBD (N)
-    resultsArraySPP(k, 14) = CH_9_StbdTorque_Mean;                                  % Torque STBD (Nm)  
+    resultsArraySPP(k, 12) = abs(CH_6_PortThrust_Mean/1000)*9.806;                  % Thrust PORT (N)
+    resultsArraySPP(k, 13) = CH_7_PortTorque_Mean;                                  % Torque PORT (Nm)
+    resultsArraySPP(k, 14) = abs(CH_8_StbdThrust_Mean/1000)*9.806;                  % Thrust STBD (N)
+    resultsArraySPP(k, 15) = CH_9_StbdTorque_Mean;                                  % Torque STBD (Nm)  
     
     % Kie; probe data
-    resultsArraySPP(k, 15)  = mean(Raw_CH_10_PortKP);                                % Kiel probe PORT (V)
-    resultsArraySPP(k, 16)  = mean(Raw_CH_11_StbdKP);                               % Kiel probe STBD (V)    
+    resultsArraySPP(k, 16)  = mean(Raw_CH_10_PortKP);                                % Kiel probe PORT (V)
+    resultsArraySPP(k, 17)  = mean(Raw_CH_11_StbdKP);                               % Kiel probe STBD (V)    
     
     %# Prepare strings for display ----------------------------------------
     
@@ -398,7 +435,9 @@ end
 % /////////////////////////////////////////////////////////////////////
 % START: Write results to CVS
 % ---------------------------------------------------------------------
+resultsArraySPP = resultsArraySPP(any(resultsArraySPP,2),:);           % Remove zero rows
 M = resultsArraySPP;
+%M = M(any(M,2),:);                                                    % remove zero rows only in resultsArraySPP text file
 csvwrite('resultsArraySPP.dat', M)                                     % Export matrix M to a file delimited by the comma character      
 dlmwrite('resultsArraySPP.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 % ---------------------------------------------------------------------

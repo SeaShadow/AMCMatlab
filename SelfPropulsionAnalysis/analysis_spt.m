@@ -527,7 +527,9 @@ end
 % /////////////////////////////////////////////////////////////////////
 % START: Write results to CVS
 % ---------------------------------------------------------------------
+resultsArraySPT = resultsArraySPT(any(resultsArraySPT,2),:);           % Remove zero rows
 M = resultsArraySPT;
+%M = M(any(M,2),:);                                                    % remove zero rows only in resultsArraySPP text file
 csvwrite('resultsArraySPT.dat', M)                                     % Export matrix M to a file delimited by the comma character      
 dlmwrite('resultsArraySPT.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 % ---------------------------------------------------------------------
