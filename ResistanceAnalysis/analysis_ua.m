@@ -311,8 +311,8 @@ FSdraft1804bystern    = MSdraft1804bystern*FStoMSratio;  % Full scale draft     
 %# ************************************************************************
 
 
-% *************************************************************************
-% START: CALCULATING MIN, MAX AND AVERAGED DATA
+%# ************************************************************************
+%# START: CALCULATING CONDITIONS, MIN, MAX AND AVERAGED DATA
 %# ------------------------------------------------------------------------
 
 cond1=[];cond2=[];cond3=[];cond4=[];cond5=[];cond6=[];cond7=[];cond8=[];cond9=[];cond10=[];cond11=[];cond12=[];cond13=[];
@@ -368,14 +368,15 @@ for j=1:ma
     end    
 end
 
+%# ------------------------------------------------------------------------
+%# END: CALCULATING CONDITIONS, MIN, MAX AND AVERAGED DATA
+%# ************************************************************************
+
+
 %# *********************************************************************
 %# Testname
 %# *********************************************************************
 testName = 'Resistance uncertainty analysis';
-
-% *************************************************************************
-%# UA #1: Resistance Measurements
-% *************************************************************************
 
 %# ************************************************************************
 %# ITTC Based Resistance Uncertainty Analysis (multipe tests)
@@ -724,13 +725,13 @@ for condNo=7:12
         setPCT = (setK*setSCT)/(sqrt(setM));
         
         % Percent of CT at 15 deg C
-        percentOfCT15degC = (setPCT/avgCT15degC)*100;
+        percentOfCT15degC_2 = (setPCT/avgCT15degC)*100;
         
 %         if A{j}(1,11) == 0.20
 %             setM
 %             setSCT
 %             setPCT
-%             percentOfCT15degC
+%             percentOfCT15degC_2
 %         end
         
         %# ////////////////////////////////////////////////////////////////
@@ -767,30 +768,128 @@ for condNo=7:12
         % /////////////////////////////////////////////////////////////////        
         
         %# Results array columns: 
-            %[1]  Run No.                                               (-)
-            %[2]  Condition                                             (-)
-            %[3]  Froude length number                                  (-)       
+            %[1] Run No.                                               (-)
+            %[2] Condition                                             (-)
+            %[3] Froude length number                                  (-)
         
             % Section 8.0: Total Uncertainty
-            %[4]  BCT                                                   (-)       
-            %[5]  % of UCT15 deg C                                      (-)       
-            %[6]  PCT                                                   (-)       
-            %[7]  % of UCT15 deg C                                      (-)       
-            %[8]  UCT 15 deg C                                          (-)       
-            %[9]  % of CT 15 deg C                                      (-)       
+            %[4] BCT                                                   (-)
+            %[5] % of UCT15 deg C                                      (-)
+            %[6] PCT                                                   (-)
+            %[7] % of UCT15 deg C                                      (-)
+            %[8] UCT 15 deg C                                          (-)
+            %[9] % of CT 15 deg C                                      (-)
+            
+            % Section 3.0: Single or Multiple Test Uncertainty
+            %[10] Average CT                                           (-) 
+            %[11] Average CT at 15 deg C                               (-) 
+            %[12] Standard deviation                                   (-) 
+            
+            % Section 4.0: Input variables
+            %[13] Mx, mass, total resistance in x-direction            (Kg)
+            %[14] Rx, resistance (average)                             (N)
+            %[15] CF at 15 deg C                                       (-)
+            %[16] CFtw, fric. resistance coeff. at measured temp, tw   (-)
+            
+            % Section 6.1: Wetted Surface
+            %[17] BS (Wetted Surface)                                  (m^2)
+            %[18] % of S                                               (-)
+            
+            % Section 6.2: Speed
+            %[19] BV (Speed)                                           (m/s)
+            %[20] % of V                                               (-)
+            
+            % Section 6.3: Resistance
+            %[21] BMx (Total Resistance Mass)                          (Kg)
+            %[22] % of Mx                                              (-)
+            
+            % Section 6.4: Towing Tank Water Properties
+            %[23] Btw (Water temperature)                              (Deg C)
+            %[24] % of tw                                              (-)
+            %[25] B? (Water density)                                   (Kg)
+            %[26] % of ?                                               (-)
+            
+            % Section 6.5: Sensitivity Coefficients
+            %[27] ?S (Wetted Surface)                                  (1/m^2)
+            %[28] ?V (Speed)                                           (1/(m/s))
+            %[29] ?Mx (Total Mass Resistance)                          (m/Ns^2)
+            %[30] ?? (Water Density)                                   (m^3/Kg)
+            %[31] ??tw? (Water Temperature)                            (1/Deg C)
+            
+            % Section 6.6: Total Bias of Resistance Coefficient CT
+            %[32] BCT (Resistance Coefficient CT)                      (-)
+            %[33] % of CT15degC                                        (-)
+            
+            % Section 7.0: Precision Limit
+            %[34] PCT (Resistance Coefficient CT)                      (-)
+            %[35] % of CT15degC                                        (-)
+            
+        %# Constants and identifiers ---------------------------------------            
             
         % General identifiers
-        resultsArrayUARes(counter1, 1) = A{j}(1,1);       % Run no.
-        resultsArrayUARes(counter1, 2) = setCondNo;       % Condition
-        resultsArrayUARes(counter1, 3) = A{j}(1,11);      % Froude length number
-
+        resultsArrayUARes(counter1, 1)  = A{j}(1,1);
+        resultsArrayUARes(counter1, 2)  = setCondNo;
+        resultsArrayUARes(counter1, 3)  = A{j}(1,11);
+        
+        %# Total uncertainty ----------------------------------------------
+        
         % Section 8.0: Total Uncertainty
-        resultsArrayUARes(counter1, 4) = setBCT;
-        resultsArrayUARes(counter1, 5) = percentOfUCT152degC1;
-        resultsArrayUARes(counter1, 6) = setPCT;
-        resultsArrayUARes(counter1, 7) = percentOfUCT152degC2;
-        resultsArrayUARes(counter1, 8) = setUCT152degC;
-        resultsArrayUARes(counter1, 9) = percentOfCT152degC;
+        resultsArrayUARes(counter1, 4)  = setBCT;
+        resultsArrayUARes(counter1, 5)  = percentOfUCT152degC1;
+        resultsArrayUARes(counter1, 6)  = setPCT;
+        resultsArrayUARes(counter1, 7)  = percentOfUCT152degC2;
+        resultsArrayUARes(counter1, 8)  = setUCT152degC;
+        resultsArrayUARes(counter1, 9)  = percentOfCT152degC;
+        
+        %# Averages and standard deviation --------------------------------        
+        
+        % Section 3.0: Single or Multiple Test Uncertainty
+        resultsArrayUARes(counter1, 10) = avgCT;
+        resultsArrayUARes(counter1, 11) = avgCT15degC;
+        resultsArrayUARes(counter1, 12) = stdDev;
+
+        %# Variables ------------------------------------------------------
+        
+        % Section 4.0: Input variables
+        resultsArrayUARes(counter1, 13) = setMx;
+        resultsArrayUARes(counter1, 14) = setRx;
+        resultsArrayUARes(counter1, 15) = setCF15degC;
+        resultsArrayUARes(counter1, 16) = setCFtw;
+
+        %# Coefficients ---------------------------------------------------
+        
+        % Section 6.1: Wetted Surface
+        resultsArrayUARes(counter1, 17) = setBs;
+        resultsArrayUARes(counter1, 18) = percentOfS;
+        
+        % Section 6.2: Speed
+        resultsArrayUARes(counter1, 19) = setBv;
+        resultsArrayUARes(counter1, 20) = percentOfV;
+        
+        % Section 6.3: Resistance
+        resultsArrayUARes(counter1, 21) = setBMx;
+        resultsArrayUARes(counter1, 22) = percentOfBMx;
+        
+        % Section 6.4: Towing Tank Water Properties
+        resultsArrayUARes(counter1, 23) = setBtw;
+        resultsArrayUARes(counter1, 24) = percentOfTw;
+        resultsArrayUARes(counter1, 25) = setBRho;
+        resultsArrayUARes(counter1, 26) = percentOfRho;
+        
+        % Section 6.5: Sensitivity Coefficients
+        resultsArrayUARes(counter1, 27) = thetaS;
+        resultsArrayUARes(counter1, 28) = thetaV;
+        resultsArrayUARes(counter1, 29) = thetaMx;
+        resultsArrayUARes(counter1, 30) = thetaRho;
+        resultsArrayUARes(counter1, 31) = thetaRhoTw;
+
+        % Section 6.6: Total Bias of Resistance Coefficient CT
+        resultsArrayUARes(counter1, 32) = setBCT;
+        resultsArrayUARes(counter1, 33) = percentOfCT15degC;
+        
+        % Section 7.0: Precision Limit
+        resultsArrayUARes(counter1, 34) = setPCT;
+        resultsArrayUARes(counter1, 35) = percentOfCT15degC_2;
         
         counter1 = counter1 + 1;
     end
@@ -819,7 +918,6 @@ for l=1:qas
 end
 plotArray7 = plotArray7(any(plotArray7,2),:);  % Remove zero rows
 
-plotArray = [];
 for l=1:qas
     if resultsArrayUARes(l,2) == 8
         plotArray8(l,:) = resultsArrayUARes(l,:);
@@ -827,7 +925,6 @@ for l=1:qas
 end
 plotArray8 = plotArray8(any(plotArray8,2),:);  % Remove zero rows
 
-plotArray = [];
 for l=1:qas
     if resultsArrayUARes(l,2) == 9
         plotArray9(l,:) = resultsArrayUARes(l,:);
@@ -835,7 +932,6 @@ for l=1:qas
 end
 plotArray9 = plotArray9(any(plotArray9,2),:);  % Remove zero rows
 
-plotArray = [];
 for l=1:qas
     if resultsArrayUARes(l,2) == 10
         plotArray10(l,:) = resultsArrayUARes(l,:);
@@ -843,7 +939,6 @@ for l=1:qas
 end
 plotArray10 = plotArray10(any(plotArray10,2),:);  % Remove zero rows
 
-plotArray = [];
 for l=1:qas
     if resultsArrayUARes(l,2) == 11
         plotArray11(l,:) = resultsArrayUARes(l,:);
@@ -851,7 +946,6 @@ for l=1:qas
 end
 plotArray11 = plotArray11(any(plotArray11,2),:);  % Remove zero rows
 
-plotArray = [];
 for l=1:qas
     if resultsArrayUARes(l,2) == 12
         plotArray12(l,:) = resultsArrayUARes(l,:);
@@ -859,9 +953,13 @@ for l=1:qas
 end
 plotArray12 = plotArray12(any(plotArray12,2),:);  % Remove zero rows
 
+%# ////////////////////////////////////////////////////////////////////////
+% Plots
+%# ////////////////////////////////////////////////////////////////////////
 
-% Plot
-figurename = sprintf('%s:: Condition %s', testName, num2str(setCondNo));
+%# PLOT #1: Fr versus resistance coefficient, total uncertainty ***********
+
+figurename = sprintf('%s:: Condition %s', 'Resistance Coefficient, total uncertainty', num2str(setCondNo));
 f = figure('Name',figurename,'NumberTitle','off');
 
 setX1 = plotArray7(:,3);
@@ -901,9 +999,9 @@ set(gcf,'Color',[1,1,1]);
 set(h(1),'Color',[0 0 1],'Marker','s','MarkerSize',setMarkerSize,'MarkerFaceColor',[0 0 1]); %,'LineStyle','-','linewidth',1
 set(h(2),'Color',[0 0.5 0],'Marker','o','MarkerSize',setMarkerSize,'MarkerFaceColor',[0 0.5 0]);
 set(h(3),'Color',[1 0 0],'Marker','d','MarkerSize',setMarkerSize,'MarkerFaceColor',[1 0 0]);
-set(h(4),'Color',[1 0 1],'Marker','p','MarkerSize',setMarkerSize,'MarkerFaceColor',[1 0 1]);
+set(h(4),'Color',[1 0 1],'Marker','v','MarkerSize',setMarkerSize,'MarkerFaceColor',[1 0 1]);
 set(h(5),'Color',[0 1 1],'Marker','>','MarkerSize',setMarkerSize,'MarkerFaceColor',[0 1 1]);
-set(h(6),'Color',[0 0 0],'Marker','v','MarkerSize',setMarkerSize,'MarkerFaceColor',[0 0 0]);
+set(h(6),'Color',[0 0 0],'Marker','p','MarkerSize',setMarkerSize,'MarkerFaceColor',[0 0 0]);
 
 %# Axis limitations
 set(gca,'XLim',[0.2 0.5]);
@@ -917,9 +1015,9 @@ set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
 %legend boxoff;
 
-%# ////////////////////////////////////////////////////////////////////
+%# ------------------------------------------------------------------------
 %# Save plot as PNG
-%# ////////////////////////////////////////////////////////////////////
+%# ------------------------------------------------------------------------
 
 %# Figure size on screen (50% scaled, but same aspect ratio)
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -930,35 +1028,295 @@ set(gcf, 'PaperSize',[XPlot YPlot]);
 set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
 set(gcf, 'PaperOrientation','portrait');
 
-%# Plot title ---------------------------------------------------------
+%# Plot title -------------------------------------------------------------
 annotation('textbox', [0 0.9 1 0.1], ...
     'String', strcat('{\bf ', figurename, '}'), ...
     'EdgeColor', 'none', ...
     'HorizontalAlignment', 'center');
 
-%# ////////////////////////////////////////////////////////////////////
+%# ------------------------------------------------------------------------
 %# Save plots as PDF and PNG
-%# ////////////////////////////////////////////////////////////////////
-%plotsavenamePDF = sprintf('_plots/%s/Condition_%s_Resistance_Uncertainty_Analysis_Plots.pdf', '_uncertainty_analysis', num2str(setCondNo));
+%# ------------------------------------------------------------------------
+%plotsavenamePDF = sprintf('_plots/%s/Condition_7_to_12_Resistance_Uncertainty_Analysis_Plots.pdf', '_uncertainty_analysis');
 %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
 plotsavename = sprintf('_plots/%s/Condition_7_to_12_Resistance_Uncertainty_Analysis_Plots.png', '_uncertainty_analysis');
 saveas(f, plotsavename);                % Save plot as PNG
 %close;
 
 
+%# -/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+%# -/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+%# -/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+
+
+%# PLOT #2: Resistance coefficient bias and precision limit ***************
+
+% Fr versus resistance coefficient, total uncertainty
+figurename = sprintf('%s:: Conditions %s to %s', 'Resistance coefficient bias and precision limits', num2str(7), num2str(12));
+f = figure('Name',figurename,'NumberTitle','off');
+
+% Condition 7 -------------------------------------------------------------
+subplot(3,2,1)
+
+X = plotArray7(:,3);
+A = plotArray7(:,5);
+B = plotArray7(:,7);
+
+% Set marker size
+setMarkerSize = 8;
+
+h = plot(X,A,'s',X,B,'o');
+xlabel('{\bf Froude length number [-]}');
+ylabel('{\bf % of U_{CT15 deg C}}');
+title('{\bf Cond 7: 1,500t, static trim level}');
+grid on;
+box on;
+%axis square;
+
+% Colors and markers
+set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
+set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+set(gca,'XLim',[0.2 0.5]);
+set(gca,'XTick',[0.2:0.02:0.5]);
+set(gca,'YLim',[0 100]);
+set(gca,'YTick',[0:20:100]);
+
+%# Legend
+hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
+set(hleg1,'Location','SouthOutside');
+set(hleg1,'Interpreter','none');
+set(hleg1, 'Box', 'off')
+
+% Condition 8 -------------------------------------------------------------
+subplot(3,2,3)
+
+X = plotArray8(:,3);
+A = plotArray8(:,5);
+B = plotArray8(:,7);
+
+% Set marker size
+setMarkerSize = 8;
+
+h = plot(X,A,'s',X,B,'o');
+xlabel('{\bf Froude length number [-]}');
+ylabel('{\bf % of U_{CT15 deg C}}');
+title('{\bf Cond 8: 1,500t, static trim 0.5}');
+grid on;
+box on;
+%axis square;
+
+% Colors and markers
+set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
+set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
+
+%# Axis limitations
+set(gca,'XLim',[0.2 0.5]);
+set(gca,'XTick',[0.2:0.02:0.5]);
+set(gca,'YLim',[0 100]);
+set(gca,'YTick',[0:20:100]);
+
+%# Legend
+hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
+set(hleg1,'Location','SouthOutside');
+set(hleg1,'Interpreter','none');
+set(hleg1, 'Box', 'off')
+
+% Condition 9 -------------------------------------------------------------
+subplot(3,2,5)
+
+X = plotArray9(:,3);
+A = plotArray9(:,5);
+B = plotArray9(:,7);
+
+% Set marker size
+setMarkerSize = 8;
+
+h = plot(X,A,'s',X,B,'o');
+xlabel('{\bf Froude length number [-]}');
+ylabel('{\bf % of U_{CT15 deg C}}');
+title('{\bf Cond 9: 1,500t, static trim -0.5}');
+grid on;
+box on;
+%axis square;
+
+% Colors and markers
+set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
+set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
+
+%# Axis limitations
+set(gca,'XLim',[0.2 0.5]);
+set(gca,'XTick',[0.2:0.02:0.5]);
+set(gca,'YLim',[0 100]);
+set(gca,'YTick',[0:20:100]);
+
+%# Legend
+hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
+set(hleg1,'Location','SouthOutside');
+set(hleg1,'Interpreter','none');
+set(hleg1, 'Box', 'off')
+
+% Condition 10 ------------------------------------------------------------
+subplot(3,2,2)
+
+X = plotArray10(:,3);
+A = plotArray10(:,5);
+B = plotArray10(:,7);
+
+% Set marker size
+setMarkerSize = 8;
+
+h = plot(X,A,'s',X,B,'o');
+xlabel('{\bf Froude length number [-]}');
+ylabel('{\bf % of U_{CT15 deg C}}');
+title('{\bf Cond 10: 1,804t, static trim level}');
+grid on;
+box on;
+%axis square;
+
+% Colors and markers
+set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
+set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
+
+%# Axis limitations
+set(gca,'XLim',[0.2 0.5]);
+set(gca,'XTick',[0.2:0.02:0.5]);
+set(gca,'YLim',[0 100]);
+set(gca,'YTick',[0:20:100]);
+
+%# Legend
+hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
+set(hleg1,'Location','SouthOutside');
+set(hleg1,'Interpreter','none');
+set(hleg1, 'Box', 'off')
+
+% Condition 11 ------------------------------------------------------------
+subplot(3,2,4)
+
+X = plotArray11(:,3);
+A = plotArray11(:,5);
+B = plotArray11(:,7);
+
+% Set marker size
+setMarkerSize = 8;
+
+h = plot(X,A,'s',X,B,'o');
+xlabel('{\bf Froude length number [-]}');
+ylabel('{\bf % of U_{CT15 deg C}}');
+title('{\bf Cond 11: 1,804t, static trim 0.5}');
+grid on;
+box on;
+%axis square;
+
+% Colors and markers
+set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
+set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
+
+%# Axis limitations
+set(gca,'XLim',[0.2 0.5]);
+set(gca,'XTick',[0.2:0.02:0.5]);
+set(gca,'YLim',[0 100]);
+set(gca,'YTick',[0:20:100]);
+
+%# Legend
+hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
+set(hleg1,'Location','SouthOutside');
+set(hleg1,'Interpreter','none');
+set(hleg1, 'Box', 'off')
+
+% Condition 12 ------------------------------------------------------------
+subplot(3,2,6)
+
+X = plotArray12(:,3);
+A = plotArray12(:,5);
+B = plotArray12(:,7);
+
+% Set marker size
+setMarkerSize = 8;
+
+h = plot(X,A,'s',X,B,'o');
+xlabel('{\bf Froude length number [-]}');
+ylabel('{\bf % of U_{CT15 deg C}}');
+title('{\bf Cond 12: 1,804t, static trim -0.5}');
+grid on;
+box on;
+%axis square;
+
+% Colors and markers
+set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
+set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
+
+%# Axis limitations
+set(gca,'XLim',[0.2 0.5]);
+set(gca,'XTick',[0.2:0.02:0.5]);
+set(gca,'YLim',[0 100]);
+set(gca,'YTick',[0:20:100]);
+
+%# Legend
+hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
+set(hleg1,'Location','SouthOutside');
+set(hleg1,'Interpreter','none');
+set(hleg1, 'Box', 'off')
+
+%# ------------------------------------------------------------------------
+%# Save plot as PNG
+%# ------------------------------------------------------------------------
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# Plot title -------------------------------------------------------------
+annotation('textbox', [0 0.9 1 0.1], ...
+    'String', strcat('{\bf ', figurename, '}'), ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center');
+
+%# ------------------------------------------------------------------------
+%# Save plots as PDF and PNG
+%# ------------------------------------------------------------------------
+%plotsavenamePDF = sprintf('_plots/%s/Condition_7_to_12_Resistance_Coefficient_Bias_and_Precision_Limit_Plots.pdf', '_uncertainty_analysis');
+%saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+plotsavename = sprintf('_plots/%s/Condition_7_to_12_Resistance_Coefficient_Bias_and_Precision_Limit_Plots.png', '_uncertainty_analysis');
+saveas(f, plotsavename);                % Save plot as PNG
+close;
+
+
 %# ////////////////////////////////////////////////////////////////////////
-%# Order resultsArrayUARes by Froude length number
+%# 1. Order resultsArrayUARes by Froude length number
+%# 2. Remove from factor related runs (i.e. Prohaska) from resultsArrayUARes
 %# ////////////////////////////////////////////////////////////////////////
+
+% 1. Order
 resultsArrayUARes = sortrows(resultsArrayUARes,[2 3]);
+
+% 2. Remove Prohaska runs
+resultsArrayUAResShort = [];
+for l=1:qas
+    if resultsArrayUARes(l,1) >= 81 && resultsArrayUARes(l,1) <= 234
+        resultsArrayUAResShort(l,:) = resultsArrayUARes(l,:);
+    end
+end
+resultsArrayUAResShort = resultsArrayUAResShort(any(resultsArrayUAResShort,2),:);  % Remove zero rows
 
 
 %# ////////////////////////////////////////////////////////////////////////
 %# START: Write results to CVS
 %# ------------------------------------------------------------------------
 
-M = resultsArrayUARes;
-csvwrite('resultsArrayUARes.dat', M)                                     % Export matrix M to a file delimited by the comma character      
-dlmwrite('resultsArrayUARes.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
+M = resultsArrayUAResShort;
+csvwrite('resultsArrayUAResShort.dat', M)                                     % Export matrix M to a file delimited by the comma character      
+dlmwrite('resultsArrayUAResShort.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 
 %# ------------------------------------------------------------------------
 %# END: Write results to CVS
@@ -973,8 +1331,11 @@ clearvars MSlwl1500 MSwsa1500 MSdraft1500 MSAx1500 BlockCoeff1500 FSlwl1500 FSws
 clearvars MSlwl1804 MSwsa1804 MSdraft1804 MSAx1804 BlockCoeff1804 FSlwl1804 FSwsa1804 FSdraft1804 MSlwl1804bybow MSwsa1804bybow MSdraft1804bybow MSAx1804bybow BlockCoeff1804bybow FSlwl1804bybow FSwsa1804bybow FSdraft1804bybow MSlwl1804bystern MSwsa1804bystern MSdraft1804bystern MSAx1804bystern BlockCoeff1804bystern FSlwl1804bystern FSwsa1804bystern FSdraft1804bystern MSbeam1804 MSbeam1804bybow MSbeam1804bystern
 clearvars XPlot YPlot XPlotMargin YPlotMargin XPlotSize YPlotSize
 clearvars setFormFactor
-clearvars ma na mas nas oas pas n results setCond setCondNo condNo counter1 counter2 j k m A R M allPlots testName 
+clearvars ma na mas nas oas pas qas ras n results setCond setCondNo condNo counter1 counter2 h l f j k m A R M allPlots testName 
 clearvars setBeam setModWsa avgCT avgCT15degC setCF15degC setCFtw setCurrentCT setK setModKinVisc setModLwl setMx setRx setTw stdDev
 clearvars cond1 cond2 cond3 cond4 cond5 cond6 cond13
 clearvars setBs1 setBs2 setBs percentOfBs1 percentOfBs2 percentOfS setBv percentOfV setBMx1 setBMx2 setBMx3 setBMx4 setBMx percentOfBMx percentOfBMx1 percentOfBMx2 percentOfBMx3 percentOfBMx4 setBtw setBRho percentOfTw percentOfRho
-clearvars thetaS thetaV thetaMx thetaRho thetaRhoTw setBCT percentOfCT15degC setSCT setBCT setPCT setM setUCT152degC percentOfCT152degC percentOfUCT152degC1 percentOfUCT152degC2
+clearvars thetaS thetaV thetaMx thetaRho thetaRhoTw setBCT percentOfCT15degC percentOfCT15degC_2 setSCT setBCT setPCT setM setUCT152degC percentOfCT152degC percentOfUCT152degC1 percentOfUCT152degC2
+clearvars plotsavename fPath figurename hleg1 setMarkerSize
+clearvars plotArray7 plotArray8 plotArray9 plotArray10 plotArray11 plotArray12
+clearvars setX1 setX2 setX3 setX4 setX5 setX6 setY1 setY2 setY3 setY4 setY5 setY6
