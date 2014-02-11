@@ -959,7 +959,7 @@ plotArray12 = plotArray12(any(plotArray12,2),:);  % Remove zero rows
 
 %# PLOT #1: Fr versus resistance coefficient, total uncertainty ***********
 
-figurename = sprintf('%s:: Condition %s', 'Resistance Coefficient, total uncertainty', num2str(setCondNo));
+figurename = sprintf('%s >> Conditions %s to %s', 'Total uncertainty U_{CT 15 deg C}', num2str(7), num2str(12));
 f = figure('Name',figurename,'NumberTitle','off');
 
 setX1 = plotArray7(:,3);
@@ -980,11 +980,19 @@ setY5 = plotArray11(:,9);
 setX6 = plotArray12(:,3);
 setY6 = plotArray12(:,9);
 
-% Set marker size
+% Set marker size, color and line width
 setMarkerSize = 10;
+setLineWidth  = 1;
+setLineWidth  = 1.5;
+setColor1     = [0 0 1];
+setColor2     = [0 0.5 0];
+setColor3     = [1 0 0];
+setColor4     = [1 0 1];
+setColor5     = [1 0 0];
+setColor6     = [0 1 1];
 
 % Prepare plot
-h = plot(setX1,setY1,'s',setX2,setY2,'o',setX3,setY3,'d',setX4,setY4,'p',setX5,setY5,'>',setX6,setY6,'v');   %,'MarkerSize',8,'MarkerEdgeColor','r','MarkerFaceColor','r'
+h = plot(setX1,setY1,'s',setX2,setY2,'x',setX3,setY3,'*',setX4,setY4,'v',setX5,setY5,'x',setX6,setY6,'*');   %,'MarkerSize',8,'MarkerEdgeColor','r','MarkerFaceColor','r'
 xlabel('{\bf Froude length number [-]}');
 ylabel('{\bf % of C_{T15 deg C} [-]}');
 grid on;
@@ -996,12 +1004,12 @@ axis square;
 set(gcf,'Color',[1,1,1]);
 
 % Colors and markers
-set(h(1),'Color',[0 0 1],'Marker','s','MarkerSize',setMarkerSize,'MarkerFaceColor',[0 0 1]); %,'LineStyle','-','linewidth',1
-set(h(2),'Color',[0 0.5 0],'Marker','o','MarkerSize',setMarkerSize,'MarkerFaceColor',[0 0.5 0]);
-set(h(3),'Color',[1 0 0],'Marker','d','MarkerSize',setMarkerSize,'MarkerFaceColor',[1 0 0]);
-set(h(4),'Color',[1 0 1],'Marker','v','MarkerSize',setMarkerSize,'MarkerFaceColor',[1 0 1]);
-set(h(5),'Color',[0 1 1],'Marker','>','MarkerSize',setMarkerSize,'MarkerFaceColor',[0 1 1]);
-set(h(6),'Color',[0 0 0],'Marker','p','MarkerSize',setMarkerSize,'MarkerFaceColor',[0 0 0]);
+set(h(1),'Color',setColor1,'Marker','s','MarkerSize',setMarkerSize,'LineWidth',setLineWidth); %,'MarkerFaceColor',setColor1,'LineStyle','-','linewidth',setLineWidth
+set(h(2),'Color',setColor2,'Marker','x','MarkerSize',setMarkerSize,'LineWidth',setLineWidth); %,'MarkerFaceColor',setColor2,'LineStyle',':','linewidth',setLineWidth
+set(h(3),'Color',setColor3,'Marker','*','MarkerSize',setMarkerSize,'LineWidth',setLineWidth); %,'MarkerFaceColor',setColor3,'LineStyle',':','linewidth',setLineWidth
+set(h(4),'Color',setColor4,'Marker','v','MarkerSize',setMarkerSize,'LineWidth',setLineWidth); %,'MarkerFaceColor',setColor4,'LineStyle','-','linewidth',setLineWidth
+set(h(5),'Color',setColor5,'Marker','x','MarkerSize',setMarkerSize,'LineWidth',setLineWidth); %,'MarkerFaceColor',setColor5,'LineStyle',':','linewidth',setLineWidth
+set(h(6),'Color',setColor6,'Marker','*','MarkerSize',setMarkerSize,'LineWidth',setLineWidth); %,'MarkerFaceColor',setColor6,'LineStyle',':','linewidth',setLineWidth
 
 %# Axis limitations
 set(gca,'XLim',[0.2 0.5]);
@@ -1052,7 +1060,7 @@ saveas(f, plotsavename);                % Save plot as PNG
 %# PLOT #2: Resistance coefficient bias and precision limit ***************
 
 % Fr versus resistance coefficient, total uncertainty
-figurename = sprintf('%s:: Conditions %s to %s', 'Resistance coefficient bias and precision limits', num2str(7), num2str(12));
+figurename = sprintf('%s >> Conditions %s to %s', 'Resistance coefficient bias and precision limits', num2str(7), num2str(12));
 f = figure('Name',figurename,'NumberTitle','off');
 
 % Condition 7 -------------------------------------------------------------
@@ -1062,20 +1070,27 @@ X = plotArray7(:,3);
 A = plotArray7(:,5);
 B = plotArray7(:,7);
 
-% Set marker size
-setMarkerSize = 8;
-
-h = plot(X,A,'s',X,B,'o');
+bar(X,[A B])
 xlabel('{\bf Froude length number [-]}');
 ylabel('{\bf % of U_{CT15 deg C}}');
 title('{\bf Cond 7: 1,500t, static trim level}');
 grid on;
 box on;
-%axis square;
 
-% Colors and markers
-set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
-set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
+% % Set marker size
+% setMarkerSize = 8;
+% 
+% h = plot(X,A,'s',X,B,'o');
+% xlabel('{\bf Froude length number [-]}');
+% ylabel('{\bf % of U_{CT15 deg C}}');
+% title('{\bf Cond 7: 1,500t, static trim level}');
+% grid on;
+% box on;
+% %axis square;
+
+% % Colors and markers
+% set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
+% set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -1089,9 +1104,9 @@ set(gca,'YTick',[0:20:100]);
 
 %# Legend
 hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
-set(hleg1,'Location','SouthOutside');
+set(hleg1,'Location','NorthEast'); %SouthOutside
 set(hleg1,'Interpreter','none');
-set(hleg1, 'Box', 'off')
+set(hleg1, 'Box', 'on');
 
 % Condition 8 -------------------------------------------------------------
 subplot(3,2,3)
@@ -1100,20 +1115,27 @@ X = plotArray8(:,3);
 A = plotArray8(:,5);
 B = plotArray8(:,7);
 
-% Set marker size
-setMarkerSize = 8;
-
-h = plot(X,A,'s',X,B,'o');
+bar(X,[A B])
 xlabel('{\bf Froude length number [-]}');
 ylabel('{\bf % of U_{CT15 deg C}}');
 title('{\bf Cond 8: 1,500t, static trim 0.5}');
 grid on;
 box on;
-%axis square;
 
-% Colors and markers
-set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
-set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
+% % Set marker size
+% setMarkerSize = 8;
+% 
+% h = plot(X,A,'s',X,B,'o');
+% xlabel('{\bf Froude length number [-]}');
+% ylabel('{\bf % of U_{CT15 deg C}}');
+% title('{\bf Cond 8: 1,500t, static trim 0.5}');
+% grid on;
+% box on;
+% %axis square;
+
+% % Colors and markers
+% set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
+% set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
 
 %# Axis limitations
 set(gca,'XLim',[0.2 0.5]);
@@ -1123,9 +1145,9 @@ set(gca,'YTick',[0:20:100]);
 
 %# Legend
 hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
-set(hleg1,'Location','SouthOutside');
+set(hleg1,'Location','NorthEast'); %SouthOutside
 set(hleg1,'Interpreter','none');
-set(hleg1, 'Box', 'off')
+set(hleg1, 'Box', 'on');
 
 % Condition 9 -------------------------------------------------------------
 subplot(3,2,5)
@@ -1134,20 +1156,27 @@ X = plotArray9(:,3);
 A = plotArray9(:,5);
 B = plotArray9(:,7);
 
-% Set marker size
-setMarkerSize = 8;
-
-h = plot(X,A,'s',X,B,'o');
+bar(X,[A B])
 xlabel('{\bf Froude length number [-]}');
 ylabel('{\bf % of U_{CT15 deg C}}');
 title('{\bf Cond 9: 1,500t, static trim -0.5}');
 grid on;
 box on;
-%axis square;
 
-% Colors and markers
-set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
-set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
+% % Set marker size
+% setMarkerSize = 8;
+% 
+% h = plot(X,A,'s',X,B,'o');
+% xlabel('{\bf Froude length number [-]}');
+% ylabel('{\bf % of U_{CT15 deg C}}');
+% title('{\bf Cond 9: 1,500t, static trim -0.5}');
+% grid on;
+% box on;
+% %axis square;
+
+% % Colors and markers
+% set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
+% set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
 
 %# Axis limitations
 set(gca,'XLim',[0.2 0.5]);
@@ -1157,9 +1186,9 @@ set(gca,'YTick',[0:20:100]);
 
 %# Legend
 hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
-set(hleg1,'Location','SouthOutside');
+set(hleg1,'Location','NorthEast'); %SouthOutside
 set(hleg1,'Interpreter','none');
-set(hleg1, 'Box', 'off')
+set(hleg1, 'Box', 'on');
 
 % Condition 10 ------------------------------------------------------------
 subplot(3,2,2)
@@ -1168,20 +1197,27 @@ X = plotArray10(:,3);
 A = plotArray10(:,5);
 B = plotArray10(:,7);
 
-% Set marker size
-setMarkerSize = 8;
-
-h = plot(X,A,'s',X,B,'o');
+bar(X,[A B])
 xlabel('{\bf Froude length number [-]}');
 ylabel('{\bf % of U_{CT15 deg C}}');
 title('{\bf Cond 10: 1,804t, static trim level}');
 grid on;
 box on;
-%axis square;
 
-% Colors and markers
-set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
-set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
+% % Set marker size
+% setMarkerSize = 8;
+% 
+% h = plot(X,A,'s',X,B,'o');
+% xlabel('{\bf Froude length number [-]}');
+% ylabel('{\bf % of U_{CT15 deg C}}');
+% title('{\bf Cond 10: 1,804t, static trim level}');
+% grid on;
+% box on;
+% %axis square;
+
+% % Colors and markers
+% set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
+% set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
 
 %# Axis limitations
 set(gca,'XLim',[0.2 0.5]);
@@ -1191,9 +1227,9 @@ set(gca,'YTick',[0:20:100]);
 
 %# Legend
 hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
-set(hleg1,'Location','SouthOutside');
+set(hleg1,'Location','NorthEast'); %SouthOutside
 set(hleg1,'Interpreter','none');
-set(hleg1, 'Box', 'off')
+set(hleg1, 'Box', 'on');
 
 % Condition 11 ------------------------------------------------------------
 subplot(3,2,4)
@@ -1202,20 +1238,27 @@ X = plotArray11(:,3);
 A = plotArray11(:,5);
 B = plotArray11(:,7);
 
-% Set marker size
-setMarkerSize = 8;
-
-h = plot(X,A,'s',X,B,'o');
+bar(X,[A B])
 xlabel('{\bf Froude length number [-]}');
 ylabel('{\bf % of U_{CT15 deg C}}');
 title('{\bf Cond 11: 1,804t, static trim 0.5}');
 grid on;
 box on;
-%axis square;
 
-% Colors and markers
-set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
-set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
+% % Set marker size
+% setMarkerSize = 8;
+% 
+% h = plot(X,A,'s',X,B,'o');
+% xlabel('{\bf Froude length number [-]}');
+% ylabel('{\bf % of U_{CT15 deg C}}');
+% title('{\bf Cond 11: 1,804t, static trim 0.5}');
+% grid on;
+% box on;
+% %axis square;
+
+% % Colors and markers
+% set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
+% set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
 
 %# Axis limitations
 set(gca,'XLim',[0.2 0.5]);
@@ -1225,9 +1268,9 @@ set(gca,'YTick',[0:20:100]);
 
 %# Legend
 hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
-set(hleg1,'Location','SouthOutside');
+set(hleg1,'Location','NorthEast'); %SouthOutside
 set(hleg1,'Interpreter','none');
-set(hleg1, 'Box', 'off')
+set(hleg1, 'Box', 'on');
 
 % Condition 12 ------------------------------------------------------------
 subplot(3,2,6)
@@ -1236,20 +1279,27 @@ X = plotArray12(:,3);
 A = plotArray12(:,5);
 B = plotArray12(:,7);
 
-% Set marker size
-setMarkerSize = 8;
-
-h = plot(X,A,'s',X,B,'o');
+bar(X,[A B])
 xlabel('{\bf Froude length number [-]}');
 ylabel('{\bf % of U_{CT15 deg C}}');
 title('{\bf Cond 12: 1,804t, static trim -0.5}');
 grid on;
 box on;
-%axis square;
 
-% Colors and markers
-set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
-set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
+% % Set marker size
+% setMarkerSize = 8;
+% 
+% h = plot(X,A,'s',X,B,'o');
+% xlabel('{\bf Froude length number [-]}');
+% ylabel('{\bf % of U_{CT15 deg C}}');
+% title('{\bf Cond 12: 1,804t, static trim -0.5}');
+% grid on;
+% box on;
+% %axis square;
+
+% % Colors and markers
+% set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
+% set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
 
 %# Axis limitations
 set(gca,'XLim',[0.2 0.5]);
@@ -1259,9 +1309,9 @@ set(gca,'YTick',[0:20:100]);
 
 %# Legend
 hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
-set(hleg1,'Location','SouthOutside');
+set(hleg1,'Location','NorthEast'); %SouthOutside
 set(hleg1,'Interpreter','none');
-set(hleg1, 'Box', 'off')
+set(hleg1, 'Box', 'on');
 
 %# ------------------------------------------------------------------------
 %# Save plot as PNG
@@ -1289,7 +1339,7 @@ annotation('textbox', [0 0.9 1 0.1], ...
 %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
 plotsavename = sprintf('_plots/%s/Condition_7_to_12_Resistance_Coefficient_Bias_and_Precision_Limit_Plots.png', '_uncertainty_analysis');
 saveas(f, plotsavename);                % Save plot as PNG
-close;
+%close;
 
 
 %# ////////////////////////////////////////////////////////////////////////
