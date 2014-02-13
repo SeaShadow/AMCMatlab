@@ -80,6 +80,11 @@
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
+%#               8 => analysis_sene.m     >> Calibration errors
+%#                    |
+%#                    |__> BASE DATA:     1. Read .cal data files
+%#                                        2. "resultsArraySensorError.dat"
+%#
 %# ------------------------------------------------------------------------
 %#
 %# IMPORTANT  :  Change runfilespath and do not forget to substitute \ => \\
@@ -982,7 +987,6 @@ setY6 = plotArray12(:,9);
 
 % Set marker size, color and line width
 setMarkerSize = 10;
-setLineWidth  = 1;
 setLineWidth  = 1.5;
 setColor1     = [0 0 1];
 setColor2     = [0 0.5 0];
