@@ -83,6 +83,11 @@
 %#                    |__> BASE DATA:     1. Read .cal data files
 %#                                        2. "resultsArraySensorError.dat"
 %#
+%#               9 => analysis_ts_drag.m  >> Time series data for cond 7-12
+%#                    |                   >> DRAG ONLY!!!
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
 %# ------------------------------------------------------------------------
 %#
 %# IMPORTANT  :  Change runfilespath and do not forget to substitute \ => \\
@@ -220,11 +225,12 @@ end
 
 %# Stop script if required data unavailble --------------------------------
 if exist('results','var') == 0
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    disp('WARNING: Required resistance data file does not exist!');
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('!!! WARNING: Required resistance data file does not exist! !!!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     break;
 end
+
 
 % *************************************************************************
 % START: CONDITIONS BASED ON SPEED
@@ -287,1823 +293,1907 @@ end
 % END: CONDITIONS BASED ON SPEED
 % *************************************************************************
 
+
+% *************************************************************************
+% START: PLOT SWITCHES: 1 = ENABLED 
+%                       0 = DISABLED
+% -------------------------------------------------------------------------
+
+enableCond07Plot        = 1; % Plot condition 7
+enableCond08Plot        = 0; % Plot condition 8
+enableCond09Plot        = 0; % Plot condition 9
+enableCond10Plot        = 0; % Plot condition 10
+enableCond11Plot        = 0; % Plot condition 12
+enableCond12Plot        = 0; % Plot condition 12
+
+% Check if any plots enabled, if not stop
+if enableCond07Plot == 0 && enableCond08Plot == 0 && enableCond09Plot == 0 && enableCond10Plot == 0 && enableCond11Plot == 0 && enableCond12Plot == 0
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('!!! WARNING: No plots enabled! !!!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    break;
+end
+
+% -------------------------------------------------------------------------
+% END: PLOT SWITCHES
+% *************************************************************************  
+
+
 %# ------------------------------------------------------------------------
 %# CONDITION 7: Time Series -----------------------------------------------
 %# ------------------------------------------------------------------------
-sortedArray = arrayfun(@(x) cond7(cond7(:,11) == x, :), unique(cond7(:,11)), 'uniformoutput', false);
-[ml,nl] = size(sortedArray);
 
-for j=1:ml
-    [ms,ns] = size(sortedArray{j});
-
-    minRunNo = min(sortedArray{j}(:,1));
-    maxRunNo = max(sortedArray{j}(:,1));
-    FroudeNo    = sortedArray{j}(1,11);
-    RunCond     = sortedArray{j}(1,28);
-    RunRepeats  = ms;
+if enableCond07Plot == 1
     
-    figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Data');
-    f = figure('Name',figurename,'NumberTitle','off');
-
-    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
-    setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
-    setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
+    sortedArray = arrayfun(@(x) cond7(cond7(:,11) == x, :), unique(cond7(:,11)), 'uniformoutput', false);
+    [ml,nl] = size(sortedArray);
     
-    % Time vs. Aft LVDT ---------------------------------------------------
-    subplot(2,2,1)
-    
-    minXValues = [];
-    maxXValues = [];
-    minYValues = [];
-    maxYValues = [];    
-    % Run through repeats
-    for k=1:ms
+    for j=1:ml
+        [ms,ns] = size(sortedArray{j});
         
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
+        minRunNo = min(sortedArray{j}(:,1));
+        maxRunNo = max(sortedArray{j}(:,1));
+        FroudeNo    = sortedArray{j}(1,11);
+        RunCond     = sortedArray{j}(1,28);
+        RunRepeats  = ms;
         
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        %# PLOT: SPEED, LVDTs, AND DRAG
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         
-        if exist('full_resistance_data.dat', 'file') == 0
-           disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-           disp(sprintf('WARNING: Required time series data file _time_series_data/R%s.dat does not exist!',runnumber));
-           disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');           
-           break;
+        figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Data');
+        f = figure('Name',figurename,'NumberTitle','off');
+        
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+        setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
+        setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
+        
+        % Time vs. Aft LVDT ---------------------------------------------------
+        subplot(2,2,1)
+        
+        minXValues = [];
+        maxXValues = [];
+        minYValues = [];
+        maxYValues = [];
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            if exist('full_resistance_data.dat', 'file') == 0
+                disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                disp(sprintf('WARNING: Required time series data file _time_series_data/R%s.dat does not exist!',runnumber));
+                disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                break;
+            end
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,3);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
         end
+        hold off;
         
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf LVDT output [mm]}');
+        title('{\bf Aft LVDT}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Speed ------------------------------------------------------
+        subplot(2,2,2)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,2);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
         end
-
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,3);
+        hold off;
         
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Speed [m/s]}');
+        title('{\bf Speed}');
+        grid on;
+        box on;
+        axis square;
         
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
         
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf LVDT output [mm]}');
-    title('{\bf Aft LVDT}');
-    grid on;
-    box on;
-    axis square;
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-    
-    clearvars legendInfo;
-    
-    % Time vs. Speed ------------------------------------------------------
-    subplot(2,2,2)
-    
-    % Run through repeats
-    for k=1:ms
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
         
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
+        clearvars legendInfo;
         
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
+        % Time vs. Fwd LVDT ---------------------------------------------------
+        subplot(2,2,3)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,4);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
         end
+        hold off;
         
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,2);
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf LVDT output [mm]}');
+        title('{\bf Fwd LVDT}');
+        grid on;
+        box on;
+        axis square;
         
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
+        %# Axis limitations
+        %minX = min(minXValues);
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
         
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
         
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf Speed [m/s]}');
-    title('{\bf Speed}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-    
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-    
-    clearvars legendInfo;
-    
-    % Time vs. Fwd LVDT ---------------------------------------------------
-    subplot(2,2,3)
-    
-    % Run through repeats
-    for k=1:ms
+        clearvars legendInfo;
         
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
+        % Time vs. Drag ---------------------------------------------------
+        subplot(2,2,4)
         
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,5);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
         end
+        hold off;
         
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,4);
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Drag [g]}');
+        title('{\bf Drag}');
+        grid on;
+        box on;
+        axis square;
         
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        minY = round(max(minYValues)*0.8);
+        maxY = round(max(maxYValues)*1.2);
+        setIncr = round((maxY-minY)/5);
+        set(gca,'YLim',[minY maxY]);
+        set(gca,'YTick',[minY:setIncr:maxY]);
         
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
         
-    end
-    hold off;
+        clearvars legendInfo;
+        
+        %# Save plot as PNG -------------------------------------------------------
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        
+        %# Plot title -------------------------------------------------------------
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;
+        
+    end % For loop
     
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf LVDT output [mm]}');
-    title('{\bf Fwd LVDT}');
-    grid on;
-    box on;
-    axis square;
+end % enableCond07Plot
 
-    %# Axis limitations
-    %minX = min(minXValues);
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-   
-    clearvars legendInfo;
-    
-    % Time vs. Drag ---------------------------------------------------
-    subplot(2,2,4)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,5);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf Drag [g]}');
-    title('{\bf Drag}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-    minY = round(max(minYValues)*0.8);
-    maxY = round(max(maxYValues)*1.2);
-    setIncr = round((maxY-minY)/5);
-    set(gca,'YLim',[minY maxY]);
-    set(gca,'YTick',[minY:setIncr:maxY]);    
-    
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;
-    
-    clearvars legendInfo;
-    
-    %# Save plot as PNG -------------------------------------------------------
-
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-    %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-
-    %# Plot title -------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-    saveas(f, plotsavename);                % Save plot as PNG
-    close;    
-    
-end
 
 %# ------------------------------------------------------------------------
 %# CONDITION 8: Time Series -----------------------------------------------
 %# ------------------------------------------------------------------------
-sortedArray = arrayfun(@(x) cond8(cond8(:,11) == x, :), unique(cond8(:,11)), 'uniformoutput', false);
-[ml,nl] = size(sortedArray);
 
-for j=1:ml
-    [ms,ns] = size(sortedArray{j});
+if enableCond08Plot == 1
 
-    minRunNo = min(sortedArray{j}(:,1));
-    maxRunNo = max(sortedArray{j}(:,1));
-    FroudeNo    = sortedArray{j}(1,11);
-    RunCond     = sortedArray{j}(1,28);
-    RunRepeats  = ms;
+    sortedArray = arrayfun(@(x) cond8(cond8(:,11) == x, :), unique(cond8(:,11)), 'uniformoutput', false);
+    [ml,nl] = size(sortedArray);
     
-    figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Data');
-    f = figure('Name',figurename,'NumberTitle','off');
-
-    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
-    setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
-    setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
-    
-    % Time vs. Aft LVDT ---------------------------------------------------
-    subplot(2,2,1)
-    
-    minXValues = [];
-    maxXValues = [];
-    minYValues = [];
-    maxYValues = [];    
-    % Run through repeats
-    for k=1:ms
+    for j=1:ml
+        [ms,ns] = size(sortedArray{j});
         
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
+        minRunNo = min(sortedArray{j}(:,1));
+        maxRunNo = max(sortedArray{j}(:,1));
+        FroudeNo    = sortedArray{j}(1,11);
+        RunCond     = sortedArray{j}(1,28);
+        RunRepeats  = ms;
         
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        %# PLOT: SPEED, LVDTs, AND DRAG
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+        
+        
+        figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Data');
+        f = figure('Name',figurename,'NumberTitle','off');
+        
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+        setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
+        setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
+        
+        % Time vs. Aft LVDT ---------------------------------------------------
+        subplot(2,2,1)
+        
+        minXValues = [];
+        maxXValues = [];
+        minYValues = [];
+        maxYValues = [];
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,3);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
         end
-
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,3);
+        hold off;
         
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf LVDT output [mm]}');
+        title('{\bf Aft LVDT}');
+        grid on;
+        box on;
+        axis square;
         
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Speed ------------------------------------------------------
+        subplot(2,2,2)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,2);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Speed [m/s]}');
+        title('{\bf Speed}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Fwd LVDT ---------------------------------------------------
+        subplot(2,2,3)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,4);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf LVDT output [mm]}');
+        title('{\bf Fwd LVDT}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        %minX = min(minXValues);
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Drag ---------------------------------------------------
+        subplot(2,2,4)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,5);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Drag [g]}');
+        title('{\bf Drag}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        minY = round(max(minYValues)*0.8);
+        maxY = round(max(maxYValues)*1.2);
+        setIncr = round((maxY-minY)/5);
+        set(gca,'YLim',[minY maxY]);
+        set(gca,'YTick',[minY:setIncr:maxY]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        %# Save plot as PNG -------------------------------------------------------
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        
+        %# Plot title -------------------------------------------------------------
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;
         
     end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf LVDT output [mm]}');
-    title('{\bf Aft LVDT}');
-    grid on;
-    box on;
-    axis square;
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
 
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-    
-    clearvars legendInfo;
-    
-    % Time vs. Speed ------------------------------------------------------
-    subplot(2,2,2)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,2);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf Speed [m/s]}');
-    title('{\bf Speed}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-    
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-    
-    clearvars legendInfo;
-    
-    % Time vs. Fwd LVDT ---------------------------------------------------
-    subplot(2,2,3)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,4);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf LVDT output [mm]}');
-    title('{\bf Fwd LVDT}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    %minX = min(minXValues);
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-   
-    clearvars legendInfo;
-    
-    % Time vs. Drag ---------------------------------------------------
-    subplot(2,2,4)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,5);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf Drag [g]}');
-    title('{\bf Drag}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-    minY = round(max(minYValues)*0.8);
-    maxY = round(max(maxYValues)*1.2);
-    setIncr = round((maxY-minY)/5);
-    set(gca,'YLim',[minY maxY]);
-    set(gca,'YTick',[minY:setIncr:maxY]);    
-    
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;
-    
-    clearvars legendInfo;
-    
-    %# Save plot as PNG -------------------------------------------------------
-
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-    %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-
-    %# Plot title -------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-    saveas(f, plotsavename);                % Save plot as PNG
-    close;    
-    
 end
+
 
 %# ------------------------------------------------------------------------
 %# CONDITION 9: Time Series -----------------------------------------------
 %# ------------------------------------------------------------------------
-sortedArray = arrayfun(@(x) cond9(cond9(:,11) == x, :), unique(cond9(:,11)), 'uniformoutput', false);
-[ml,nl] = size(sortedArray);
 
-for j=1:ml
-    [ms,ns] = size(sortedArray{j});
+if enableCond09Plot == 1
 
-    minRunNo = min(sortedArray{j}(:,1));
-    maxRunNo = max(sortedArray{j}(:,1));
-    FroudeNo    = sortedArray{j}(1,11);
-    RunCond     = sortedArray{j}(1,28);
-    RunRepeats  = ms;
+    sortedArray = arrayfun(@(x) cond9(cond9(:,11) == x, :), unique(cond9(:,11)), 'uniformoutput', false);
+    [ml,nl] = size(sortedArray);
     
-    figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Data');
-    f = figure('Name',figurename,'NumberTitle','off');
-
-    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
-    setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
-    setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
-    
-    % Time vs. Aft LVDT ---------------------------------------------------
-    subplot(2,2,1)
-    
-    minXValues = [];
-    maxXValues = [];
-    minYValues = [];
-    maxYValues = [];    
-    % Run through repeats
-    for k=1:ms
+    for j=1:ml
+        [ms,ns] = size(sortedArray{j});
         
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
+        minRunNo = min(sortedArray{j}(:,1));
+        maxRunNo = max(sortedArray{j}(:,1));
+        FroudeNo    = sortedArray{j}(1,11);
+        RunCond     = sortedArray{j}(1,28);
+        RunRepeats  = ms;
         
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        %# PLOT: SPEED, LVDTs, AND DRAG
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+        
+        
+        figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Data');
+        f = figure('Name',figurename,'NumberTitle','off');
+        
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+        setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
+        setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
+        
+        % Time vs. Aft LVDT ---------------------------------------------------
+        subplot(2,2,1)
+        
+        minXValues = [];
+        maxXValues = [];
+        minYValues = [];
+        maxYValues = [];
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,3);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
         end
-
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,3);
+        hold off;
         
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf LVDT output [mm]}');
+        title('{\bf Aft LVDT}');
+        grid on;
+        box on;
+        axis square;
         
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Speed ------------------------------------------------------
+        subplot(2,2,2)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,2);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Speed [m/s]}');
+        title('{\bf Speed}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Fwd LVDT ---------------------------------------------------
+        subplot(2,2,3)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,4);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf LVDT output [mm]}');
+        title('{\bf Fwd LVDT}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        %minX = min(minXValues);
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Drag ---------------------------------------------------
+        subplot(2,2,4)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,5);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Drag [g]}');
+        title('{\bf Drag}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        minY = round(max(minYValues)*0.8);
+        maxY = round(max(maxYValues)*1.2);
+        setIncr = round((maxY-minY)/5);
+        set(gca,'YLim',[minY maxY]);
+        set(gca,'YTick',[minY:setIncr:maxY]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        %# Save plot as PNG -------------------------------------------------------
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        
+        %# Plot title -------------------------------------------------------------
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;
         
     end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf LVDT output [mm]}');
-    title('{\bf Aft LVDT}');
-    grid on;
-    box on;
-    axis square;
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
 
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-    
-    clearvars legendInfo;
-    
-    % Time vs. Speed ------------------------------------------------------
-    subplot(2,2,2)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,2);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf Speed [m/s]}');
-    title('{\bf Speed}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-    
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-    
-    clearvars legendInfo;
-    
-    % Time vs. Fwd LVDT ---------------------------------------------------
-    subplot(2,2,3)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,4);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf LVDT output [mm]}');
-    title('{\bf Fwd LVDT}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    %minX = min(minXValues);
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-   
-    clearvars legendInfo;
-    
-    % Time vs. Drag ---------------------------------------------------
-    subplot(2,2,4)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,5);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf Drag [g]}');
-    title('{\bf Drag}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-    minY = round(max(minYValues)*0.8);
-    maxY = round(max(maxYValues)*1.2);
-    setIncr = round((maxY-minY)/5);
-    set(gca,'YLim',[minY maxY]);
-    set(gca,'YTick',[minY:setIncr:maxY]);    
-    
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;
-    
-    clearvars legendInfo;
-    
-    %# Save plot as PNG -------------------------------------------------------
-
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-    %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-
-    %# Plot title -------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-    saveas(f, plotsavename);                % Save plot as PNG
-    close;    
-    
 end
+
 
 %# ------------------------------------------------------------------------
 %# CONDITION 10: Time Series -----------------------------------------------
 %# ------------------------------------------------------------------------
-sortedArray = arrayfun(@(x) cond10(cond10(:,11) == x, :), unique(cond10(:,11)), 'uniformoutput', false);
-[ml,nl] = size(sortedArray);
 
-for j=1:ml
-    [ms,ns] = size(sortedArray{j});
+if enableCond10Plot == 1
 
-    minRunNo = min(sortedArray{j}(:,1));
-    maxRunNo = max(sortedArray{j}(:,1));
-    FroudeNo    = sortedArray{j}(1,11);
-    RunCond     = sortedArray{j}(1,28);
-    RunRepeats  = ms;
+    sortedArray = arrayfun(@(x) cond10(cond10(:,11) == x, :), unique(cond10(:,11)), 'uniformoutput', false);
+    [ml,nl] = size(sortedArray);
     
-    figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Data');
-    f = figure('Name',figurename,'NumberTitle','off');
-
-    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
-    setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
-    setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
-    
-    % Time vs. Aft LVDT ---------------------------------------------------
-    subplot(2,2,1)
-    
-    minXValues = [];
-    maxXValues = [];
-    minYValues = [];
-    maxYValues = [];    
-    % Run through repeats
-    for k=1:ms
+    for j=1:ml
+        [ms,ns] = size(sortedArray{j});
         
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
+        minRunNo = min(sortedArray{j}(:,1));
+        maxRunNo = max(sortedArray{j}(:,1));
+        FroudeNo    = sortedArray{j}(1,11);
+        RunCond     = sortedArray{j}(1,28);
+        RunRepeats  = ms;
         
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        %# PLOT: SPEED, LVDTs, AND DRAG
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+        
+        
+        figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Data');
+        f = figure('Name',figurename,'NumberTitle','off');
+        
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+        setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
+        setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
+        
+        % Time vs. Aft LVDT ---------------------------------------------------
+        subplot(2,2,1)
+        
+        minXValues = [];
+        maxXValues = [];
+        minYValues = [];
+        maxYValues = [];
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,3);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
         end
-
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,3);
+        hold off;
         
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf LVDT output [mm]}');
+        title('{\bf Aft LVDT}');
+        grid on;
+        box on;
+        axis square;
         
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Speed ------------------------------------------------------
+        subplot(2,2,2)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,2);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Speed [m/s]}');
+        title('{\bf Speed}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Fwd LVDT ---------------------------------------------------
+        subplot(2,2,3)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,4);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf LVDT output [mm]}');
+        title('{\bf Fwd LVDT}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        %minX = min(minXValues);
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Drag ---------------------------------------------------
+        subplot(2,2,4)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,5);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Drag [g]}');
+        title('{\bf Drag}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        minY = round(max(minYValues)*0.8);
+        maxY = round(max(maxYValues)*1.2);
+        setIncr = round((maxY-minY)/5);
+        set(gca,'YLim',[minY maxY]);
+        set(gca,'YTick',[minY:setIncr:maxY]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        %# Save plot as PNG -------------------------------------------------------
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        
+        %# Plot title -------------------------------------------------------------
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;
         
     end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf LVDT output [mm]}');
-    title('{\bf Aft LVDT}');
-    grid on;
-    box on;
-    axis square;
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
 
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-    
-    clearvars legendInfo;
-    
-    % Time vs. Speed ------------------------------------------------------
-    subplot(2,2,2)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,2);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf Speed [m/s]}');
-    title('{\bf Speed}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-    
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-    
-    clearvars legendInfo;
-    
-    % Time vs. Fwd LVDT ---------------------------------------------------
-    subplot(2,2,3)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,4);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf LVDT output [mm]}');
-    title('{\bf Fwd LVDT}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    %minX = min(minXValues);
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-   
-    clearvars legendInfo;
-    
-    % Time vs. Drag ---------------------------------------------------
-    subplot(2,2,4)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,5);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf Drag [g]}');
-    title('{\bf Drag}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-    minY = round(max(minYValues)*0.8);
-    maxY = round(max(maxYValues)*1.2);
-    setIncr = round((maxY-minY)/5);
-    set(gca,'YLim',[minY maxY]);
-    set(gca,'YTick',[minY:setIncr:maxY]);    
-    
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;
-    
-    clearvars legendInfo;
-    
-    %# Save plot as PNG -------------------------------------------------------
-
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-    %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-
-    %# Plot title -------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-    saveas(f, plotsavename);                % Save plot as PNG
-    close;    
-    
 end
+
 
 %# ------------------------------------------------------------------------
 %# CONDITION 11: Time Series -----------------------------------------------
 %# ------------------------------------------------------------------------
-sortedArray = arrayfun(@(x) cond11(cond11(:,11) == x, :), unique(cond11(:,11)), 'uniformoutput', false);
-[ml,nl] = size(sortedArray);
 
-for j=1:ml
-    [ms,ns] = size(sortedArray{j});
+if enableCond11Plot == 1
 
-    minRunNo = min(sortedArray{j}(:,1));
-    maxRunNo = max(sortedArray{j}(:,1));
-    FroudeNo    = sortedArray{j}(1,11);
-    RunCond     = sortedArray{j}(1,28);
-    RunRepeats  = ms;
+    sortedArray = arrayfun(@(x) cond11(cond11(:,11) == x, :), unique(cond11(:,11)), 'uniformoutput', false);
+    [ml,nl] = size(sortedArray);
     
-    figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Data');
-    f = figure('Name',figurename,'NumberTitle','off');
-
-    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
-    setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
-    setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
-    
-    % Time vs. Aft LVDT ---------------------------------------------------
-    subplot(2,2,1)
-    
-    minXValues = [];
-    maxXValues = [];
-    minYValues = [];
-    maxYValues = [];    
-    % Run through repeats
-    for k=1:ms
+    for j=1:ml
+        [ms,ns] = size(sortedArray{j});
         
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
+        minRunNo = min(sortedArray{j}(:,1));
+        maxRunNo = max(sortedArray{j}(:,1));
+        FroudeNo    = sortedArray{j}(1,11);
+        RunCond     = sortedArray{j}(1,28);
+        RunRepeats  = ms;
         
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        %# PLOT: SPEED, LVDTs, AND DRAG
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+           
+        
+        figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Data');
+        f = figure('Name',figurename,'NumberTitle','off');
+        
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+        setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
+        setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
+        
+        % Time vs. Aft LVDT ---------------------------------------------------
+        subplot(2,2,1)
+        
+        minXValues = [];
+        maxXValues = [];
+        minYValues = [];
+        maxYValues = [];
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,3);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
         end
-
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,3);
+        hold off;
         
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf LVDT output [mm]}');
+        title('{\bf Aft LVDT}');
+        grid on;
+        box on;
+        axis square;
         
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Speed ------------------------------------------------------
+        subplot(2,2,2)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,2);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Speed [m/s]}');
+        title('{\bf Speed}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Fwd LVDT ---------------------------------------------------
+        subplot(2,2,3)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,4);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf LVDT output [mm]}');
+        title('{\bf Fwd LVDT}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        %minX = min(minXValues);
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Drag ---------------------------------------------------
+        subplot(2,2,4)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,5);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Drag [g]}');
+        title('{\bf Drag}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        minY = round(max(minYValues)*0.8);
+        maxY = round(max(maxYValues)*1.2);
+        setIncr = round((maxY-minY)/5);
+        set(gca,'YLim',[minY maxY]);
+        set(gca,'YTick',[minY:setIncr:maxY]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        %# Save plot as PNG -------------------------------------------------------
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        
+        %# Plot title -------------------------------------------------------------
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;
         
     end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf LVDT output [mm]}');
-    title('{\bf Aft LVDT}');
-    grid on;
-    box on;
-    axis square;
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
 
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-    
-    clearvars legendInfo;
-    
-    % Time vs. Speed ------------------------------------------------------
-    subplot(2,2,2)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,2);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf Speed [m/s]}');
-    title('{\bf Speed}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-    
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-    
-    clearvars legendInfo;
-    
-    % Time vs. Fwd LVDT ---------------------------------------------------
-    subplot(2,2,3)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,4);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf LVDT output [mm]}');
-    title('{\bf Fwd LVDT}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    %minX = min(minXValues);
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-   
-    clearvars legendInfo;
-    
-    % Time vs. Drag ---------------------------------------------------
-    subplot(2,2,4)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,5);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf Drag [g]}');
-    title('{\bf Drag}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-    minY = round(max(minYValues)*0.8);
-    maxY = round(max(maxYValues)*1.2);
-    setIncr = round((maxY-minY)/5);
-    set(gca,'YLim',[minY maxY]);
-    set(gca,'YTick',[minY:setIncr:maxY]);    
-    
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;
-    
-    clearvars legendInfo;
-    
-    %# Save plot as PNG -------------------------------------------------------
-
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-    %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-
-    %# Plot title -------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-    saveas(f, plotsavename);                % Save plot as PNG
-    close;    
-    
 end
 
 %# ------------------------------------------------------------------------
 %# CONDITION 12: Time Series -----------------------------------------------
 %# ------------------------------------------------------------------------
-sortedArray = arrayfun(@(x) cond12(cond12(:,11) == x, :), unique(cond12(:,11)), 'uniformoutput', false);
-[ml,nl] = size(sortedArray);
 
-for j=1:ml
-    [ms,ns] = size(sortedArray{j});
+if enableCond12Plot == 1
 
-    minRunNo = min(sortedArray{j}(:,1));
-    maxRunNo = max(sortedArray{j}(:,1));
-    FroudeNo    = sortedArray{j}(1,11);
-    RunCond     = sortedArray{j}(1,28);
-    RunRepeats  = ms;
+    sortedArray = arrayfun(@(x) cond12(cond12(:,11) == x, :), unique(cond12(:,11)), 'uniformoutput', false);
+    [ml,nl] = size(sortedArray);
     
-    figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Data');
-    f = figure('Name',figurename,'NumberTitle','off');
-
-    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
-    setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
-    setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
-    
-    % Time vs. Aft LVDT ---------------------------------------------------
-    subplot(2,2,1)
-    
-    minXValues = [];
-    maxXValues = [];
-    minYValues = [];
-    maxYValues = [];    
-    % Run through repeats
-    for k=1:ms
+    for j=1:ml
+        [ms,ns] = size(sortedArray{j});
         
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
+        minRunNo = min(sortedArray{j}(:,1));
+        maxRunNo = max(sortedArray{j}(:,1));
+        FroudeNo    = sortedArray{j}(1,11);
+        RunCond     = sortedArray{j}(1,28);
+        RunRepeats  = ms;
         
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        %# PLOT: SPEED, LVDTs, AND DRAG
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+        
+        
+        figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Data');
+        f = figure('Name',figurename,'NumberTitle','off');
+        
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+        setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
+        setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
+        
+        % Time vs. Aft LVDT ---------------------------------------------------
+        subplot(2,2,1)
+        
+        minXValues = [];
+        maxXValues = [];
+        minYValues = [];
+        maxYValues = [];
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,3);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
         end
-
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,3);
+        hold off;
         
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf LVDT output [mm]}');
+        title('{\bf Aft LVDT}');
+        grid on;
+        box on;
+        axis square;
         
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Speed ------------------------------------------------------
+        subplot(2,2,2)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,2);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Speed [m/s]}');
+        title('{\bf Speed}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Fwd LVDT ---------------------------------------------------
+        subplot(2,2,3)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,4);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf LVDT output [mm]}');
+        title('{\bf Fwd LVDT}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        %minX = min(minXValues);
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Time vs. Drag ---------------------------------------------------
+        subplot(2,2,4)
+        
+        % Run through repeats
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            % Set general filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            x = timeSeriesData(:,1);
+            y = timeSeriesData(:,5);
+            
+            minXValues(ms) = min(x);
+            maxXValues(ms) = max(x);
+            minYValues(ms) = min(y);
+            maxYValues(ms) = max(y);
+            
+            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
+            hold on;
+            
+        end
+        hold off;
+        
+        xlabel('{\bf Time [s]}');
+        ylabel('{\bf Drag [g]}');
+        title('{\bf Drag}');
+        grid on;
+        box on;
+        axis square;
+        
+        %# Axis limitations
+        maxX = max(maxXValues);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        minY = round(max(minYValues)*0.8);
+        maxY = round(max(maxYValues)*1.2);
+        setIncr = round((maxY-minY)/5);
+        set(gca,'YLim',[minY maxY]);
+        set(gca,'YTick',[minY:setIncr:maxY]);
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        %# Save plot as PNG -------------------------------------------------------
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        
+        %# Plot title -------------------------------------------------------------
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        saveas(f, plotsavename);                % Save plot as PNG
+        close;
         
     end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf LVDT output [mm]}');
-    title('{\bf Aft LVDT}');
-    grid on;
-    box on;
-    axis square;
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
 
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-    
-    clearvars legendInfo;
-    
-    % Time vs. Speed ------------------------------------------------------
-    subplot(2,2,2)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,2);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf Speed [m/s]}');
-    title('{\bf Speed}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-    
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-    
-    clearvars legendInfo;
-    
-    % Time vs. Fwd LVDT ---------------------------------------------------
-    subplot(2,2,3)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,4);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf LVDT output [mm]}');
-    title('{\bf Fwd LVDT}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    %minX = min(minXValues);
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;    
-   
-    clearvars legendInfo;
-    
-    % Time vs. Drag ---------------------------------------------------
-    subplot(2,2,4)
-    
-    % Run through repeats
-    for k=1:ms
-        
-        % Correct for run numbers below 10
-        runNo = sortedArray{j}(k,1);
-        if runNo < 10
-            runnumber = sprintf('0%s',num2str(runNo));
-        else
-            runnumber = sprintf('%s',num2str(runNo));
-        end        
-        
-        % Set general filename
-        filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
-        % Read DAT file
-        if exist(filename, 'file') == 2
-            timeSeriesData = csvread(filename);
-            timeSeriesData(all(timeSeriesData==0,2),:)=[];
-        else
-            break;
-        end
-        
-        x = timeSeriesData(:,1);
-        y = timeSeriesData(:,5);
-        
-        minXValues(ms) = min(x);
-        maxXValues(ms) = max(x);
-        minYValues(ms) = min(y);
-        maxYValues(ms) = max(y);
-        
-        h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-        legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-        hold on;
-        
-    end
-    hold off;
-    
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf Drag [g]}');
-    title('{\bf Drag}');
-    grid on;
-    box on;
-    axis square;
-
-    %# Axis limitations
-    maxX = max(maxXValues);
-    set(gca,'XLim',[0 maxX]);
-    set(gca,'XTick',[0:5:maxX]);
-    minY = round(max(minYValues)*0.8);
-    maxY = round(max(maxYValues)*1.2);
-    setIncr = round((maxY-minY)/5);
-    set(gca,'YLim',[minY maxY]);
-    set(gca,'YTick',[minY:setIncr:maxY]);    
-    
-    %# Legend
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    legend boxoff;
-    
-    clearvars legendInfo;
-    
-    %# Save plot as PNG -------------------------------------------------------
-
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-    %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-
-    %# Plot title -------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-    saveas(f, plotsavename);                % Save plot as PNG
-    close;    
-    
 end
 
 

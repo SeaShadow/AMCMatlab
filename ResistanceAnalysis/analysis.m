@@ -421,16 +421,15 @@ for k=startRun:endRun
         % Do nothing as directory exists
     else
         mkdir(fPath);
+    end
+
+    fPath = '_time_series_drag_plots/';
+    if isequal(exist(fPath, 'dir'),7)
+        % Do nothing as directory exists
+    else
+        mkdir(fPath);
     end    
     
-    %# RUN directory (i.e. R01 for run 1)
-%     fPath = sprintf('_plots/%s', name(2:4));
-%     if isequal(exist(fPath, 'dir'),7)
-%         % Do nothing as directory exists
-%     else    
-%         mkdir(fPath);
-%     end
-
     %# Have directory
     fPath = sprintf('_plots/%s', '_heave');
     if isequal(exist(fPath, 'dir'),7)
