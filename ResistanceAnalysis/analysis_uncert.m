@@ -71,6 +71,20 @@
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
+%#               7 => analysis_ua.m       >> Resistance uncertainty analysis
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
+%#               8 => analysis_sene.m     >> Calibration errors
+%#                    |
+%#                    |__> BASE DATA:     1. Read .cal data files
+%#                                        2. "resultsArraySensorError.dat"
+%#
+%#               9 => analysis_ts_drag.m  >> Time series data for cond 7-12
+%#                    |                   >> DRAG ONLY!!!
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
 %# ------------------------------------------------------------------------
 %#
 %# IMPORTANT  :  Change runfilespath and do not forget to substitute \ => \\

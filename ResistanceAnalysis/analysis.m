@@ -83,6 +83,11 @@
 %#                    |__> BASE DATA:     1. Read .cal data files
 %#                                        2. "resultsArraySensorError.dat"
 %#
+%#               9 => analysis_ts_drag.m  >> Time series data for cond 7-12
+%#                    |                   >> DRAG ONLY!!!
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
 %# ------------------------------------------------------------------------
 %#
 %# IMPORTANT  :  Change runfilespath and do not forget to substitute \ => \\
@@ -167,7 +172,7 @@ FSdraft1500         = MSdraft1500*FStoMSratio;           % Full scale draft     
 %# ------------------------------------------------------------------------
 %# CONDITION: 1,500 tonnes, -0.5 degrees by bow, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
-MSlwl1500bybow      = 4.328;                             % Model length waterline          (m)
+MSlwl1500bybow      = 4.33;                              % Model length waterline          (m)
 MSwsa1500bybow      = 1.48;                              % Model scale wetted surface area (m^2)
 MSdraft1500bybow    = 0.138;                             % Model draft                     (m)
 MSAx1500bybow       = 0.025;                             % Model area of max. transverse section (m^2)
@@ -178,7 +183,7 @@ FSdraft1500bybow    = MSdraft1500bybow*FStoMSratio;      % Full scale draft     
 %# ------------------------------------------------------------------------
 %# CONDITION: 1,500 tonnes, 0.5 degrees by stern, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
-MSlwl1500bystern    = 4.216;                             % Model length waterline          (m)
+MSlwl1500bystern    = 4.22;                              % Model length waterline          (m)
 MSwsa1500bystern    = 1.52;                              % Model scale wetted surface area (m^2)
 MSdraft1500bystern  = 0.131;                             % Model draft                     (m)
 MSAx1500bystern     = 0.024;                             % Model area of max. transverse section (m^2)
@@ -200,7 +205,7 @@ FSdraft1500prohaska  = MSdraft1500prohaska*FStoMSratio;  % Full scale draft     
 %# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 %# CONDITION: 1,804 tonnes, level static trim, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
-MSlwl1804          = 4.222;                              % Model length waterline          (m)
+MSlwl1804          = 4.22;                               % Model length waterline          (m)
 MSwsa1804          = 1.68;                               % Model scale wetted surface area (m^2)
 MSdraft1804        = 0.153;                              % Model draft                     (m)
 MSAx1804           = 0.028;                              % Model area of max. transverse section (m^2)
@@ -211,7 +216,7 @@ FSdraft1804        = MSdraft1804*FStoMSratio;            % Full scale draft     
 %# ------------------------------------------------------------------------
 %# CONDITION: 1,804 tonnes, -0.5 degrees by bow, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
-MSlwl1804bybow     = 4.306;                              % Model length waterline          (m)
+MSlwl1804bybow     = 4.31;                               % Model length waterline          (m)
 MSwsa1804bybow     = 1.66;                               % Model scale wetted surface area (m^2)
 MSdraft1804bybow   = 0.157;                              % Model draft                     (m)
 MSA1804bybow      = 0.030;                               % Model area of max. transverse section (m^2)
@@ -222,7 +227,7 @@ FSdraft1804bybow   = MSdraft1804bybow*FStoMSratio;       % Full scale draft     
 %# ------------------------------------------------------------------------
 %# CONDITION: 1,804 tonnes, 0.5 degrees by stern, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
-MSlwl1804bystern   = 4.107;                              % Model length waterline          (m)
+MSlwl1804bystern   = 4.11;                               % Model length waterline          (m)
 MSwsa1804bystern   = 1.70;                               % Model scale wetted surface area (m^2)
 MSdraft1804bystern = 0.151;                              % Model draft                     (m)
 MSA1804bystern     = 0.028;                              % Model area of max. transverse section (m^2)
@@ -264,12 +269,16 @@ cutSamplesFromEnd = 400;    % Cut last 2 seconds
 %# ------------------------------------------------------------------------
 
 % All runs
-startRun = 1;    % Start at run x
-endRun   = 249;  % Stop at run y
+startRun = 1;       % Start at run x
+endRun   = 249;     % Stop at run y
 
 % Custom range
-%startRun = 1;    % Start at run x
-%endRun   = 249;  % Stop at run y
+%startRun = 63;      % Start at run x
+%endRun   = 80;      % Stop at run y
+
+% Custom range
+%startRun = 81;      % Start at run x
+%endRun   = 141;     % Stop at run y
 
 % Single runs
 %startRun = 163;    % Start at run x
@@ -1086,7 +1095,7 @@ for k=startRun:endRun
     resultsArray(k, 9)  = (resultsArray(k, 8) / 1000) * gravconst;                  % Model Averaged drag (Rtm) (N)
     resultsArray(k, 10) = resultsArray(k, 9) / (0.5*freshwaterdensity*MSwsa*resultsArray(k, 5)^2); % Model Averaged drag (Ctm) (-)
         
-    roundedspeed   = str2num(sprintf('%.1f',resultsArray(k, 5)));                   % Round averaged speed to two (2) decimals only
+    roundedspeed   = str2num(sprintf('%.2f',resultsArray(k, 5)));                   % Round averaged speed to two (2) decimals only
     modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl))); % Calculate Froude length number
     resultsArray(k, 11) = modelfrrounded;                                           % Froude length number (adjusted for Lwl change at different conditions) (-)
     
