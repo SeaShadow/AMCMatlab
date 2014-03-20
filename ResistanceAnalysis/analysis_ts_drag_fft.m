@@ -1,5 +1,5 @@
 %# ------------------------------------------------------------------------
-%# Resistance Test Analysis - TS analysis, drag only, for wall accuracy
+%# Resistance Test Analysis - Time Series analysis
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
@@ -316,7 +316,7 @@ if enableCond07Plot == 0 && enableCond08Plot == 0 && enableCond09Plot == 0 && en
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     disp('!!! WARNING: No plots enabled! !!!');
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    break;    
+    break;
 end
 
 % -------------------------------------------------------------------------
@@ -343,12 +343,12 @@ if enableCond07Plot == 1
         RunCond     = sortedArray{j}(1,28);
         RunRepeats  = ms;
 
-        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         %# PLOT: DRAG ONLY. WALL INACURACCY INVESTIGATION
-        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+        
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+       
         
-        figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Drag Data');
-        f = figure('Name',figurename,'NumberTitle','off');
+        figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Drag Data and FFT');
+        fig = figure('Name',figurename,'NumberTitle','off');
         
         setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
         setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
@@ -360,8 +360,22 @@ if enableCond07Plot == 1
         minYValues = [];
         maxYValues = [];
         
+        %# Filters --------------------------------------------------------
+        
+        % Moving Average Filter
+        %a = 1;
+        %b = [1/4 1/4 1/4 1/4];
+        
+        % Discrete Filter
+        %a = [1 0.2];
+        %b = [2 3];
+        
         % Run through repeats
+        graphLeft  = 1;
+        graphRight = 2;
         for k=1:ms
+            
+            %# Data preparation -------------------------------------------
             
             % Correct for run numbers below 10
             runNo = sortedArray{j}(k,1);
@@ -375,7 +389,7 @@ if enableCond07Plot == 1
             
             % Define run filename
             filename = sprintf('_time_series_data/R%s.dat',runnumber);
-            
+
             % Read DAT file
             if exist(filename, 'file') == 2
                 timeSeriesData = csvread(filename);
@@ -384,53 +398,141 @@ if enableCond07Plot == 1
                 break;
             end
             
+            % Column names for timeSeriesData
+            
+            %[1] Time               (s)
+            %[2] RU: Speed          (m/s)
+            %[3] RU: Forward LVDT   (mm)
+            %[4] RU: Aft LVDT       (mm)
+            %[5] RU: Drag           (g)
+            
             %# Set columns to be used as X and Y values from time series data
             
-            x = timeSeriesData(:,1);
-            y = timeSeriesData(:,5);
+            x  = timeSeriesData(:,1);
+            y  = timeSeriesData(:,5);
+            
+            % USING FILTER
+            %fy = filter(b,a,y);
+                        
+            [tsm,tsn] = size(x);
+            
+            %# Detrending -------------------------------------------------
+            
+            % Find the maximum value in each column
+            mx    = max(y);
+            
+            % Calculate the mean of each column
+            mu    = mean(y);
+            
+            % Calculate the standard deviation of each column
+            sigma = std(y);            
+            
+            % Create a matrix of mean values by replicating the mu vector for n rows
+            MeanMat = repmat(mu,tsm,1);
+            
+            % Subtract the column mean from each element in that column
+            %dy      = y - MeanMat;
+            dy      = detrend(y);
             
             %# Set min and max values for axis limitations
             
             minXValues(ms) = min(x);
             maxXValues(ms) = max(x);
             minYValues(ms) = min(y);
-            maxYValues(ms) = max(y);
+            maxYValues(ms) = max(y);       
+
+            %# Plot time vs. output ---------------------------------------
             
-            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-            legendInfo{k} = sprintf('Run %s',num2str(runnumber));
-            hold on;
+            subplot(ms,2,graphLeft)
+            
+            % NOT USING FILTER
+            %h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            % USING FILTER, ETC. WHERE 2 COLUMNS USED
+            h = plot(x,y,x,dy);
+            xlabel('Time (s)');
+            ylabel('Magnitude, drag (g)');
+            title('{\bf Time Series - Raw Data}');
+            grid on;
+            box on;
+            %axis square;
+    
+            % USING FILTER - Colors and markers
+            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            set(h(2),'Color','k','Marker',setMarker{k},'MarkerSize',1,'LineStyle','--','linewidth',1);
+            
+            %# Set plot figure background to a defined color
+            %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+            set(gcf,'Color',[1,1,1]);
+            
+            %# Axis limitations
+            maxX = max(maxXValues);
+            set(gca,'XLim',[0 maxX]);
+            set(gca,'XTick',[0:5:maxX]);
+%             minY = round(max(minYValues)*0.8);
+%             maxY = round(max(maxYValues)*1.2);
+%             setIncr = round((maxY-minY)/5);
+%             set(gca,'YLim',[minY maxY]);
+%             set(gca,'YTick',[minY:setIncr:maxY]);
+            
+            %# Legend
+            % NOT USING FILTER
+            %hleg1 = legend(sprintf('Run %s',num2str(runnumber)));
+            % USING FILTER
+            hleg1 = legend(sprintf('Run %s',num2str(runnumber)),'Detrending');
+            set(hleg1,'Location','NorthEast');
+            set(hleg1,'Interpreter','none');
+            legend boxoff;
+            
+            clearvars legendInfo;
+            
+            %# Plot FFT ---------------------------------------------------
+            
+            subplot(ms,2,graphRight)
+            
+            % Time series
+            % http://cda.psych.uiuc.edu/matlab_class_material/data_analysis.pdf)
+            ts_time = timeseries(x, length(x), 'name', 'TS-Time');
+            getdatasamplesize(ts_time);
+            
+            ts_drag = timeseries(y, length(y), 'name', 'TS-Drag');
+            getdatasamplesize(ts_drag);
+            
+            % FFT calculations
+            
+            Fs = 200;               % Sampling frequency
+            T = 1/Fs;               % Sample time
+            L = tsm;                % Length of signal
+            t = (0:L-1)*T;          % Time vector
+
+            % Plot single-sided amplitude spectrum.
+            
+            NFFT = 2^nextpow2(L);   % Next power of 2 from length of y
+            Y    = fft(y,NFFT)/L;
+            f    = Fs/2*linspace(0,1,NFFT/2+1);
+            
+            plot(f,2*abs(Y(1:NFFT/2+1)),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            title('{\bf Single-Sided Amplitude Spectrum of y(t)}')
+            xlabel('{\bf Frequency (Hz)}')
+            ylabel('{\bf |Y(f)|}')
+            grid on;
+            box on;
+            %axis square;
+            
+            %# Legend
+            hleg1 = legend(sprintf('Run %s',num2str(runnumber)));
+            set(hleg1,'Location','NorthEast');
+            set(hleg1,'Interpreter','none');
+            legend boxoff;
+            
+            clearvars legendInfo;
+            
+            % Counter only
+            % NOTE: Needs to be adjusted if more than 2 columns in graph subplot!
+            
+            graphLeft  = graphLeft+2;
+            graphRight = graphRight+2;
             
         end
-        hold off;
-        
-        xlabel('{\bf Time [s]}');
-        ylabel('{\bf Drag [g]}');
-        %title('{\bf Drag}');
-        grid on;
-        box on;
-        axis square;
-        
-        %# Set plot figure background to a defined color
-        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-        set(gcf,'Color',[1,1,1]);
-        
-        %# Axis limitations
-        maxX = max(maxXValues);
-        set(gca,'XLim',[0 maxX]);
-        set(gca,'XTick',[0:2:maxX]);
-        minY = round(max(minYValues)*0.8);
-        maxY = round(max(maxYValues)*1.2);
-        setIncr = round((maxY-minY)/5);
-        set(gca,'YLim',[minY maxY]);
-        set(gca,'YTick',[minY:setIncr:maxY]);
-        
-        %# Legend
-        hleg1 = legend(legendInfo);
-        set(hleg1,'Location','NorthWest');
-        set(hleg1,'Interpreter','none');
-        legend boxoff;
-        
-        clearvars legendInfo;
         
         %# Save plot as PNG -------------------------------------------------------
         
@@ -447,19 +549,20 @@ if enableCond07Plot == 1
         annotation('textbox', [0 0.9 1 0.1], ...
             'String', strcat('{\bf ', figurename, '}'), ...
             'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
+            'HorizontalAlignment', 'center');        
         
         %# Save plots as PDF and PNG
-        %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots.pdf', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots_FFT.pdf', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots.png', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-        saveas(f, plotsavename);                % Save plot as PNG
-        close;
+        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots_FFT.png', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        saveas(fig, plotsavename);                % Save plot as PNG
+        %close;
+        
+        %break;
         
     end % For loop
     
 end % enableCond07Plot
-
 
 %# ------------------------------------------------------------------------
 %# CONDITION 8: Time Series -----------------------------------------------

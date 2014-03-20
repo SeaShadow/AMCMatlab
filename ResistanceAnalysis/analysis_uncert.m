@@ -85,6 +85,11 @@
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
+%#               10 => analysis_ts_drag_fft.m  >> Time series data for cond 7-12
+%#                    |                        >> DRAG ONLY!!!
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
 %# ------------------------------------------------------------------------
 %#
 %# IMPORTANT  :  Change runfilespath and do not forget to substitute \ => \\

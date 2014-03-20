@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date:         September 24, 2013
+%# Date:         March 20, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -254,9 +254,10 @@ for k=startRun:endRun
     % END: REAL UNITS COVNERSION
     % /////////////////////////////////////////////////////////////////////       
     
-    %# -------------------------------------------------------------------------
+    
+    %# ********************************************************************
     %# Fast Fourier Transform (FFT)
-    %# -------------------------------------------------------------------------
+    %# ********************************************************************
     
     %# Create FFT plots and PNG images
     if k > 99
@@ -281,20 +282,27 @@ for k=startRun:endRun
     
     heaveData = heaveData.';
     
-    n = 0.7*sin(2*pi*50*t) + sin(2*pi*120*t);
-    y = n + heaveData;            % Plot (WITH noise)
-    
+    % Plot: With noise
+    n        = 0.7*sin(2*pi*50*t) + sin(2*pi*120*t);
+    y        = n + heaveData;    
     filename = sprintf('Run_%s_LVDT_Fwd_Noise', runno);
     fft_plot(Fs,timeData,y,1,length(y),filename,name);
-    
-    y = heaveData;                % Plot (NO noise)
-    
+
+    % Plot: No noise
+    y        = heaveData;
     filename = sprintf('Run_%s_LVDT_Fwd', runno);
     fft_plot(Fs,timeData,y,1,length(y),filename,name);    
 
+    
+    
+    
+    
     break;
     
-    %# MANUAL FFT FOR CHECKING --------------------------------------------
+    %# ********************************************************************
+    %# MANUAL FFT FOR CHECKING
+    %# ********************************************************************
+    
     figurename = sprintf('%s (averaged):: 1,500 and 1,804 tonnes, level, Run %s to %s', testName, num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');    
     
@@ -315,6 +323,7 @@ for k=startRun:endRun
     y = n + heaveData;            % Plot (WITH noise)
     %y = heaveData;               % Plot (NO noise)
     
+    %# Single-Sided Amplitude Spectrum of y(t) ----------------------------
     subplot(1,2,1)
 
     plot(x,y)
@@ -334,6 +343,7 @@ for k=startRun:endRun
     Y = fft(y,NFFT)/L;
     f = Fs/2*linspace(0,1,NFFT/2+1);
 
+    %# Single-Sided Amplitude Spectrum of y(t) ----------------------------    
     subplot(1,2,2)
 
     plot(f,2*abs(Y(1:NFFT/2+1))) 

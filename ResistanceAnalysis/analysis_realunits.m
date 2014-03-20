@@ -1,5 +1,5 @@
 %# ------------------------------------------------------------------------
-%# function [realUnits meanValue] = analysis_realunits( input )
+%# Function [realUnits meanValue] = analysis_realunits( input )
 %# ------------------------------------------------------------------------
 %# 
 %# Author:       K. Zürcher (kzurcher@amc.edu.au)
@@ -45,8 +45,8 @@ function [realUnits meanValue] = analysis_realunits(Raw_Data,Zero,CF)
 %# CELLFUN: FAST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 Raw_Data = num2cell(Raw_Data);                                              % Double to cell conversion
 Raw_Data  = cellfun(@(y) CF*(y-Zero), Raw_Data, 'UniformOutput', false);    % Apply functions to cell
-%S = sprintf('%s*', Raw_Data{:});                                            % Cell to double conversion
-%realUnits = sscanf(S, '%f*');                                               % Cell to double conversion
+%S = sprintf('%s*', Raw_Data{:});                                           % Cell to double conversion
+%realUnits = sscanf(S, '%f*');                                              % Cell to double conversion
 realUnits = cell2mat(Raw_Data);                                             % Cell to double conversion
 
 %# Calculate mean

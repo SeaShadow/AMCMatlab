@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  September 27, 2013
+%# Date       :  March 20, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -85,6 +85,11 @@
 %#
 %#               9 => analysis_ts_drag.m  >> Time series data for cond 7-12
 %#                    |                   >> DRAG ONLY!!!
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
+%#               10 => analysis_ts_drag_fft.m  >> Time series data for cond 7-12
+%#                    |                        >> DRAG ONLY!!!
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#

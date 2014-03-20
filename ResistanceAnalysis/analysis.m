@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  September 9, 2013
+%# Date       :  March 20, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -85,6 +85,11 @@
 %#
 %#               9 => analysis_ts_drag.m  >> Time series data for cond 7-12
 %#                    |                   >> DRAG ONLY!!!
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
+%#               10 => analysis_ts_drag_fft.m  >> Time series data for cond 7-12
+%#                    |                        >> DRAG ONLY!!!
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
@@ -277,8 +282,8 @@ endRun   = 249;     % Stop at run y
 %endRun   = 80;      % Stop at run y
 
 % Custom range
-%startRun = 81;      % Start at run x
-%endRun   = 141;     % Stop at run y
+%startRun = 63;      % Start at run x
+%endRun   = 63;     % Stop at run y
 
 % Single runs
 %startRun = 163;    % Start at run x
@@ -355,6 +360,7 @@ RunNosCond13 = 232:249; % Cond. 13 (Prohaska): 1,500t, deep transom
 %# ------------------------------------------------------------------------
 %# END DEFINE RUN NUMBERS BY TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START DEFINE PLOT SIZE
@@ -491,23 +497,51 @@ for k=startRun:endRun
     % START: REAL UNITS COVNERSION
     % ---------------------------------------------------------------------    
     
+    % Real units (i.e. m/s, mm and grams)
     [CH_0_Speed CH_0_Speed_Mean]     = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
     [CH_1_LVDTFwd CH_1_LVDTFwd_Mean] = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
     [CH_2_LVDTAft CH_2_LVDTAft_Mean] = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
     [CH_3_Drag CH_3_Drag_Mean]       = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);    
     
+    % Leave it as voltage but subtract zero value     
+    [CH_0_Speed_Volt CH_0_Speed_Mean_Volt]     = analysis_voltage(Raw_CH_0_Speed,CH_0_Zero);
+    [CH_1_LVDTFwd_Volt CH_1_LVDTFwd_Mean_Volt] = analysis_voltage(Raw_CH_1_LVDTFwd,CH_1_Zero);
+    [CH_2_LVDTAft_Volt CH_2_LVDTAft_Mean_Volt] = analysis_voltage(Raw_CH_2_LVDTAft,CH_2_Zero);
+    [CH_3_Drag_Volt CH_3_Drag_Mean_Volt]       = analysis_voltage(Raw_CH_3_Drag,CH_3_Zero);    
+    
     % Time series data array and save as DAT file -------------------------
-        %[1] Time           (s)
-        %[2] Speed          (m/s)
-        %[3] Forward LVDT   (mm)
-        %[4] Aft LVDT       (mm)
-        %[5] Drag           (g)
+    
+    % Column names
+    
+    % Where:
+        % UNIT = Real units   (i.e. s, m/s, mm, g)
+        % VOLT = Raw data     (V)
+    
+    %[1] Time                 (s)
+    
+    %[2] UNIT: Speed          (m/s)
+    %[3] UNIT: Forward LVDT   (mm)
+    %[4] UNIT: Aft LVDT       (mm)
+    %[5] UNIT: Drag           (g)
+    
+    %[6] VOLT: Speed          (V)
+    %[7] VOLT: Forward LVDT   (V)
+    %[8] VOLT: Aft LVDT       (V)
+    %[9] VOLT: Drag           (V)
+    
     tsArray = [];
+    
     tsArray(:,1) = timeData;
+    
     tsArray(:,2) = CH_0_Speed;
     tsArray(:,3) = CH_1_LVDTFwd;
     tsArray(:,4) = CH_2_LVDTAft;
     tsArray(:,5) = CH_3_Drag;
+    
+    tsArray(:,6) = CH_0_Speed_Volt;
+    tsArray(:,7) = CH_1_LVDTFwd_Volt;
+    tsArray(:,8) = CH_2_LVDTAft_Volt;
+    tsArray(:,9) = CH_3_Drag_Volt;
     
     if k > 99
         runnumber = name(3:5);
