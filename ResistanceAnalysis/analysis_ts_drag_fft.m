@@ -333,6 +333,9 @@ if enableCond07Plot == 1
     sortedArray = arrayfun(@(x) cond7(cond7(:,11) == x, :), unique(cond7(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
     
+    % Loop through speed groups
+    frequencyArray = [];
+    FACounter = 1;
     for j=1:ml
         
         [ms,ns] = size(sortedArray{j});
@@ -370,9 +373,10 @@ if enableCond07Plot == 1
         %a = [1 0.2];
         %b = [2 3];
         
-        % Run through repeats
-        graphLeft  = 1;
-        graphRight = 2;
+        % Loop through repeats of speed group
+        graphLeft   = 1;
+        graphCenter = 2;
+        graphRight  = 3;
         for k=1:ms
             
             %# Data preparation -------------------------------------------
@@ -429,10 +433,24 @@ if enableCond07Plot == 1
             
             % Create a matrix of mean values by replicating the mu vector for n rows
             MeanMat = repmat(mu,tsm,1);
+
+            %# Subtract mean (i.e. remove baseline) -----------------------
+            % See: http://www.psy.gla.ac.uk/~joachim/TSA/Time_series_analysis_tutorial1.pdf
             
             % Subtract the column mean from each element in that column
-            %dy      = y - MeanMat;
-            dy      = detrend(y);
+            % See: http://cda.psych.uiuc.edu/matlab_class_material/data_analysis.pdf
+            dy1      = y - MeanMat;
+            
+            % Similar approach to subtract mean and fit using DETREND
+            % See: http://www.mathworks.com.au/help/matlab/ref/detrend.html
+            %dy1      = detrend(y);              % Removes the best straight-line fit from vector y
+            %dy1      = detrend(y,'constant');   % Removes the mean value from vector y            
+            
+            % Testbed
+            %dy2      = medfilt1(dy1,1000);
+            %dy2      = dy1;
+            
+            %# Min and max values -----------------------------------------
             
             %# Set min and max values for axis limitations
             
@@ -443,22 +461,24 @@ if enableCond07Plot == 1
 
             %# Plot time vs. output ---------------------------------------
             
-            subplot(ms,2,graphLeft)
-            
+            subplot(ms,3,graphLeft)
+                        
             % NOT USING FILTER
             %h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
             % USING FILTER, ETC. WHERE 2 COLUMNS USED
-            h = plot(x,y,x,dy);
+            h = plot(x,y,x,dy1);
+            %h = plot(x,y,x,dy1,x,dy2);
             xlabel('Time (s)');
             ylabel('Magnitude, drag (g)');
-            title('{\bf Time Series - Raw Data}');
+            title('Time series (raw data) and with subtracted mean');
             grid on;
             box on;
             %axis square;
     
             % USING FILTER - Colors and markers
             set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-            set(h(2),'Color','k','Marker',setMarker{k},'MarkerSize',1,'LineStyle','--','linewidth',1);
+            set(h(2),'Color','k','Marker',setMarker{k},'MarkerSize',1,'LineStyle','-.','linewidth',1);
+            %set(h(3),'Color','k','Marker',setMarker{k},'MarkerSize',1,'LineStyle','-.','linewidth',1);
             
             %# Set plot figure background to a defined color
             %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -468,17 +488,18 @@ if enableCond07Plot == 1
             maxX = max(maxXValues);
             set(gca,'XLim',[0 maxX]);
             set(gca,'XTick',[0:5:maxX]);
-%             minY = round(max(minYValues)*0.8);
-%             maxY = round(max(maxYValues)*1.2);
-%             setIncr = round((maxY-minY)/5);
-%             set(gca,'YLim',[minY maxY]);
-%             set(gca,'YTick',[minY:setIncr:maxY]);
+            %minY = round(max(minYValues)*0.8);
+            %maxY = round(max(maxYValues)*1.2);
+            %setIncr = round((maxY-minY)/5);
+            %set(gca,'YLim',[minY maxY]);
+            %set(gca,'YTick',[minY:setIncr:maxY]);
             
             %# Legend
             % NOT USING FILTER
             %hleg1 = legend(sprintf('Run %s',num2str(runnumber)));
             % USING FILTER
-            hleg1 = legend(sprintf('Run %s',num2str(runnumber)),'Detrending');
+            hleg1 = legend(sprintf('Run %s',num2str(runnumber)),'Subtracted mean');
+            %hleg1 = legend(sprintf('Run %s',num2str(runnumber)),'Subtracted mean','Other');
             set(hleg1,'Location','NorthEast');
             set(hleg1,'Interpreter','none');
             legend boxoff;
@@ -487,17 +508,22 @@ if enableCond07Plot == 1
             
             %# Plot FFT ---------------------------------------------------
             
-            subplot(ms,2,graphRight)
+            subplot(ms,3,graphCenter)
             
-            % Time series
+            % Set x and y as time series objects --------------------------
+            
             % http://cda.psych.uiuc.edu/matlab_class_material/data_analysis.pdf)
             ts_time = timeseries(x, length(x), 'name', 'TS-Time');
             getdatasamplesize(ts_time);
             
+            % NOTE: Use y as either subtracted mean or detrend
+            % DEFAULT: y = y
+            y = dy1;
+            
             ts_drag = timeseries(y, length(y), 'name', 'TS-Drag');
             getdatasamplesize(ts_drag);
             
-            % FFT calculations
+            % FFT calculations --------------------------------------------
             
             Fs = 200;               % Sampling frequency
             T = 1/Fs;               % Sample time
@@ -511,7 +537,7 @@ if enableCond07Plot == 1
             f    = Fs/2*linspace(0,1,NFFT/2+1);
             
             plot(f,2*abs(Y(1:NFFT/2+1)),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-            title('{\bf Single-Sided Amplitude Spectrum of y(t)}')
+            title('Single-Sided Amplitude Spectrum of y(t)')
             xlabel('{\bf Frequency (Hz)}')
             ylabel('{\bf |Y(f)|}')
             grid on;
@@ -526,11 +552,35 @@ if enableCond07Plot == 1
             
             clearvars legendInfo;
             
-            % Counter only
-            % NOTE: Needs to be adjusted if more than 2 columns in graph subplot!
+            % Periodogram -------------------------------------------------
             
-            graphLeft  = graphLeft+2;
-            graphRight = graphRight+2;
+            subplot(ms,3,graphRight)
+            
+            % Maximum frequency
+            % See: http://www.mathworks.com.au/matlabcentral/answers/28239-get-frequencies-out-of-data-with-an-fft
+            psdest = psd(spectrum.periodogram,y,'Fs',Fs,'NFFT',length(y));
+            [~,I] = max(psdest.Data);
+            fprintf('Run %s:: Maximum occurs at %4.3f Hz.\n',num2str(runnumber),psdest.Frequencies(I));
+            plot(psdest);
+            
+            % Write data to array -----------------------------------------
+            
+            %# frequencyArray columns:
+            
+            %[1]  Run No.                                              (-)
+            %[2]  Max. frequency                                       (Hz)
+            
+            frequencyArray(FACounter, 1) = str2num(runnumber);
+            frequencyArray(FACounter, 2) = psdest.Frequencies(I); 
+            
+            % Counter only ------------------------------------------------
+            % NOTE: Needs to be adjusted if more than 3 columns in graph subplot!
+            
+            FACounter = FACounter+1;
+            
+            graphLeft   = graphLeft+3;
+            graphCenter = graphCenter+3;
+            graphRight  = graphRight+3;
             
         end
         
@@ -564,6 +614,20 @@ if enableCond07Plot == 1
     
 end % enableCond07Plot
 
+
+% /////////////////////////////////////////////////////////////////////
+% START: Write results to CVS
+% ---------------------------------------------------------------------
+
+M = frequencyArray;
+csvwrite('frequencyArrayFFT.dat', M)                                     % Export matrix M to a file delimited by the comma character      
+dlmwrite('frequencyArrayFFT.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
+
+% ---------------------------------------------------------------------
+% END: Write results to CVS
+% /////////////////////////////////////////////////////////////////////
+
+
 %# ------------------------------------------------------------------------
 %# CONDITION 8: Time Series -----------------------------------------------
 %# ------------------------------------------------------------------------
@@ -572,17 +636,6 @@ if enableCond08Plot == 1
 
     sortedArray = arrayfun(@(x) cond8(cond8(:,11) == x, :), unique(cond8(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-    
-    for j=1:ml
-        [ms,ns] = size(sortedArray{j});
-        
-        minRunNo = min(sortedArray{j}(:,1));
-        maxRunNo = max(sortedArray{j}(:,1));
-        FroudeNo    = sortedArray{j}(1,11);
-        RunCond     = sortedArray{j}(1,28);
-        RunRepeats  = ms;
-        
-    end
 
 end
 
@@ -595,17 +648,6 @@ if enableCond09Plot == 1
 
     sortedArray = arrayfun(@(x) cond9(cond9(:,11) == x, :), unique(cond9(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-    
-    for j=1:ml
-        [ms,ns] = size(sortedArray{j});
-        
-        minRunNo = min(sortedArray{j}(:,1));
-        maxRunNo = max(sortedArray{j}(:,1));
-        FroudeNo    = sortedArray{j}(1,11);
-        RunCond     = sortedArray{j}(1,28);
-        RunRepeats  = ms;
-        
-    end
 
 end
 
@@ -618,17 +660,6 @@ if enableCond10Plot == 1
 
     sortedArray = arrayfun(@(x) cond10(cond10(:,11) == x, :), unique(cond10(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-    
-    for j=1:ml
-        [ms,ns] = size(sortedArray{j});
-        
-        minRunNo = min(sortedArray{j}(:,1));
-        maxRunNo = max(sortedArray{j}(:,1));
-        FroudeNo    = sortedArray{j}(1,11);
-        RunCond     = sortedArray{j}(1,28);
-        RunRepeats  = ms;
-
-    end
 
 end
 
@@ -641,17 +672,6 @@ if enableCond11Plot == 1
 
     sortedArray = arrayfun(@(x) cond11(cond11(:,11) == x, :), unique(cond11(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-    
-    for j=1:ml
-        [ms,ns] = size(sortedArray{j});
-        
-        minRunNo = min(sortedArray{j}(:,1));
-        maxRunNo = max(sortedArray{j}(:,1));
-        FroudeNo    = sortedArray{j}(1,11);
-        RunCond     = sortedArray{j}(1,28);
-        RunRepeats  = ms;
-        
-    end
 
 end
 
@@ -663,16 +683,5 @@ if enableCond12Plot == 1
 
     sortedArray = arrayfun(@(x) cond12(cond12(:,11) == x, :), unique(cond12(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-    
-    for j=1:ml
-        [ms,ns] = size(sortedArray{j});
-        
-        minRunNo = min(sortedArray{j}(:,1));
-        maxRunNo = max(sortedArray{j}(:,1));
-        FroudeNo    = sortedArray{j}(1,11);
-        RunCond     = sortedArray{j}(1,28);
-        RunRepeats  = ms;
-
-    end
 
 end
