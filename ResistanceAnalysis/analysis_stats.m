@@ -93,6 +93,8 @@
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
+%#               >>> TODO: Copy data from frequencyArrayFFT.dat to fft_frequency_data.dat
+%#
 %# ------------------------------------------------------------------------
 %#
 %# IMPORTANT  :  Change runfilespath and do not forget to substitute \ => \\

@@ -93,6 +93,8 @@
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
+%#               >>> TODO: Copy data from frequencyArrayFFT.dat to fft_frequency_data.dat
+%#
 %# ------------------------------------------------------------------------
 %#
 %# IMPORTANT  :  Change runfilespath and do not forget to substitute \ => \\
@@ -163,11 +165,14 @@ endRun   = 141;   % Stop at run y
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-%# -------------------------------------------------------------------------
-%# Read results DAT file
-%# -------------------------------------------------------------------------
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# START: Read results DAT file
+%# ------------------------------------------------------------------------
+
+% Read full_resistance_data
 if exist('full_resistance_data.dat', 'file') == 2
     %# Results array columns: 
+    
     %[1]  Run No.                                                                  (-)
     %[2]  FS                                                                       (Hz)
     %[3]  No. of samples                                                           (-)
@@ -235,6 +240,31 @@ if exist('results','var') == 0
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     break;
 end
+
+% Read fft_frequency_data
+resultsFreqs = [];
+if exist('frequencyArrayFFT.dat', 'file') == 2
+    %# fft_frequency_data columns: 
+    
+    %[1]  Run No.                                              (-)
+    %[2]  Length Froude Number                                 (-)
+    %[3]  Condition                                            (-)
+    %[4]  Max. frequency                                       (Hz)
+
+    resultsFreqs = csvread('fft_frequency_data.dat');
+    
+    %# Remove zero rows
+    resultsFreqs(all(resultsFreqs==0,2),:)=[];
+else
+    disp('---------------------------------------------------------------------------------------');
+    disp('File fft_frequency_data.dat does not exist!');
+    disp('---------------------------------------------------------------------------------------');
+    break;
+end
+
+%# ------------------------------------------------------------------------
+%# END: Read results DAT file
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 % *************************************************************************
@@ -304,6 +334,17 @@ end
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
+% Frequency plots
+% FILE: fft_frequency_data.dat
+enableCond07FreqPlot    = 0; % Frequency plot condition 7
+enableCond08FreqPlot    = 0; % Frequency plot condition 8
+enableCond09FreqPlot    = 0; % Frequency plot condition 9
+enableCond10FreqPlot    = 0; % Frequency plot condition 10
+enableCond11FreqPlot    = 0; % Frequency plot condition 11
+enableCond12FreqPlot    = 0; % Frequency plot condition 12
+
+% FFT and periodogram plots
+% FILE: full_resistance_data.dat
 enableCond07Plot        = 1; % Plot condition 7
 enableCond08Plot        = 0; % Plot condition 8
 enableCond09Plot        = 0; % Plot condition 9
@@ -312,12 +353,12 @@ enableCond11Plot        = 0; % Plot condition 12
 enableCond12Plot        = 0; % Plot condition 12
 
 % Check if any plots enabled, if not stop
-if enableCond07Plot == 0 && enableCond08Plot == 0 && enableCond09Plot == 0 && enableCond10Plot == 0 && enableCond11Plot == 0 && enableCond12Plot == 0
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    disp('!!! WARNING: No plots enabled! !!!');
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    break;
-end
+% if enableCond07Plot == 0 && enableCond08Plot == 0 && enableCond09Plot == 0 && enableCond10Plot == 0 && enableCond11Plot == 0 && enableCond12Plot == 0
+%     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+%     disp('!!! WARNING: No plots enabled! !!!');
+%     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+%     break;
+% end
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
@@ -325,7 +366,115 @@ end
 
 
 %# ------------------------------------------------------------------------
-%# CONDITION 7: Time Series -----------------------------------------------
+%# CONDITION 7: FFT Frequencies
+%# ------------------------------------------------------------------------
+
+if enableCond07FreqPlot == 1
+    
+    % Set condition number
+    setCondition = 7;
+    
+    setArray = resultsFreqs;
+    sortedArray = arrayfun(@(x) setArray(setArray(:,3) == x, :), unique(setArray(:,3)), 'uniformoutput', false);
+    [ml,nl] = size(sortedArray);
+
+    for j=1:ml
+        
+        if sortedArray{j}(1,3) == setCondition
+            
+            % Variables
+            
+            minRunNo = min(sortedArray{j}(:,1));
+            maxRunNo = max(sortedArray{j}(:,1));
+            RunCond  = sortedArray{j}(1,3);
+           
+            % Plots
+                        
+            figurename = sprintf('Condition %s:: Run %s to %s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), 'Maximum frequencies from drag FFT');
+            fig = figure('Name',figurename,'NumberTitle','off');
+
+            % Plot frequencies (bar)
+            
+            subplot(2,1,1);            
+            
+            x = sortedArray{j}(:,2);
+            y = sortedArray{j}(:,4);
+            
+            bar(y,0.4,'b');
+            set(gca,'XTickLabel',x,'XTick',1:numel(x));
+            
+            % Rotate x label due to space issues
+            xticklabel_rotate([],90,[],'Fontsize',10)
+            
+            xlabel('Froude length number (-)');
+            ylabel('Frequency (-)');
+            %title('Bar plot');
+            grid on;
+            box on;
+            %axis square;
+            
+            %# Set plot figure background to a defined color
+            %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+            set(gcf,'Color',[1,1,1]);
+           
+            % Plot frequencies (scatter)
+            
+            subplot(2,1,2);
+            
+            plot(x,y,'rs',...
+                'LineWidth',2,...
+                'MarkerEdgeColor','b',...
+                'MarkerFaceColor','w',...
+                'MarkerSize',8);
+            xlabel('Froude length number (-)');
+            ylabel('Frequency (-)');
+            %title('Scatter plot');
+            grid on;
+            box on;
+            %axis square;
+
+            %# Axis limitations
+            minX = min(x);
+            maxX = max(x);
+            set(gca,'XLim',[minX maxX]);
+            set(gca,'XTick',[minX:0.01:maxX]);
+            
+            % Rotate x label due to space issues
+            xticklabel_rotate([],90,[],'Fontsize',10)
+            
+            %# Save plot as PNG -------------------------------------------
+            
+            %# Figure size on screen (50% scaled, but same aspect ratio)
+            set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+            
+            %# Figure size printed on paper
+            set(gcf, 'PaperUnits','centimeters');
+            set(gcf, 'PaperSize',[XPlot YPlot]);
+            set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+            set(gcf, 'PaperOrientation','portrait');
+            
+            %# Plot title -------------------------------------------------
+            annotation('textbox', [0 0.9 1 0.1], ...
+                'String', strcat('{\bf ', figurename, '}'), ...
+                'EdgeColor', 'none', ...
+                'HorizontalAlignment', 'center');
+            
+            %# Save plots as PDF and PNG
+            %plotsavenamePDF = sprintf('%s/_Cond_%s_Run%s_to_Run%s_FFT_Frequency_Plot_FFT.pdf', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo));
+            %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+            plotsavename = sprintf('%s/_Cond_%s_Run%s_to_Run%s_FFT_Frequency_Plot_FFT.png', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo));
+            saveas(fig, plotsavename);                % Save plot as PNG
+            %close;
+            
+        end % If statement
+        
+    end % For loop
+
+end % enableCond07FreqPlot
+
+
+%# ------------------------------------------------------------------------
+%# CONDITION 7: Time Series FFT
 %# ------------------------------------------------------------------------
 
 if enableCond07Plot == 1
@@ -337,9 +486,9 @@ if enableCond07Plot == 1
     frequencyArray = [];
     FACounter = 1;
     for j=1:ml
-        
+
         [ms,ns] = size(sortedArray{j});
-        
+
         minRunNo    = min(sortedArray{j}(:,1));
         maxRunNo    = max(sortedArray{j}(:,1));
         FroudeNo    = sortedArray{j}(1,11);
@@ -462,12 +611,14 @@ if enableCond07Plot == 1
             %# Plot time vs. output ---------------------------------------
             
             subplot(ms,3,graphLeft)
-                        
+            
+            polyf = polyfit(x,dy1,1);
+            polyv = polyval(polyf,x);      
+            
             % NOT USING FILTER
             %h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
             % USING FILTER, ETC. WHERE 2 COLUMNS USED
-            h = plot(x,y,x,dy1);
-            %h = plot(x,y,x,dy1,x,dy2);
+            h = plot(x,y,x,dy1,x,polyv);
             xlabel('Time (s)');
             ylabel('Magnitude, drag (g)');
             title('Time series (raw data) and with subtracted mean');
@@ -477,8 +628,8 @@ if enableCond07Plot == 1
     
             % USING FILTER - Colors and markers
             set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-            set(h(2),'Color','k','Marker',setMarker{k},'MarkerSize',1,'LineStyle','-.','linewidth',1);
-            %set(h(3),'Color','k','Marker',setMarker{k},'MarkerSize',1,'LineStyle','-.','linewidth',1);
+            set(h(2),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle','-.','linewidth',1);
+            set(h(3),'Color','k','Marker',setMarker{k},'MarkerSize',1,'LineStyle','-','linewidth',1);
             
             %# Set plot figure background to a defined color
             %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -488,18 +639,15 @@ if enableCond07Plot == 1
             maxX = max(maxXValues);
             set(gca,'XLim',[0 maxX]);
             set(gca,'XTick',[0:5:maxX]);
-            %minY = round(max(minYValues)*0.8);
-            %maxY = round(max(maxYValues)*1.2);
-            %setIncr = round((maxY-minY)/5);
-            %set(gca,'YLim',[minY maxY]);
-            %set(gca,'YTick',[minY:setIncr:maxY]);
+            minY = min(dy1);
+            maxY = max(y);
+            set(gca,'YLim',[minY maxY*1.5]);
             
             %# Legend
             % NOT USING FILTER
             %hleg1 = legend(sprintf('Run %s',num2str(runnumber)));
             % USING FILTER
-            hleg1 = legend(sprintf('Run %s',num2str(runnumber)),'Subtracted mean');
-            %hleg1 = legend(sprintf('Run %s',num2str(runnumber)),'Subtracted mean','Other');
+            hleg1 = legend(sprintf('Run %s',num2str(runnumber)),'Subtracted mean','Linear fit');
             set(hleg1,'Location','NorthEast');
             set(hleg1,'Interpreter','none');
             legend boxoff;
@@ -561,17 +709,22 @@ if enableCond07Plot == 1
             psdest = psd(spectrum.periodogram,y,'Fs',Fs,'NFFT',length(y));
             [~,I] = max(psdest.Data);
             fprintf('Run %s:: Maximum occurs at %4.3f Hz.\n',num2str(runnumber),psdest.Frequencies(I));
-            plot(psdest);
-            
+            h1 = plot(psdest);
+            set(h1,'Color',setColor{k});
+
             % Write data to array -----------------------------------------
             
             %# frequencyArray columns:
             
             %[1]  Run No.                                              (-)
-            %[2]  Max. frequency                                       (Hz)
+            %[2]  Length Froude Number                                 (-)
+            %[3]  Condition                                            (-)
+            %[4]  Max. frequency                                       (Hz)
             
             frequencyArray(FACounter, 1) = str2num(runnumber);
-            frequencyArray(FACounter, 2) = psdest.Frequencies(I); 
+            frequencyArray(FACounter, 2) = FroudeNo;
+            frequencyArray(FACounter, 3) = RunCond;
+            frequencyArray(FACounter, 4) = psdest.Frequencies(I); 
             
             % Counter only ------------------------------------------------
             % NOTE: Needs to be adjusted if more than 3 columns in graph subplot!
@@ -615,21 +768,8 @@ if enableCond07Plot == 1
 end % enableCond07Plot
 
 
-% /////////////////////////////////////////////////////////////////////
-% START: Write results to CVS
-% ---------------------------------------------------------------------
-
-M = frequencyArray;
-csvwrite('frequencyArrayFFT.dat', M)                                     % Export matrix M to a file delimited by the comma character      
-dlmwrite('frequencyArrayFFT.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
-
-% ---------------------------------------------------------------------
-% END: Write results to CVS
-% /////////////////////////////////////////////////////////////////////
-
-
 %# ------------------------------------------------------------------------
-%# CONDITION 8: Time Series -----------------------------------------------
+%# CONDITION 8: Time Series FFT
 %# ------------------------------------------------------------------------
 
 if enableCond08Plot == 1
@@ -641,7 +781,7 @@ end
 
 
 %# ------------------------------------------------------------------------
-%# CONDITION 9: Time Series -----------------------------------------------
+%# CONDITION 9: Time Series FFT
 %# ------------------------------------------------------------------------
 
 if enableCond09Plot == 1
@@ -653,7 +793,7 @@ end
 
 
 %# ------------------------------------------------------------------------
-%# CONDITION 10: Time Series -----------------------------------------------
+%# CONDITION 10: Time Series FFT
 %# ------------------------------------------------------------------------
 
 if enableCond10Plot == 1
@@ -665,7 +805,7 @@ end
 
 
 %# ------------------------------------------------------------------------
-%# CONDITION 11: Time Series -----------------------------------------------
+%# CONDITION 11: Time Series FFT
 %# ------------------------------------------------------------------------
 
 if enableCond11Plot == 1
@@ -676,7 +816,7 @@ if enableCond11Plot == 1
 end
 
 %# ------------------------------------------------------------------------
-%# CONDITION 12: Time Series -----------------------------------------------
+%# CONDITION 12: Time Series FFT
 %# ------------------------------------------------------------------------
 
 if enableCond12Plot == 1
@@ -685,3 +825,20 @@ if enableCond12Plot == 1
     [ml,nl] = size(sortedArray);
 
 end
+
+
+% /////////////////////////////////////////////////////////////////////
+% START: Write results to CVS
+% ---------------------------------------------------------------------
+
+if exist('frequencyArray','var') == 1
+
+    M = frequencyArray;
+    csvwrite('frequencyArrayFFT.dat', M)                                     % Export matrix M to a file delimited by the comma character
+    dlmwrite('frequencyArrayFFT.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
+
+end
+
+% ---------------------------------------------------------------------
+% END: Write results to CVS
+% /////////////////////////////////////////////////////////////////////

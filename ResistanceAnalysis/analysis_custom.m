@@ -83,10 +83,12 @@
 %#                    |__> BASE DATA:     1. Read .cal data files
 %#                                        2. "resultsArraySensorError.dat"
 %#
-%#               9 => analysis_ts_drag.m  >> Time series data for cond 7-12
-%#                    |                   >> DRAG ONLY!!!
+%#               10 => analysis_ts_drag_fft.m  >> Time series data for cond 7-12
+%#                    |                        >> DRAG ONLY!!!
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
+%#               >>> TODO: Copy data from frequencyArrayFFT.dat to fft_frequency_data.dat
 %#
 %# ------------------------------------------------------------------------
 %#
