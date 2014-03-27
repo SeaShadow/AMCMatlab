@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  March 20, 2014
+%# Date       :  March 27, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -472,6 +472,7 @@ if enableCond07FreqPlot == 1
 
 end % enableCond07FreqPlot
 
+test = arrayfun(@(x) cond7(cond7(:,11) == x, :), unique(cond7(:,11)), 'uniformoutput', false);
 
 %# ------------------------------------------------------------------------
 %# CONDITION 7: Time Series FFT
@@ -522,10 +523,55 @@ if enableCond07Plot == 1
         %a = [1 0.2];
         %b = [2 3];
         
-        % Loop through repeats of speed group
-        graphLeft   = 1;
-        graphCenter = 2;
-        graphRight  = 3;
+        % Loop through repeats of speed group -----------------------------
+        runDataLength = []; % Lengths of runs (i.e no of samples)
+        for k=1:ms
+            
+            % Correct for run numbers below 10
+            runNo = sortedArray{j}(k,1);
+            if runNo < 10
+                runnumber = sprintf('0%s',num2str(runNo));
+            else
+                runnumber = sprintf('%s',num2str(runNo));
+            end
+            
+            %# Read run time series data create with analysis script ------
+            
+            % Define run filename
+            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+
+            % Read DAT file
+            if exist(filename, 'file') == 2
+                timeSeriesData = csvread(filename);
+                timeSeriesData(all(timeSeriesData==0,2),:)=[];
+            else
+                break;
+            end
+            
+            % Column names for timeSeriesData
+            
+            %[1] Time               (s)
+            %[2] RU: Speed          (m/s)
+            %[3] RU: Forward LVDT   (mm)
+            %[4] RU: Aft LVDT       (mm)
+            %[5] RU: Drag           (g)
+            
+            %# Set columns to be used as X and Y values from time series data
+            
+            x  = timeSeriesData(:,1);
+            y  = timeSeriesData(:,5);
+            
+            %# Store run data lengths -------------------------------------
+            
+            runDataLength(k, 1) = length(y);            
+            
+        end % For loop
+        
+        % Loop through repeats of speed group -----------------------------
+        graphLeft     = 1;  % Used to align subplots in figure 3 x n
+        graphCenter   = 2;  % Used to align subplots in figure 3 x n
+        graphRight    = 3;  % Used to align subplots in figure 3 x n
+        runDataArray  = [];
         for k=1:ms
             
             %# Data preparation -------------------------------------------
@@ -598,6 +644,23 @@ if enableCond07Plot == 1
             % Testbed
             %dy2      = medfilt1(dy1,1000);
             %dy2      = dy1;
+
+            %# Store y data to runDataArray -------------------------------
+            
+            % Columns:
+            
+                % [1] Run x: Raw data
+                % [2] Run y: Raw data
+                % [3] Run z: Raw data
+                % [n] Run n: Raw data
+
+                % [4] Run x: Raw data - mean (detrend)
+                % [5] Run y: Raw data - mean (detrend)
+                % [6] Run z: Raw data - mean (detrend)
+                % [n] Run n: Raw data
+            
+            runDataArray(:,k)    = y(1:min(runDataLength));
+            runDataArray(:,k+ms) = dy1(1:min(runDataLength));
             
             %# Min and max values -----------------------------------------
             
@@ -612,8 +675,9 @@ if enableCond07Plot == 1
             
             subplot(ms,3,graphLeft)
             
+            % Linear fit through detrended data
             polyf = polyfit(x,dy1,1);
-            polyv = polyval(polyf,x);      
+            polyv = polyval(polyf,x);
             
             % NOT USING FILTER
             %h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
@@ -627,8 +691,8 @@ if enableCond07Plot == 1
             %axis square;
     
             % USING FILTER - Colors and markers
-            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
-            set(h(2),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle','-.','linewidth',1);
+            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle','-.','linewidth',1);
+            set(h(2),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle','-','linewidth',1);
             set(h(3),'Color','k','Marker',setMarker{k},'MarkerSize',1,'LineStyle','-','linewidth',1);
             
             %# Set plot figure background to a defined color
@@ -641,7 +705,7 @@ if enableCond07Plot == 1
             set(gca,'XTick',[0:5:maxX]);
             minY = min(dy1);
             maxY = max(y);
-            set(gca,'YLim',[minY maxY*1.5]);
+            set(gca,'YLim',[minY*1.2 maxY*1.5]);
             
             %# Legend
             % NOT USING FILTER
@@ -708,7 +772,7 @@ if enableCond07Plot == 1
             % See: http://www.mathworks.com.au/matlabcentral/answers/28239-get-frequencies-out-of-data-with-an-fft
             psdest = psd(spectrum.periodogram,y,'Fs',Fs,'NFFT',length(y));
             [~,I] = max(psdest.Data);
-            fprintf('Run %s:: Maximum occurs at %4.3f Hz.\n',num2str(runnumber),psdest.Frequencies(I));
+            fprintf('Run %s:: Maximum frequency occurs at %4.3f Hz.\n',num2str(runnumber),psdest.Frequencies(I));
             h1 = plot(psdest);
             set(h1,'Color',setColor{k});
 
@@ -736,8 +800,8 @@ if enableCond07Plot == 1
             graphRight  = graphRight+3;
             
         end
-        
-        %# Save plot as PNG -------------------------------------------------------
+
+        %# Save plot as PNG -----------------------------------------------
         
         %# Figure size on screen (50% scaled, but same aspect ratio)
         set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -748,7 +812,7 @@ if enableCond07Plot == 1
         set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
         set(gcf, 'PaperOrientation','portrait');
         
-        %# Plot title -------------------------------------------------------------
+        %# Plot title -----------------------------------------------------
         annotation('textbox', [0 0.9 1 0.1], ...
             'String', strcat('{\bf ', figurename, '}'), ...
             'EdgeColor', 'none', ...
@@ -761,8 +825,193 @@ if enableCond07Plot == 1
         saveas(fig, plotsavename);                % Save plot as PNG
         %close;
         
-        %break;
+        % Plot averaged data ----------------------------------------------
         
+        figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Drag Data and FFT. Averaged samples of runs.');
+        fig = figure('Name',figurename,'NumberTitle','off');
+        
+        [mrda,nrda] = size(runDataArray);
+        
+        data = runDataArray;
+        
+        % Data (i.e. runDataArray) columns:
+        
+            % [1] Run x: Raw data
+            % [2] Run y: Raw data
+            % [3] Run z: Raw data
+            % [n] Run n: Raw data
+
+            % [4] Run x: Raw data - mean (detrend)
+            % [5] Run y: Raw data - mean (detrend)
+            % [6] Run z: Raw data - mean (detrend)
+            % [n] Run n: Raw data
+            
+        % Average run samples
+        DA  = [];
+        DAD = [];
+        for k=1:ms
+            if k == 1
+                DA(:,1)  = data(:,1);
+                DAD(:,1) = data(:,1+ms);
+            else    
+                DA(:,1)  = DA(:,1)+data(:,k);
+                DAD(:,1) = DAD(:,1)+data(:,k+ms);                
+            end
+        end
+        avgDA  = DA(:,1)/ms;
+        avgDAD = DAD(:,1)/ms;
+        
+        %# Plot time vs. output -------------------------------------------
+        
+        subplot(3,1,1)
+        
+        % Set axis data
+        x  = x(1:min(runDataLength));
+        y1 = avgDA;
+        y2 = avgDAD;
+        
+        % Linear fit through detrended data
+        polyf = polyfit(x,y2,1);
+        polyv = polyval(polyf,x);
+        
+        h = plot(x,y1,x,y2,x,polyv);
+        hold on;
+        for o=1:ms
+            plot(x,data(:,o),'Color','r','Marker','+','MarkerSize',1,'LineStyle','-.','linewidth',1);
+        end
+        for o=1:ms
+            plot(x,data(:,o+3),'Color','b','Marker','+','MarkerSize',1,'LineStyle','-.','linewidth',1);
+        end        
+        xlabel('Time (s)');
+        ylabel('Magnitude, drag (g)');
+        title('Time series (raw data) and with subtracted mean');
+        grid on;
+        box on;
+        %axis square;
+        
+        % USING FILTER - Colors and markers
+        set(h(1),'Color','k','Marker',setMarker{ms+1},'MarkerSize',1,'LineStyle','-','linewidth',1.5); %setColor{ms+1}
+        set(h(2),'Color','k','Marker',setMarker{ms+1},'MarkerSize',1,'LineStyle','--','linewidth',1.5);
+        set(h(3),'Color','k','Marker','*','MarkerSize',1,'LineStyle','-.','linewidth',1.5);
+
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Axis limitations
+        maxX = max(x);
+        set(gca,'XLim',[0 maxX]);
+        set(gca,'XTick',[0:5:maxX]);
+        minY = min(y2);
+        maxY = max(y1);
+        set(gca,'YLim',[minY*1.2 maxY*1.5]);
+        
+        %# Legend
+        legend_names=cell(1,ms*2+3);
+        legend_names{1} = 'Averaged samples';
+        legend_names{2} = 'Averaged samples, subtracted mean';
+        legend_names{3} = 'Linear fit';
+        counter = 1;
+        for p=4:(ms*2+3)
+            if counter > ms
+                legend_names{p} = sprintf('Run %s (subtracted mean)',num2str(sortedArray{j}(counter-ms,1)));
+            else
+                legend_names{p} = sprintf('Run %s',num2str(sortedArray{j}(counter,1)));
+            end
+            counter = counter+1;
+        end
+        hleg1 = legend(legend_names);
+        %hleg1 = legend(sprintf('Run %s',num2str(runnumber)),'Subtracted mean','Linear fit');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        %# Plot FFT -------------------------------------------------------
+        
+        subplot(3,1,2)
+        
+        Fs = 200;               % Sampling frequency
+        T = 1/Fs;               % Sample time
+        L = length(x);          % Length of signal
+        t = (0:L-1)*T;          % Time vector
+        
+        % Plot single-sided amplitude spectrum.
+        
+        NFFT = 2^nextpow2(L);   % Next power of 2 from length of y
+        Y    = fft(y2,NFFT)/L;
+        f    = Fs/2*linspace(0,1,NFFT/2+1);
+        
+        plot(f,2*abs(Y(1:NFFT/2+1)),'Color','k','Marker',setMarker{ms+1},'MarkerSize',1,'LineStyle','-','linewidth',1); % setColor{ms+1}
+        title('Single-Sided Amplitude Spectrum of y(t)')
+        xlabel('{\bf Frequency (Hz)}')
+        ylabel('{\bf |Y(f)|}')
+        grid on;
+        box on;
+        %axis square;
+        
+        %# Legend
+        hleg1 = legend('Averaged samples');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;
+        
+        % Periodogram -------------------------------------------------
+        
+        subplot(3,1,3)
+        
+        % Maximum frequency
+        % See: http://www.mathworks.com.au/matlabcentral/answers/28239-get-frequencies-out-of-data-with-an-fft
+        psdest = psd(spectrum.periodogram,y2,'Fs',Fs,'NFFT',length(y2));
+        [~,I] = max(psdest.Data);
+        fprintf('Run %s to %s at Fr = %s (averaged samples):: Maximum frequency occurs at %4.3f Hz.\n',num2str(minRunNo),num2str(maxRunNo),num2str(FroudeNo),psdest.Frequencies(I));
+        h1 = plot(psdest);
+        %title('Averaged samples: Periodogram Power Spectral Density Estimate')
+        set(h1,'Color','k'); % setColor{ms+1}
+        
+        %# Legend
+        hleg1 = legend('Averaged samples');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        legend boxoff;
+        
+        clearvars legendInfo;        
+        
+        %# Save plot as PNG -----------------------------------------------
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        
+        %# Plot title -----------------------------------------------------
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        
+        %# Save plots as PDF and PNG
+        %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots_FFT_Averaged.pdf', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots_FFT_Averaged.png', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        saveas(fig, plotsavename);                % Save plot as PNG
+        %close;        
+        
+        % ////////////////////////////////////////
+        
+        % Run 6 loops to consider different amount of repeated runs
+%         if j > 5
+%             break;
+%         end
+        %break;
+         
     end % For loop
     
 end % enableCond07Plot
