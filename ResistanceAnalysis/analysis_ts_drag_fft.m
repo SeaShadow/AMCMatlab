@@ -572,6 +572,7 @@ if enableCond07Plot == 1
         graphCenter   = 2;  % Used to align subplots in figure 3 x n
         graphRight    = 3;  % Used to align subplots in figure 3 x n
         runDataArray  = [];
+        polyfitArray  = [];
         for k=1:ms
             
             %# Data preparation -------------------------------------------
@@ -675,9 +676,44 @@ if enableCond07Plot == 1
             
             subplot(ms,3,graphLeft)
             
-            % Linear fit through detrended data
+            % Linear fit through detrended data ---------------------------
             polyf = polyfit(x,dy1,1);
             polyv = polyval(polyf,x);
+
+            % Slope and intercept of linear fit ---------------------------
+            slopeITTC     = polyf(1,1);         % Slope
+            interceptITTC = polyf(1,2);         % Intercept
+            theta         = atan(polyf(1));     % Angle
+            
+            if interceptITTC > 0
+                chooseSign = '+';
+                interceptITTC = interceptITTC;
+            else
+                chooseSign = '-';
+                interceptITTC = abs(interceptITTC);
+            end
+
+            disp('-------------------------------------------------------------');
+            slopeTextITTC = sprintf('Run %s:: y = %s*x %s %s, theta = %s', num2str(runnumber), sprintf('%.3f',slopeITTC), chooseSign, sprintf('%.3f',interceptITTC), sprintf('%.3f',theta));
+            disp(slopeTextITTC);
+            
+            %# Store polyfitArray data ------------------------------------
+            
+            % Columns:
+            
+                % [1] Run number            (-)            
+                % [2] Condition             (-)
+                % [3] Length Froude number  (-)
+                % [4] Slope                 (-)
+                % [5] Intercept             (g)
+                % [6] Theta                 (deg)
+            
+            polyfitArray(k, 1) = str2num(runnumber);
+            polyfitArray(k, 2) = RunCond;
+            polyfitArray(k, 3) = FroudeNo;
+            polyfitArray(k, 4) = slopeITTC;
+            polyfitArray(k, 5) = interceptITTC;
+            polyfitArray(k, 6) = theta;
             
             % NOT USING FILTER
             %h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
@@ -772,7 +808,7 @@ if enableCond07Plot == 1
             % See: http://www.mathworks.com.au/matlabcentral/answers/28239-get-frequencies-out-of-data-with-an-fft
             psdest = psd(spectrum.periodogram,y,'Fs',Fs,'NFFT',length(y));
             [~,I] = max(psdest.Data);
-            fprintf('Run %s:: Maximum frequency occurs at %4.3f Hz.\n',num2str(runnumber),psdest.Frequencies(I));
+            fprintf('Run %s:: Maximum frequency occurs at %4.3f Hz\n',num2str(runnumber),psdest.Frequencies(I));
             h1 = plot(psdest);
             set(h1,'Color',setColor{k});
 
@@ -788,7 +824,7 @@ if enableCond07Plot == 1
             frequencyArray(FACounter, 1) = str2num(runnumber);
             frequencyArray(FACounter, 2) = FroudeNo;
             frequencyArray(FACounter, 3) = RunCond;
-            frequencyArray(FACounter, 4) = psdest.Frequencies(I); 
+            frequencyArray(FACounter, 4) = psdest.Frequencies(I);
             
             % Counter only ------------------------------------------------
             % NOTE: Needs to be adjusted if more than 3 columns in graph subplot!
@@ -874,13 +910,34 @@ if enableCond07Plot == 1
         polyf = polyfit(x,y2,1);
         polyv = polyval(polyf,x);
         
+        % Slope and intercept of linear fit ---------------------------
+        slopeITTC     = polyf(1,1);         % Slope
+        interceptITTC = polyf(1,2);         % Intercept
+        theta         = atan(polyf(1));     % Angle
+        
+        if interceptITTC > 0
+            chooseSign = '+';
+            interceptITTC = interceptITTC;
+        else
+            chooseSign = '-';
+            interceptITTC = abs(interceptITTC);
+        end
+        
+        disp('-------------------------------------------------------------');
+        slopeTextITTC = sprintf('Run %s to %s at Fr = %s (averaged samples):: y = %s*x %s %s, theta = %s',num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), sprintf('%.3f',slopeITTC), chooseSign, sprintf('%.3f',interceptITTC), sprintf('%.3f',theta));
+        disp(slopeTextITTC);
+        
         h = plot(x,y1,x,y2,x,polyv);
         hold on;
+        maxTSDataArray    = [];     % Highest data point of TS data
+        minTSDetDataArray = [];     % Lowest data point of TS (detrend) data
         for o=1:ms
             plot(x,data(:,o),'Color','r','Marker','+','MarkerSize',1,'LineStyle','-.','linewidth',1);
+            maxTSDataArray(o) = max(data(:,o));
         end
         for o=1:ms
             plot(x,data(:,o+3),'Color','b','Marker','+','MarkerSize',1,'LineStyle','-.','linewidth',1);
+            minTSDetDataArray(o) = min(data(:,o+3));
         end        
         xlabel('Time (s)');
         ylabel('Magnitude, drag (g)');
@@ -902,9 +959,9 @@ if enableCond07Plot == 1
         maxX = max(x);
         set(gca,'XLim',[0 maxX]);
         set(gca,'XTick',[0:5:maxX]);
-        minY = min(y2);
-        maxY = max(y1);
-        set(gca,'YLim',[minY*1.2 maxY*1.5]);
+        minY = min(minTSDetDataArray);
+        maxY = max(maxTSDataArray);
+        set(gca,'YLim',[minY*1.1 maxY*1.5]);
         
         %# Legend
         legend_names=cell(1,ms*2+3);
@@ -952,7 +1009,7 @@ if enableCond07Plot == 1
         %axis square;
         
         %# Legend
-        hleg1 = legend('Averaged samples');
+        hleg1 = legend('Averaged samples (subtracted mean)');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
         legend boxoff;
@@ -967,13 +1024,15 @@ if enableCond07Plot == 1
         % See: http://www.mathworks.com.au/matlabcentral/answers/28239-get-frequencies-out-of-data-with-an-fft
         psdest = psd(spectrum.periodogram,y2,'Fs',Fs,'NFFT',length(y2));
         [~,I] = max(psdest.Data);
-        fprintf('Run %s to %s at Fr = %s (averaged samples):: Maximum frequency occurs at %4.3f Hz.\n',num2str(minRunNo),num2str(maxRunNo),num2str(FroudeNo),psdest.Frequencies(I));
+        fprintf('Run %s to %s at Fr = %s (averaged samples):: Maximum frequency occurs at %4.3f Hz\n',num2str(minRunNo),num2str(maxRunNo),num2str(FroudeNo),psdest.Frequencies(I));
+        disp('-------------------------------------------------------------');
+        disp(' ');
         h1 = plot(psdest);
         %title('Averaged samples: Periodogram Power Spectral Density Estimate')
         set(h1,'Color','k'); % setColor{ms+1}
         
         %# Legend
-        hleg1 = legend('Averaged samples');
+        hleg1 = legend('Averaged samples (subtracted mean)');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
         legend boxoff;
@@ -996,24 +1055,24 @@ if enableCond07Plot == 1
             'String', strcat('{\bf ', figurename, '}'), ...
             'EdgeColor', 'none', ...
             'HorizontalAlignment', 'center');
-        
+ 
         %# Save plots as PDF and PNG
         %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots_FFT_Averaged.pdf', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
         plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots_FFT_Averaged.png', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         saveas(fig, plotsavename);                % Save plot as PNG
         %close;        
-        
+
         % ////////////////////////////////////////
-        
+
         % Run 6 loops to consider different amount of repeated runs
 %         if j > 5
 %             break;
 %         end
         %break;
-         
+
     end % For loop
-    
+
 end % enableCond07Plot
 
 
