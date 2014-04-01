@@ -485,6 +485,7 @@ if enableCond07Plot == 1
     
     % Loop through speed groups
     frequencyArray = [];
+    polyfitArray   = [];
     FACounter = 1;
     for j=1:ml
 
@@ -572,7 +573,6 @@ if enableCond07Plot == 1
         graphCenter   = 2;  % Used to align subplots in figure 3 x n
         graphRight    = 3;  % Used to align subplots in figure 3 x n
         runDataArray  = [];
-        polyfitArray  = [];
         for k=1:ms
             
             %# Data preparation -------------------------------------------
