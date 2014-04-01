@@ -708,12 +708,12 @@ if enableCond07Plot == 1
                 % [5] Intercept             (g)
                 % [6] Theta                 (deg)
             
-            polyfitArray(k, 1) = str2num(runnumber);
-            polyfitArray(k, 2) = RunCond;
-            polyfitArray(k, 3) = FroudeNo;
-            polyfitArray(k, 4) = slopeITTC;
-            polyfitArray(k, 5) = interceptITTC;
-            polyfitArray(k, 6) = theta;
+            polyfitArray(FACounter, 1) = str2num(runnumber);
+            polyfitArray(FACounter, 2) = RunCond;
+            polyfitArray(FACounter, 3) = FroudeNo;
+            polyfitArray(FACounter, 4) = slopeITTC;
+            polyfitArray(FACounter, 5) = interceptITTC;
+            polyfitArray(FACounter, 6) = theta;
             
             % NOT USING FILTER
             %h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
