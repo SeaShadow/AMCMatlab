@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  March 27, 2014
+%# Date       :  April 2, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -726,7 +726,7 @@ if enableCond07Plot == 1
             box on;
             %axis square;
     
-            % USING FILTER - Colors and markers
+            % Line - Colors and markers
             set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle','-.','linewidth',1);
             set(h(2),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle','-','linewidth',1);
             set(h(3),'Color','k','Marker',setMarker{k},'MarkerSize',1,'LineStyle','-','linewidth',1);
@@ -784,13 +784,40 @@ if enableCond07Plot == 1
             Y    = fft(y,NFFT)/L;
             f    = Fs/2*linspace(0,1,NFFT/2+1);
             
-            plot(f,2*abs(Y(1:NFFT/2+1)),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            % Identify peaks
+            [maxtabstbd, mintabstbd] = peakdet(2*abs(Y(1:NFFT/2+1)), 0.5, f);
+            
+            % Find two highest values
+            %As   = unique(maxtabstbd(:,2));    % Remove duplicates + sort
+           
+            As   = sort(maxtabstbd(:,2));
+            lst2 = As(end-1:end);
+
+            % Find indexes of highest two values
+            ind1 = find(maxtabstbd(:,2)==lst2(1));
+            ind2 = find(maxtabstbd(:,2)==lst2(2));
+            
+            % Set indexes to correc order
+            setIndArray = [ind1 ind2];
+            setIndArray = sort(setIndArray);
+            
+            ind1 = setIndArray(1);
+            ind2 = setIndArray(2);
+            
+            % Defined X and Y values
+            peakDetX = [maxtabstbd(ind1,1) maxtabstbd(ind2,1)];
+            peakDetY = [maxtabstbd(ind1,2) maxtabstbd(ind2,2)];
+            
+            h = plot(f,2*abs(Y(1:NFFT/2+1)),'-',peakDetX,peakDetY,'ok');
             title('Single-Sided Amplitude Spectrum of y(t)')
             xlabel('{\bf Frequency (Hz)}')
             ylabel('{\bf |Y(f)|}')
             grid on;
             box on;
             %axis square;
+            
+            % Line - Colors and markers
+            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);      
             
             %# Legend
             hleg1 = legend(sprintf('Run %s',num2str(runnumber)));
@@ -821,16 +848,24 @@ if enableCond07Plot == 1
             %[3]  Condition                                            (-)
             %[4]  Max. frequency                                       (Hz)
             
+            % The two highest frequencies:
+            %[5]  Frequency #1                                         (Hz)
+            %[6]  Frequency #2                                         (Hz)
+            
             frequencyArray(FACounter, 1) = str2num(runnumber);
             frequencyArray(FACounter, 2) = FroudeNo;
             frequencyArray(FACounter, 3) = RunCond;
             frequencyArray(FACounter, 4) = psdest.Frequencies(I);
+            frequencyArray(FACounter, 5) = peakDetX(1);
+            frequencyArray(FACounter, 6) = peakDetX(2);
             
-            % Counter only ------------------------------------------------
+            % Counters only -----------------------------------------------
             % NOTE: Needs to be adjusted if more than 3 columns in graph subplot!
             
-            FACounter = FACounter+1;
+            % General counter
+            FACounter   = FACounter+1;
             
+            % Counter for subplots
             graphLeft   = graphLeft+3;
             graphCenter = graphCenter+3;
             graphRight  = graphRight+3;
