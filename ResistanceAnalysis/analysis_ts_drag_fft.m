@@ -808,6 +808,8 @@ if enableCond07Plot == 1
             peakDetX = [maxtabstbd(ind1,1) maxtabstbd(ind2,1)];
             peakDetY = [maxtabstbd(ind1,2) maxtabstbd(ind2,2)];
             
+            fprintf('Run %s:: Maximum frequency occurs at %4.3f Hz, lower frequency at %4.3f Hz which is %4.2f %%\n',num2str(runnumber),max(peakDetX),min(peakDetX),min(peakDetX)/max(peakDetX));
+            
             h = plot(f,2*abs(Y(1:NFFT/2+1)),'-',peakDetX,peakDetY,'ok');
             title('Single-Sided Amplitude Spectrum of y(t)')
             xlabel('{\bf Frequency (Hz)}')
@@ -835,7 +837,7 @@ if enableCond07Plot == 1
             % See: http://www.mathworks.com.au/matlabcentral/answers/28239-get-frequencies-out-of-data-with-an-fft
             psdest = psd(spectrum.periodogram,y,'Fs',Fs,'NFFT',length(y));
             [~,I] = max(psdest.Data);
-            fprintf('Run %s:: Maximum frequency occurs at %4.3f Hz\n',num2str(runnumber),psdest.Frequencies(I));
+            %fprintf('Run %s:: Maximum frequency occurs at %4.3f Hz\n',num2str(runnumber),psdest.Frequencies(I));
             h1 = plot(psdest);
             set(h1,'Color',setColor{k});
 
@@ -1100,10 +1102,10 @@ if enableCond07Plot == 1
 
         % ////////////////////////////////////////
 
-        % Run 6 loops to consider different amount of repeated runs
-%         if j > 5
-%             break;
-%         end
+        % Run 3 loops to consider different amount of repeated runs
+        %if j > 1
+        %    break;
+        %end
         %break;
 
     end % For loop
