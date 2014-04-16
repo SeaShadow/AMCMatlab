@@ -50,6 +50,8 @@
 %# ------------------------------------------------------------------------
 %#
 %# SCRIPTS  :    1 => analysis.m          >> Real units, save date to result array
+%#                    |
+%#                    |__> BASE DATA:     DAQ run files
 %#
 %#               >>> TODO: Copy data from resultsArray.dat to full_resistance_data.dat
 %#
@@ -83,12 +85,21 @@
 %#                    |__> BASE DATA:     1. Read .cal data files
 %#                                        2. "resultsArraySensorError.dat"
 %#
+%#               9 => analysis_ts_drag.m  >> Time series data for cond 7-12
+%#                    |                   >> DRAG ONLY!!!
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
 %#               10 => analysis_ts_drag_fft.m  >> Time series data for cond 7-12
 %#                    |                        >> DRAG ONLY!!!
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
 %#               >>> TODO: Copy data from frequencyArrayFFT.dat to fft_frequency_data.dat
+%#
+%#               11 => analysis_ts_dp.m  >> Time series data for cond 7-12
+%#                    |
+%#                    |__> BASE DATA:     DAQ run files
 %#
 %# ------------------------------------------------------------------------
 %#
