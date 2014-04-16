@@ -695,7 +695,7 @@ for k=startRun:endRun
     setLine   = {'-';'-';'-';'-';'-';'-';'-';'-';'-';'-'};
     
     % Speed ---------------------------------------------------------------
-    subplot(2,2,1);
+    subplot(3,1,1);
 
     x = dataArray(:,1);
     y = dataArray(:,4);
@@ -724,7 +724,7 @@ for k=startRun:endRun
     set(gca,'XTick',[minX:2:maxX]);    
     
     % Drag ----------------------------------------------------------------
-    subplot(2,2,2);
+    subplot(3,1,2);
     
     x = dataArray(:,1);
     y = dataArray(:,10);
@@ -749,7 +749,7 @@ for k=startRun:endRun
     set(gca,'XTick',[minX:2:maxX]);      
     
     % Fwd LVDT ------------------------------------------------------------
-    subplot(2,2,[3,4]);
+    subplot(3,1,3);
     
     x = dataArray(:,1);
     
