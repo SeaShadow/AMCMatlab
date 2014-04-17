@@ -391,6 +391,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# ////////////////////////////////////////////////////////////////////////
 
 resultsArray = [];
+trimFreqArray = [];
 %w = waitbar(0,'Processed run files'); 
 for k=startRun:endRun
     
@@ -655,7 +656,7 @@ for k=startRun:endRun
         %[2]  Run No.                                                 (-)
         %[3]  Condition                                               (-)
         %[4]  Speed                                                   (m/s)
-        %[5]  length Froude number                                    (-)
+        %[5]  Length Froude number                                    (-)
         %[6]  Fwd LVDT                                                (mm)
         %[7]  Aft LVDT                                                (mm)
         %[8]  Heave                                                   (mm)
@@ -690,12 +691,12 @@ for k=startRun:endRun
     figurename = sprintf('Condition: %s, Run: %s, Fr: %.2f // Time Series: Heave and Trim', num2str(testcond), num2str(k), dataArray(1,5));
     fig = figure('Name',figurename,'NumberTitle','off');
 
-    setColor  = {'k';'k';'r';'g';'b';'c';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
+    setColor  = {'k';'k';'r';'g';'b';'k';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
     setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
     setLine   = {'-';'-';'-';'-';'-';'-';'-';'-';'-';'-'};
     
     % Speed ---------------------------------------------------------------
-    subplot(3,1,1);
+    subplot(4,1,1);
 
     x = dataArray(:,1);
     y = dataArray(:,4);
@@ -721,17 +722,22 @@ for k=startRun:endRun
     minX = min(x);
     maxX = max(x);
     set(gca,'XLim',[minX maxX]);
-    set(gca,'XTick',[minX:2:maxX]);    
+    set(gca,'XTick',minX:2:maxX);    
     
     % Drag ----------------------------------------------------------------
-    subplot(3,1,2);
+    subplot(4,1,2);
     
     x = dataArray(:,1);
     y = dataArray(:,10);
+
+    % Grams to Newton conversion
+    Raw_Data  = num2cell(y);                                                    % Double to cell conversion
+    Raw_Data  = cellfun(@(y) (y/100)*9.806, Raw_Data, 'UniformOutput', false);  % Apply functions to cell
+    y         = cell2mat(Raw_Data);                                             % Cell to double conversion
     
     h = plot(x,y);
     xlabel('{\bf Time (s)}');
-    ylabel('{\bf Drag (g)}');
+    ylabel('{\bf Drag (N)}');
     %title('{\bf Drag}');
     grid on;
     box on;
@@ -746,95 +752,71 @@ for k=startRun:endRun
     minX = min(x);
     maxX = max(x);
     set(gca,'XLim',[minX maxX]);
-    set(gca,'XTick',[minX:2:maxX]);      
+    set(gca,'XTick',minX:2:maxX);      
     
-    % Fwd LVDT ------------------------------------------------------------
-    subplot(3,1,3);
+    % Fwd LVDT, aft LVDT and heave ----------------------------------------
+    subplot(4,1,3);
     
     x = dataArray(:,1);
     
     y1 = dataArray(:,6);    % Fwd LVDT
     y2 = dataArray(:,7);    % Aft LVDT
     y3 = dataArray(:,8);    % Heave
-    y4 = dataArray(:,9);    % Trim
-
-    % Create plot with 3 curve one left and 1 on right axis
-    ax1 = gca;
-    hold on
-    h(1) = plot(x,y1);
-    h(2) = plot(x,y2);
-    h(3) = plot(x,y3);
     
-    ax2 = axes('Position',get(ax1,'Position'),...
-        'XAxisLocation','top',...
-        'YAxisLocation','right',...
-        'Color','none',...
-        'XColor','k','YColor','k');
-    linkaxes([ax1 ax2],'x');
-    
-    hold on;
-    h(4) = plot(x,y4);
-    
+    h = plot(x,y1,'r-',x,y2,'g-',x,y3,'b-');
+    xlabel('{\bf Time (s)}');
+    ylabel('{\bf LVDTs and heave (mm)}');
+    %title('{\bf Fwd LVDT, aft LVDT and heave}');
     grid on;
     box on;
+    %axis square;
     
     % Colors and markers
-    MS = 2;
-    LW = 1;
-    setSubPlotNo = 3; set(h(1),'Color',setColor{setSubPlotNo},'Marker',setMarker{setSubPlotNo},'MarkerSize',MS,'LineStyle',setMarker{setSubPlotNo},'linewidth',LW);
-    setSubPlotNo = 4; set(h(2),'Color',setColor{setSubPlotNo},'Marker',setMarker{setSubPlotNo},'MarkerSize',MS,'LineStyle',setMarker{setSubPlotNo},'linewidth',LW);
-    setSubPlotNo = 5; set(h(3),'Color',setColor{setSubPlotNo},'Marker',setMarker{setSubPlotNo},'MarkerSize',MS,'LineStyle',setMarker{setSubPlotNo},'linewidth',LW);
-    setSubPlotNo = 6; set(h(4),'Color',setColor{setSubPlotNo},'Marker',setMarker{setSubPlotNo},'MarkerSize',MS,'LineStyle',setMarker{setSubPlotNo},'linewidth',LW);
+    %MS = 2;
+    %LW = 1;
+    %setSubPlotNo = 3; set(h(1),'Color',setColor{setSubPlotNo},'Marker',setMarker{setSubPlotNo},'MarkerSize',MS,'LineStyle',setMarker{setSubPlotNo},'linewidth',LW);
+    %setSubPlotNo = 4; set(h(2),'Color',setColor{setSubPlotNo},'Marker',setMarker{setSubPlotNo},'MarkerSize',MS,'LineStyle',setMarker{setSubPlotNo},'linewidth',LW);
+    %setSubPlotNo = 5; set(h(3),'Color',setColor{setSubPlotNo},'Marker',setMarker{setSubPlotNo},'MarkerSize',MS,'LineStyle',setMarker{setSubPlotNo},'linewidth',LW); 
     
-    % Labels
-    ylabel(ax1,'{\bf Displacement (mm)}') % Label left y-axis
-    ylabel(ax2,'{\bf Trim (deg)}')        % Label right y-axis
-    xlabel(ax1,'{\bf Time (s)}')          % Label x-axis        
-    title('{\bf Fwd LVDT, aft LVDT and heave}');
+    %# Axis limitations
+    minX = min(x);
+    maxX = max(x);
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:2:maxX); 
+    
+    % Legend
+    hleg1 = legend('Fwd LVDT','Aft LVDT','Heave'); %,'Trim'
+    set(hleg1,'Location','SouthEast');
+    set(hleg1,'Interpreter','none');
+    %legend boxoff;
+    clearvars legendInfo;
+
+    % Trim ----------------------------------------------------------------
+    subplot(4,1,4);
+    
+    x = dataArray(:,1);
+    y = dataArray(:,9);
+    
+    h = plot(x,y);
+    xlabel('{\bf Time (s)}');
+    ylabel('{\bf Trim (deg)}');
+    %title('{\bf Trim}');
+    grid on;
+    box on;
+    %axis square;
+    
+    % Line - Colors and markers
+    setSubPlotNo = 6;
+    set(h(1),'Color',setColor{setSubPlotNo},'Marker',setMarker{setSubPlotNo},'MarkerSize',1,'LineStyle',setMarker{setSubPlotNo},'linewidth',1);
+    %set(h(1),'Color','k','Marker','x','MarkerSize',1,'LineStyle','--','linewidth',1);   
     
     %# Axis limitations
     minX = min(x);
     maxX = max(x);
     set(gca,'XLim',[minX maxX]);
     set(gca,'XTick',minX:2:maxX);
-    minRY = 0;
-    maxRY = 1.1;
-    set(ax2,'YLim',[minRY maxRY]);
-    set(ax2,'YTick',minRY:0.1:maxRY);
     
-    % Legend
-    hleg1 = legend([h(1) h(2) h(3) h(4)],'Fwd LVDT','Aft LVDT','heave','Trim');
-    set(hleg1,'Location','SouthEast');
-    set(hleg1,'Interpreter','none');    
-    legend boxoff;
-    clearvars legendInfo;
-    
-    % Trim FFT ------------------------------------------------------------
-%     subplot(3,2,[5,6]);    
-%     
-%     Fs = 200;               % Sampling frequency
-%     T  = 1/Fs;              % Sample time
-%     L  = ms;                % Length of signal
-%     t  = (0:L-1)*T;         % Time vector
-%     
-%     % Plot single-sided amplitude spectrum.
-%     
-%     NFFT = 2^nextpow2(L);   % Next power of 2 from length of y
-%     Y    = fft(y4,NFFT)/L;
-%     f    = Fs/2*linspace(0,1,NFFT/2+1);
-%     
-%     % Identify peaks
-%     [maxtabstbd, mintabstbd] = peakdet(2*abs(Y(1:NFFT/2+1)), 0.5, f);
-%     
-%     h = plot(f,2*abs(Y(1:NFFT/2+1)),'k-');
-%     title('{\bf Trim:: Single-Sided Amplitude Spectrum of y(t)}')
-%     xlabel('{\bf Frequency (Hz)}')
-%     ylabel('{\bf |Y(f)|}')
-%     grid on;
-%     box on;
-%     %axis square;
-    
-    %# Save plot as PNG -----------------------------------------------
+    %# Save plot as PNG ---------------------------------------------------
     
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -884,17 +866,19 @@ end
 %# Close progress bar
 %close(w);
 
-% /////////////////////////////////////////////////////////////////////
+
+% /////////////////////////////////////////////////////////////////////////
 % START: Write results to CVS
-% ---------------------------------------------------------------------
+% -------------------------------------------------------------------------
 
 %M = resultsArray;
 %csvwrite('resultsArray.dat', M)                                     % Export matrix M to a file delimited by the comma character      
 %dlmwrite('resultsArray.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 
-% ---------------------------------------------------------------------
+% -------------------------------------------------------------------------
 % END: Write results to CVS
-% /////////////////////////////////////////////////////////////////////
+% /////////////////////////////////////////////////////////////////////////
+
 
 % -------------------------------------------------------------------------
 % View profile
