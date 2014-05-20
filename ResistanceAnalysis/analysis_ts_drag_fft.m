@@ -358,6 +358,9 @@ enableCond10Plot        = 0; % Plot condition 10
 enableCond11Plot        = 0; % Plot condition 12
 enableCond12Plot        = 0; % Plot condition 12
 
+% Enable printer friendly graphs (slow)
+enablePFPlot            = 0; % Printer friendly plots
+
 % Check if any plots enabled, if not stop
 % if enableCond07Plot == 0 && enableCond08Plot == 0 && enableCond09Plot == 0 && enableCond10Plot == 0 && enableCond11Plot == 0 && enableCond12Plot == 0
 %     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
@@ -450,14 +453,18 @@ if enableCond07FreqPlot == 1
             
             %# Save plot as PNG -------------------------------------------
             
-            %# Figure size on screen (50% scaled, but same aspect ratio)
-            set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-            
-            %# Figure size printed on paper
-            set(gcf, 'PaperUnits','centimeters');
-            set(gcf, 'PaperSize',[XPlot YPlot]);
-            set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-            set(gcf, 'PaperOrientation','portrait');
+            if enablePFPlot == 1
+                
+                %# Figure size on screen (50% scaled, but same aspect ratio)
+                set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+                
+                %# Figure size printed on paper
+                set(gcf, 'PaperUnits','centimeters');
+                set(gcf, 'PaperSize',[XPlot YPlot]);
+                set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+                set(gcf, 'PaperOrientation','portrait');
+                
+            end
             
             %# Plot title -------------------------------------------------
             annotation('textbox', [0 0.9 1 0.1], ...
@@ -478,7 +485,7 @@ if enableCond07FreqPlot == 1
 
 end % enableCond07FreqPlot
 
-test = arrayfun(@(x) cond7(cond7(:,11) == x, :), unique(cond7(:,11)), 'uniformoutput', false);
+%test = arrayfun(@(x) cond7(cond7(:,11) == x, :), unique(cond7(:,11)), 'uniformoutput', false);
 
 %# ------------------------------------------------------------------------
 %# CONDITION 7: Time Series FFT
@@ -489,8 +496,13 @@ if enableCond07Plot == 1
     sortedArray = arrayfun(@(x) cond7(cond7(:,11) == x, :), unique(cond7(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
     
+    % !!!!!!!!!! Test only (limit number of loops)!!!!!!!!!!!!!!!!!!!!!!!!!
+    %ml = 1;
+    % !!!!!!!!!! Test only (limit number of loops)!!!!!!!!!!!!!!!!!!!!!!!!!
+    
     % Loop through speed groups
     frequencyArray = [];
+    freqArray      = [];
     polyfitArray   = [];
     FACounter = 1;
     for j=1:ml
@@ -566,7 +578,8 @@ if enableCond07Plot == 1
             %# Set columns to be used as X and Y values from time series data
             
             x  = timeSeriesData(:,1);
-            y  = timeSeriesData(:,5);
+            y  = timeSeriesData(:,5); % Units!
+            %y  = timeSeriesData(:,9); % Volt!
             
             %# Store run data lengths -------------------------------------
             
@@ -575,9 +588,11 @@ if enableCond07Plot == 1
         end % For loop
         
         % Loop through repeats of speed group -----------------------------
+        
         graphLeft     = 1;  % Used to align subplots in figure 3 x n
         graphCenter   = 2;  % Used to align subplots in figure 3 x n
         graphRight    = 3;  % Used to align subplots in figure 3 x n
+        
         runDataArray  = [];
         for k=1:ms
             
@@ -604,18 +619,25 @@ if enableCond07Plot == 1
                 break;
             end
             
-            % Column names for timeSeriesData
+            % Column names for timeSeriesData (see analysis.m)
             
-            %[1] Time               (s)
-            %[2] RU: Speed          (m/s)
-            %[3] RU: Forward LVDT   (mm)
-            %[4] RU: Aft LVDT       (mm)
-            %[5] RU: Drag           (g)
+            %[1] Time                 (s)
+            
+            %[2] UNIT: Speed          (m/s)
+            %[3] UNIT: Forward LVDT   (mm)
+            %[4] UNIT: Aft LVDT       (mm)
+            %[5] UNIT: Drag           (g)
+            
+            %[6] VOLT: Speed          (V)
+            %[7] VOLT: Forward LVDT   (V)
+            %[8] VOLT: Aft LVDT       (V)
+            %[9] VOLT: Drag           (V)
             
             %# Set columns to be used as X and Y values from time series data
             
             x  = timeSeriesData(:,1);
-            y  = timeSeriesData(:,5);
+            %y  = timeSeriesData(:,5); % Units!
+            y  = timeSeriesData(:,9); % Volt!
             
             % USING FILTER
             %fy = filter(b,a,y);
@@ -699,9 +721,9 @@ if enableCond07Plot == 1
                 interceptITTC = abs(interceptITTC);
             end
 
-            disp('-------------------------------------------------------------');
-            slopeTextITTC = sprintf('Run %s:: y = %s*x %s %s, theta = %s', num2str(runnumber), sprintf('%.3f',slopeITTC), chooseSign, sprintf('%.3f',interceptITTC), sprintf('%.3f',theta));
-            disp(slopeTextITTC);
+            %disp('-------------------------------------------------------------');
+            %slopeTextITTC = sprintf('Run %s:: y = %s*x %s %s, theta = %s', num2str(runnumber), sprintf('%.3f',slopeITTC), chooseSign, sprintf('%.3f',interceptITTC), sprintf('%.3f',theta));
+            %disp(slopeTextITTC);
             
             %# Store polyfitArray data ------------------------------------
             
@@ -725,6 +747,7 @@ if enableCond07Plot == 1
             %h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
             % USING FILTER, ETC. WHERE 2 COLUMNS USED
             h = plot(x,y,x,dy1,x,polyv);
+            set(gca,'FontSize',10,'FontWeight','normal','linewidth',2);
             xlabel('Time (s)');
             ylabel('Magnitude, drag (g)');
             title('Time series (raw data) and with subtracted mean');
@@ -733,8 +756,8 @@ if enableCond07Plot == 1
             %axis square;
     
             % Line - Colors and markers
-            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle','-.','linewidth',1);
-            set(h(2),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle','-','linewidth',1);
+            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle','-','linewidth',1);
+            set(h(2),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle','-','linewidth',2);
             set(h(3),'Color','k','Marker',setMarker{k},'MarkerSize',1,'LineStyle','-','linewidth',1);
             
             %# Set plot figure background to a defined color
@@ -745,9 +768,9 @@ if enableCond07Plot == 1
             maxX = max(maxXValues);
             set(gca,'XLim',[0 maxX]);
             set(gca,'XTick',[0:5:maxX]);
-            minY = min(dy1);
-            maxY = max(y);
-            set(gca,'YLim',[minY*1.2 maxY*1.5]);
+            %minY = min(dy1);
+            %maxY = max(y);
+            %set(gca,'YLim',[minY*1.2 maxY*1.5]);
             
             %# Legend
             % NOT USING FILTER
@@ -756,7 +779,7 @@ if enableCond07Plot == 1
             hleg1 = legend(sprintf('Run %s',num2str(runnumber)),'Subtracted mean','Linear fit');
             set(hleg1,'Location','NorthEast');
             set(hleg1,'Interpreter','none');
-            legend boxoff;
+            %legend boxoff;
             
             clearvars legendInfo;
             
@@ -791,35 +814,66 @@ if enableCond07Plot == 1
             f    = Fs/2*linspace(0,1,NFFT/2+1);
             
             % Identify peaks
-            [maxtabstbd, mintabstbd] = peakdet(2*abs(Y(1:NFFT/2+1)), 0.5, f);
+            [maxtabstbd, mintabstbd] = peakdet(2*abs(Y(1:NFFT/2+1)), 0.01, f);
+            [mpd,npd] = size(maxtabstbd);
             
-            % Find two highest values
-            %As   = unique(maxtabstbd(:,2));    % Remove duplicates + sort
-           
-            As   = sort(maxtabstbd(:,2));
-            lst2 = As(end-1:end);
+            % Remove zero x entries
+            maxtabstbdnew = [];
+            counter = 1;
+            for l=1:mpd
+                if maxtabstbd(l,1) ~= 0
+                    maxtabstbdnew(counter,1) = maxtabstbd(l,1);
+                    maxtabstbdnew(counter,2) = maxtabstbd(l,2);
+                    counter = counter + 1;
+                end
+            end
 
-            % Find indexes of highest two values
-            ind1 = find(maxtabstbd(:,2)==lst2(1));
-            ind2 = find(maxtabstbd(:,2)==lst2(2));
+            % Array sizes
+            [mpdn,npdn] = size(maxtabstbdnew);
+            [mfa,nfa]   = size(freqArray);            
             
-            % Set indexes to correc order
-            setIndArray = [ind1 ind2];
-            setIndArray = sort(setIndArray);
+            % Sorting array by frequency
+            % See: http://www.mathworks.com.au/help/matlab/ref/sortrows.html
+            maxtabstbdnew = sortrows(maxtabstbdnew,-2);
             
-            ind1 = setIndArray(1);
-            ind2 = setIndArray(2);
+            %# ------------------------------------------------------------
+            %# START: Limit to two max. frequencies only ------------------
             
-            % Defined X and Y values
-            peakDetX = [maxtabstbd(ind1,1) maxtabstbd(ind2,1)];
-            peakDetY = [maxtabstbd(ind1,2) maxtabstbd(ind2,2)];
+            % If there are more than 2 identified frequencies limit output
+            % to 2 frequencies only
+            if mpdn > 2
+                for kk=1:2
+                    ts(kk,1) = maxtabstbdnew(kk,1);
+                    ts(kk,2) = maxtabstbdnew(kk,2);
+                end
+                maxtabstbdnew = ts;
+            end
             
-            fprintf('Run %s:: Maximum frequency occurs at %4.3f Hz, lower frequency at %4.3f Hz which is %4.2f %%\n',num2str(runnumber),max(peakDetX),min(peakDetX),min(peakDetX)/max(peakDetX));
+            %# END: Limit to two max. frequencies only --------------------
+            %# ------------------------------------------------------------
             
-            h = plot(f,2*abs(Y(1:NFFT/2+1)),'-',peakDetX,peakDetY,'ok');
+            % Recheck array sizes
+            [mpdn,npdn] = size(maxtabstbdnew);
+            
+            % Add found frequencies to freqArray
+            % Columns:
+            %   [1] Run number              (-)
+            %   [2] Froude length number    (-)
+            %   [3] Frequency               (Hz)
+            for kk=1:mpdn
+                freqArray(mfa+kk,:) = [runNo FroudeNo maxtabstbdnew(kk,2)];
+            end
+            
+            %# Plotting
+            h = plot(f,2*abs(Y(1:NFFT/2+1)),'-');
+            if mpd > 0
+                hold on;
+                plot(maxtabstbdnew(:,1),maxtabstbdnew(:,2),'ko','MarkerSize',6);
+            end
+            set(gca,'FontSize',10,'FontWeight','normal','linewidth',2);
             title('Single-Sided Amplitude Spectrum of y(t)')
-            xlabel('{\bf Frequency (Hz)}')
-            ylabel('{\bf |Y(f)|}')
+            xlabel('Frequency (Hz)')
+            ylabel('|Y(f)')
             grid on;
             box on;
             %axis square;
@@ -831,7 +885,7 @@ if enableCond07Plot == 1
             hleg1 = legend(sprintf('Run %s',num2str(runnumber)));
             set(hleg1,'Location','NorthEast');
             set(hleg1,'Interpreter','none');
-            legend boxoff;
+            %legend boxoff;
             
             clearvars legendInfo;
             
@@ -843,8 +897,9 @@ if enableCond07Plot == 1
             % See: http://www.mathworks.com.au/matlabcentral/answers/28239-get-frequencies-out-of-data-with-an-fft
             psdest = psd(spectrum.periodogram,y,'Fs',Fs,'NFFT',length(y));
             [~,I] = max(psdest.Data);
-            %fprintf('Run %s:: Maximum frequency occurs at %4.3f Hz\n',num2str(runnumber),psdest.Frequencies(I));
+            fprintf('Run %s:: Periodogram: Maximum frequency occurs at %4.3f Hz\n',num2str(runnumber),psdest.Frequencies(I));
             h1 = plot(psdest);
+            set(gca,'FontSize',10,'FontWeight','normal','linewidth',2);
             set(h1,'Color',setColor{k});
 
             % Write data to array -----------------------------------------
@@ -858,14 +913,17 @@ if enableCond07Plot == 1
             
             % The two highest frequencies:
             %[5]  Frequency #1                                         (Hz)
-            %[6]  Frequency #2                                         (Hz)
+            %[n]  Frequency #n                                         (Hz)
             
             frequencyArray(FACounter, 1) = str2num(runnumber);
             frequencyArray(FACounter, 2) = FroudeNo;
             frequencyArray(FACounter, 3) = RunCond;
             frequencyArray(FACounter, 4) = psdest.Frequencies(I);
-            frequencyArray(FACounter, 5) = peakDetX(1);
-            frequencyArray(FACounter, 6) = peakDetX(2);
+            
+            if mpdn >= 2
+                frequencyArray(FACounter, 5) = maxtabstbdnew(1,2);
+                frequencyArray(FACounter, 6) = maxtabstbdnew(2,2);
+            end
             
             % Counters only -----------------------------------------------
             % NOTE: Needs to be adjusted if more than 3 columns in graph subplot!
@@ -877,19 +935,23 @@ if enableCond07Plot == 1
             graphLeft   = graphLeft+3;
             graphCenter = graphCenter+3;
             graphRight  = graphRight+3;
-            
+
         end
 
         %# Save plot as PNG -----------------------------------------------
         
-        %# Figure size on screen (50% scaled, but same aspect ratio)
-        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-        
-        %# Figure size printed on paper
-        set(gcf, 'PaperUnits','centimeters');
-        set(gcf, 'PaperSize',[XPlot YPlot]);
-        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-        set(gcf, 'PaperOrientation','portrait');
+        if enablePFPlot == 1
+            
+            %# Figure size on screen (50% scaled, but same aspect ratio)
+            set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+            
+            %# Figure size printed on paper
+            set(gcf, 'PaperUnits','centimeters');
+            set(gcf, 'PaperSize',[XPlot YPlot]);
+            set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+            set(gcf, 'PaperOrientation','portrait');
+            
+        end
         
         %# Plot title -----------------------------------------------------
         annotation('textbox', [0 0.9 1 0.1], ...
@@ -966,9 +1028,9 @@ if enableCond07Plot == 1
             interceptITTC = abs(interceptITTC);
         end
         
-        disp('-------------------------------------------------------------');
-        slopeTextITTC = sprintf('Run %s to %s at Fr = %s (averaged samples):: y = %s*x %s %s, theta = %s',num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), sprintf('%.3f',slopeITTC), chooseSign, sprintf('%.3f',interceptITTC), sprintf('%.3f',theta));
-        disp(slopeTextITTC);
+        %disp('-------------------------------------------------------------');
+        %slopeTextITTC = sprintf('Run %s to %s at Fr = %s (averaged samples):: y = %s*x %s %s, theta = %s',num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), sprintf('%.3f',slopeITTC), chooseSign, sprintf('%.3f',interceptITTC), sprintf('%.3f',theta));
+        %disp(slopeTextITTC);
         
         h = plot(x,y1,x,y2,x,polyv);
         hold on;
@@ -981,7 +1043,8 @@ if enableCond07Plot == 1
         for o=1:ms
             plot(x,data(:,o+3),'Color','b','Marker','+','MarkerSize',1,'LineStyle','-.','linewidth',1);
             minTSDetDataArray(o) = min(data(:,o+3));
-        end        
+        end
+        set(gca,'FontSize',10,'FontWeight','normal','linewidth',2);
         xlabel('Time (s)');
         ylabel('Magnitude, drag (g)');
         title('Time series (raw data) and with subtracted mean');
@@ -1002,9 +1065,9 @@ if enableCond07Plot == 1
         maxX = max(x);
         set(gca,'XLim',[0 maxX]);
         set(gca,'XTick',[0:5:maxX]);
-        minY = min(minTSDetDataArray);
-        maxY = max(maxTSDataArray);
-        set(gca,'YLim',[minY*1.1 maxY*1.5]);
+        %minY = min(minTSDetDataArray);
+        %maxY = max(maxTSDataArray);
+        %set(gca,'YLim',[minY*1.1 maxY*1.5]);
         
         %# Legend
         legend_names=cell(1,ms*2+3);
@@ -1024,7 +1087,7 @@ if enableCond07Plot == 1
         %hleg1 = legend(sprintf('Run %s',num2str(runnumber)),'Subtracted mean','Linear fit');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
-        legend boxoff;
+        %legend boxoff;
         
         clearvars legendInfo;
         
@@ -1043,10 +1106,57 @@ if enableCond07Plot == 1
         Y    = fft(y2,NFFT)/L;
         f    = Fs/2*linspace(0,1,NFFT/2+1);
         
-        plot(f,2*abs(Y(1:NFFT/2+1)),'Color','k','Marker',setMarker{ms+1},'MarkerSize',1,'LineStyle','-','linewidth',1); % setColor{ms+1}
+        % Identify peaks
+        [maxtabstbd, mintabstbd] = peakdet(2*abs(Y(1:NFFT/2+1)), 0.01, f);
+        [mpd,npd] = size(maxtabstbd);
+        
+        % Remove zero x entries
+        maxtabstbdnew = [];
+        counter = 1;
+        for l=1:mpd
+            if maxtabstbd(l,1) ~= 0
+                maxtabstbdnew(counter,1) = maxtabstbd(l,1);
+                maxtabstbdnew(counter,2) = maxtabstbd(l,2);
+                counter = counter + 1;
+            end
+        end
+        
+        % Array sizes
+        [mpdn,npdn] = size(maxtabstbdnew);
+        [mfa,nfa]   = size(freqArray);
+        
+        % Sorting array by frequency
+        % See: http://www.mathworks.com.au/help/matlab/ref/sortrows.html
+        maxtabstbdnew = sortrows(maxtabstbdnew,-2);
+        
+        %# ------------------------------------------------------------
+        %# START: Limit to two max. frequencies only ------------------
+        
+        % If there are more than 2 identified frequencies limit output
+        % to 2 frequencies only
+        if mpdn > 2
+            for kk=1:2
+                ts(kk,1) = maxtabstbdnew(kk,1);
+                ts(kk,2) = maxtabstbdnew(kk,2);
+            end
+            maxtabstbdnew = ts;
+        end
+        
+        %# END: Limit to two max. frequencies only --------------------
+        %# ------------------------------------------------------------
+        
+        % Recheck array sizes
+        [mpdn,npdn] = size(maxtabstbdnew);
+        
+        plot(f,2*abs(Y(1:NFFT/2+1)),'Color','b','Marker',setMarker{ms+1},'MarkerSize',1,'LineStyle','-','linewidth',1);
+        set(gca,'FontSize',10,'FontWeight','normal','linewidth',2);
+        if mpd > 0
+            hold on;
+            plot(maxtabstbdnew(:,1),maxtabstbdnew(:,2),'ro','MarkerSize',6);
+        end
         title('Single-Sided Amplitude Spectrum of y(t)')
-        xlabel('{\bf Frequency (Hz)}')
-        ylabel('{\bf |Y(f)|}')
+        xlabel('Frequency (Hz)')
+        ylabel('|Y(f)|')
         grid on;
         box on;
         %axis square;
@@ -1055,7 +1165,7 @@ if enableCond07Plot == 1
         hleg1 = legend('Averaged samples (subtracted mean)');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
-        legend boxoff;
+        %legend boxoff;
         
         clearvars legendInfo;
         
@@ -1067,31 +1177,35 @@ if enableCond07Plot == 1
         % See: http://www.mathworks.com.au/matlabcentral/answers/28239-get-frequencies-out-of-data-with-an-fft
         psdest = psd(spectrum.periodogram,y2,'Fs',Fs,'NFFT',length(y2));
         [~,I] = max(psdest.Data);
-        fprintf('Run %s to %s at Fr = %s (averaged samples):: Maximum frequency occurs at %4.3f Hz\n',num2str(minRunNo),num2str(maxRunNo),num2str(FroudeNo),psdest.Frequencies(I));
+        fprintf('Run %s to %s at Fr = %s (averaged samples):: Periodogram: Maximum frequency occurs at %4.3f Hz\n',num2str(minRunNo),num2str(maxRunNo),num2str(FroudeNo),psdest.Frequencies(I));
         disp('-------------------------------------------------------------');
-        disp(' ');
         h1 = plot(psdest);
-        %title('Averaged samples: Periodogram Power Spectral Density Estimate')
-        set(h1,'Color','k'); % setColor{ms+1}
+        set(gca,'FontSize',10,'FontWeight','normal','linewidth',2);
+        title('Averaged samples: Periodogram Power Spectral Density Estimate')
+        set(h1,'Color','b'); % setColor{ms+1}
         
         %# Legend
         hleg1 = legend('Averaged samples (subtracted mean)');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
-        legend boxoff;
+        %legend boxoff;
         
         clearvars legendInfo;        
         
         %# Save plot as PNG -----------------------------------------------
         
-        %# Figure size on screen (50% scaled, but same aspect ratio)
-        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-        
-        %# Figure size printed on paper
-        set(gcf, 'PaperUnits','centimeters');
-        set(gcf, 'PaperSize',[XPlot YPlot]);
-        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-        set(gcf, 'PaperOrientation','portrait');
+        if enablePFPlot == 1
+            
+            %# Figure size on screen (50% scaled, but same aspect ratio)
+            set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+            
+            %# Figure size printed on paper
+            set(gcf, 'PaperUnits','centimeters');
+            set(gcf, 'PaperSize',[XPlot YPlot]);
+            set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+            set(gcf, 'PaperOrientation','portrait');
+            
+        end
         
         %# Plot title -----------------------------------------------------
         annotation('textbox', [0 0.9 1 0.1], ...
@@ -1116,6 +1230,67 @@ if enableCond07Plot == 1
 
     end % For loop
 
+    % Plot identified frequencies (FFT)
+    figurename = sprintf('Condition %s:: %s', num2str(RunCond), 'Identified frequencies (FFT)');
+    fig = figure('Name',figurename,'NumberTitle','off');
+
+    x = freqArray(:,2);
+    y = freqArray(:,3);
+    
+    % Plotting
+    plot(x,y,'bx','MarkerSize',9); % ,'LineStyle','-.','linewidth',1
+    set(gca,'FontSize',11,'FontWeight','normal','linewidth',2);
+    xlabel('Froude length number [-]');
+    ylabel('Frequency by FFT [Hz]');
+    %title('{\bf Drag}');
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    %minX = min(x)-1;
+    %maxX = max(x)+1;
+    minX = 0;
+    maxX = 0.5;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:0.05:maxX);
+    minY = 0;
+    maxY = max(y)+0.05;
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:0.05:maxY);
+    
+    %# Save plot as PNG -----------------------------------------------
+    
+    if enablePFPlot == 1
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        
+    end
+    
+    %# Plot title -----------------------------------------------------
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');
+    
+    %# Save plots as PDF and PNG
+    %plotsavenamePDF = sprintf('%s/Cond_%s_FFT_Identified_Frequencies_Plot.pdf', '_time_series_drag_plots', num2str(RunCond));
+    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+    plotsavename = sprintf('%s/Cond_%s_FFT_Identified_Frequencies_Plot.png', '_time_series_drag_plots', num2str(RunCond));
+    saveas(fig, plotsavename);                % Save plot as PNG
+    %close;
+    
 end % enableCond07Plot
 
 

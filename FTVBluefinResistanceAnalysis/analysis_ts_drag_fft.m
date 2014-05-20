@@ -99,9 +99,6 @@ cutSamplesFromEnd = 0;
 startRun = 2;       % Start at run x
 endRun   = 18;      % Stop at run y
 
-startRun = 2;       % Start at run x
-endRun   = 18;      % Stop at run y
-
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -763,8 +760,8 @@ xm = maxfreqArray(:,2);
 ym = maxfreqArray(:,3);
 
 % Plotting
-plot(xm,ym,'ro','MarkerSize',10); % ,'LineStyle','-.','linewidth',1
-hold on;
+% plot(xm,ym,'ro','MarkerSize',10); % ,'LineStyle','-.','linewidth',1
+% hold on;
 plot(x,y,'bx','MarkerSize',9);
 set(gca,'FontSize',10,'FontWeight','normal','linewidth',2);
 xlabel('Froude length number [-]');
@@ -784,7 +781,7 @@ set(gcf,'Color',[1,1,1]);
 minX = 0.1;
 maxX = 0.43;
 set(gca,'XLim',[minX maxX]);
-set(gca,'XTick',minX:0.01:maxX);
+set(gca,'XTick',minX:0.05:maxX);
 minY = 0;
 maxY = max(ym)+0.05;
 set(gca,'YLim',[minY maxY]);
@@ -808,9 +805,9 @@ annotation('textbox', [0 0.9 1 0.1], ...
     'HorizontalAlignment', 'center');
 
 %# Save plots as PDF and PNG
-%plotsavenamePDF = sprintf('%s/Cond_%s_Run_%s_to_Run_%s_FFT_Frequencies_Plot.pdf', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo));
+%plotsavenamePDF = sprintf('%s/Cond_%s_FFT_Identified_Frequencies_Plot.pdf', '_time_series_drag_plots', num2str(RunCond));
 %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-plotsavename = sprintf('%s/Cond_%s_Run_%s_to_Run_%s_FFT_Frequencies_Plot.png', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo));
+plotsavename = sprintf('%s/Cond_%s_FFT_Identified_Frequencies_Plot.png', '_time_series_drag_plots', num2str(RunCond));
 saveas(fig, plotsavename);                % Save plot as PNG
 %close;
 
