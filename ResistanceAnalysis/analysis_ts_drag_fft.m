@@ -359,7 +359,7 @@ enableCond11Plot        = 0; % Plot condition 12
 enableCond12Plot        = 0; % Plot condition 12
 
 % Enable printer friendly graphs (slow)
-enablePFPlot            = 0; % Printer friendly plots
+enablePFPlot            = 1; % Printer friendly plots
 
 % Check if any plots enabled, if not stop
 % if enableCond07Plot == 0 && enableCond08Plot == 0 && enableCond09Plot == 0 && enableCond10Plot == 0 && enableCond11Plot == 0 && enableCond12Plot == 0
