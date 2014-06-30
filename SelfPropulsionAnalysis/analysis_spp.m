@@ -31,32 +31,23 @@
 %#               => analysis_calib.m  PST calibration run data
 %#                                    ==> Creates resultsArrayCALIB.dat
 %#
-%#               then use --> analysis_calib_plot.m
-%#
 %#               => analysis_rt.m    Flow visualistation and resistance
 %#                                    ==> Creates resultsArrayRT.dat
-%#
-%#               then use --> analysis_rt_plot.m
 %#
 %#               => analysis_bl.m    Bondary layer measurements
 %#                                    ==> Creates resultsArrayBL.dat
 %#
-%#               then use --> analysis_bl_plot.m
-%#
 %#               => analysis_spp.m    Self-propulsion points
 %#                                    ==> Creates resultsArraySPP.dat
-%#
-%#               then use --> analysis_spp_plot.m
 %#
 %#               => analysis_spt.m    Self-propulsion test
 %#                                    ==> Creates resultsArraySPT.dat
 %#
-%#               then use --> analysis_spt_plot.m
+%#               => analysis_avg.m    Averages self-propulsion test repeats
+%#                                    ==> Creates avgResultsArray.dat
 %#
 %#               => analysis_ts.m    Time series data
 %#                                    ==> Creates resultsArrayTS.dat
-%#
-%#               then use --> analysis_ts_plot.m
 %#
 %# ------------------------------------------------------------------------
 %#

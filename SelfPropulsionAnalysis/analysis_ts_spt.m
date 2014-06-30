@@ -25,6 +25,32 @@
 %#
 %# ------------------------------------------------------------------------
 %#
+%# SCRIPTS  :    => analysis.m        First iteration analysis
+%#                                    ==> Creates resultsArray.dat
+%#
+%#               => analysis_calib.m  PST calibration run data
+%#                                    ==> Creates resultsArrayCALIB.dat
+%#
+%#               => analysis_rt.m    Flow visualistation and resistance
+%#                                    ==> Creates resultsArrayRT.dat
+%#
+%#               => analysis_bl.m    Bondary layer measurements
+%#                                    ==> Creates resultsArrayBL.dat
+%#
+%#               => analysis_spp.m    Self-propulsion points
+%#                                    ==> Creates resultsArraySPP.dat
+%#
+%#               => analysis_spt.m    Self-propulsion test
+%#                                    ==> Creates resultsArraySPT.dat
+%#
+%#               => analysis_avg.m    Averages self-propulsion test repeats
+%#                                    ==> Creates avgResultsArray.dat
+%#
+%#               => analysis_ts.m    Time series data
+%#                                    ==> Creates resultsArrayTS.dat
+%#
+%# ------------------------------------------------------------------------
+%#
 %# IMPORTANT  :  Change runfilespath and do not forget to substitute \ => \\
 %#               Make use "_plots" directory has been created in folder
 %#

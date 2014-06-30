@@ -31,32 +31,23 @@
 %#               => analysis_calib.m  PST calibration run data
 %#                                    ==> Creates resultsArrayCALIB.dat
 %#
-%#               then use --> analysis_calib_plot.m
-%#
 %#               => analysis_rt.m    Flow visualistation and resistance
 %#                                    ==> Creates resultsArrayRT.dat
-%#
-%#               then use --> analysis_rt_plot.m
 %#
 %#               => analysis_bl.m    Bondary layer measurements
 %#                                    ==> Creates resultsArrayBL.dat
 %#
-%#               then use --> analysis_bl_plot.m
-%#
 %#               => analysis_spp.m    Self-propulsion points
 %#                                    ==> Creates resultsArraySPP.dat
-%#
-%#               then use --> analysis_spp_plot.m
 %#
 %#               => analysis_spt.m    Self-propulsion test
 %#                                    ==> Creates resultsArraySPT.dat
 %#
-%#               then use --> analysis_spt_plot.m
+%#               => analysis_avg.m    Averages self-propulsion test repeats
+%#                                    ==> Creates avgResultsArray.dat
 %#
 %#               => analysis_ts.m    Time series data
 %#                                    ==> Creates resultsArrayTS.dat
-%#
-%#               then use --> analysis_ts_plot.m
 %#
 %# ------------------------------------------------------------------------
 %#
@@ -70,17 +61,20 @@
 %#
 %# ------------------------------------------------------------------------
 
+
 %# ------------------------------------------------------------------------
 %# Clear workspace
 %# ------------------------------------------------------------------------
 clear
 clc
 
+
 %# ------------------------------------------------------------------------
 %# Find and close all plots
 %# ------------------------------------------------------------------------
 allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
+
 
 %# ------------------------------------------------------------------------
 %# GENERAL SETTINGS AND CONSTANTS
@@ -92,10 +86,12 @@ delete(allPlots);   % Close all plots
 % testName = 'Waterjet Self-Propulsion Points';
 testName = 'Waterjet Self-Propulsion Test';
 
+
 % -------------------------------------------------------------------------
 % Enable profile
 % -------------------------------------------------------------------------
 %profile on
+
 
 %# -------------------------------------------------------------------------
 %# Path where run directories are located
@@ -103,10 +99,17 @@ testName = 'Waterjet Self-Propulsion Test';
 %runfilespath = 'D:\\Flow Rate MTB Backup\\KZ Flow Rate\\';
 runfilespath = '..\\';      % Relative path from Matlab directory
 
-%# -------------------------------------------------------------------------
-%# GENERAL SETTINGS
-%# -------------------------------------------------------------------------
-Fs = 800;       % Sampling frequency = 800Hz
+
+%# ************************************************************************
+%# START: DAQ related settings
+%# ------------------------------------------------------------------------
+
+Fs = 800;                               % DAQ sampling frequency = 200Hz
+
+%# ------------------------------------------------------------------------
+%# END: DAQ related settings
+%# ************************************************************************
+
 
 %# ************************************************************************
 %# START CONSTANTS AND PARTICULARS
@@ -128,6 +131,32 @@ saltwaterdensity    = 1025;                   % Salt water scale water density  
 distbetwposts       = 1150;                   % Distance between carriage posts  (mm)
 FStoMSratio         = 21.6;                   % Full scale to model scale ratio  (-)
 
+% Waterjet constants (FS = full scale and MS = model scale)
+
+% Pump diameter, Dp, (m)
+FS_PumpDia = 1.2;
+MS_PumpDia = 0.056;
+
+% Effective nozzle diamter, Dn, (m)
+FS_EffNozzDia = 0.72;
+MS_EffNozzDia = 0.033;
+
+% Nozzle area, An, (m^2)
+FS_NozzArea = 0.41;
+MS_NozzArea = 0.00087;
+
+% Impeller diameter, Di, (m)
+FS_ImpDia = 1.582;
+MS_ImpDia = 0.073;
+
+% Pump inlet area, A4, (m^2)
+FS_PumpInlArea = 1.99;
+MS_PumpInlArea = 0.004;
+
+% Pump maximum area, A5, (m^2)
+FS_PumpMaxArea = 0.67;
+MS_PumpMaxArea = 0.001;
+
 %# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 %# CONDITION: 1,500 tonnes, level static trim, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
@@ -139,6 +168,12 @@ BlockCoeff1500      = 0.592;                             % Mode block coefficien
 FSlwl1500           = MSlwl1500*FStoMSratio;             % Full scale length waterline     (m)
 FSwsa1500           = MSwsa1500*FStoMSratio^2;           % Full scale wetted surface area  (m^2)
 FSdraft1500         = MSdraft1500*FStoMSratio;           % Full scale draft                (m)
+%# ////////////////////////////////////////////////////////////////////////
+
+%# ------------------------------------------------------------------------
+%# END CONSTANTS AND PARTICULARS
+%# ************************************************************************
+
 
 %# -------------------------------------------------------------------------
 %# Number of headerlines in DAT file
@@ -165,6 +200,9 @@ cutSamplesFromEnd = 0;
 
 startRun = 111;      % Start at run x
 endRun   = 180;      % Stop at run y
+
+startRun = 111;      % Start at run x
+endRun   = 111;      % Stop at run y
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# END FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -408,32 +446,33 @@ for k=startRun:endRun
     % /////////////////////////////////////////////////////////////////////
     
     %# Add results to dedicated array for simple export
-    %# Results array columns: 
-        %[1]  Run No.
-        %[2]  FS                   (Hz)
-        %[3]  No. of samples       (-)
-        %[4]  Record time          (s)
-        %[5]  Speed                (m/s)
-        %[6]  Forward LVDT         (mm)
-        %[7]  Aft LVDT             (mm)
-        %[8]  Drag                 (g)
-        %[9]  Froude length number (-)
-        
-        %[9]  Shaft Speed PORT     (RPM)
-        %[10] Shaft Speed STBD     (RPM)
-        %[11] Thrust PORT          (N)
-        %[12] Torque PORT          (Nm)
-        %[13] Thrust STBD          (N)
-        %[14] Torque STBD          (Nm)        
-        %[15] Kiel probe PORT      (V)
-        %[16] Kiel probe STBD      (V)
-        %[17] PORT static pressure ITTC station 6   (mmH20)
-        %[18] STBD static pressure ITTC station 6   (mmH20)
-        %[19] STBD static pressure ITTC station 5   (mmH20)
-        %[20] STBD static pressure ITTC station 4   (mmH20)
-        %[21] STBD static pressure ITTC station 3   (mmH20)
-        %[22] PORT static pressure ITTC station 1a  (mmH20)
-        %[23] STBD static pressure ITTC station 1a  (mmH20)
+    %# Results array columns:
+    
+    %[1]  Run No.                               (-)
+    %[2]  FS                                    (Hz)
+    %[3]  No. of samples                        (-)
+    %[4]  Record time                           (s)
+    %[5]  Speed                                 (m/s)
+    %[6]  Forward LVDT                          (mm)
+    %[7]  Aft LVDT                              (mm)
+    %[8]  Drag                                  (g)
+    %[9]  Froude length number                  (-)
+    
+    %[10] Shaft Speed PORT                      (RPM)
+    %[11] Shaft Speed STBD                      (RPM)
+    %[12] Thrust PORT                           (N)
+    %[13] Torque PORT                           (Nm)
+    %[14] Thrust STBD                           (N)
+    %[15] Torque STBD                           (Nm)
+    %[16] Kiel probe PORT                       (V)
+    %[17] Kiel probe STBD                       (V)
+    %[18] PORT static pressure ITTC station 6   (mmH20)
+    %[19] STBD static pressure ITTC station 6   (mmH20)
+    %[20] STBD static pressure ITTC station 5   (mmH20)
+    %[21] STBD static pressure ITTC station 4   (mmH20)
+    %[22] STBD static pressure ITTC station 3   (mmH20)
+    %[23] PORT static pressure ITTC station 1a  (mmH20)
+    %[24] STBD static pressure ITTC station 1a  (mmH20)
     
     % General data
     resultsArraySPT(k, 1)  = k;                                                  % Run No.
@@ -453,7 +492,7 @@ for k=startRun:endRun
     resultsArraySPT(k, 9) = modelfrrounded;                                         % Froude length number (adjusted for Lwl change at different conditions) (-)    
     
     % RPM data
-    resultsArraySPT(k, 10)  = RPMPort;                                            % Shaft Speed PORT (RPM)
+    resultsArraySPT(k, 10) = RPMPort;                                            % Shaft Speed PORT (RPM)
     resultsArraySPT(k, 11) = RPMStbd;                                            % Shaft Speed STBD (RPM)
 
     % Thrust and torque data
@@ -474,6 +513,7 @@ for k=startRun:endRun
     resultsArraySPT(k, 22)  = CH_16_Stbd_Stat_3_Mean;                            % STBD static pressure ITTC station 3 (mmH20)
     resultsArraySPT(k, 23)  = CH_17_Port_Stat_1a_Mean;                           % PORT static pressure ITTC station 1a (mmH20)
     resultsArraySPT(k, 24)  = CH_18_Stbd_Stat_1a_Mean;                           % STBD static pressure ITTC station 1a (mmH20)
+    
     
     %# Prepare strings for display ----------------------------------------
     
