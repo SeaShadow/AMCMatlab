@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  November 12, 2013
+%# Date       :  July 15, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -112,24 +112,62 @@ ttwatertemp         = 17.5;                   % Towing Tank: Water temperature (
 
 % General constants
 gravconst           = 9.806;                  % Gravitational constant           (m/s^2)
-modelkinviscosity   = (((0.585*10^(-3))*(ttwatertemp-12)-0.03361)*(ttwatertemp-12)+1.235)*10^(-6); % Model scale kinetic viscosity at X (see ttwatertemp) degrees following ITTC (m2/s)
-fullscalekinvi      = 0.000001034;            % Full scale kinetic viscosity     (m^2/s)
+%MSKinVis            = (((0.585*10^(-3))*(ttwatertemp-12)-0.03361)*(ttwatertemp-12)+1.235)*10^(-6); % Model scale kinetic viscosity at X (see ttwatertemp) degrees following ITTC (m2/s)
+MSKinVis            = 0.0000011581;           % Model scale kinetic viscosity at X (see ttwatertemp) degrees following ITTC (m2/s)
+FSKinVis            = 0.00000104125125;       % Full scale kinetic viscosity     (m^2/s)
 freshwaterdensity   = 1000;                   % Model scale water density        (Kg/m^3)
 saltwaterdensity    = 1025;                   % Salt water scale water density   (Kg/m^3)
 distbetwposts       = 1150;                   % Distance between carriage posts  (mm)
 FStoMSratio         = 21.6;                   % Full scale to model scale ratio  (-)
 
+% Form factors and correlaction coefficient
+FormFactor = 1.18;                            % Form factor (1+k)
+CorrCoeff  = 0;                               % Correlation coefficient, Ca
+
+% Waterjet constants (FS = full scale and MS = model scale)
+
+% Pump diameter, Dp, (m)
+FS_PumpDia     = 1.2;
+MS_PumpDia     = 0.056;
+
+% Effective nozzle diamter, Dn, (m)
+FS_EffNozzDia  = 0.72;
+MS_EffNozzDia  = 0.033;
+
+% Nozzle area, An, (m^2)
+FS_NozzArea    = 0.41;
+MS_NozzArea    = 0.00087;
+
+% Impeller diameter, Di, (m)
+FS_ImpDia      = 1.582;
+MS_ImpDia      = 0.073;
+
+% Pump inlet area, A4, (m^2)
+FS_PumpInlArea = 1.99;
+MS_PumpInlArea = 0.004;
+
+% Pump maximum area, A5, (m^2)
+FS_PumpMaxArea = 0.67;
+MS_PumpMaxArea = 0.001;
+
+% Wake fractions (from self-propulsion test) for 9 speeds
+% Order of wake fractions is based on Fr=0.24, 0.26, 0.28 to 0.40 
+PortWakeFractions = [0.798 0.799 0.800 0.802 0.803 0.801 0.801 0.802 0.806];
+StbdWakeFractions = [0.803 0.803 0.805 0.807 0.808 0.807 0.807 0.808 0.812];
+% PortWakeFractions = PortWakeFractions'; % Convert row to column vector (transpose)
+% StbdWakeFractions = StbdWakeFractions'; % Convert row to column vector (transpose)
+
 %# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 %# CONDITION: 1,500 tonnes, level static trim, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
-MSlwl1500           = 4.30;                              % Model length waterline          (m)
-MSwsa1500           = 1.501;                             % Model scale wetted surface area (m^2)
-MSdraft1500         = 0.133;                             % Model draft                     (m)
-MSAx1500            = 0.024;                             % Model area of max. transverse section (m^2)
-BlockCoeff1500      = 0.592;                             % Mode block coefficient          (-)
-FSlwl1500           = MSlwl1500*FStoMSratio;             % Full scale length waterline     (m)
-FSwsa1500           = MSwsa1500*FStoMSratio^2;           % Full scale wetted surface area  (m^2)
-FSdraft1500         = MSdraft1500*FStoMSratio;           % Full scale draft                (m)
+MSlwl           = 4.30;                          % Model length waterline          (m)
+MSwsa           = 1.501;                         % Model scale wetted surface area (m^2)
+MSdraft         = 0.133;                         % Model draft                     (m)
+MSAx            = 0.024;                         % Model area of max. transverse section (m^2)
+BlockCoeff      = 0.592;                         % Mode block coefficient          (-)
+FSlwl           = MSlwl*FStoMSratio;             % Full scale length waterline     (m)
+FSwsa           = MSwsa*FStoMSratio^2;           % Full scale wetted surface area  (m^2)
+FSdraft         = MSdraft*FStoMSratio;           % Full scale draft                (m)
 
 %# -------------------------------------------------------------------------
 %# Number of headerlines in DAT file
@@ -148,22 +186,22 @@ startSamplePos    = 1;
 cutSamplesFromEnd = 0;   
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# START FILE LOOP FOR RUNS startRun to endRun
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-%startRun = 70;      % Start at run x
-%endRun   = 70;      % Stop at run y
+% startRun = 70;      % Start at run x
+% endRun   = 70;      % Stop at run y
 
 startRun = 70;       % Start at run x
-endRun   = 110;      % Stop at run y
+endRun   = 109;      % Stop at run y
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# END FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# END FILE LOOP FOR RUNS startRun to endRun
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS !!!!!!!!!!!!!!!!
+%# START DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 % RunNosTest = [1:8];          % Prelimnary testing only
@@ -189,12 +227,12 @@ endRun   = 110;      % Stop at run y
 % end
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# END DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS !!!!!!!!!!!!!!!!!!
+%# END DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# START DEFINE PLOT SIZE
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# Centimeters units
 XPlot = 42.0;                           %# A3 paper size
@@ -204,236 +242,544 @@ YPlotMargin = 1;                        %# bottom/top margins from page borders
 XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
 YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# END DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# END DEFINE PLOT SIZE
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# START Load shaft speed list (variable name is shaftSpeedList by default)
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+if exist('shaftSpeedListRuns90to109.mat', 'file') == 2
+    % Load file into shaftSpeedList variable
+    load('shaftSpeedListRuns90to109.mat');
+else    
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('WARNING: Required data file for shaft speed data (shaftSpeedListRuns90to109.mat) does not exist!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    break;
+end
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# END Load shaft speed list (variable name is shaftSpeedList by default)
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+%# ////////////////////////////////////////////////////////////////////////
+%# START Repeat runs
+%# ------------------------------------------------------------------------
+
+RunsForSpeed1 = [101 102 103 107];          % Fr = 0.24
+RunsForSpeed2 = [98 99 100 108];            % Fr = 0.26
+RunsForSpeed3 = [95 96 97 109];             % Fr = 0.28
+RunsForSpeed4 = [70 104 71 72 73 74];       % Fr = 0.30
+RunsForSpeed5 = [75 76 78 77];              % Fr = 0.32
+RunsForSpeed6 = [79 80 81];                 % Fr = 0.34
+RunsForSpeed7 = [82 83 84];                 % Fr = 0.36
+RunsForSpeed8 = [85 86 87 88 89 105 106];   % Fr = 0.38
+RunsForSpeed9 = [90 91 92 93 94];           % Fr = 0.40
+
+%# ------------------------------------------------------------------------
+%# END Repeat runs
+%# ////////////////////////////////////////////////////////////////////////
 
 
 %# ////////////////////////////////////////////////////////////////////////
 %# LOOP THROUGH ALL RUN FILES (depending on startRun and endRun settings)
 %# ////////////////////////////////////////////////////////////////////////
 
-resultsArraySPP = [];
-%w = waitbar(0,'Processed run files'); 
-for k=startRun:endRun
-    
-    %# Allow for 1 to become 01 for run numbers
-    if k < 10
-        filename = sprintf('%s0%s.run\\R0%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
-    else
-        filename = sprintf('%s%s.run\\R%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
-    end
-    [pathstr, name, ext] = fileparts(filename);     % Get file details like path, filename and extension
+% If resultsArraySPP.dat does NOT EXIST loop through DAQ files
+if exist('resultsArraySPP.dat', 'file') == 0
 
-    %# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
-    zAndCFData = importdata(filename, ' ', headerlines);
-    zAndCF     = zAndCFData.data;
-
-    %# Calibration factors and zeros
-    ZeroAndCalibData = importdata(filename, ' ', headerlinesZeroAndCalib);
-    ZeroAndCalib     = ZeroAndCalibData.data;
-
-    %# Time series
-    AllRawChannelData = importdata(filename, ' ', headerlines);
-
-    %# Create new variables in the base workspace from those fields.
-    vars = fieldnames(AllRawChannelData);
-    for i = 1:length(vars)
-       assignin('base', vars{i}, AllRawChannelData.(vars{i}));
-    end
-    
-    % /////////////////////////////////////////////////////////////////////
-    % START: CREATE PLOTS AND RUN DIRECTORY
-    % ---------------------------------------------------------------------
-    
-    %# _PLOTS directory
-    fPath = '_plots/';
-    if isequal(exist(fPath, 'dir'),7)
-        % Do nothing as directory exists
-    else
-        mkdir(fPath);
-    end
-    
-    %# RUN directory
-%     fPath = sprintf('_plots/%s', name(1:3));
-%     if isequal(exist(fPath, 'dir'),7)
-%         % Do nothing as directory exists
-%     else
-%         mkdir(fPath);
-%     end
-    
-    % ---------------------------------------------------------------------
-    % END: CREATE PLOTS AND RUN DIRECTORY
-    % /////////////////////////////////////////////////////////////////////
-    
-    %# Columns as variables (RAW DATA)
-    timeData             = data(:,1);       % Timeline
-    Raw_CH_0_Speed       = data(:,2);       % Speed
-    Raw_CH_1_LVDTFwd     = data(:,3);       % Forward LVDT
-    Raw_CH_2_LVDTAft     = data(:,4);       % Aft LVDT
-    Raw_CH_3_Drag        = data(:,5);       % Load cell (drag)
-    Raw_CH_4_PortRPM     = data(:,6);       % Port RPM
-    Raw_CH_5_StbdRPM     = data(:,7);       % Starboard RPM
-    Raw_CH_6_PortThrust  = data(:,8);       % Port thrust
-    Raw_CH_7_PortTorque  = data(:,9);       % Port torque
-    Raw_CH_8_StbdThrust  = data(:,10);      % Starboard thrust
-    Raw_CH_9_StbdTorque  = data(:,11);      % Starboard torque
-    Raw_CH_10_PortKP     = data(:,12);     % Port kiel probe
-    Raw_CH_11_StbdKP     = data(:,13);      % Starboard kiel probe  
-    
-    %# Zeros and calibration factors for each channel
-    Time_Zero  = ZeroAndCalib(1);
-    Time_CF    = ZeroAndCalib(2);
-    CH_0_Zero  = ZeroAndCalib(3);
-    CH_0_CF    = ZeroAndCalib(4);
-    CH_1_Zero  = ZeroAndCalib(5);
-    CH_1_CF    = ZeroAndCalib(6);
-    CH_2_Zero  = ZeroAndCalib(7);
-    CH_2_CF    = ZeroAndCalib(8);
-    CH_3_Zero  = ZeroAndCalib(9);
-    CH_3_CF    = ZeroAndCalib(10);
-    CH_4_Zero  = ZeroAndCalib(11);
-    CH_4_CF    = ZeroAndCalib(12);
-    CH_5_Zero  = ZeroAndCalib(13);
-    CH_5_CF    = ZeroAndCalib(14);
-    CH_6_Zero  = ZeroAndCalib(15);
-    CH_6_CF    = ZeroAndCalib(16);
-    CH_7_Zero  = ZeroAndCalib(17);
-    CH_7_CF    = ZeroAndCalib(18);
-    CH_8_Zero  = ZeroAndCalib(19);
-    CH_8_CF    = ZeroAndCalib(20);
-    CH_9_Zero  = ZeroAndCalib(21);
-    CH_9_CF    = ZeroAndCalib(22);
-    CH_10_Zero = ZeroAndCalib(23);
-    CH_10_CF   = ZeroAndCalib(24);
-    CH_11_Zero = ZeroAndCalib(25);
-    CH_11_CF   = ZeroAndCalib(26);
+    resultsArraySPP = [];
+    %w = waitbar(0,'Processed run files');
+    for k=startRun:endRun
         
-    %# --------------------------------------------------------------------
-    %# Real units ---------------------------------------------------------
-    %# --------------------------------------------------------------------
-    
-    [CH_0_Speed CH_0_Speed_Mean]           = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
-    [CH_1_LVDTFwd CH_1_LVDTFwd_Mean]       = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
-    [CH_2_LVDTAft CH_2_LVDTAft_Mean]       = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
-    [CH_3_Drag CH_3_Drag_Mean]             = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);
-    
-    [RPMStbd RPMPort]                      = analysis_rpm(k,name,Fs,timeData,Raw_CH_5_StbdRPM,Raw_CH_4_PortRPM);
-    
-    [CH_6_PortThrust CH_6_PortThrust_Mean] = analysis_realunits(Raw_CH_6_PortThrust,CH_6_Zero,CH_6_CF);
-    [CH_7_PortTorque CH_7_PortTorque_Mean] = analysis_realunits(Raw_CH_7_PortTorque,CH_7_Zero,CH_7_CF);
-    [CH_8_StbdThrust CH_8_StbdThrust_Mean] = analysis_realunits(Raw_CH_8_StbdThrust,CH_8_Zero,CH_8_CF);
-    [CH_9_StbdTorque CH_9_StbdTorque_Mean] = analysis_realunits(Raw_CH_9_StbdTorque,CH_9_Zero,CH_9_CF);    
-   
-    % /////////////////////////////////////////////////////////////////////
-    % DISPLAY RESULTS
-    % /////////////////////////////////////////////////////////////////////
-    
-    %# Add results to dedicated array for simple export
-    %# Results array columns: 
+        %# Allow for 1 to become 01 for run numbers
+        if k < 10
+            filename = sprintf('%s0%s.run\\R0%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
+        else
+            filename = sprintf('%s%s.run\\R%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
+        end
+        [pathstr, name, ext] = fileparts(filename);     % Get file details like path, filename and extension
+        
+        %# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
+        zAndCFData = importdata(filename, ' ', headerlines);
+        zAndCF     = zAndCFData.data;
+        
+        %# Calibration factors and zeros
+        ZeroAndCalibData = importdata(filename, ' ', headerlinesZeroAndCalib);
+        ZeroAndCalib     = ZeroAndCalibData.data;
+        
+        %# Time series
+        AllRawChannelData = importdata(filename, ' ', headerlines);
+        
+        %# Create new variables in the base workspace from those fields.
+        vars = fieldnames(AllRawChannelData);
+        for i = 1:length(vars)
+            assignin('base', vars{i}, AllRawChannelData.(vars{i}));
+        end
+        
+        % /////////////////////////////////////////////////////////////////////
+        % START: CREATE PLOTS AND RUN DIRECTORY
+        % ---------------------------------------------------------------------
+        
+        %# _PLOTS directory
+        fPath = '_plots/';
+        if isequal(exist(fPath, 'dir'),7)
+            % Do nothing as directory exists
+        else
+            mkdir(fPath);
+        end
+        
+        %# RUN directory
+        %     fPath = sprintf('_plots/%s', name(1:3));
+        %     if isequal(exist(fPath, 'dir'),7)
+        %         % Do nothing as directory exists
+        %     else
+        %         mkdir(fPath);
+        %     end
+        
+        % ---------------------------------------------------------------------
+        % END: CREATE PLOTS AND RUN DIRECTORY
+        % /////////////////////////////////////////////////////////////////////
+        
+        %# Columns as variables (RAW DATA)
+        timeData             = data(:,1);       % Timeline
+        Raw_CH_0_Speed       = data(:,2);       % Speed
+        Raw_CH_1_LVDTFwd     = data(:,3);       % Forward LVDT
+        Raw_CH_2_LVDTAft     = data(:,4);       % Aft LVDT
+        Raw_CH_3_Drag        = data(:,5);       % Load cell (drag)
+        Raw_CH_4_PortRPM     = data(:,6);       % Port RPM
+        Raw_CH_5_StbdRPM     = data(:,7);       % Starboard RPM
+        Raw_CH_6_PortThrust  = data(:,8);       % Port thrust
+        Raw_CH_7_PortTorque  = data(:,9);       % Port torque
+        Raw_CH_8_StbdThrust  = data(:,10);      % Starboard thrust
+        Raw_CH_9_StbdTorque  = data(:,11);      % Starboard torque
+        Raw_CH_10_PortKP     = data(:,12);     % Port kiel probe
+        Raw_CH_11_StbdKP     = data(:,13);      % Starboard kiel probe
+        
+        %# Zeros and calibration factors for each channel
+        Time_Zero  = ZeroAndCalib(1);
+        Time_CF    = ZeroAndCalib(2);
+        CH_0_Zero  = ZeroAndCalib(3);
+        CH_0_CF    = ZeroAndCalib(4);
+        CH_1_Zero  = ZeroAndCalib(5);
+        CH_1_CF    = ZeroAndCalib(6);
+        CH_2_Zero  = ZeroAndCalib(7);
+        CH_2_CF    = ZeroAndCalib(8);
+        CH_3_Zero  = ZeroAndCalib(9);
+        CH_3_CF    = ZeroAndCalib(10);
+        CH_4_Zero  = ZeroAndCalib(11);
+        CH_4_CF    = ZeroAndCalib(12);
+        CH_5_Zero  = ZeroAndCalib(13);
+        CH_5_CF    = ZeroAndCalib(14);
+        CH_6_Zero  = ZeroAndCalib(15);
+        CH_6_CF    = ZeroAndCalib(16);
+        CH_7_Zero  = ZeroAndCalib(17);
+        CH_7_CF    = ZeroAndCalib(18);
+        CH_8_Zero  = ZeroAndCalib(19);
+        CH_8_CF    = ZeroAndCalib(20);
+        CH_9_Zero  = ZeroAndCalib(21);
+        CH_9_CF    = ZeroAndCalib(22);
+        CH_10_Zero = ZeroAndCalib(23);
+        CH_10_CF   = ZeroAndCalib(24);
+        CH_11_Zero = ZeroAndCalib(25);
+        CH_11_CF   = ZeroAndCalib(26);
+        
+        %# --------------------------------------------------------------------
+        %# Real units ---------------------------------------------------------
+        %# --------------------------------------------------------------------
+        
+        [CH_0_Speed CH_0_Speed_Mean]           = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
+        [CH_1_LVDTFwd CH_1_LVDTFwd_Mean]       = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
+        [CH_2_LVDTAft CH_2_LVDTAft_Mean]       = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
+        [CH_3_Drag CH_3_Drag_Mean]             = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);
+        
+        [RPMStbd RPMPort]                      = analysis_rpm(k,name,Fs,timeData,Raw_CH_5_StbdRPM,Raw_CH_4_PortRPM);
+        
+        [CH_6_PortThrust CH_6_PortThrust_Mean] = analysis_realunits(Raw_CH_6_PortThrust,CH_6_Zero,CH_6_CF);
+        [CH_7_PortTorque CH_7_PortTorque_Mean] = analysis_realunits(Raw_CH_7_PortTorque,CH_7_Zero,CH_7_CF);
+        [CH_8_StbdThrust CH_8_StbdThrust_Mean] = analysis_realunits(Raw_CH_8_StbdThrust,CH_8_Zero,CH_8_CF);
+        [CH_9_StbdTorque CH_9_StbdTorque_Mean] = analysis_realunits(Raw_CH_9_StbdTorque,CH_9_Zero,CH_9_CF);
+        
+        % /////////////////////////////////////////////////////////////////////
+        % DISPLAY RESULTS
+        % /////////////////////////////////////////////////////////////////////
+        
+        %# Add results to dedicated array for simple export
+        %# Results array columns:
+        
         %[1]  Run No.
-        %[2]  FS                (Hz)
-        %[3]  No. of samples    (-)
-        %[4]  Record time       (s)
-        %[5]  Froude length number (-)
-        %[6]  Speed             (m/s)
-        %[7]  Forward LVDT      (mm)
-        %[8]  Aft LVDT          (mm)
-        %[9]  Drag              (g)
-        %[10]  Shaft Speed PORT  (RPM)
-        %[11] Shaft Speed STBD  (RPM)
-        %[12] Thrust PORT       (N)
-        %[13] Torque PORT       (Nm)
-        %[14] Thrust STBD       (N)
-        %[15] Torque STBD       (Nm)        
-        %[16] Kiel probe PORT   (V)
-        %[17] Kiel probe STBD   (V)   
+        %[2]  FS                          (Hz)
+        %[3]  No. of samples              (-)
+        %[4]  Record time                 (s)
         
-    % General data
-    resultsArraySPP(k, 1)  = k;                                                     % Run No.
-    resultsArraySPP(k, 2)  = round(length(timeData) / timeData(end));               % FS (Hz)    
-    resultsArraySPP(k, 3)  = length(timeData);                                      % Number of samples
-    recordTime = length(timeData) / (round(length(timeData) / timeData(end)));
-    resultsArraySPP(k, 4)  = round(recordTime);                                     % Record time in seconds
-    
-    roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                      % Round averaged speed to two (2) decimals only
-    modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number
-    resultsArraySPP(k, 5) = modelfrrounded;                                         % Froude length number (adjusted for Lwl change at different conditions) (-)
-    
-    % Resistance data
-    resultsArraySPP(k, 6)  = CH_0_Speed_Mean;                                       % Speed (m/s)
-    resultsArraySPP(k, 7)  = CH_1_LVDTFwd_Mean;                                     % Forward LVDT (mm)
-    resultsArraySPP(k, 8)  = CH_2_LVDTAft_Mean;                                     % Aft LVDT (mm)
-    resultsArraySPP(k, 9)  = CH_3_Drag_Mean;                                        % Drag (g)
+        %[5]  Froude length number        (-)
+        %[6]  Speed                       (m/s)
+        %[7]  Forward LVDT                (mm)
+        %[8]  Aft LVDT                    (mm)
+        %[9]  Drag                        (g)
+        %[10] Drag                        (N)
+        
+        %[11] PORT: Shaft Speed           (RPM)
+        %[12] STBD: Shaft Speed           (RPM)
+        %[13] PORT: Thrust                (N)
+        %[14] PORT: Torque                (Nm)
+        %[15] STBD: Thrust                (N)
+        %[16] STBD: Torque                (Nm)
+        %[17] PORT: Kiel probe            (V)
+        %[18] STBD: Kiel probe            (V)
+        
+        % New columns added 15/7/2014
+        %[19] Shaft/motor speed           (RPM)
+        %[20] Ship speed                  (m/s)
+        %[21] Ship speed                  (knots)
+        
+        %[22] Model scale Reynolds number (-)
+        %[23] Full scale Reynolds number  (-)
+        
+        %[24] Model scale frictional resistance coefficient (Grigson), CFm (-)
+        %[25] Full scale Frictional resistance coefficient (Grigson), CFs  (-)
+        %[26] Correleation coefficient, Ca                                 (-)
+        %[27] Form factor                                                  (-)
+        %[28] Towing force, FD                                             (N)
+        %[29] Towing force coefficient, CFD                                (-)
+        
+        % Mass flow rate and jet velocity
+        %[30] PORT: Mass flow rate        (Kg/s)
+        %[31] STBD: Mass flow rate        (Kg/s)
+        %[32] PORT: Mass flow rate        (m^3/s)
+        %[33] STBD: Mass flow rate        (m^3/s)
+        
+        %[34] PORT: Jet velocity          (m/s)
+        %[35] STBD: Jet velocity          (m/s)
+        
+        % Wake fraction and gross thrust
+        %[36] PORT: Wake fraction (1-w)   (-)
+        %[37] STBD: Wake fraction (1-w)   (-)
+        
+        %[38] PORT: Inlet velocity, vi    (m/s)
+        %[39] STBD: Inlet velocity, vi    (m/s)
+        
+        %[38] PORT: Gross thrust, TG      (N)
+        %[39] STBD: Gross thrust, TG      (N)
+        %[40] Total gross thrust, TG      (N)
+        
+        % General data
+        resultsArraySPP(k, 1)  = k;                                                     % Run No.
+        resultsArraySPP(k, 2)  = round(length(timeData) / timeData(end));               % FS (Hz)
+        resultsArraySPP(k, 3)  = length(timeData);                                      % Number of samples
+        recordTime = length(timeData) / (round(length(timeData) / timeData(end)));
+        resultsArraySPP(k, 4)  = round(recordTime);                                     % Record time in seconds
+        
+        roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                      % Round averaged speed to two (2) decimals only
+        modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl))); % Calculate Froude length number
+        resultsArraySPP(k, 5) = modelfrrounded;                                         % Froude length number (adjusted for Lwl change at different conditions) (-)
+        
+        % Resistance data
+        resultsArraySPP(k, 6)  = CH_0_Speed_Mean;                                       % Speed (m/s)
+        resultsArraySPP(k, 7)  = CH_1_LVDTFwd_Mean;                                     % Forward LVDT (mm)
+        resultsArraySPP(k, 8)  = CH_2_LVDTAft_Mean;                                     % Aft LVDT (mm)
+        resultsArraySPP(k, 9)  = CH_3_Drag_Mean;                                        % Drag (g)
+        resultsArraySPP(k, 10) = (CH_3_Drag_Mean/1000)*gravconst;                       % Drag (N)
+        
+        % RPM data
+        resultsArraySPP(k, 11) = RPMPort;                                               % Shaft Speed PORT (RPM)
+        resultsArraySPP(k, 12) = RPMStbd;                                               % Shaft Speed STBD (RPM)
+        
+        % Thrust and torque data
+        resultsArraySPP(k, 13) = abs(CH_6_PortThrust_Mean/1000)*9.806;                  % Thrust PORT (N)
+        resultsArraySPP(k, 14) = CH_7_PortTorque_Mean;                                  % Torque PORT (Nm)
+        resultsArraySPP(k, 15) = abs(CH_8_StbdThrust_Mean/1000)*9.806;                  % Thrust STBD (N)
+        resultsArraySPP(k, 16) = CH_9_StbdTorque_Mean;                                  % Torque STBD (Nm)
+        
+        % Kie; probe data
+        resultsArraySPP(k, 17)  = mean(Raw_CH_10_PortKP);                               % Kiel probe PORT (V)
+        resultsArraySPP(k, 18)  = mean(Raw_CH_11_StbdKP);                               % Kiel probe STBD (V)
+        
+        % New columns added 15/7/2014
+        sslIndex = find(shaftSpeedList == k);
+        
+        if isempty(sslIndex) == 1
+            shaftSpeedRPM = 0;
+        else
+            shaftSpeedRPM = shaftSpeedList(sslIndex,2);
+        end
+        
+        resultsArraySPP(k, 19)  = shaftSpeedRPM;                                        % Shaft/motor speed (RPM)
 
-    % RPM data
-    resultsArraySPP(k, 10) = RPMPort;                                               % Shaft Speed PORT (RPM)
-    resultsArraySPP(k, 11) = RPMStbd;                                               % Shaft Speed STBD (RPM)
+        MSspeed = CH_0_Speed_Mean;
+        FSspeed = CH_0_Speed_Mean*sqrt(FStoMSratio);
+        
+        resultsArraySPP(k, 20)  = FSspeed;                                              % Ship speed (m/s)
+        resultsArraySPP(k, 21)  = FSspeed/0.514444;                                     % Ship speed (knots)
 
-    % Thrust and torque data
-    resultsArraySPP(k, 12) = abs(CH_6_PortThrust_Mean/1000)*9.806;                  % Thrust PORT (N)
-    resultsArraySPP(k, 13) = CH_7_PortTorque_Mean;                                  % Torque PORT (Nm)
-    resultsArraySPP(k, 14) = abs(CH_8_StbdThrust_Mean/1000)*9.806;                  % Thrust STBD (N)
-    resultsArraySPP(k, 15) = CH_9_StbdTorque_Mean;                                  % Torque STBD (Nm)  
-    
-    % Kie; probe data
-    resultsArraySPP(k, 16)  = mean(Raw_CH_10_PortKP);                                % Kiel probe PORT (V)
-    resultsArraySPP(k, 17)  = mean(Raw_CH_11_StbdKP);                               % Kiel probe STBD (V)    
-    
-    %# Prepare strings for display ----------------------------------------
-    
-    % Change from 2 to 3 digits
-    if k > 99
-        name = name(1:4);
-    else
-        name = name(1:3);
+        resultsArraySPP(k, 22)  = (MSspeed*MSlwl)/MSKinVis;                             % Model scale Reynolds number (-)
+        resultsArraySPP(k, 23)  = (FSspeed*FSlwl)/FSKinVis;                             % Full scale Reynolds number (-)
+        
+        MSReynoldsNo = resultsArraySPP(k, 22);
+        FSReynoldsNo = resultsArraySPP(k, 23);        
+        
+        % Model scale frictional resistance coefficient (Grigson), CFm (-)
+        if MSReynoldsNo < 10000000
+            resultsArraySPP(k, 24) = 10^(2.98651-10.8843*(log10(log10(MSReynoldsNo)))+5.15283*(log10(log10(MSReynoldsNo)))^2);
+        else
+            resultsArraySPP(k, 24) = 10^(-9.57459+26.6084*(log10(log10(MSReynoldsNo)))-30.8285*(log10(log10(MSReynoldsNo)))^2+10.8914*(log10(log10(MSReynoldsNo)))^3);
+        end
+        
+        % Full scale frictional resistance coefficient (Grigson), CFs (-)
+        if FSReynoldsNo < 10000000
+            resultsArraySPP(k, 25) = 10^(2.98651-10.8843*(log10(log10(FSReynoldsNo)))+5.15283*(log10(log10(FSReynoldsNo)))^2);
+        else
+            resultsArraySPP(k, 25) = 10^(-9.57459+26.6084*(log10(log10(FSReynoldsNo)))-30.8285*(log10(log10(FSReynoldsNo)))^2+10.8914*(log10(log10(FSReynoldsNo)))^3);
+        end
+        
+        resultsArraySPP(k, 26)  = CorrCoeff;                                            % Correlation coefficient, Ca (-)
+        resultsArraySPP(k, 27)  = FormFactor;                                           % Form factor (-)    
+        setCFm        = resultsArraySPP(k, 24);
+        setCFs        = resultsArraySPP(k, 25);
+        setCorrCoeff  = resultsArraySPP(k, 26);
+        setFormFactor = resultsArraySPP(k, 27);
+        resultsArraySPP(k, 28)  = 0.5*freshwaterdensity*(MSspeed^2)*MSwsa*(setFormFactor*(setCFm-setCFs)-setCorrCoeff);  % Towing force, FD (N) 
+        resultsArraySPP(k, 29)  = setFormFactor*(setCFm-setCFs)-setCorrCoeff;           % Towing force coefficient, CFD (-)
+        
+        PortKP = resultsArraySPP(k, 17);                                                % PORT: Kiel probe (V)
+        StbdKP = resultsArraySPP(k, 18);                                                % STBD: Kiel probe (V)
+        
+        % PORT: Mass flow rate (Kg/s)
+        if PortKP > 1.86
+            PortMfr = 0.1133*PortKP^3-1.0326*PortKP^2+4.3652*PortKP-2.6737;
+        else
+            PortMfr = 0.4186*PortKP^5-4.5094*PortKP^4+19.255*PortKP^3-41.064*PortKP^2+45.647*PortKP-19.488;
+        end
+        
+        % STBD: Mass flow rate (Kg/s)
+        if StbdKP > 1.86
+            StbdMfr = 0.1133*StbdKP^3-1.0326*StbdKP^2+4.3652*StbdKP-2.6737;
+        else
+            StbdMfr = 0.4186*StbdKP^5-4.5094*StbdKP^4+19.255*StbdKP^3-41.064*StbdKP^2+45.647*StbdKP-19.488;
+        end        
+
+        % Mass flow rate and jet velocity
+        resultsArraySPP(k, 30)  = PortMfr;                                   % PORT: Mass flow rate (Kg/s)
+        resultsArraySPP(k, 31)  = StbdMfr;                                   % STBD: Mass flow rate (Kg/s)
+        resultsArraySPP(k, 32)  = PortMfr/freshwaterdensity;                 % PORT: Volume flow rate (m^3/s)
+        resultsArraySPP(k, 33)  = StbdMfr/freshwaterdensity;                 % STBD: Volume flow rate (m^3/s)
+        resultsArraySPP(k, 34)  = (PortMfr/freshwaterdensity)/MS_NozzArea;   % PORT: Jet velocity (m/s)
+        resultsArraySPP(k, 35)  = (StbdMfr/freshwaterdensity)/MS_NozzArea;   % STBD: Jet velocity (m/s)
+        
+        % Wake fraction and gross thrust
+        setPortWF = 1;
+        setStbdWF = 1;
+        if any(k==RunsForSpeed1)
+            disp('Speed 1');
+            setPortWF = PortWakeFractions(1);
+            setStbdWF = StbdWakeFractions(1);
+        elseif any(k==RunsForSpeed2)
+            disp('Speed 2');
+            setPortWF = PortWakeFractions(2);
+            setStbdWF = StbdWakeFractions(2);
+        elseif any(k==RunsForSpeed3)
+            disp('Speed 3');
+            setPortWF = PortWakeFractions(3);
+            setStbdWF = StbdWakeFractions(3);
+        elseif any(k==RunsForSpeed4)
+            disp('Speed 4');
+            setPortWF = PortWakeFractions(4);
+            setStbdWF = StbdWakeFractions(4);
+        elseif any(k==RunsForSpeed5)
+            disp('Speed 5');
+            setPortWF = PortWakeFractions(5);
+            setStbdWF = StbdWakeFractions(5);
+        elseif any(k==RunsForSpeed6)
+            disp('Speed 6');
+            setPortWF = PortWakeFractions(6);
+            setStbdWF = StbdWakeFractions(6);
+        elseif any(k==RunsForSpeed7)
+            disp('Speed 7');
+            setPortWF = PortWakeFractions(7);
+            setStbdWF = StbdWakeFractions(7);
+        elseif any(k==RunsForSpeed8)
+            disp('Speed 8');
+            setPortWF = PortWakeFractions(8);
+            setStbdWF = StbdWakeFractions(8);
+        elseif any(k==RunsForSpeed9)
+            disp('Speed 9');
+            setPortWF = PortWakeFractions(9);
+            setStbdWF = StbdWakeFractions(9);
+        end
+        resultsArraySPP(k, 36)  = setPortWF;         % PORT: Wake fraction (1-w) (-)
+        resultsArraySPP(k, 37)  = setStbdWF;         % STBD: Wake fraction (1-w) (-)
+        
+        PortWF = resultsArraySPP(k, 36);
+        StbdWF = resultsArraySPP(k, 37);
+        resultsArraySPP(k, 38)  = MSspeed*PortWF;    % PORT: Inlet velocity, vi  (m/s)
+        resultsArraySPP(k, 39)  = MSspeed*StbdWF;    % STBD: Inlet velocity, vi  (m/s)
+        
+        PortJetVel = resultsArraySPP(k, 34);
+        StbdJetVel = resultsArraySPP(k, 35);
+        PortInlVel = resultsArraySPP(k, 38);
+        StbdInlVel = resultsArraySPP(k, 39);
+        resultsArraySPP(k, 40)  = PortMfr*(PortJetVel-PortInlVel);                  % PORT: Gross thrust, TG    (N)
+        resultsArraySPP(k, 41)  = StbdMfr*(StbdJetVel-StbdInlVel);                  % STBD: Gross thrust, TG    (N)
+        resultsArraySPP(k, 42)  = resultsArraySPP(k, 40)+resultsArraySPP(k, 41);    % Total gross thrust, TG      (N)
+        
+        %# Prepare strings for display ----------------------------------------
+        
+        % Change from 2 to 3 digits
+        if k > 99
+            name = name(1:4);
+        else
+            name = name(1:3);
+        end
+        
+        % Prepare strings  ----------------------------------------------------
+        
+        setRPM       = sprintf('%s:: Set motor/shaft speed: %s [RPM]', name, sprintf('%.0f',shaftSpeedRPM));
+        shaftrpmport = sprintf('%s:: Measured motor/shaft speed PORT: %s [RPM]', name, sprintf('%.0f',RPMPort));
+        shaftrpmstbd = sprintf('%s:: Measured motor/speed STBD: %s [RPM]', name, sprintf('%.0f',RPMStbd));
+        
+        %# Display strings ---------------------------------------------------
+        
+        disp(setRPM);
+        disp(shaftrpmport);
+        disp(shaftrpmstbd);
+        
+        disp('/////////////////////////////////////////////////');
+        
+        %wtot = endRun - startRun;
+        %w = waitbar(k/wtot,w,['iteration: ',num2str(k)]);
     end
-
-%     massflowrate     = sprintf('%s:: Mass flow rate: %s [Kg/s]', name, sprintf('%.2f',abs(flowrate)));
-%     kielprobestbd    = sprintf('%s:: Kiel probe STBD (mean): %s [V]', name, sprintf('%.2f',mean(Raw_CH_1_KPStbd)));
-%     kielprobeport    = sprintf('%s:: Kiel probe PORT (mean): %s [V]', name, sprintf('%.2f',mean(Raw_CH_2_KPPort)));
-%     thruststbd       = sprintf('%s:: Thrust STBD (mean): %s [N]', name, sprintf('%.2f',abs(((CH_7_ThrustStbd_Mean/1000)*9.806))));
-%     thrustport       = sprintf('%s:: Thrust PORT (mean): %s [N]', name, sprintf('%.2f',abs(((CH_8_ThrustPort_Mean/1000)*9.806))));
-%     torquestbd       = sprintf('%s:: Torque STBD (mean): %s [Nm]', name, sprintf('%.2f',abs(CH_9_TorqueStbd_Mean)));
-%     torqueport       = sprintf('%s:: Torque PORT (mean): %s [Nm]', name, sprintf('%.2f',abs(CH_10_TorquePort_Mean)));
-
-    shaftrpmport     = sprintf('%s:: Shaft speed PORT: %s [RPM]', name, sprintf('%.0f',RPMPort));  
-    shaftrpmstbd     = sprintf('%s:: Shaft speed STBD: %s [RPM]', name, sprintf('%.0f',RPMStbd));
-
-     %# Display strings ---------------------------------------------------
-     
-%     disp(kielprobestbd);
-%     disp(kielprobeport);
-%     %disp('-------------------------------------------------');  
-%     disp(thruststbd);
-%     disp(thrustport);
-%     %disp('-------------------------------------------------');  
-%     disp(torquestbd);
-%     disp(torqueport);        
-
-    disp(shaftrpmport);
-    disp(shaftrpmstbd);
-
-    disp('/////////////////////////////////////////////////');
     
-    %wtot = endRun - startRun;
-    %w = waitbar(k/wtot,w,['iteration: ',num2str(k)]);
+    %# Close progress bar
+    %close(w);
+
+    % /////////////////////////////////////////////////////////////////////
+    % START: Write results to CVS
+    % ---------------------------------------------------------------------
+    
+    resultsArraySPP = resultsArraySPP(any(resultsArraySPP,2),:);           % Remove zero rows
+    M = resultsArraySPP;
+    %M = M(any(M,2),:);                                                    % remove zero rows only in resultsArraySPP text file
+    csvwrite('resultsArraySPP.dat', M)                                     % Export matrix M to a file delimited by the comma character
+    %dlmwrite('resultsArraySPP.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
+    
+    % ---------------------------------------------------------------------
+    % END: Write results to CVS
+    % /////////////////////////////////////////////////////////////////////
+    
+else
+   
+    %# As we know that resultsArraySPP.dat exits, read it
+    resultsArraySPP = csvread('resultsArraySPP.dat');
+    
+    %# Remove zero rows
+    resultsArraySPP(all(resultsArraySPP==0,2),:)=[];
+
 end
 
-%# Close progress bar
-%close(w);
-
-
 % /////////////////////////////////////////////////////////////////////
-% START: Write results to CVS
-% ---------------------------------------------------------------------
-resultsArraySPP = resultsArraySPP(any(resultsArraySPP,2),:);           % Remove zero rows
-M = resultsArraySPP;
-%M = M(any(M,2),:);                                                    % remove zero rows only in resultsArraySPP text file
-csvwrite('resultsArraySPP.dat', M)                                     % Export matrix M to a file delimited by the comma character      
-dlmwrite('resultsArraySPP.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
-% ---------------------------------------------------------------------
-% END: Write results to CVS
+% Split resultsArraySPP by Froude length number
 % /////////////////////////////////////////////////////////////////////
+
+% Remove zero rows
+resultsArraySPP = resultsArraySPP(any(resultsArraySPP,2),:);
+
+% Split results array based on column 9 (Length Froude Number)
+R = resultsArraySPP;
+A = arrayfun(@(x) R(R(:,5) == x, :), unique(R(:,5)), 'uniformoutput', false);
+[m,n] = size(A);      % Array dimensions
+
+% Loop through speeds
+% for k=1:ma
+%     [m,n] = size(A{k});
+%     for j=1:m
+%         A{k}(j,1)
+%     end
+% end
+
+% Only plot if all (9) datasets are available
+if m == 9
+    
+    % Plotting gross thrust vs. towing force
+    figurename = 'Thrust vs. Towing Force';
+    %figurename = sprintf('%s:: RPM Logger (Raw Data), Run %s', testName, num2str(runno));
+    f = figure('Name',figurename,'NumberTitle','off');
+   
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
+    
+    %# Trendline
+    x1 = A{1}(:,42); y1 = A{1}(:,10);
+    polyf1 = polyfit(x1,y1,1); polyv1 = polyval(polyf1,x1);
+    x2 = A{2}(:,42); y2 = A{2}(:,10);
+    polyf2 = polyfit(x2,y2,1); polyv2 = polyval(polyf2,x2);
+    x3 = A{3}(:,42); y3 = A{3}(:,10);
+    polyf3 = polyfit(x3,y3,1); polyv3 = polyval(polyf3,x3);
+    x4 = A{4}(:,42); y4 = A{4}(:,10);
+    polyf4 = polyfit(x4,y4,1); polyv4 = polyval(polyf4,x4);
+    x5 = A{5}(:,42); y5 = A{5}(:,10);
+    polyf5 = polyfit(x5,y5,1); polyv5 = polyval(polyf5,x5);
+    x6 = A{6}(:,42); y6 = A{6}(:,10);
+    polyf6 = polyfit(x6,y6,1); polyv6 = polyval(polyf6,x6);
+    x7 = A{7}(:,42); y7 = A{7}(:,10);
+    polyf7 = polyfit(x7,y7,1); polyv7 = polyval(polyf7,x7);
+    x8 = A{8}(:,42); y8 = A{8}(:,10);
+    polyf8 = polyfit(x8,y8,1); polyv8 = polyval(polyf8,x8);
+    x9 = A{9}(:,42); y9 = A{9}(:,10);
+    polyf9 = polyfit(x9,y9,1); polyv9 = polyval(polyf9,x9);
+    
+    h1 = plot(x1,y1,setMarker{1},x2,y2,setMarker{2},x3,y3,setMarker{3},x4,y4,setMarker{4},x5,y5,setMarker{5},x6,y6,setMarker{6},x7,y7,setMarker{7},x8,y8,setMarker{8},x9,y9,setMarker{9});
+    hold on;
+    h2 = plot(x1,polyv1,x2,polyv2,x3,polyv3,x4,polyv4,x5,polyv5,x6,polyv6,x7,polyv7,x8,polyv8,x9,polyv9);
+    %title('{\bf FFT: Single-Sided Amplitude Spectrum of y(t)}')
+    xlabel('{\bf Gross thrust (N)}')
+    ylabel('{\bf Towing force (N)}')
+    grid on;
+    box on;
+    axis square;
+    
+    % Line, colors and markers
+    setMarkerSize = 7;
+    setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
+    setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
+    setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
+    setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
+    setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
+    setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
+    setSpeed=7;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
+    setSpeed=8;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
+    setSpeed=9;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
+    
+     % Linear curve fit
+    setSpeed=1;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle','-.','linewidth',1);
+    setSpeed=2;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle','-.','linewidth',1);
+    setSpeed=3;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle','-.','linewidth',1);
+    setSpeed=4;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle','-.','linewidth',1);
+    setSpeed=5;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle','-.','linewidth',1);
+    setSpeed=6;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle','-.','linewidth',1);
+    setSpeed=7;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle','-.','linewidth',1);
+    setSpeed=8;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle','-.','linewidth',1);
+    setSpeed=9;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle','-.','linewidth',1);
+    
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Legend
+    %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+    hleg1 = legend('Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+    set(hleg1,'Location','NorthEast');
+    set(hleg1,'Interpreter','none');
+    %legend boxoff;
+    
+end
+
+% -------------------------------------------------------------------------
+% Clear variables
+% -------------------------------------------------------------------------
+%clearvars timeData Raw_CH_0_Speed Raw_CH_1_LVDTFwd Raw_CH_2_LVDTAftRaw_CH_3_Drag  Raw_CH_4_PortRPM Raw_CH_5_StbdRPM Raw_CH_6_PortThrust Raw_CH_7_PortTorque Raw_CH_8_StbdThrust Raw_CH_9_StbdTorque Raw_CH_10_PortKP Raw_CH_11_StbdKP
+%clearvars Time_Zero Time_CF CH_0_Zero CH_0_CF CH_1_Zero CH_1_CF CH_2_Zero CH_2_CF CH_3_Zero CH_3_CF CH_4_Zero CH_4_CF CH_5_Zero CH_5_CF CH_6_Zero CH_6_CF CH_7_Zero CH_7_CF CH_8_Zero CH_8_CF CH_9_Zero CH_9_CF CH_10_Zero CH_10_CF CH_11_Zero CH_11_CF
 
 
 % -------------------------------------------------------------------------
