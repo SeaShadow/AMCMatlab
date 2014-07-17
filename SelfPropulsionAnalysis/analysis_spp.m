@@ -423,8 +423,8 @@ if exist('resultsArraySPP.dat', 'file') == 0
         %[11] PORT: Shaft Speed           (RPM)
         %[12] STBD: Shaft Speed           (RPM)
         %[13] PORT: Thrust                (N)
-        %[14] PORT: Torque                (Nm)
-        %[15] STBD: Thrust                (N)
+        %[14] STBD: Thrust                (N)
+        %[15] PORT: Torque                (Nm)
         %[16] STBD: Torque                (Nm)
         %[17] PORT: Kiel probe            (V)
         %[18] STBD: Kiel probe            (V)
@@ -488,8 +488,8 @@ if exist('resultsArraySPP.dat', 'file') == 0
         
         % Thrust and torque data
         resultsArraySPP(k, 13) = abs(CH_6_PortThrust_Mean/1000)*9.806;                  % Thrust PORT (N)
-        resultsArraySPP(k, 14) = CH_7_PortTorque_Mean;                                  % Torque PORT (Nm)
-        resultsArraySPP(k, 15) = abs(CH_8_StbdThrust_Mean/1000)*9.806;                  % Thrust STBD (N)
+        resultsArraySPP(k, 14) = abs(CH_8_StbdThrust_Mean/1000)*9.806;                  % Thrust STBD (N)
+        resultsArraySPP(k, 15) = CH_7_PortTorque_Mean;                                  % Torque PORT (Nm)
         resultsArraySPP(k, 16) = CH_9_StbdTorque_Mean;                                  % Torque STBD (Nm)
         
         % Kie; probe data
