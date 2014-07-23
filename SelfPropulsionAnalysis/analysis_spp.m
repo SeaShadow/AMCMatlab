@@ -152,8 +152,9 @@ MS_PumpMaxArea = 0.001;
 
 % Wake fractions (from self-propulsion test) for 9 speeds
 % Order of wake fractions is based on Fr=0.24, 0.26, 0.28 to 0.40 
-PortWakeFractions = [0.798 0.799 0.800 0.802 0.803 0.801 0.801 0.802 0.806];
-StbdWakeFractions = [0.803 0.803 0.805 0.807 0.808 0.807 0.807 0.808 0.812];
+% See Excel file: Run Sheet - Self-Propulsion Test.xlsx
+PortWakeFractions = [0.781 0.780 0.782 0.783 0.783 0.779 0.780 0.778 0.780];
+StbdWakeFractions = [0.784 0.783 0.785 0.784 0.786 0.780 0.782 0.780 0.782];
 
 %# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 %# CONDITION: 1,500 tonnes, level static trim, trim tab at 5 degrees
@@ -608,7 +609,7 @@ if exist('resultsArraySPP.dat', 'file') == 0
         PortInlVel = resultsArraySPP(k, 38);         % Port inlet velocity (m/s)
         StbdInlVel = resultsArraySPP(k, 39);         % Stbd inlet velocity (m/s)
         
-        % Gross thrust = TG = ? Q (vj - vi)
+        % Gross thrust = TG = \rho Q (vj - vi)
         TG1Port = PortMfr*(PortJetVel-PortInlVel);
         TG1Stbd = StbdMfr*(StbdJetVel-StbdInlVel);
         
@@ -616,7 +617,7 @@ if exist('resultsArraySPP.dat', 'file') == 0
         resultsArraySPP(k, 41)  = TG1Stbd;           % STBD: Gross thrust, TG (N)
         resultsArraySPP(k, 42)  = TG1Port+TG1Stbd;   % TOTAL gross thrust, TG (N)
         
-        % Gross thrust = TG = ? Q vj
+        % Gross thrust = TG = \rho Q vj
         TG2Port  = PortMfr*PortJetVel;
         TG2Stbd  = StbdMfr*StbdJetVel;
         
@@ -1082,6 +1083,7 @@ else
     disp('!Plotting not possible as dataset is not complete (i.e. data for 9 speeds)!');
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 end
+
 
 % -------------------------------------------------------------------------
 % Clear variables
