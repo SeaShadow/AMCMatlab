@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Self-Propulsion Test Analysis
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  June 30, 2014
 %#
@@ -252,7 +252,7 @@ end
 % R = results;            % Results array
 % R(all(R==0,2),:) = [];  % Remove Zero rows from array
 % [m,n] = size(R);        % Array dimensions
-% 
+%
 % % Split results array based on column 28 (test condition)
 % A = arrayfun(@(x) R(R(:,9) == x, :), unique(R(:,9)), 'uniformoutput', false);
 % [ma,na] = size(A);      % Array dimensions
@@ -335,7 +335,7 @@ for j=1:ma
             avgResultsArray(j, l) = mean(A{j}(:,l));
         end
     end
-
+    
 end
 
 % Adjust averaged results array -------------------------------------------

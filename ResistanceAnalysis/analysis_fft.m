@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Resistance Test Analysis - Frequency Analysis of Heave Data
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date:         March 20, 2014
 %#
@@ -10,7 +10,7 @@
 %#
 %# Runs TSI   :  Runs 01-35   Turbulence Studs Investigation               (TSI)
 %#               |__Disp. & trim:   1,500t, level static trim
-%#               |__Conditions:     1 = No turbulence studs 
+%#               |__Conditions:     1 = No turbulence studs
 %#                                  2 = First row of turbulence studs
 %#                                  3 = First and second row of turbulence studs
 %#
@@ -41,7 +41,7 @@
 %#
 %# Description    :  Turbulence studs investigation, trim tab optimisation and
 %#                   standard resistance test using a single catamaran demihull.
-%#                   Form factor estimation has been carried out using prohaska 
+%#                   Form factor estimation has been carried out using prohaska
 %#                   method as described by ITTC 7.2-02-02-01.
 %#
 %# ITTC Guidelines:  7.5-02-02-01
@@ -122,7 +122,7 @@ headerlinesZeroAndCalib = 16;  % Number of headerlines to zero and calibration f
 startSamplePos    = 1;
 
 % X seconds x sample frequency = X x FS = XFS samples (from end)
-cutSamplesFromEnd = 0;   
+cutSamplesFromEnd = 0;
 
 %# ------------------------------------------------------------------------
 %# END: Omit first 10 seconds of data due to acceleration
@@ -176,43 +176,43 @@ for k=startRun:endRun
     %# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
     zAndCFData = importdata(filename, ' ', headerlines);
     zAndCF     = zAndCFData.data;
-
+    
     %# Calibration factors and zeros
     ZeroAndCalibData = importdata(filename, ' ', headerlinesZeroAndCalib);
     ZeroAndCalib     = ZeroAndCalibData.data;
-
+    
     %# Time series
     AllRawChannelData = importdata(filename, ' ', headerlines);
-
+    
     %# Create new variables in the base workspace from those fields.
     vars = fieldnames(AllRawChannelData);
     for i = 1:length(vars)
-       assignin('base', vars{i}, AllRawChannelData.(vars{i}));
+        assignin('base', vars{i}, AllRawChannelData.(vars{i}));
     end
-
+    
     % /////////////////////////////////////////////////////////////////////
     % START: CREATE PLOTS AND RUN DIRECTORY
     % ---------------------------------------------------------------------
-
+    
     %# _PLOTS directory
     fPath = '_plots/';
     if isequal(exist(fPath, 'dir'),7)
         % Do nothing as directory exists
-    else    
+    else
         mkdir(fPath);
-    end    
+    end
     
     %# Averaged directory
     fPath = sprintf('_plots/%s', '_fft');
     if isequal(exist(fPath, 'dir'),7)
         % Do nothing as directory exists
-    else    
+    else
         mkdir(fPath);
-    end    
+    end
     
     % ---------------------------------------------------------------------
     % END: CREATE PLOTS AND RUN DIRECTORY
-    % ///////////////////////////////////////////////////////////////////// 
+    % /////////////////////////////////////////////////////////////////////
     
     
     % /////////////////////////////////////////////////////////////////////
@@ -239,20 +239,20 @@ for k=startRun:endRun
     
     %# --------------------------------------------------------------------
     %# END: Columns as variables (RAW DATA)
-    % /////////////////////////////////////////////////////////////////////  
-   
+    % /////////////////////////////////////////////////////////////////////
+    
     % /////////////////////////////////////////////////////////////////////
     % START: REAL UNITS COVNERSION
-    % ---------------------------------------------------------------------    
+    % ---------------------------------------------------------------------
     
     [CH_0_Speed CH_0_Speed_Mean]     = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
     [CH_1_LVDTFwd CH_1_LVDTFwd_Mean] = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
     [CH_2_LVDTAft CH_2_LVDTAft_Mean] = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
-    [CH_3_Drag CH_3_Drag_Mean]       = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);    
+    [CH_3_Drag CH_3_Drag_Mean]       = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);
     
     % ---------------------------------------------------------------------
     % END: REAL UNITS COVNERSION
-    % /////////////////////////////////////////////////////////////////////       
+    % /////////////////////////////////////////////////////////////////////
     
     
     %# ********************************************************************
@@ -261,11 +261,11 @@ for k=startRun:endRun
     
     %# Create FFT plots and PNG images
     if k > 99
-       runno = name(3:5);
-       name  = name(2:5);
+        runno = name(3:5);
+        name  = name(2:5);
     else
-       runno = name(3:4);
-       name  = name(2:5);
+        runno = name(3:4);
+        name  = name(2:5);
     end
     
     [m,n] = size(timeData); % Array dimensions
@@ -274,7 +274,7 @@ for k=startRun:endRun
     for j=1:m
         heaveData(j,1) = (CH_1_LVDTFwd(j)+CH_2_LVDTAft(j))/2;
     end
-
+    
     Fs = 200;                     % Sampling frequency
     T = 1/Fs;                     % Sample time
     L = m;                        % Length of signal
@@ -284,15 +284,15 @@ for k=startRun:endRun
     
     % Plot: With noise
     n        = 0.7*sin(2*pi*50*t) + sin(2*pi*120*t);
-    y        = n + heaveData;    
+    y        = n + heaveData;
     filename = sprintf('Run_%s_LVDT_Fwd_Noise', runno);
     fft_plot(Fs,timeData,y,1,length(y),filename,name);
-
+    
     % Plot: No noise
     y        = heaveData;
     filename = sprintf('Run_%s_LVDT_Fwd', runno);
-    fft_plot(Fs,timeData,y,1,length(y),filename,name);    
-
+    fft_plot(Fs,timeData,y,1,length(y),filename,name);
+    
     
     
     
@@ -304,7 +304,7 @@ for k=startRun:endRun
     %# ********************************************************************
     
     figurename = sprintf('%s (averaged):: 1,500 and 1,804 tonnes, level, Run %s to %s', testName, num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');    
+    f = figure('Name',figurename,'NumberTitle','off');
     
     Fs = 200;                     % Sampling frequency
     T = 1/Fs;                     % Sample time
@@ -312,7 +312,7 @@ for k=startRun:endRun
     t = (0:L-1)*T;                % Time vector
     
     % Sum of a 50 Hz sinusoid and a 120 Hz sinusoid
-    %x = 0.7*sin(2*pi*50*t) + sin(2*pi*120*t); 
+    %x = 0.7*sin(2*pi*50*t) + sin(2*pi*120*t);
     %y = x + 2*randn(size(t));    % Sinusoids plus noise
     
     x = timeData;
@@ -325,7 +325,7 @@ for k=startRun:endRun
     
     %# Single-Sided Amplitude Spectrum of y(t) ----------------------------
     subplot(1,2,1)
-
+    
     plot(x,y)
     title('{\bf Signal}')
     xlabel('{\bf Time (seconds)}')
@@ -336,39 +336,39 @@ for k=startRun:endRun
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]); 
+    set(gcf,'Color',[1,1,1]);
     
     % Plot single-sided amplitude spectrum.
     NFFT = 2^nextpow2(L); % Next power of 2 from length of y
     Y = fft(y,NFFT)/L;
     f = Fs/2*linspace(0,1,NFFT/2+1);
-
-    %# Single-Sided Amplitude Spectrum of y(t) ----------------------------    
+    
+    %# Single-Sided Amplitude Spectrum of y(t) ----------------------------
     subplot(1,2,2)
-
-    plot(f,2*abs(Y(1:NFFT/2+1))) 
+    
+    plot(f,2*abs(Y(1:NFFT/2+1)))
     title('{\bf Single-Sided Amplitude Spectrum of y(t)}')
     xlabel('{\bf Frequency (Hz)}')
     ylabel('{\bf |Y(f)|}')
     grid on;
     box on;
     axis square;
-
+    
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');   
+        'HorizontalAlignment', 'center');
     
 end

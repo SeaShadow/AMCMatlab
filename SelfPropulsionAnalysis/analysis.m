@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Self-Propulsion Test Analysis
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  November 12, 2013
 %#
@@ -113,7 +113,7 @@ headerlinesZeroAndCalib = 33;  % Number of headerlines to zero and calibration f
 startSamplePos    = 1;
 
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from end)
-cutSamplesFromEnd = 0;   
+cutSamplesFromEnd = 0;
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -147,13 +147,13 @@ endRun   = 110;      % Stop at run y
 % elseif any(RunNosPort==k)
 %     disp('PORT');
 % elseif any(RunNosComb==k)
-%     disp('COMBINED');    
+%     disp('COMBINED');
 % elseif any(RunNosStbd==k)
-%     disp('STBD');    
+%     disp('STBD');
 % elseif any(RunNosStat==k)
-%     disp('STATIC');    
+%     disp('STATIC');
 % else
-%     disp('OTHER');        
+%     disp('OTHER');
 % end
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -181,7 +181,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# ////////////////////////////////////////////////////////////////////////
 
 resultsArray = [];
-%w = waitbar(0,'Processed run files'); 
+%w = waitbar(0,'Processed run files');
 for k=startRun:endRun
     
     %# Allow for 1 to become 01 for run numbers
@@ -191,22 +191,22 @@ for k=startRun:endRun
         filename = sprintf('%s%s.run\\R%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
     end
     [pathstr, name, ext] = fileparts(filename);     % Get file details like path, filename and extension
-
+    
     %# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
     zAndCFData = importdata(filename, ' ', headerlines);
     zAndCF     = zAndCFData.data;
-
+    
     %# Calibration factors and zeros
     ZeroAndCalibData = importdata(filename, ' ', headerlinesZeroAndCalib);
     ZeroAndCalib     = ZeroAndCalibData.data;
-
+    
     %# Time series
     AllRawChannelData = importdata(filename, ' ', headerlines);
-
+    
     %# Create new variables in the base workspace from those fields.
     vars = fieldnames(AllRawChannelData);
     for i = 1:length(vars)
-       assignin('base', vars{i}, AllRawChannelData.(vars{i}));
+        assignin('base', vars{i}, AllRawChannelData.(vars{i}));
     end
     
     % /////////////////////////////////////////////////////////////////////
@@ -222,12 +222,12 @@ for k=startRun:endRun
     end
     
     %# RUN directory
-%     fPath = sprintf('_plots/%s', name(1:3));
-%     if isequal(exist(fPath, 'dir'),7)
-%         % Do nothing as directory exists
-%     else
-%         mkdir(fPath);
-%     end
+    %     fPath = sprintf('_plots/%s', name(1:3));
+    %     if isequal(exist(fPath, 'dir'),7)
+    %         % Do nothing as directory exists
+    %     else
+    %         mkdir(fPath);
+    %     end
     
     % ---------------------------------------------------------------------
     % END: CREATE PLOTS AND RUN DIRECTORY
@@ -246,7 +246,7 @@ for k=startRun:endRun
     Raw_CH_8_StbdThrust  = data(:,10);       % Starboard thrust
     Raw_CH_9_StbdTorque  = data(:,11);      % Starboard torque
     Raw_CH_9_PortKP      = data(:,12);      % Port kiel probe
-    Raw_CH_10_StbdKP     = data(:,13);      % Starboard kiel probe  
+    Raw_CH_10_StbdKP     = data(:,13);      % Starboard kiel probe
     
     %# Zeros and calibration factors for each channel
     Time_Zero  = ZeroAndCalib(1);
@@ -275,44 +275,44 @@ for k=startRun:endRun
     CH_10_CF   = ZeroAndCalib(24);
     CH_11_Zero = ZeroAndCalib(25);
     CH_11_CF   = ZeroAndCalib(26);
-        
+    
     % Real units
     [CH_0_Speed CH_0_Speed_Mean]           = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
     [CH_1_LVDTFwd CH_1_LVDTFwd_Mean]       = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
     [CH_2_LVDTAft CH_2_LVDTAft_Mean]       = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
-    [CH_3_Drag CH_3_Drag_Mean]             = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);       
+    [CH_3_Drag CH_3_Drag_Mean]             = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);
     [CH_6_PortThrust CH_6_PortThrust_Mean] = analysis_realunits(Raw_CH_6_PortThrust,CH_6_Zero,CH_6_CF);
     [CH_7_PortTorque CH_7_PortTorque_Mean] = analysis_realunits(Raw_CH_7_PortTorque,CH_7_Zero,CH_7_CF);
     [CH_8_StbdThrust CH_8_StbdThrust_Mean] = analysis_realunits(Raw_CH_8_StbdThrust,CH_8_Zero,CH_8_CF);
     [CH_9_StbdTorque CH_9_StbdTorque_Mean] = analysis_realunits(Raw_CH_9_StbdTorque,CH_9_Zero,CH_9_CF);
     [RPMStbd RPMPort]                      = analysis_rpm(k,name,Fs,timeData,Raw_CH_5_StbdRPM,Raw_CH_4_PortRPM);
     
-   
+    
     % /////////////////////////////////////////////////////////////////////
     % DISPLAY RESULTS
     % /////////////////////////////////////////////////////////////////////
     
     %# Add results to dedicated array for simple export
-    %# Results array columns: 
-        %[1]  Run No.
-        %[2]  FS                (Hz)
-        %[3]  No. of samples    (-)
-        %[4]  Record time       (s)
-        %[5]  Speed             (Kg/s)
-        %[6]  Forward LVDT      (mm)
-        %[7]  Aft LVDT          (mm)
-        %[8]  Drag              (g)
-        %[9]  Shaft Speed PORT  (RPM)
-        %[10] Shaft Speed STBD  (RPM)
-        %[11] Thrust PORT       (N)
-        %[12] Torque PORT       (Nm)
-        %[13] Thrust STBD       (N)
-        %[14] Torque STBD       (Nm)        
-        %[15] Kiel probe PORT   (V)
-        %[16] Kiel probe STBD   (V)   
-        
+    %# Results array columns:
+    %[1]  Run No.
+    %[2]  FS                (Hz)
+    %[3]  No. of samples    (-)
+    %[4]  Record time       (s)
+    %[5]  Speed             (Kg/s)
+    %[6]  Forward LVDT      (mm)
+    %[7]  Aft LVDT          (mm)
+    %[8]  Drag              (g)
+    %[9]  Shaft Speed PORT  (RPM)
+    %[10] Shaft Speed STBD  (RPM)
+    %[11] Thrust PORT       (N)
+    %[12] Torque PORT       (Nm)
+    %[13] Thrust STBD       (N)
+    %[14] Torque STBD       (Nm)
+    %[15] Kiel probe PORT   (V)
+    %[16] Kiel probe STBD   (V)
+    
     resultsArray(k, 1)  = k;                                                     % Run No.
-    resultsArray(k, 2)  = round(length(timeData) / timeData(end));               % FS (Hz)    
+    resultsArray(k, 2)  = round(length(timeData) / timeData(end));               % FS (Hz)
     resultsArray(k, 3)  = length(timeData);                                      % Number of samples
     recordTime = length(timeData) / (round(length(timeData) / timeData(end)));
     resultsArray(k, 4)  = round(recordTime);                                     % Record time in seconds
@@ -321,47 +321,47 @@ for k=startRun:endRun
     resultsArray(k, 6)  = CH_1_LVDTFwd_Mean;                                     % Forward LVDT (mm)
     resultsArray(k, 7)  = CH_2_LVDTAft_Mean;                                     % Aft LVDT (mm)
     resultsArray(k, 8)  = CH_3_Drag_Mean;                                        % Drag (g)
-
+    
     resultsArray(k, 9)  = RPMPort;                                               % Shaft Speed PORT (RPM)
     resultsArray(k, 10) = RPMStbd;                                               % Shaft Speed STBD (RPM)
-
+    
     resultsArray(k, 11) = abs(CH_6_PortThrust_Mean/1000)*9.806;                  % Thrust PORT (N)
     resultsArray(k, 12) = CH_7_PortTorque_Mean;                                  % Torque PORT (Nm)
     resultsArray(k, 13) = abs(CH_8_StbdThrust_Mean/1000)*9.806;                  % Thrust STBD (N)
-    resultsArray(k, 14) = CH_9_StbdTorque_Mean;                                  % Torque STBD (Nm)  
+    resultsArray(k, 14) = CH_9_StbdTorque_Mean;                                  % Torque STBD (Nm)
     
     resultsArray(k, 15)  = mean(Raw_CH_9_PortKP);                                % Kiel probe PORT (V)
-    resultsArray(k, 16)  = mean(Raw_CH_10_StbdKP);                               % Kiel probe STBD (V)    
+    resultsArray(k, 16)  = mean(Raw_CH_10_StbdKP);                               % Kiel probe STBD (V)
     
     %# Prepare strings for display
     name = name(1:3);
-
-%     massflowrate     = sprintf('%s:: Mass flow rate: %s [Kg/s]', name, sprintf('%.2f',abs(flowrate)));
-%     kielprobestbd    = sprintf('%s:: Kiel probe STBD (mean): %s [V]', name, sprintf('%.2f',mean(Raw_CH_1_KPStbd)));
-%     kielprobeport    = sprintf('%s:: Kiel probe PORT (mean): %s [V]', name, sprintf('%.2f',mean(Raw_CH_2_KPPort)));
-%     thruststbd       = sprintf('%s:: Thrust STBD (mean): %s [N]', name, sprintf('%.2f',abs(((CH_7_ThrustStbd_Mean/1000)*9.806))));
-%     thrustport       = sprintf('%s:: Thrust PORT (mean): %s [N]', name, sprintf('%.2f',abs(((CH_8_ThrustPort_Mean/1000)*9.806))));
-%     torquestbd       = sprintf('%s:: Torque STBD (mean): %s [Nm]', name, sprintf('%.2f',abs(CH_9_TorqueStbd_Mean)));
-%     torqueport       = sprintf('%s:: Torque PORT (mean): %s [Nm]', name, sprintf('%.2f',abs(CH_10_TorquePort_Mean)));
-
-    shaftrpmport     = sprintf('%s:: Shaft speed PORT: %s [RPM]', name, sprintf('%.0f',RPMPort));  
+    
+    %     massflowrate     = sprintf('%s:: Mass flow rate: %s [Kg/s]', name, sprintf('%.2f',abs(flowrate)));
+    %     kielprobestbd    = sprintf('%s:: Kiel probe STBD (mean): %s [V]', name, sprintf('%.2f',mean(Raw_CH_1_KPStbd)));
+    %     kielprobeport    = sprintf('%s:: Kiel probe PORT (mean): %s [V]', name, sprintf('%.2f',mean(Raw_CH_2_KPPort)));
+    %     thruststbd       = sprintf('%s:: Thrust STBD (mean): %s [N]', name, sprintf('%.2f',abs(((CH_7_ThrustStbd_Mean/1000)*9.806))));
+    %     thrustport       = sprintf('%s:: Thrust PORT (mean): %s [N]', name, sprintf('%.2f',abs(((CH_8_ThrustPort_Mean/1000)*9.806))));
+    %     torquestbd       = sprintf('%s:: Torque STBD (mean): %s [Nm]', name, sprintf('%.2f',abs(CH_9_TorqueStbd_Mean)));
+    %     torqueport       = sprintf('%s:: Torque PORT (mean): %s [Nm]', name, sprintf('%.2f',abs(CH_10_TorquePort_Mean)));
+    
+    shaftrpmport     = sprintf('%s:: Shaft speed PORT: %s [RPM]', name, sprintf('%.0f',RPMPort));
     shaftrpmstbd     = sprintf('%s:: Shaft speed STBD: %s [RPM]', name, sprintf('%.0f',RPMStbd));
-
-%     %# Display strings
-%     disp(massflowrate);  
-%     %disp('-------------------------------------------------');  
-%     disp(kielprobestbd);
-%     disp(kielprobeport);
-%     %disp('-------------------------------------------------');  
-%     disp(thruststbd);
-%     disp(thrustport);
-%     %disp('-------------------------------------------------');  
-%     disp(torquestbd);
-%     disp(torqueport);        
-
+    
+    %     %# Display strings
+    %     disp(massflowrate);
+    %     %disp('-------------------------------------------------');
+    %     disp(kielprobestbd);
+    %     disp(kielprobeport);
+    %     %disp('-------------------------------------------------');
+    %     disp(thruststbd);
+    %     disp(thrustport);
+    %     %disp('-------------------------------------------------');
+    %     disp(torquestbd);
+    %     disp(torqueport);
+    
     disp(shaftrpmport);
     disp(shaftrpmstbd);
-
+    
     disp('/////////////////////////////////////////////////');
     
     %wtot = endRun - startRun;
@@ -376,7 +376,7 @@ end
 % START: Write results to CVS
 % ---------------------------------------------------------------------
 M = resultsArray;
-csvwrite('resultsArray.dat', M)                                     % Export matrix M to a file delimited by the comma character      
+csvwrite('resultsArray.dat', M)                                     % Export matrix M to a file delimited by the comma character
 dlmwrite('resultsArray.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 % ---------------------------------------------------------------------
 % END: Write results to CVS

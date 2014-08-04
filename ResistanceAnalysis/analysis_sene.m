@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Resistance Test Analysis - Sensor Errors / Statistics
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  February 13, 2014
 %#
@@ -10,7 +10,7 @@
 %#
 %# Runs TSI   :  Runs 01-35   Turbulence Studs Investigation               (TSI)
 %#               |__Disp. & trim:   1,500t, level static trim
-%#               |__Conditions:     1 = No turbulence studs 
+%#               |__Conditions:     1 = No turbulence studs
 %#                                  2 = First row of turbulence studs
 %#                                  3 = First and second row of turbulence studs
 %#
@@ -39,8 +39,8 @@
 %#
 %# Speeds (FR)    :  0.1-0.47 (5.9-27.6 knots)
 %#
-%# Description    :  Uncertainty analysis for multiple tests as outlined 
-%#                   by ITTC including resistance, speed, sinkage and 
+%# Description    :  Uncertainty analysis for multiple tests as outlined
+%#                   by ITTC including resistance, speed, sinkage and
 %#                   trim measurements.
 %#
 %# ITTC Guidelines:  7.5-02-02-01
@@ -204,7 +204,7 @@ end
 
 
 % *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED 
+% START: PLOT SWITCHES: 1 = ENABLED
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
@@ -212,7 +212,7 @@ enableCompOverlayPlot = 0;      % Comparison overlay plots
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
-% *************************************************************************  
+% *************************************************************************
 
 
 %# ////////////////////////////////////////////////////////////////////////
@@ -249,8 +249,8 @@ calFileArray = {
     '01_Ch1_FwdLVDT_ Gain 2.5 Filter 1Hz 290813_37.cal';
     '01_Ch1_FwdLVDT_ Gain 2.5 Filter 1Hz 300813_38.cal';
     '01_Ch1_FwdLVDT_ Gain 2.5 Filter 1Hz 020913_39.cal';
-    '01_Ch1_FwdLVDT_ Gain 2.5 Filter 1Hz 030913_40.cal'    
-};
+    '01_Ch1_FwdLVDT_ Gain 2.5 Filter 1Hz 030913_40.cal'
+    };
 
 %# ------------------------------------------------------------------------
 %# Loop through calibration files
@@ -283,36 +283,36 @@ for k=startRun:endRun
         setTitle      = 'Fwd LVDT';
         setSensorType = 3;
     else
-        setTitle      = 'Undefined title';        
+        setTitle      = 'Undefined title';
         setSensorType = 0;
     end
-
+    
     %# Allow for 1 to become 01 for run numbers
     filename = sprintf('%sDAQ CAL Files\\%s', runfilespath, currentFileName{1});
-
+    
     [pathstr, name, ext] = fileparts(filename);     % Get file details like path, filename and extension
     
     %# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
     zAndCFData = importdata(filename, ' ', headerlines);
     zAndCF     = zAndCFData.data;
-
+    
     %# Calibration factors and zeros
     ZeroAndCalibData = importdata(filename, ' ', headerlinesZeroAndCalib);
     ZeroAndCalib     = ZeroAndCalibData.data;
-
+    
     %# Time series
     AllRawChannelData = importdata(filename, ' ', headerlines);
-
+    
     %# Create new variables in the base workspace from those fields.
     vars = fieldnames(AllRawChannelData);
     for i = 1:length(vars)
-       assignin('base', vars{i}, AllRawChannelData.(vars{i}));
+        assignin('base', vars{i}, AllRawChannelData.(vars{i}));
     end
     
     %# ********************************************************************
     %# START: Columns as variables (RAW DATA)
     %# --------------------------------------------------------------------
-
+    
     % Access variables using colValue{1}, colValue{2}, etc.
     colValue{k}   = data(:,1);   % Value
     colVoltage{k} = data(:,2);   % Voltage
@@ -352,7 +352,7 @@ for k=startRun:endRun
     
     % Define valiables
     fitSlopeVvsFD     = polyf(1,1);    % Slope
-    fitInterceptVvsFD = polyf(1,2);    % Intercept    
+    fitInterceptVvsFD = polyf(1,2);    % Intercept
     r2VvsFD           = rsq;           % Compute simple R2
     r2AdjVvsFD        = rsq_adj;       % Compute simple R2 adjusted for degrees of freedom
     
@@ -372,7 +372,7 @@ for k=startRun:endRun
     rsq_adj = 1 - SSresid/SStotal * (length(y)-1)/(length(y)-length(polyf));
     
     fitSlopeVvsGD     = polyf(1,1);    % Slope
-    fitInterceptVvsGD = polyf(1,2);    % Intercept    
+    fitInterceptVvsGD = polyf(1,2);    % Intercept
     r2VvsGD           = rsq;           % Compute simple R2
     r2AdjVvsGD        = rsq_adj;       % Compute simple R2 adjusted for degrees of freedom
     
@@ -404,16 +404,16 @@ for k=startRun:endRun
     %X = [ones(size(x)) x];
     %[b,bint,r,rint,stats] = regress(y,X);
     %rsquared = stats(1)
-
+    
     % Linear regression model #1
-%     a    = fitSlopeVvsFD;
-%     Sxx  = sum((x-mean(x)).^2);
-%     Syy  = sum((y-mean(y)).^2);
-%     Sxy  = sum((x-mean(x)).*(y-mean(y)));
-%     SSE  = Syy-a*Sxy;
-%     S2yx = SSE/(n-2);
-%     Syx = sqrt(SSE/(n-2));
-   
+    %     a    = fitSlopeVvsFD;
+    %     Sxx  = sum((x-mean(x)).^2);
+    %     Syy  = sum((y-mean(y)).^2);
+    %     Sxy  = sum((x-mean(x)).*(y-mean(y)));
+    %     SSE  = Syy-a*Sxy;
+    %     S2yx = SSE/(n-2);
+    %     Syx = sqrt(SSE/(n-2));
+    
     % Linear regression model #2 (better as using existing functionality))
     % See: http://www.mathworks.com.au/help/stats/linearmodel.fit.html
     lm = LinearModel.fit(x,y,'linear');
@@ -425,10 +425,10 @@ for k=startRun:endRun
     %# Results array columns:
     %[1]  Calibration file no                                           (-)
     %[2]  Sensor type                                                   (-)
-          % 1 = Load cell
-          % 2 = Aft LVDT
-          % 3 = Aft LVDT
-          
+    % 1 = Load cell
+    % 2 = Aft LVDT
+    % 3 = Aft LVDT
+    
     % Error
     %[3]  Error, mean                                                   (-)
     %[4]  Error, standard deviation                                     (-)
@@ -495,7 +495,7 @@ dataFwdLVDT  = A{3};
 % -------------------------------------------------------------------------
 
 M = resultsArray;
-csvwrite('resultsArraySensorError.dat', M)                                     % Export matrix M to a file delimited by the comma character      
+csvwrite('resultsArraySensorError.dat', M)                                     % Export matrix M to a file delimited by the comma character
 dlmwrite('resultsArraySensorError.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 
 % -------------------------------------------------------------------------
@@ -507,7 +507,7 @@ dlmwrite('resultsArraySensorError.txt', M, 'delimiter', '\t', 'precision', 4)  %
 %# Comparison Overlay Plotting
 %# ////////////////////////////////////////////////////////////////////////
 if enableCompOverlayPlot == 1
-
+    
     %# ////////////////////////////////////////////////////////////////////
     %# Comparison Overlay Plotting: Load cell
     %# ////////////////////////////////////////////////////////////////////
@@ -761,7 +761,7 @@ if enableCompOverlayPlot == 1
     plotsavename = sprintf('_plots/%s/Fwd_LVDT_Calibration_Comparison_Plots.png', '_sensor_error_statistics');
     saveas(f, plotsavename);                % Save plot as PNG
     %close;
-
+    
 end
 
 %# ////////////////////////////////////////////////////////////////////////

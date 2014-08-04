@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Resistance Test Analysis - Establish wet/dry transom
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  November 12, 2013
 %#

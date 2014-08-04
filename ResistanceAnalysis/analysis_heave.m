@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Resistance Test Analysis - Heave Averaging Investigation
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  September 16, 2013
 %#
@@ -10,7 +10,7 @@
 %#
 %# Runs TSI   :  Runs 01-35   Turbulence Studs Investigation               (TSI)
 %#               |__Disp. & trim:   1,500t, level static trim
-%#               |__Conditions:     1 = No turbulence studs 
+%#               |__Conditions:     1 = No turbulence studs
 %#                                  2 = First row of turbulence studs
 %#                                  3 = First and second row of turbulence studs
 %#
@@ -41,7 +41,7 @@
 %#
 %# Description    :  Turbulence studs investigation, trim tab optimisation and
 %#                   standard resistance test using a single catamaran demihull.
-%#                   Form factor estimation has been carried out using prohaska 
+%#                   Form factor estimation has been carried out using prohaska
 %#                   method as described by ITTC 7.2-02-02-01.
 %#
 %# ITTC Guidelines:  7.5-02-02-01
@@ -144,7 +144,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# Read results DAT file
 %# -------------------------------------------------------------------------
 if exist('full_resistance_data.dat', 'file') == 2
-    %# Results array columns: 
+    %# Results array columns:
     %[1]  Run No.                                                                  (-)
     %[2]  FS                                                                       (Hz)
     %[3]  No. of samples                                                           (-)
@@ -193,7 +193,7 @@ if exist('full_resistance_data.dat', 'file') == 2
     %[46] LVDT (FWD): Standard deviation                                           (mm)
     %[47] LVDT (AFT): Standard deviation                                           (mm)
     %[48] DRAG: Standard deviation                                                 (g)
-
+    
     results = csvread('full_resistance_data.dat');
     
     %# Remove zero rows
@@ -267,7 +267,7 @@ for j=1:ma
     end
     if A{j}(1,28) == 13
         cond13 = A{j};
-    end    
+    end
 end
 
 %# *********************************************************************
@@ -312,7 +312,7 @@ testName = 'Heave Investigation';
 
 
 % *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED 
+% START: PLOT SWITCHES: 1 = ENABLED
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
@@ -320,12 +320,12 @@ enableHeaveMinMaxAvgPlot = 1; % Heave, min, max and averaged values
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
-% *************************************************************************  
+% *************************************************************************
 
 
 % *************************************************************************
 % 1,500 AND 1,804 TONNES: Heave, min, max and averages
-% *************************************************************************     
+% *************************************************************************
 if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
     
     startRun = 81;
@@ -335,11 +335,11 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     % Averaged values using data from all repeat runs
     % *********************************************************************
     figurename = sprintf('%s (using all repeat runs):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');   
+    f = figure('Name',figurename,'NumberTitle','off');
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,1)
-
+    
     if length(cond7) ~= 0
         x7 = cond7(:,11); y7 = cond7(:,12);
         x7avg = avgcond7(:,11); y7avg = avgcond7(:,12);
@@ -357,7 +357,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
         x9avg = avgcond9(:,11); y9avg = avgcond9(:,12);
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(cond10) ~= 0
         x10 = cond10(:,11); y10 = cond10(:,12);
         x10avg = avgcond10(:,11); y10avg = avgcond10(:,12);
@@ -375,7 +375,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
         x12avg = avgcond12(:,11); y12avg = avgcond12(:,12);
     else
         x12 = 0; y12 = 0;
-    end    
+    end
     
     h = plot(x7,y7,'*',x7avg,y7avg,'-',x8,y8,'+',x8avg,y8avg,'-',x9,y9,'x',x9avg,y9avg,'-',x10,y10,'o',x10avg,y10avg,'-',x11,y11,'s',x11avg,y11avg,'-',x12,y12,'d',x12avg,y12avg,'-','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
@@ -401,7 +401,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     set(gca,'XLim',[0.1 0.5]);
@@ -412,12 +412,12 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     %# Legend
     hleg1 = legend([h(1) h(3) h(5) h(7) h(9) h(11)],'Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
+    set(hleg1,'Interpreter','none');
     legend boxoff;
     
     % Model speed vs. model heave (mm) ------------------------------------
     subplot(1,2,2)
-
+    
     if length(avgcond7) ~= 0
         x7 = avgcond7(:,11); y7 = avgcond7(:,12);
     else
@@ -432,7 +432,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
         x9 = avgcond9(:,11); y9 = avgcond9(:,12);
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         x10 = avgcond10(:,11); y10 = avgcond10(:,12);
     else
@@ -447,7 +447,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
         x12 = avgcond12(:,11); y12 = avgcond12(:,12);
     else
         x12 = 0; y12 = 0;
-    end    
+    end
     
     h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'+',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
@@ -456,14 +456,14 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     axis square;
-
+    
     % Colors and markers
     set(h(1),'Color',[0 0 1],'LineStyle','--','linewidth',1);
     set(h(2),'Color',[0 0.5 0],'LineStyle','-.','linewidth',1);
     set(h(3),'Color',[1 0 0],'LineStyle','-.','linewidth',1);
     set(h(4),'Color',[0 0.75 0.75],'LineStyle','--','linewidth',1);
     set(h(5),'Color',[0.75 0 0.75],'LineStyle','-.','linewidth',1);
-    set(h(6),'Color',[0.75 0.75 0],'LineStyle','-.','linewidth',1);  
+    set(h(6),'Color',[0.75 0.75 0],'LineStyle','-.','linewidth',1);
     
     %# Line width
     %set(h(1),'linewidth',2);
@@ -474,30 +474,30 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     set(gca,'XTick',[0.1:0.05:0.5]);
     set(gca,'YLim',[-14 2]);
     set(gca,'YTick',[-14:2:2]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
-    legend boxoff;   
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');      
-      
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
@@ -526,7 +526,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     y10max    = minmaxcond10(:,4);
     y10avg    = minmaxcond10(:,5);
     x10avgall = avgcond10(:,11);
-    y10avgall = avgcond10(:,12);    
+    y10avgall = avgcond10(:,12);
     
     h = plot(x7,y7avg,'--*',x7avgall,y7avgall,':x',x10,y10avg,'--+',x10avgall,y10avgall,':o','MarkerSize',7);
     %hold on;
@@ -538,14 +538,14 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     %axis square;
-
+    
     %# Line width
     %set(h(1),'linewidth',1);
     %set(h(2),'linewidth',1);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     set(gca,'XLim',[0.1 0.5]);
@@ -556,7 +556,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg) min/max','Cond. 7: 1,500t (0 deg) All repeats','Cond. 10: 1,804t (0 deg) min/max','Cond. 10: 1,804t (0 deg) All repeats');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
+    set(hleg1,'Interpreter','none');
     legend boxoff;
     
     % Model speed vs. model heave (mm) ----------------------------------------
@@ -566,11 +566,11 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     y7min  = minmaxcond7(:,3);
     y7max  = minmaxcond7(:,4);
     y7avg  = minmaxcond7(:,5);
-
+    
     x10    = minmaxcond10(:,2);
     y10min = minmaxcond10(:,3);
     y10max = minmaxcond10(:,4);
-    y10avg = minmaxcond10(:,5);    
+    y10avg = minmaxcond10(:,5);
     
     h = plot(x7,y7min,'--*',x10,y10min,'-.x','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
@@ -579,14 +579,14 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     %axis square;
-
+    
     %# Line width
     %set(h(2),'linewidth',2);
-    %set(h(7),'linewidth',2);    
+    %set(h(7),'linewidth',2);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     set(gca,'XLim',[0.1 0.5]);
@@ -597,9 +597,9 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg) Min','Cond. 10: 1,804t (0 deg) Min');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
+    set(hleg1,'Interpreter','none');
     legend boxoff;
-
+    
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(3,2,3)
     
@@ -615,7 +615,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     y11max    = minmaxcond11(:,4);
     y11avg    = minmaxcond11(:,5);
     x11avgall = avgcond11(:,11);
-    y11avgall = avgcond11(:,12);    
+    y11avgall = avgcond11(:,12);
     
     h = plot(x8,y8avg,'--*',x8avgall,y8avgall,'-.x',x11,y11avg,'-.+',x11avgall,y11avgall,'--o','MarkerSize',7);
     %hold on;
@@ -627,14 +627,14 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     %axis square;
-
+    
     %# Line width
     %set(h(1),'linewidth',1);
     %set(h(2),'linewidth',1);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     set(gca,'XLim',[0.2 0.5]);
@@ -645,7 +645,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     %# Legend
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) min/max','Cond. 8: 1,500t (-0.5 deg) All repeats','Cond. 11: 1,804t (-0.5 deg) min/max','Cond. 11: 1,804t (-0.5 deg) All repeats');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
+    set(hleg1,'Interpreter','none');
     legend boxoff;
     
     % Model speed vs. model heave (mm) ----------------------------------------
@@ -668,14 +668,14 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     %axis square;
-
+    
     %# Line width
     %set(h(2),'linewidth',2);
-    %set(h(7),'linewidth',2);    
+    %set(h(7),'linewidth',2);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     set(gca,'XLim',[0.2 0.5]);
@@ -686,9 +686,9 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     %# Legend
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) Min','Cond. 11: 1,804t (-0.5 deg) Min');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
-    legend boxoff;     
-   
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
+    
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(3,2,5)
     
@@ -716,14 +716,14 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     %axis square;
-
+    
     %# Line width
     %set(h(1),'linewidth',1);
     %set(h(2),'linewidth',1);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     set(gca,'XLim',[0.2 0.5]);
@@ -734,7 +734,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     %# Legend
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) min/max','Cond. 9: 1,500t (0.5 deg) All repeats','Cond. 12: 1,804t (0.5 deg) min/max','Cond. 12: 1,804t (0.5 deg) All repeats');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
+    set(hleg1,'Interpreter','none');
     legend boxoff;
     
     % Model speed vs. model heave (mm) ----------------------------------------
@@ -757,14 +757,14 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     %axis square;
-
+    
     %# Line width
     %set(h(2),'linewidth',2);
-    %set(h(7),'linewidth',2);    
+    %set(h(7),'linewidth',2);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     set(gca,'XLim',[0.2 0.5]);
@@ -775,26 +775,26 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     %# Legend
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) Min','Cond. 12: 1,804t (0.5 deg) Min');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
-    legend boxoff;    
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');      
-      
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots_Min_Max.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
@@ -807,12 +807,12 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     % *********************************************************************
     figurename = sprintf('%s (curve fitting, level static trim):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
-
+    
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,1)
     
     % Degrees for curve fitting
-    poldegr = 7;    
+    poldegr = 7;
     
     x7        = minmaxcond7(:,2);
     y7min     = minmaxcond7(:,3);
@@ -832,7 +832,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     polyf10   = polyfit(x10,y10avg,poldegr); polyv10 = polyval(polyf10,x10);
     
     x10avgall = avgcond10(:,11);
-    y10avgall = avgcond10(:,12);    
+    y10avgall = avgcond10(:,12);
     
     h = plot(x7,y7avg,'*',x7avgall,y7avgall,'o',x7,polyv7,'-sk',x10,y10avg,'+',x10avgall,y10avgall,'v',x10,polyv10,'-dk','MarkerSize',10);
     xlabel('{\bf Froude length number [-]}');
@@ -841,14 +841,14 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     axis square;
-
+    
     % Annotations
     text(0.41,-8.5,sprintf('%.1f',min(polyv7)),'FontSize',11,'color','k','FontWeight','normal');
     text(0.41,-11,sprintf('%.1f',min(polyv10)),'FontSize',11,'color','k','FontWeight','normal');
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     set(gca,'XLim',[0.1 0.5]);
@@ -859,8 +859,8 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg) min/max','Cond. 7: 1,500t (0 deg) All repeats','Cond. 7: 1,500t Curve fitting','Cond. 10: 1,804t (0 deg) min/max','Cond. 10: 1,804t (0 deg) All repeats','Cond. 10: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
-    legend boxoff;    
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,2)
@@ -886,14 +886,14 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     axis square;
-
+    
     % Annotations
     text(0.41,-9,sprintf('%.1f',min(polyv7)),'FontSize',11,'color','k','FontWeight','normal');
-    text(0.41,-11,sprintf('%.1f',min(polyv10)),'FontSize',11,'color','k','FontWeight','normal');    
+    text(0.41,-11,sprintf('%.1f',min(polyv10)),'FontSize',11,'color','k','FontWeight','normal');
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     set(gca,'XLim',[0.1 0.5]);
@@ -904,39 +904,39 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg) Min','Cond. 7: 1,500t Curve fitting','Cond. 10: 1,804t (0 deg) Min','Cond. 10: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
-    legend boxoff;    
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');      
-      
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots_Fitting_Curves_Level.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots_Fitting_Curves_Level.png', '_averaged', num2str(startRun), num2str(endRun));
     saveas(f, plotsavename);                % Save plot as PNG
-    %close;    
-   
+    %close;
+    
     % *********************************************************************
     % Fitting lines (-0.5 degrees by bow)
     % *********************************************************************
     figurename = sprintf('%s (curve fitting, -0.5 degrees by bow):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
-
+    
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,1)
     
@@ -961,7 +961,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     polyf11   = polyfit(x11,y11avg,poldegr); polyv11 = polyval(polyf11,x11);
     
     x11avgall = avgcond11(:,11);
-    y11avgall = avgcond11(:,12);    
+    y11avgall = avgcond11(:,12);
     
     h = plot(x8,y8avg,'*',x8avgall,y8avgall,'o',x8,polyv8,'-sk',x11,y11avg,'+',x11avgall,y11avgall,'v',x11,polyv11,'-dk','MarkerSize',10);
     xlabel('{\bf Froude length number [-]}');
@@ -970,14 +970,14 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     axis square;
-
+    
     % Annotations
     text(0.4,-10,sprintf('%.1f',min(polyv8)),'FontSize',11,'color','k','FontWeight','normal');
     text(0.4,-13,sprintf('%.1f',min(polyv11)),'FontSize',11,'color','k','FontWeight','normal');
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     set(gca,'XLim',[0.2 0.5]);
@@ -988,8 +988,8 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     %# Legend
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) min/max','Cond. 8: 1,500t (-0.5 deg) All repeats','Cond. 8: 1,500t Curve fitting','Cond. 11: 1,804t (-0.5 deg) min/max','Cond. 11: 1,804t (-0.5 deg) All repeats','Cond. 11: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
-    legend boxoff;    
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,2)
@@ -1015,14 +1015,14 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     axis square;
-
+    
     % Annotations
     text(0.4,-10.5,sprintf('%.1f',min(polyv8)),'FontSize',11,'color','k','FontWeight','normal');
     text(0.4,-13,sprintf('%.1f',min(polyv11)),'FontSize',11,'color','k','FontWeight','normal');
-
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     set(gca,'XLim',[0.2 0.5]);
@@ -1033,26 +1033,26 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     %# Legend
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) Min','Cond. 8: 1,500t Curve fitting','Cond. 11: 1,804t (-0.5 deg) Min','Cond. 11: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
-    legend boxoff;    
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');      
-      
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots_Fitting_Curves_05_By_Bow.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
@@ -1065,7 +1065,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     % *********************************************************************
     figurename = sprintf('%s (curve fitting, 0.5 degrees by stern):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
-
+    
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,1)
     
@@ -1090,7 +1090,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     polyf12   = polyfit(x12,y12avg,poldegr); polyv12 = polyval(polyf12,x12);
     
     x12avgall = avgcond12(:,11);
-    y12avgall = avgcond12(:,12);    
+    y12avgall = avgcond12(:,12);
     
     h = plot(x9,y9avg,'*',x9avgall,y9avgall,'o',x9,polyv9,'-sk',x12,y12avg,'+',x12avgall,y12avgall,'v',x12,polyv12,'-dk','MarkerSize',10);
     xlabel('{\bf Froude length number [-]}');
@@ -1099,7 +1099,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     axis square;
-
+    
     % Annotations
     text(0.41,-7,sprintf('%.1f',min(polyv9)),'FontSize',11,'color','k','FontWeight','normal');
     text(0.41,-8.5,sprintf('%.1f',min(polyv12)),'FontSize',11,'color','k','FontWeight','normal');
@@ -1110,7 +1110,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     set(gca,'XLim',[0.2 0.5]);
@@ -1121,8 +1121,8 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     %# Legend
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) min/max','Cond. 9: 1,500t (0.5 deg) All repeats','Cond. 9: 1,500t Curve fitting','Cond. 12: 1,804t (0.5 deg) min/max','Cond. 12: 1,804t (0.5 deg) All repeats','Cond. 12: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
-    legend boxoff;    
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,2)
@@ -1151,14 +1151,14 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     axis square;
-
+    
     % Annotations
     text(0.41,-7,sprintf('%.1f',min(polyv9)),'FontSize',11,'color','k','FontWeight','normal');
     text(0.41,-9,sprintf('%.1f',min(polyv12)),'FontSize',11,'color','k','FontWeight','normal');
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     set(gca,'XLim',[0.2 0.5]);
@@ -1169,41 +1169,41 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     %# Legend
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) Min','Cond. 9: 1,500t Curve fitting','Cond. 12: 1,804t (0.5 deg) Min','Cond. 12: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
-    legend boxoff;    
+    set(hleg1,'Interpreter','none');
+    legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');      
-      
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots_Fitting_Curves_05_By_Stern.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots_Fitting_Curves_05_By_Stern.png', '_averaged', num2str(startRun), num2str(endRun));
     saveas(f, plotsavename);                % Save plot as PNG
-    %close;    
+    %close;
     
     % *********************************************************************
     % Heave vs. Crm for conditions 7 - 12
     % *********************************************************************
     figurename = sprintf('%s (using averaged min/max values):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');   
-
+    f = figure('Name',figurename,'NumberTitle','off');
+    
     % Heave vs. Crm ----------------------------------------
-    subplot(2,3,1)    
+    subplot(2,3,1)
     
     x7  = minmaxcond7(20,5);
     y7  = minmaxcond7(20,6);
@@ -1230,20 +1230,20 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     axis square;
-
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'FontSize',9);
-    legend boxoff;      
+    legend boxoff;
     
     % Trim vs. Crm ----------------------------------------
-    subplot(2,3,2)    
+    subplot(2,3,2)
     
     x7  = minmaxcond7(20,10);
     y7  = minmaxcond7(20,6);
@@ -1270,17 +1270,17 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     axis square;
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'FontSize',9);
-    legend boxoff;    
+    legend boxoff;
     
     % Fr vs. Crm ----------------------------------------
-    %subplot(2,2,3:4)    
-    subplot(2,3,3) 
+    %subplot(2,2,3:4)
+    subplot(2,3,3)
     
     x7  = minmaxcond7(:,7);
     y7  = minmaxcond7(:,6);
@@ -1307,7 +1307,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     axis square;
-
+    
     % Colors and markers
     set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
     set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
@@ -1327,10 +1327,10 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     set(hleg1,'Location','SouthEast');
     set(hleg1,'Interpreter','none');
     set(hleg1,'FontSize',9);
-    legend boxoff;     
+    legend boxoff;
     
     % Heave vs. Crm ----------------------------------------
-    subplot(2,3,4)    
+    subplot(2,3,4)
     
     x7  = minmaxcond7(10,5);
     y7  = minmaxcond7(10,6);
@@ -1357,16 +1357,16 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     axis square;
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'FontSize',9);
-    legend boxoff;    
+    legend boxoff;
     
     % Trim vs. Crm ----------------------------------------
-    subplot(2,3,5)    
+    subplot(2,3,5)
     
     x7  = minmaxcond7(10,10);
     y7  = minmaxcond7(10,6);
@@ -1393,19 +1393,19 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     grid on;
     box on;
     axis square;
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthEast');
-    set(hleg1,'Interpreter','none');  
+    set(hleg1,'Interpreter','none');
     set(hleg1,'FontSize',9);
     legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
@@ -1416,13 +1416,13 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');      
-      
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Heave_vs_Crm_Data_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Heave_vs_Crm_Data_Plots.png', '_averaged', num2str(startRun), num2str(endRun));
     saveas(f, plotsavename);                % Save plot as PNG
-    %close;    
+    %close;
     
 end

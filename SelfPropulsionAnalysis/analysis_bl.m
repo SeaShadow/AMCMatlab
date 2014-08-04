@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Self-Propulsion Test - Boundary Layer Measurements
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  November 12, 2013
 %#
@@ -127,7 +127,7 @@ headerlinesZeroAndCalib = 33;  % Number of headerlines to zero and calibration f
 startSamplePos    = 1;
 
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from end)
-cutSamplesFromEnd = 0;   
+cutSamplesFromEnd = 0;
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -182,7 +182,7 @@ FSdraft1500         = MSdraft1500*FStoMSratio;           % Full scale draft     
 
 
 % *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED 
+% START: PLOT SWITCHES: 1 = ENABLED
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
@@ -207,7 +207,7 @@ resultsArrayBlm          = [];   % BL Data
 resultsArrayBlmTS        = [];   % BL TS data
 resultsArrayBlmVandRData = [];   % Voltage and real data using CF est. in PST calibration runs
 
-%w = waitbar(0,'Processed run files'); 
+%w = waitbar(0,'Processed run files');
 for k=startRun:endRun
     
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -269,7 +269,7 @@ for k=startRun:endRun
         setDepthCond = 73;
     else
         %disp('OTHER');
-    end    
+    end
     
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     %# END DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS !!!!!!!!!!!!!!!!!!
@@ -282,22 +282,22 @@ for k=startRun:endRun
         filename = sprintf('%s%s.run\\R%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
     end
     [pathstr, name, ext] = fileparts(filename);     % Get file details like path, filename and extension
-
+    
     %# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
     zAndCFData = importdata(filename, ' ', headerlines);
     zAndCF     = zAndCFData.data;
-
+    
     %# Calibration factors and zeros
     ZeroAndCalibData = importdata(filename, ' ', headerlinesZeroAndCalib);
     ZeroAndCalib     = ZeroAndCalibData.data;
-
+    
     %# Time series
     AllRawChannelData = importdata(filename, ' ', headerlines);
-
+    
     %# Create new variables in the base workspace from those fields.
     vars = fieldnames(AllRawChannelData);
     for i = 1:length(vars)
-       assignin('base', vars{i}, AllRawChannelData.(vars{i}));
+        assignin('base', vars{i}, AllRawChannelData.(vars{i}));
     end
     
     % /////////////////////////////////////////////////////////////////////
@@ -345,7 +345,7 @@ for k=startRun:endRun
     CH_3_Zero  = ZeroAndCalib(9);
     CH_3_CF    = ZeroAndCalib(10);
     CH_19_Zero = ZeroAndCalib(11);
-    CH_19_CF   = ZeroAndCalib(12);    
+    CH_19_CF   = ZeroAndCalib(12);
     CH_20_Zero = ZeroAndCalib(13);
     CH_20_CF   = ZeroAndCalib(14);
     
@@ -357,7 +357,7 @@ for k=startRun:endRun
     [CH_0_Speed CH_0_Speed_Mean]                 = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
     [CH_1_LVDTFwd CH_1_LVDTFwd_Mean]             = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
     [CH_2_LVDTAft CH_2_LVDTAft_Mean]             = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
-    [CH_3_Drag CH_3_Drag_Mean]                   = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);   
+    [CH_3_Drag CH_3_Drag_Mean]                   = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);
     
     % PST Data for BL Measurements
     [CH_19_PSTInboard CH_19_PSTInboard_Mean]     = analysis_realunits(Raw_CH_19_PSTInboard,CH_19_Zero,CH_19_CF);
@@ -369,7 +369,7 @@ for k=startRun:endRun
     else
         runno = name(1:3);
     end
-
+    
     %# ////////////////////////////////////////////////////////////////////
     %# ////////////////////////////////////////////////////////////////////
     %# Boundary Layer - Real data, plots, etc.
@@ -377,39 +377,39 @@ for k=startRun:endRun
     %# ////////////////////////////////////////////////////////////////////
     
     if enableVolAndRDSave == 1
-    
+        
         %# ********************************************************************
         %# Save data to aray then save to file
         %# ********************************************************************
-
+        
         %# Add results to dedicated array for simple export
-        %# Results array columns: 
-            %[1]  Run No.
-            %[2]  Froude length Number                     (-)
-            
-            %[3]  Speed no. (i.e. 1=0.30, 2=0.35, 3=0.40)  (-)
-            %[4]  Depth no. (i.e. 1 to 8)                  (-)
-            
-            %[5]  Inboard: Averaged zero value             (V)
-            %[6]  Inboard: Averaged zero value             (V)
-
-            %[7]  Outboard: Calibration factor CF          (V to m/s)
-            %[8]  Outboard: Calibration factor CF          (V to m/s)
-
-            %[9]  Inboard PST: Voltage                     (V)
-            %[10] Outboard PST: Voltage                    (V)
-
-            %[11] Inboard PST: Real units using CF         (m/s)
-            %[12] Outboard PST:Real units using CF         (m/s)
-
+        %# Results array columns:
+        %[1]  Run No.
+        %[2]  Froude length Number                     (-)
+        
+        %[3]  Speed no. (i.e. 1=0.30, 2=0.35, 3=0.40)  (-)
+        %[4]  Depth no. (i.e. 1 to 8)                  (-)
+        
+        %[5]  Inboard: Averaged zero value             (V)
+        %[6]  Inboard: Averaged zero value             (V)
+        
+        %[7]  Outboard: Calibration factor CF          (V to m/s)
+        %[8]  Outboard: Calibration factor CF          (V to m/s)
+        
+        %[9]  Inboard PST: Voltage                     (V)
+        %[10] Outboard PST: Voltage                    (V)
+        
+        %[11] Inboard PST: Real units using CF         (m/s)
+        %[12] Outboard PST:Real units using CF         (m/s)
+        
         % General data
         resultsArrayBlmVandRData(k, 1)  = k;
-
+        
         % Froude length number
         roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
-        modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number        
+        modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number
         resultsArrayBlmVandRData(k, 2)  = modelfrrounded;
-
+        
         % Speed and depth number
         resultsArrayBlmVandRData(k, 3)  = setSpeedCond;
         resultsArrayBlmVandRData(k, 4)  = setDepthCond;
@@ -417,23 +417,23 @@ for k=startRun:endRun
         % Zero values
         resultsArrayBlmVandRData(k, 5)  = CH_19_Zero;
         resultsArrayBlmVandRData(k, 6)  = CH_20_Zero;
-
+        
         % Calibration factors
         resultsArrayBlmVandRData(k, 7)  = CH_19_CF;
         resultsArrayBlmVandRData(k, 8)  = CH_20_CF;
-
+        
         % Voltage values
         resultsArrayBlmVandRData(k, 9)  = CH_19_PSTInboard_Mean;
-        resultsArrayBlmVandRData(k, 10) = CH_20_PSTOutboard_Mean;    
-
+        resultsArrayBlmVandRData(k, 10) = CH_20_PSTOutboard_Mean;
+        
         % Real unit values (m/s) based on PST calibration curve
-
+        
         x1 = CH_19_PSTInboard_Mean;
         x2 = CH_20_PSTOutboard_Mean;
-
+        
         resultsArrayBlmVandRData(k, 11) = -0.0328*x1^4+0.2521*x1^3-0.7873*x1^2+1.7721*x1+0.4389;
         resultsArrayBlmVandRData(k, 12) = -0.0328*x2^4+0.2521*x2^3-0.7873*x2^2+1.7721*x2+0.4389;
-    
+        
     end
     
     %# ////////////////////////////////////////////////////////////////////
@@ -443,7 +443,7 @@ for k=startRun:endRun
     %# ////////////////////////////////////////////////////////////////////
     
     if enableTSDataSave == 1
-    
+        
         figurename = sprintf('%s:: Boundary Layer Time Series Plot, Run %s', testName, num2str(runno));
         f = figure('Name',figurename,'NumberTitle','off');
         
@@ -612,7 +612,7 @@ for k=startRun:endRun
         
         %[2]  Froude length Number                     (-)
         %[3]  Speed no. (i.e. 1=0.30, 2=0.35, 3=0.40)  (-)
-        %[4]  Depth no. (i.e. 1 to 8)                  (-)             
+        %[4]  Depth no. (i.e. 1 to 8)                  (-)
         
         %[5]  Channel
         %[6]  Inboard PST: Averaged            (V)
@@ -622,7 +622,7 @@ for k=startRun:endRun
         %[10] Inboard PST: Standard deviation  (V)
         
         %[11] Inboard PST: Zero value          (V)
-        %[12] Inboard PST: Calibration factor  (-)        
+        %[12] Inboard PST: Calibration factor  (-)
         
         %[13] Channel
         %[14] Outboard PST: Averaged           (V)
@@ -632,16 +632,16 @@ for k=startRun:endRun
         %[18] Outboard PST: Standard deviation (V)
         
         %[19] Outboard PST: Zero value         (V)
-        %[20] Outboard PST: Calibration factor (-)        
+        %[20] Outboard PST: Calibration factor (-)
         
         % General data
         resultsArrayBlmTS(k, 1)  = k;
         
         % Froude length number
         roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
-        modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number        
+        modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number
         resultsArrayBlmTS(k, 2)  = modelfrrounded;
-
+        
         % Speed and depth number
         resultsArrayBlmTS(k, 3)  = setSpeedCond;
         resultsArrayBlmTS(k, 4)  = setDepthCond;
@@ -659,7 +659,7 @@ for k=startRun:endRun
         
         % Inboard CF and zero
         resultsArrayBlmTS(k, 11)  = CH_19_Zero;
-        resultsArrayBlmTS(k, 12)  = CH_19_CF;    
+        resultsArrayBlmTS(k, 12)  = CH_19_CF;
         
         % Outboard --------------------------------------------------------
         MeanData = CH_20_PSTOutboard_Mean;
@@ -671,10 +671,10 @@ for k=startRun:endRun
         resultsArrayBlmTS(k, 16) = max(CHData);
         resultsArrayBlmTS(k, 17) = abs(1-(min(CHData)/MeanData));
         resultsArrayBlmTS(k, 18) = std(CHData);
-
+        
         % Outboard CF and zero
-        resultsArrayBlmTS(k, 19)  = CH_20_Zero;   
-        resultsArrayBlmTS(k, 20) = CH_20_CF;        
+        resultsArrayBlmTS(k, 19)  = CH_20_Zero;
+        resultsArrayBlmTS(k, 20) = CH_20_CF;
         
         %# ********************************************************************
         %# Save plot as PNG
@@ -701,7 +701,7 @@ for k=startRun:endRun
         plotsavename = sprintf('_plots/%s/Run_%s_CH_19-20_Bounday_Layer.png', 'TS', num2str(runno));
         saveas(f, plotsavename);                % Save plot as PNG
         close;
-    
+        
     end
     
     %# ////////////////////////////////////////////////////////////////////
@@ -710,47 +710,47 @@ for k=startRun:endRun
     %# ////////////////////////////////////////////////////////////////////
     %# ////////////////////////////////////////////////////////////////////
     
-%     if enableZeroDataSave == 1
-%     
-%         %# Add results to dedicated array for simple export
-%         %# Results array columns: 
-%             %[1]  Run No.
-% 
-%             %[2]  Froude length Number                     (-)
-%             %[3]  Speed no. (i.e. 1=0.30, 2=0.35, 3=0.40)  (-)
-%             %[4]  Depth no. (i.e. 1 to 8)                  (-)            
-%             
-%             %[5]  Channel
-%             %[6]  Inboard PST: Zero value           (V)
-%             %[7]  Inboard PST: Calibration factor   (-)
-% 
-%             %[8]  Channel
-%             %[9]  Outboard PST: Zero value          (V)
-%             %[10] Outboard PST: Calibration factor  (-)
-% 
-%         % General data
-%         resultsArrayBlmZero(k, 1)  = k;
-% 
-%         % Froude length number
-%         roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
-%         modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number        
-%         resultsArrayBlmZero(k, 2)  = modelfrrounded;
-% 
-%         % Speed and depth number
-%         resultsArrayBlmZero(k, 3)  = setSpeedCond;
-%         resultsArrayBlmZero(k, 4)  = setDepthCond;
-%         
-%         % Inboard PST
-%         resultsArrayBlmZero(k, 5)  = 19;
-%         resultsArrayBlmZero(k, 6)  = CH_19_Zero;
-%         resultsArrayBlmZero(k, 7)  = CH_19_CF; 
-% 
-%         % Outboard PST
-%         resultsArrayBlmZero(k, 8)  = 20;
-%         resultsArrayBlmZero(k, 9)  = CH_20_Zero;   
-%         resultsArrayBlmZero(k, 10) = CH_20_CF; 
-%     
-%     end
+    %     if enableZeroDataSave == 1
+    %
+    %         %# Add results to dedicated array for simple export
+    %         %# Results array columns:
+    %             %[1]  Run No.
+    %
+    %             %[2]  Froude length Number                     (-)
+    %             %[3]  Speed no. (i.e. 1=0.30, 2=0.35, 3=0.40)  (-)
+    %             %[4]  Depth no. (i.e. 1 to 8)                  (-)
+    %
+    %             %[5]  Channel
+    %             %[6]  Inboard PST: Zero value           (V)
+    %             %[7]  Inboard PST: Calibration factor   (-)
+    %
+    %             %[8]  Channel
+    %             %[9]  Outboard PST: Zero value          (V)
+    %             %[10] Outboard PST: Calibration factor  (-)
+    %
+    %         % General data
+    %         resultsArrayBlmZero(k, 1)  = k;
+    %
+    %         % Froude length number
+    %         roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
+    %         modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number
+    %         resultsArrayBlmZero(k, 2)  = modelfrrounded;
+    %
+    %         % Speed and depth number
+    %         resultsArrayBlmZero(k, 3)  = setSpeedCond;
+    %         resultsArrayBlmZero(k, 4)  = setDepthCond;
+    %
+    %         % Inboard PST
+    %         resultsArrayBlmZero(k, 5)  = 19;
+    %         resultsArrayBlmZero(k, 6)  = CH_19_Zero;
+    %         resultsArrayBlmZero(k, 7)  = CH_19_CF;
+    %
+    %         % Outboard PST
+    %         resultsArrayBlmZero(k, 8)  = 20;
+    %         resultsArrayBlmZero(k, 9)  = CH_20_Zero;
+    %         resultsArrayBlmZero(k, 10) = CH_20_CF;
+    %
+    %     end
     
     %wtot = endRun - startRun;
     %w = waitbar(k/wtot,w,['iteration: ',num2str(k)]);
@@ -805,7 +805,7 @@ if enableVolAndRDSave == 1
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);     
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     %xlim([min(x) max(x)]);
@@ -869,8 +869,8 @@ if enableVolAndRDSave == 1
     %# Legend
     hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard');
     set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');    
-   
+    set(hleg1,'Interpreter','none');
+    
     %# ********************************************************************
     %# Save plot as PNG
     %# ********************************************************************
@@ -911,7 +911,7 @@ end
 % Boundary layer measurement data
 M = resultsArrayBlm;
 M = M(any(M,2),:);                           % Remove zero rows
-csvwrite('resultsArrayBlm.dat', M)           % Export matrix M to a file delimited by the comma character  
+csvwrite('resultsArrayBlm.dat', M)           % Export matrix M to a file delimited by the comma character
 
 % Velocities and read unit data -------------------------------------------
 if enableVolAndRDSave == 1
@@ -926,10 +926,10 @@ if enableTSDataSave == 1
     % Boundary layer measurement TS data
     M = resultsArrayBlmTS;
     M = M(any(M,2),:);                           % Remove zero rows
-    csvwrite('resultsArrayBlmTS.dat', M)         % Export matrix M to a file delimited by the comma character  
+    csvwrite('resultsArrayBlmTS.dat', M)         % Export matrix M to a file delimited by the comma character
 end
-    
-% if enableZeroDataSave == 1    
+
+% if enableZeroDataSave == 1
 %     % Boundary layer measurement zero data
 %     M = resultsArrayBlmZero;
 %     M = M(any(M,2),:);                           % Remove zero rows

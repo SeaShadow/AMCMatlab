@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Resistance Test Analysis - Time Series analysis, data processing
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  April 16, 2014
 %#
@@ -10,7 +10,7 @@
 %#
 %# Runs TSI   :  Runs 01-35   Turbulence Studs Investigation               (TSI)
 %#               |__Disp. & trim:   1,500t, level static trim
-%#               |__Conditions:     1 = No turbulence studs 
+%#               |__Conditions:     1 = No turbulence studs
 %#                                  2 = First row of turbulence studs
 %#                                  3 = First and second row of turbulence studs
 %#
@@ -41,7 +41,7 @@
 %#
 %# Description    :  Turbulence studs investigation, trim tab optimisation and
 %#                   standard resistance test using a single catamaran demihull.
-%#                   Form factor estimation has been carried out using prohaska 
+%#                   Form factor estimation has been carried out using prohaska
 %#                   method as described by ITTC 7.2-02-02-01.
 %#
 %# ITTC Guidelines:  7.5-02-02-01
@@ -269,7 +269,7 @@ headerlinesZeroAndCalib = 16;  % Number of headerlines to zero and calibration f
 startSamplePos    = 1000;   % Cut first 5 seconds
 
 % X seconds x sample frequency = X x FS = XFS samples (from end)
-%cutSamplesFromEnd = 0;   
+%cutSamplesFromEnd = 0;
 cutSamplesFromEnd = 400;    % Cut last 2 seconds
 
 %# ------------------------------------------------------------------------
@@ -302,7 +302,7 @@ endRun   = 141;    % Stop at run y
 
 
 % *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED 
+% START: PLOT SWITCHES: 1 = ENABLED
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
@@ -311,7 +311,7 @@ enableHvsRtmTvsRtmPlot = 0; % Heave vs. Rtm and trim vs. Rtm
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
-% *************************************************************************  
+% *************************************************************************
 
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -361,7 +361,7 @@ RunNosCond13 = 232:249; % Cond. 13 (Prohaska): 1,500t, deep transom
 % elseif any(RunNosCond13==k)
 %     disp('Cond. 13 (Prohaska): 1,500t, deep transom');
 % else
-%     disp('Unspecified condition');        
+%     disp('Unspecified condition');
 % end
 
 %# ------------------------------------------------------------------------
@@ -392,7 +392,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 
 resultsArray = [];
 trimFreqArray = [];
-%w = waitbar(0,'Processed run files'); 
+%w = waitbar(0,'Processed run files');
 for k=startRun:endRun
     
     %# Allow for 1 to become 01 for run numbers
@@ -406,24 +406,24 @@ for k=startRun:endRun
     %# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
     zAndCFData = importdata(filename, ' ', headerlines);
     zAndCF     = zAndCFData.data;
-
+    
     %# Calibration factors and zeros
     ZeroAndCalibData = importdata(filename, ' ', headerlinesZeroAndCalib);
     ZeroAndCalib     = ZeroAndCalibData.data;
-
+    
     %# Time series
     AllRawChannelData = importdata(filename, ' ', headerlines);
-
+    
     %# Create new variables in the base workspace from those fields.
     vars = fieldnames(AllRawChannelData);
     for i = 1:length(vars)
-       assignin('base', vars{i}, AllRawChannelData.(vars{i}));
+        assignin('base', vars{i}, AllRawChannelData.(vars{i}));
     end
-
+    
     % /////////////////////////////////////////////////////////////////////
     % START: CREATE PLOTS AND RUN DIRECTORY
     % ---------------------------------------------------------------------
-
+    
     %# _PLOTS directory
     fPath = '_plots/';
     if isequal(exist(fPath, 'dir'),7)
@@ -445,40 +445,40 @@ for k=startRun:endRun
     else
         mkdir(fPath);
     end
-
+    
     fPath = '_time_series_drag_plots/';
     if isequal(exist(fPath, 'dir'),7)
         % Do nothing as directory exists
     else
         mkdir(fPath);
-    end    
+    end
     
     fPath = '_time_series_dp_plots/';
     if isequal(exist(fPath, 'dir'),7)
         % Do nothing as directory exists
     else
         mkdir(fPath);
-    end    
+    end
     
     %# Have directory
     fPath = sprintf('_plots/%s', '_heave');
     if isequal(exist(fPath, 'dir'),7)
         % Do nothing as directory exists
-    else    
+    else
         mkdir(fPath);
     end
-
+    
     %# Averaged directory
     fPath = sprintf('_plots/%s', '_averaged');
     if isequal(exist(fPath, 'dir'),7)
         % Do nothing as directory exists
-    else    
+    else
         mkdir(fPath);
-    end    
+    end
     
     % ---------------------------------------------------------------------
     % END: CREATE PLOTS AND RUN DIRECTORY
-    % ///////////////////////////////////////////////////////////////////// 
+    % /////////////////////////////////////////////////////////////////////
     
     
     % /////////////////////////////////////////////////////////////////////
@@ -510,20 +510,20 @@ for k=startRun:endRun
     
     % /////////////////////////////////////////////////////////////////////
     % START: REAL UNITS COVNERSION
-    % ---------------------------------------------------------------------    
+    % ---------------------------------------------------------------------
     
     % Real units (i.e. m/s, mm and grams)
     [CH_0_Speed CH_0_Speed_Mean]     = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
     [CH_1_LVDTFwd CH_1_LVDTFwd_Mean] = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
     [CH_2_LVDTAft CH_2_LVDTAft_Mean] = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
-    [CH_3_Drag CH_3_Drag_Mean]       = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);    
+    [CH_3_Drag CH_3_Drag_Mean]       = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);
     
-    % Leave it as voltage but subtract zero value     
+    % Leave it as voltage but subtract zero value
     [CH_0_Speed_Volt CH_0_Speed_Mean_Volt]     = analysis_voltage(Raw_CH_0_Speed,CH_0_Zero);
     [CH_1_LVDTFwd_Volt CH_1_LVDTFwd_Mean_Volt] = analysis_voltage(Raw_CH_1_LVDTFwd,CH_1_Zero);
     [CH_2_LVDTAft_Volt CH_2_LVDTAft_Mean_Volt] = analysis_voltage(Raw_CH_2_LVDTAft,CH_2_Zero);
-    [CH_3_Drag_Volt CH_3_Drag_Mean_Volt]       = analysis_voltage(Raw_CH_3_Drag,CH_3_Zero);    
- 
+    [CH_3_Drag_Volt CH_3_Drag_Mean_Volt]       = analysis_voltage(Raw_CH_3_Drag,CH_3_Zero);
+    
     %# Set variables based on condition -----------------------------------
     
     if any(RunNosCond1==k)
@@ -534,7 +534,7 @@ for k=startRun:endRun
         MSdraft  = MSdraft1500;
         FSlwl    = FSlwl1500;
         FSwsa    = FSwsa1500;
-        FSdraft  = FSdraft1500;        
+        FSdraft  = FSdraft1500;
     elseif any(RunNosCond2==k)
         %disp('Cond. 2 (Turb-studs): 1st row');
         testcond = 2;
@@ -543,7 +543,7 @@ for k=startRun:endRun
         MSdraft  = MSdraft1500;
         FSlwl    = FSlwl1500;
         FSwsa    = FSwsa1500;
-        FSdraft  = FSdraft1500;        
+        FSdraft  = FSdraft1500;
     elseif any(RunNosCond3==k)
         %disp('Cond. 3 (Turb-studs): 1st and 2nd row');
         testcond = 3;
@@ -588,7 +588,7 @@ for k=startRun:endRun
         MSdraft  = MSdraft1500;
         FSlwl    = FSlwl1500;
         FSwsa    = FSwsa1500;
-        FSdraft  = FSdraft1500;        
+        FSdraft  = FSdraft1500;
     elseif any(RunNosCond8==k)
         %disp('Cond. 8 (Resistance): 1,500t, -0.5 deg. bow');
         testcond = 8;
@@ -633,7 +633,7 @@ for k=startRun:endRun
         MSdraft  = MSdraft1804bystern;
         FSlwl    = FSlwl1804bystern;
         FSwsa    = FSwsa1804bystern;
-        FSdraft  = FSdraft1804bystern;       
+        FSdraft  = FSdraft1804bystern;
     elseif any(RunNosCond13==k)
         %disp('Cond. 13 (Prohaska): 1,500t, deep transom');
         testcond = 13;
@@ -646,23 +646,23 @@ for k=startRun:endRun
     else
         disp('Unspecified condition');
         break;
-    end    
+    end
     
     %# Data processing: Time series data ----------------------------------
     [ms,ns] = size(CH_0_Speed);
     
-    %# Results array columns: 
-        %[1]  Time                                                    (s)
-        %[2]  Run No.                                                 (-)
-        %[3]  Condition                                               (-)
-        %[4]  Speed                                                   (m/s)
-        %[5]  Length Froude number                                    (-)
-        %[6]  Fwd LVDT                                                (mm)
-        %[7]  Aft LVDT                                                (mm)
-        %[8]  Heave                                                   (mm)
-        %[9]  Trim                                                    (deg)
-        %[10] Drag                                                    (g)
-        
+    %# Results array columns:
+    %[1]  Time                                                    (s)
+    %[2]  Run No.                                                 (-)
+    %[3]  Condition                                               (-)
+    %[4]  Speed                                                   (m/s)
+    %[5]  Length Froude number                                    (-)
+    %[6]  Fwd LVDT                                                (mm)
+    %[7]  Aft LVDT                                                (mm)
+    %[8]  Heave                                                   (mm)
+    %[9]  Trim                                                    (deg)
+    %[10] Drag                                                    (g)
+    
     % Loop through time series data
     dataArray = [];
     for j=1:ms
@@ -675,7 +675,7 @@ for k=startRun:endRun
         
         roundedspeed    = str2num(sprintf('%.2f',CH_0_Speed(j)));                        % Round averaged speed to two (2) decimals only
         modelfrrounded  = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl))); % Calculate Froude length number
-        dataArray(j, 5) = modelfrrounded;    
+        dataArray(j, 5) = modelfrrounded;
         
         dataArray(j, 6) = CH_1_LVDTFwd(j);
         dataArray(j, 7) = CH_2_LVDTAft(j);
@@ -687,17 +687,17 @@ for k=startRun:endRun
     end
     
     % Plots ---------------------------------------------------------------
-
+    
     figurename = sprintf('Condition: %s, Run: %s, Fr: %.2f // Time Series: Heave and Trim', num2str(testcond), num2str(k), dataArray(1,5));
     fig = figure('Name',figurename,'NumberTitle','off');
-
+    
     setColor  = {'k';'k';'r';'g';'b';'k';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
     setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
     setLine   = {'-';'-';'-';'-';'-';'-';'-';'-';'-';'-'};
     
     % Speed ---------------------------------------------------------------
     subplot(4,1,1);
-
+    
     x = dataArray(:,1);
     y = dataArray(:,4);
     
@@ -708,10 +708,10 @@ for k=startRun:endRun
     grid on;
     box on;
     %axis square;
-
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     % Line - Colors and markers
     setSubPlotNo = 1;
@@ -722,14 +722,14 @@ for k=startRun:endRun
     minX = min(x);
     maxX = max(x);
     set(gca,'XLim',[minX maxX]);
-    set(gca,'XTick',minX:2:maxX);    
+    set(gca,'XTick',minX:2:maxX);
     
     % Drag ----------------------------------------------------------------
     subplot(4,1,2);
     
     x = dataArray(:,1);
     y = dataArray(:,10);
-
+    
     % Grams to Newton conversion
     Raw_Data  = num2cell(y);                                                    % Double to cell conversion
     Raw_Data  = cellfun(@(y) (y/100)*9.806, Raw_Data, 'UniformOutput', false);  % Apply functions to cell
@@ -746,13 +746,13 @@ for k=startRun:endRun
     % Line - Colors and markers
     setSubPlotNo = 2;
     set(h(1),'Color',setColor{setSubPlotNo},'Marker',setMarker{setSubPlotNo},'MarkerSize',1,'LineStyle',setMarker{setSubPlotNo},'linewidth',1);
-    %set(h(1),'Color','k','Marker','x','MarkerSize',1,'LineStyle','--','linewidth',1);   
+    %set(h(1),'Color','k','Marker','x','MarkerSize',1,'LineStyle','--','linewidth',1);
     
     %# Axis limitations
     minX = min(x);
     maxX = max(x);
     set(gca,'XLim',[minX maxX]);
-    set(gca,'XTick',minX:2:maxX);      
+    set(gca,'XTick',minX:2:maxX);
     
     % Fwd LVDT, aft LVDT and heave ----------------------------------------
     subplot(4,1,3);
@@ -776,13 +776,13 @@ for k=startRun:endRun
     %LW = 1;
     %setSubPlotNo = 3; set(h(1),'Color',setColor{setSubPlotNo},'Marker',setMarker{setSubPlotNo},'MarkerSize',MS,'LineStyle',setMarker{setSubPlotNo},'linewidth',LW);
     %setSubPlotNo = 4; set(h(2),'Color',setColor{setSubPlotNo},'Marker',setMarker{setSubPlotNo},'MarkerSize',MS,'LineStyle',setMarker{setSubPlotNo},'linewidth',LW);
-    %setSubPlotNo = 5; set(h(3),'Color',setColor{setSubPlotNo},'Marker',setMarker{setSubPlotNo},'MarkerSize',MS,'LineStyle',setMarker{setSubPlotNo},'linewidth',LW); 
+    %setSubPlotNo = 5; set(h(3),'Color',setColor{setSubPlotNo},'Marker',setMarker{setSubPlotNo},'MarkerSize',MS,'LineStyle',setMarker{setSubPlotNo},'linewidth',LW);
     
     %# Axis limitations
     minX = min(x);
     maxX = max(x);
     set(gca,'XLim',[minX maxX]);
-    set(gca,'XTick',minX:2:maxX); 
+    set(gca,'XTick',minX:2:maxX);
     
     % Legend
     hleg1 = legend('Fwd LVDT','Aft LVDT','Heave'); %,'Trim'
@@ -790,7 +790,7 @@ for k=startRun:endRun
     set(hleg1,'Interpreter','none');
     %legend boxoff;
     clearvars legendInfo;
-
+    
     % Trim ----------------------------------------------------------------
     subplot(4,1,4);
     
@@ -808,7 +808,7 @@ for k=startRun:endRun
     % Line - Colors and markers
     setSubPlotNo = 6;
     set(h(1),'Color',setColor{setSubPlotNo},'Marker',setMarker{setSubPlotNo},'MarkerSize',1,'LineStyle',setMarker{setSubPlotNo},'linewidth',1);
-    %set(h(1),'Color','k','Marker','x','MarkerSize',1,'LineStyle','--','linewidth',1);   
+    %set(h(1),'Color','k','Marker','x','MarkerSize',1,'LineStyle','--','linewidth',1);
     
     %# Axis limitations
     minX = min(x);
@@ -841,7 +841,7 @@ for k=startRun:endRun
     close;
     
     %# Display in command window ------------------------------------------
-
+    
     speed   = CH_0_Speed_Mean;
     fwdLvdt = CH_1_LVDTFwd_Mean;
     aftLvdt = CH_2_LVDTAft_Mean;
@@ -849,7 +849,7 @@ for k=startRun:endRun
     
     heave = (fwdLvdt+aftLvdt)/2;                    % Model Heave (mm)
     trim  = atand((fwdLvdt-aftLvdt)/distbetwposts);  % Model Trim (Degrees)
-
+    
     fprintf('Condition: %s, Run: %s:: Speed         = %.2f m/s \r', num2str(testcond), num2str(k), speed);
     fprintf('Condition: %s, Run: %s:: Mean fwd LVDT = %.2f mm \r', num2str(testcond), num2str(k), fwdLvdt);
     fprintf('Condition: %s, Run: %s:: Mean aft LVDT = %.2f mm \r', num2str(testcond), num2str(k), aftLvdt);
@@ -872,7 +872,7 @@ end
 % -------------------------------------------------------------------------
 
 %M = resultsArray;
-%csvwrite('resultsArray.dat', M)                                     % Export matrix M to a file delimited by the comma character      
+%csvwrite('resultsArray.dat', M)                                     % Export matrix M to a file delimited by the comma character
 %dlmwrite('resultsArray.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 
 % -------------------------------------------------------------------------

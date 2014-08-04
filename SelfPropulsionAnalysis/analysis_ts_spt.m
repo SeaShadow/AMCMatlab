@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Self-Propulsion Test - Time Series Investigation
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  November 28, 2013
 %#
@@ -127,7 +127,7 @@ headerlinesZeroAndCalib = 33;  % Number of headerlines to zero and calibration f
 startSamplePos    = 1;
 
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from end)
-cutSamplesFromEnd = 0;   
+cutSamplesFromEnd = 0;
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -185,7 +185,7 @@ FSdraft1500         = MSdraft1500*FStoMSratio;           % Full scale draft     
 
 
 % *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED 
+% START: PLOT SWITCHES: 1 = ENABLED
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
@@ -208,9 +208,9 @@ resultsArrayTSDyno     = [];
 resultsArrayTSKp       = [];
 resultsArrayTSPressure = [];
 
-%w = waitbar(0,'Processed run files'); 
+%w = waitbar(0,'Processed run files');
 for k=startRun:endRun
-
+    
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     %# START DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS !!!!!!!!!!!!!!!!
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -227,7 +227,7 @@ for k=startRun:endRun
     RunsAtFr36 = [149 150 151 152];         % i.e. Fr=0.36
     RunsAtFr38 = [153 154 155 156];         % i.e. Fr=0.38
     RunsAtFr40 = [157 158 159 160 ];        % i.e. Fr=0.40
-
+    
     RunsStaticUnlocked = [161 162 163 164 165 166 167 168 169];   % i.e. Static test in middle of towing tank at every RPM with unlocked posts
     RunsStaticLocked   = [170 171 172 173 174 175 176 177 178];   % i.e. Static test in middle of towing tank at every RPM with locked posts (bollard condition)
     
@@ -253,14 +253,14 @@ for k=startRun:endRun
     elseif any(RunsStaticUnlocked==k)
         setSpeedCond = 10;
     elseif any(RunsStaticLocked==k)
-        setSpeedCond = 11;         
+        setSpeedCond = 11;
     else
         %disp('OTHER');
     end
     
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     %# END DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS !!!!!!!!!!!!!!!!!!
-    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!    
+    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
     %# Allow for 1 to become 01 for run numbers
     if k < 10
@@ -269,22 +269,22 @@ for k=startRun:endRun
         filename = sprintf('%s%s.run\\R%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
     end
     [pathstr, name, ext] = fileparts(filename);     % Get file details like path, filename and extension
-
+    
     %# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
     zAndCFData = importdata(filename, ' ', headerlines);
     zAndCF     = zAndCFData.data;
-
+    
     %# Calibration factors and zeros
     ZeroAndCalibData = importdata(filename, ' ', headerlinesZeroAndCalib);
     ZeroAndCalib     = ZeroAndCalibData.data;
-
+    
     %# Time series
     AllRawChannelData = importdata(filename, ' ', headerlines);
-
+    
     %# Create new variables in the base workspace from those fields.
     vars = fieldnames(AllRawChannelData);
     for i = 1:length(vars)
-       assignin('base', vars{i}, AllRawChannelData.(vars{i}));
+        assignin('base', vars{i}, AllRawChannelData.(vars{i}));
     end
     
     % /////////////////////////////////////////////////////////////////////
@@ -324,7 +324,7 @@ for k=startRun:endRun
     Raw_CH_8_StbdThrust    = data(:,10);      % Starboard thrust
     Raw_CH_9_StbdTorque    = data(:,11);      % Starboard torque
     Raw_CH_10_PortKP       = data(:,12);      % Port kiel probe
-    Raw_CH_11_StbdKP       = data(:,13);      % Starboard kiel probe  
+    Raw_CH_11_StbdKP       = data(:,13);      % Starboard kiel probe
     Raw_CH_12_Port_Stat_6  = data(:,14);      % Port static pressure ITTC station 6
     Raw_CH_13_Stbd_Stat_6  = data(:,15);      % Starboard static pressure ITTC station 6
     Raw_CH_14_Stbd_Stat_5  = data(:,16);      % Starboard static pressure ITTC station 5
@@ -359,9 +359,9 @@ for k=startRun:endRun
     CH_10_Zero = ZeroAndCalib(23);
     CH_10_CF   = ZeroAndCalib(24);
     CH_11_Zero = ZeroAndCalib(25);
-    CH_11_CF   = ZeroAndCalib(26);        
+    CH_11_CF   = ZeroAndCalib(26);
     CH_12_Zero = ZeroAndCalib(27);
-    CH_12_CF   = ZeroAndCalib(28);    
+    CH_12_CF   = ZeroAndCalib(28);
     CH_13_Zero = ZeroAndCalib(29);
     CH_13_CF   = ZeroAndCalib(30);
     CH_14_Zero = ZeroAndCalib(31);
@@ -383,7 +383,7 @@ for k=startRun:endRun
     [CH_0_Speed CH_0_Speed_Mean]                 = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
     [CH_1_LVDTFwd CH_1_LVDTFwd_Mean]             = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
     [CH_2_LVDTAft CH_2_LVDTAft_Mean]             = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
-    [CH_3_Drag CH_3_Drag_Mean]                   = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);   
+    [CH_3_Drag CH_3_Drag_Mean]                   = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);
     
     % Dyno Data
     [CH_6_PortThrust CH_6_PortThrust_Mean]       = analysis_realunits(Raw_CH_6_PortThrust,CH_6_Zero,CH_6_CF);
@@ -402,7 +402,7 @@ for k=startRun:endRun
     [CH_15_Stbd_Stat_4 CH_15_Stbd_Stat_4_Mean]   = analysis_realunits(Raw_CH_15_Stbd_Stat_4,CH_15_Zero,CH_15_CF);
     [CH_16_Stbd_Stat_3 CH_16_Stbd_Stat_3_Mean]   = analysis_realunits(Raw_CH_16_Stbd_Stat_3,CH_16_Zero,CH_16_CF);
     [CH_17_Port_Stat_1a CH_17_Port_Stat_1a_Mean] = analysis_realunits(Raw_CH_17_Port_Stat_1a,CH_17_Zero,CH_17_CF);
-    [CH_18_Stbd_Stat_1a CH_18_Stbd_Stat_1a_Mean] = analysis_realunits(Raw_CH_18_Stbd_Stat_1a,CH_18_Zero,CH_18_CF);    
+    [CH_18_Stbd_Stat_1a CH_18_Stbd_Stat_1a_Mean] = analysis_realunits(Raw_CH_18_Stbd_Stat_1a,CH_18_Zero,CH_18_CF);
     
     % Change from 2 to 3 digits -------------------------------------------
     if k > 99
@@ -418,8 +418,8 @@ for k=startRun:endRun
     %# ********************************************************************
     %# PLOTTING
     %# ********************************************************************
-    if enableTSPlot == 1    
-    
+    if enableTSPlot == 1
+        
         figurename = sprintf('%s:: Speed Time Series Plot, Run %s', testName, num2str(runno));
         f = figure('Name',figurename,'NumberTitle','off');
         
@@ -588,7 +588,7 @@ for k=startRun:endRun
         plotsavename = sprintf('_plots/%s/Run_%s_CH_0-3_Speed_LVDT_Drag.png', 'TS', num2str(runno));
         saveas(f, plotsavename);                % Save plot as PNG
         close;
-    
+        
     end
     
     %# ********************************************************************
@@ -611,7 +611,7 @@ for k=startRun:endRun
         disp(maxspeed);
         disp(ptaspeed);
         disp(stdspeed);
-
+        
         disp('-------------------------------------------------');
         
         % FWD LVDT
@@ -628,7 +628,7 @@ for k=startRun:endRun
         disp(minfwdlvdt);
         disp(maxfwdlvdt);
         disp(ptafwdlvdt);
-        disp(stdfwdlvdt);        
+        disp(stdfwdlvdt);
         
         disp('-------------------------------------------------');
         
@@ -646,7 +646,7 @@ for k=startRun:endRun
         disp(minaftlvdt);
         disp(maxaftlvdt);
         disp(ptaaftlvdt);
-        disp(stdaftlvdt);        
+        disp(stdaftlvdt);
         
         disp('-------------------------------------------------');
         
@@ -664,54 +664,54 @@ for k=startRun:endRun
         disp(mindrag);
         disp(maxdrag);
         disp(ptadrag);
-        disp(stddrag);        
+        disp(stddrag);
         
         disp('/////////////////////////////////////////////////');
-    
+        
     end
-
+    
     %# ********************************************************************
     %# Save data to aray then save to file
     %# ********************************************************************
     
     %# Add results to dedicated array for simple export
-    %# Results array columns: 
-        %[1]  Run No.
-        
-        %[2]  Channel
-        %[3]  SPEED: Averaged              (m/s)
-        %[4]  SPEED: Minimum               (m/s)
-        %[5]  SPEED: Maximum               (m/s)    
-        %[6]  SPEED: Diff. min to avg      (percent) 
-        %[7]  SPEED: Standard deviation    (m/s)
-        
-        %[8]  Channel
-        %[9]  FWD LVDT: Averaged           (mm)
-        %[10] FWD LVDT: Minimum            (mm)
-        %[11] FWD LVDT: Maximum            (mm)    
-        %[12] FWD LVDT: Diff. min to avg   (percent) 
-        %[13] FWD LVDT: Standard deviation (mm)       
-            
-        %[14] Channel
-        %[15] AFT LVDT: Averaged           (mm)
-        %[16] AFT LVDT: Minimum            (mm)
-        %[17] AFT LVDT: Maximum            (mm)    
-        %[18] AFT LVDT: Diff. min to avg   (percent) 
-        %[19] AFT LVDT: Standard deviation (mm)         
-        
-        %[20] Channel
-        %[21] DRAG: Averaged               (g)
-        %[22] DRAG: Minimum                (g)
-        %[23] DRAG: Maximum                (g)    
-        %[24] DRAG: Diff. min to avg       (percent) 
-        %[25] DRAG: Standard deviation     (g)         
-        
-        %[26]  Froude length Number                     (-)
-        %[27]  Speed no. (i.e. 1=0.24, 2=0.26, 3=0.28)  (-)                
-        
+    %# Results array columns:
+    %[1]  Run No.
+    
+    %[2]  Channel
+    %[3]  SPEED: Averaged              (m/s)
+    %[4]  SPEED: Minimum               (m/s)
+    %[5]  SPEED: Maximum               (m/s)
+    %[6]  SPEED: Diff. min to avg      (percent)
+    %[7]  SPEED: Standard deviation    (m/s)
+    
+    %[8]  Channel
+    %[9]  FWD LVDT: Averaged           (mm)
+    %[10] FWD LVDT: Minimum            (mm)
+    %[11] FWD LVDT: Maximum            (mm)
+    %[12] FWD LVDT: Diff. min to avg   (percent)
+    %[13] FWD LVDT: Standard deviation (mm)
+    
+    %[14] Channel
+    %[15] AFT LVDT: Averaged           (mm)
+    %[16] AFT LVDT: Minimum            (mm)
+    %[17] AFT LVDT: Maximum            (mm)
+    %[18] AFT LVDT: Diff. min to avg   (percent)
+    %[19] AFT LVDT: Standard deviation (mm)
+    
+    %[20] Channel
+    %[21] DRAG: Averaged               (g)
+    %[22] DRAG: Minimum                (g)
+    %[23] DRAG: Maximum                (g)
+    %[24] DRAG: Diff. min to avg       (percent)
+    %[25] DRAG: Standard deviation     (g)
+    
+    %[26]  Froude length Number                     (-)
+    %[27]  Speed no. (i.e. 1=0.24, 2=0.26, 3=0.28)  (-)
+    
     % General data
     resultsArrayTSBasic(k, 1)  = k;
-        
+    
     % Speed
     MeanData = CH_0_Speed_Mean;
     CHData   = CH_0_Speed;
@@ -720,7 +720,7 @@ for k=startRun:endRun
     resultsArrayTSBasic(k, 3)  = MeanData;
     resultsArrayTSBasic(k, 4)  = min(CHData);
     resultsArrayTSBasic(k, 5)  = max(CHData);
-    resultsArrayTSBasic(k, 6)  = abs(1-(min(CHData)/MeanData));    
+    resultsArrayTSBasic(k, 6)  = abs(1-(min(CHData)/MeanData));
     resultsArrayTSBasic(k, 7)  = std(CHData);
     
     % FWD LVDT
@@ -731,8 +731,8 @@ for k=startRun:endRun
     resultsArrayTSBasic(k, 9)  = MeanData;
     resultsArrayTSBasic(k, 10) = min(CHData);
     resultsArrayTSBasic(k, 11) = max(CHData);
-    resultsArrayTSBasic(k, 12) = abs(1-(min(CHData)/MeanData));    
-    resultsArrayTSBasic(k, 13) = std(CHData);    
+    resultsArrayTSBasic(k, 12) = abs(1-(min(CHData)/MeanData));
+    resultsArrayTSBasic(k, 13) = std(CHData);
     
     % AFT LVDT
     MeanData = CH_2_LVDTAft_Mean;
@@ -742,8 +742,8 @@ for k=startRun:endRun
     resultsArrayTSBasic(k, 15) = MeanData;
     resultsArrayTSBasic(k, 16) = min(CHData);
     resultsArrayTSBasic(k, 17) = max(CHData);
-    resultsArrayTSBasic(k, 18) = abs(1-(min(CHData)/MeanData));    
-    resultsArrayTSBasic(k, 19) = std(CHData);    
+    resultsArrayTSBasic(k, 18) = abs(1-(min(CHData)/MeanData));
+    resultsArrayTSBasic(k, 19) = std(CHData);
     
     % Drag
     MeanData = CH_3_Drag_Mean;
@@ -753,8 +753,8 @@ for k=startRun:endRun
     resultsArrayTSBasic(k, 21) = MeanData;
     resultsArrayTSBasic(k, 22) = min(CHData);
     resultsArrayTSBasic(k, 23) = max(CHData);
-    resultsArrayTSBasic(k, 24) = abs(1-(min(CHData)/MeanData));    
-    resultsArrayTSBasic(k, 25) = std(CHData);      
+    resultsArrayTSBasic(k, 24) = abs(1-(min(CHData)/MeanData));
+    resultsArrayTSBasic(k, 25) = std(CHData);
     
     % Froude length number
     roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
@@ -767,13 +767,13 @@ for k=startRun:endRun
     
     %# ********************************************************************
     %# Dyno: Time Series Output
-    %# ********************************************************************    
+    %# ********************************************************************
     
     %# ********************************************************************
     %# PLOTTING
     %# ********************************************************************
     if enableTSPlot == 1
-    
+        
         figurename = sprintf('%s:: Dyno Time Series Plot, Run %s', testName, num2str(runno));
         f = figure('Name',figurename,'NumberTitle','off');
         
@@ -954,7 +954,7 @@ for k=startRun:endRun
         plotsavename = sprintf('_plots/%s/Run_%s_CH_6-9_Dynamometer.png', 'TS', num2str(runno));
         saveas(f, plotsavename);                % Save plot as PNG
         close;
-    
+        
     end
     
     %# ********************************************************************
@@ -989,7 +989,7 @@ for k=startRun:endRun
         maxporttorque = sprintf('%s:: PORT Torque (Maximum): %s (Nm)', runno, sprintf('%.2f',max(CHData)));
         ptaporttorque = sprintf('%s:: Diff. min to avg: %s (percent)%', runno, sprintf('%.2f',100*abs(1-(min(CHData)/MeanData))));
         stdporttorque = sprintf('%s:: Standard deviation: %s (Nm)', runno, sprintf('%.4f',std(CHData)));
-                   
+        
         disp(avgporttorque);
         disp(minporttorque);
         disp(maxporttorque);
@@ -1012,7 +1012,7 @@ for k=startRun:endRun
         disp(minstbdthrust);
         disp(maxstbdthrust);
         disp(ptastbdthrust);
-        disp(stdstbdthrust);        
+        disp(stdstbdthrust);
         
         disp('-------------------------------------------------');
         
@@ -1025,56 +1025,56 @@ for k=startRun:endRun
         maxstbdtorque = sprintf('%s:: STBD Torque (Maximum): %s (Nm)', runno, sprintf('%.2f',max(CHData)));
         ptastbdtorque = sprintf('%s:: Diff. min to avg: %s (percent)%', runno, sprintf('%.2f',100*abs(1-(min(CHData)/MeanData))));
         stdstbdtorque = sprintf('%s:: Standard deviation: %s (Nm)', runno, sprintf('%.4f',std(CHData)));
-                   
+        
         disp(avgstbdtorque);
         disp(minstbdtorque);
         disp(maxstbdtorque);
         disp(ptastbdtorque);
-        disp(stdstbdtorque);        
+        disp(stdstbdtorque);
         
         disp('/////////////////////////////////////////////////');
-    
+        
     end
-
+    
     %# ********************************************************************
     %# Save data to aray then save to file
     %# ********************************************************************
     
     %# Add results to dedicated array for simple export
-    %# Results array columns: 
-        %[1]  Run No.
-        
-        %[2]  Channel
-        %[3]  PORT (Thrust): Averaged           (N)
-        %[4]  PORT (Thrust): Minimum            (N)
-        %[5]  PORT (Thrust): Maximum            (N)    
-        %[6]  PORT (Thrust): Diff. min to avg   (percent) 
-        %[7]  PORT (Thrust): Standard deviation (N)
-        
-        %[8]  Channel
-        %[9]  PORT (Torque): Averaged           (Nm)
-        %[10] PORT (Torque): Minimum            (Nm)
-        %[11] PORT (Torque): Maximum            (Nm)    
-        %[12] PORT (Torque): Diff. min to avg   (percent) 
-        %[13] PORT (Torque): Standard deviation (Nm)
-        
-        %[14]  Channel
-        %[15]  STBD (Thrust): Averaged           (N)
-        %[16]  STBD (Thrust): Minimum            (N)
-        %[17]  STBD (Thrust): Maximum            (N)    
-        %[18]  STBD (Thrust): Diff. min to avg   (percent) 
-        %[19]  STBD (Thrust): Standard deviation (N)
-        
-        %[20]  Channel
-        %[21]  STBD (Torque): Averaged           (Nm)
-        %[22]  STBD (Torque): Minimum            (Nm)
-        %[23]  STBD (Torque): Maximum            (Nm)    
-        %[24]  STBD (Torque): Diff. min to avg   (percent) 
-        %[25]  STBD (Torque): Standard deviation (Nm)
-        
-        %[26]  Froude length Number                     (-)
-        %[27]  Speed no. (i.e. 1=0.24, 2=0.26, 3=0.28)  (-)        
-        
+    %# Results array columns:
+    %[1]  Run No.
+    
+    %[2]  Channel
+    %[3]  PORT (Thrust): Averaged           (N)
+    %[4]  PORT (Thrust): Minimum            (N)
+    %[5]  PORT (Thrust): Maximum            (N)
+    %[6]  PORT (Thrust): Diff. min to avg   (percent)
+    %[7]  PORT (Thrust): Standard deviation (N)
+    
+    %[8]  Channel
+    %[9]  PORT (Torque): Averaged           (Nm)
+    %[10] PORT (Torque): Minimum            (Nm)
+    %[11] PORT (Torque): Maximum            (Nm)
+    %[12] PORT (Torque): Diff. min to avg   (percent)
+    %[13] PORT (Torque): Standard deviation (Nm)
+    
+    %[14]  Channel
+    %[15]  STBD (Thrust): Averaged           (N)
+    %[16]  STBD (Thrust): Minimum            (N)
+    %[17]  STBD (Thrust): Maximum            (N)
+    %[18]  STBD (Thrust): Diff. min to avg   (percent)
+    %[19]  STBD (Thrust): Standard deviation (N)
+    
+    %[20]  Channel
+    %[21]  STBD (Torque): Averaged           (Nm)
+    %[22]  STBD (Torque): Minimum            (Nm)
+    %[23]  STBD (Torque): Maximum            (Nm)
+    %[24]  STBD (Torque): Diff. min to avg   (percent)
+    %[25]  STBD (Torque): Standard deviation (Nm)
+    
+    %[26]  Froude length Number                     (-)
+    %[27]  Speed no. (i.e. 1=0.24, 2=0.26, 3=0.28)  (-)
+    
     % General data
     resultsArrayTSDyno(k, 1)  = k;
     
@@ -1086,19 +1086,19 @@ for k=startRun:endRun
     resultsArrayTSDyno(k, 3)  = MeanData;
     resultsArrayTSDyno(k, 4)  = min(CHData);
     resultsArrayTSDyno(k, 5)  = max(CHData);
-    resultsArrayTSDyno(k, 6)  = abs(1-(min(CHData)/MeanData));    
+    resultsArrayTSDyno(k, 6)  = abs(1-(min(CHData)/MeanData));
     resultsArrayTSDyno(k, 7)  = std(CHData);
     
     % Port Torque
     MeanData = CH_7_PortTorque_Mean;
     CHData   = CH_7_PortTorque;
     
-    resultsArrayTSDyno(k, 8)  = 7;    
+    resultsArrayTSDyno(k, 8)  = 7;
     resultsArrayTSDyno(k, 9)  = MeanData;
     resultsArrayTSDyno(k, 10) = min(CHData);
     resultsArrayTSDyno(k, 11) = max(CHData);
-    resultsArrayTSDyno(k, 12) = abs(1-(min(CHData)/MeanData));    
-    resultsArrayTSDyno(k, 13) = std(CHData);     
+    resultsArrayTSDyno(k, 12) = abs(1-(min(CHData)/MeanData));
+    resultsArrayTSDyno(k, 13) = std(CHData);
     
     % Stbd Thrust
     MeanData = CH_8_StbdThrust_Mean;
@@ -1108,19 +1108,19 @@ for k=startRun:endRun
     resultsArrayTSDyno(k, 15) = MeanData;
     resultsArrayTSDyno(k, 16) = min(CHData);
     resultsArrayTSDyno(k, 17) = max(CHData);
-    resultsArrayTSDyno(k, 18) = abs(1-(min(CHData)/MeanData));    
+    resultsArrayTSDyno(k, 18) = abs(1-(min(CHData)/MeanData));
     resultsArrayTSDyno(k, 19) = std(CHData);
     
     % Stbd Torque
     MeanData = CH_9_StbdTorque_Mean;
     CHData   = CH_9_StbdTorque;
     
-    resultsArrayTSDyno(k, 20) = 9;    
+    resultsArrayTSDyno(k, 20) = 9;
     resultsArrayTSDyno(k, 21) = MeanData;
     resultsArrayTSDyno(k, 22) = min(CHData);
     resultsArrayTSDyno(k, 23) = max(CHData);
-    resultsArrayTSDyno(k, 24) = abs(1-(min(CHData)/MeanData));    
-    resultsArrayTSDyno(k, 25) = std(CHData);    
+    resultsArrayTSDyno(k, 24) = abs(1-(min(CHData)/MeanData));
+    resultsArrayTSDyno(k, 25) = std(CHData);
     
     % Froude length number
     roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
@@ -1128,18 +1128,18 @@ for k=startRun:endRun
     resultsArrayTSDyno(k, 26)  = modelfrrounded;
     
     % Speed and depth number
-    resultsArrayTSDyno(k, 27)  = setSpeedCond;    
+    resultsArrayTSDyno(k, 27)  = setSpeedCond;
     
     
     %# ********************************************************************
     %# Kiel Probe: Time Series Output
-    %# ********************************************************************    
+    %# ********************************************************************
     
     %# ********************************************************************
     %# PLOTTING
     %# ********************************************************************
-    if enableTSPlot == 1    
-    
+    if enableTSPlot == 1
+        
         figurename = sprintf('%s:: Kiel Probe Time Series Plot, Run %s', testName, num2str(runno));
         f = figure('Name',figurename,'NumberTitle','off');
         
@@ -1240,14 +1240,14 @@ for k=startRun:endRun
         plotsavename = sprintf('_plots/%s/Run_%s_CH_10-11_Kiel_Probe.png', 'TS', num2str(runno));
         saveas(f, plotsavename);                % Save plot as PNG
         close;
-    
+        
     end
     
     %# ********************************************************************
     %# Command Window Output
     %# ********************************************************************
     if enableDISP == 1
-
+        
         % Port Kiel Probe
         MeanData = CH_10_PortKP_Mean;
         CHData   = CH_10_PortKP;
@@ -1283,34 +1283,34 @@ for k=startRun:endRun
         disp(stdstbdkp);
         
         disp('/////////////////////////////////////////////////');
-    
+        
     end
-
+    
     %# ********************************************************************
     %# Save data to aray then save to file
     %# ********************************************************************
     
     %# Add results to dedicated array for simple export
-    %# Results array columns: 
-        %[1]  Run No.
-        
-        %[2]  Channel
-        %[3]  PORT Kiel Probe: Averaged           (V)
-        %[4]  PORT Kiel Probe: Minimum            (V)
-        %[5]  PORT Kiel Probe: Maximum            (V)    
-        %[6]  PORT Kiel Probe: Diff. min to avg   (percent) 
-        %[7]  PORT Kiel Probe: Standard deviation (V)
-        
-        %[8]  Channel
-        %[9]  STBD Kiel Probe: Averaged           (V)
-        %[10] STBD Kiel Probe: Minimum            (V)
-        %[11] STBD Kiel Probe: Maximum            (V)    
-        %[12] STBD Kiel Probe: Diff. min to avg   (percent) 
-        %[13] STBD Kiel Probe: Standard deviation (V)
-
-        %[14]  Froude length Number                     (-)
-        %[15]  Speed no. (i.e. 1=0.24, 2=0.26, 3=0.28)  (-)        
-        
+    %# Results array columns:
+    %[1]  Run No.
+    
+    %[2]  Channel
+    %[3]  PORT Kiel Probe: Averaged           (V)
+    %[4]  PORT Kiel Probe: Minimum            (V)
+    %[5]  PORT Kiel Probe: Maximum            (V)
+    %[6]  PORT Kiel Probe: Diff. min to avg   (percent)
+    %[7]  PORT Kiel Probe: Standard deviation (V)
+    
+    %[8]  Channel
+    %[9]  STBD Kiel Probe: Averaged           (V)
+    %[10] STBD Kiel Probe: Minimum            (V)
+    %[11] STBD Kiel Probe: Maximum            (V)
+    %[12] STBD Kiel Probe: Diff. min to avg   (percent)
+    %[13] STBD Kiel Probe: Standard deviation (V)
+    
+    %[14]  Froude length Number                     (-)
+    %[15]  Speed no. (i.e. 1=0.24, 2=0.26, 3=0.28)  (-)
+    
     % General data
     resultsArrayTSKp(k, 1)  = k;
     
@@ -1322,7 +1322,7 @@ for k=startRun:endRun
     resultsArrayTSKp(k, 3)  = MeanData;
     resultsArrayTSKp(k, 4)  = min(CHData);
     resultsArrayTSKp(k, 5)  = max(CHData);
-    resultsArrayTSKp(k, 6)  = abs(1-(min(CHData)/MeanData));    
+    resultsArrayTSKp(k, 6)  = abs(1-(min(CHData)/MeanData));
     resultsArrayTSKp(k, 7)  = std(CHData);
     
     % Stbd Kiel Probe
@@ -1333,8 +1333,8 @@ for k=startRun:endRun
     resultsArrayTSKp(k, 9)  = MeanData;
     resultsArrayTSKp(k, 10)  = min(CHData);
     resultsArrayTSKp(k, 11) = max(CHData);
-    resultsArrayTSKp(k, 12) = abs(1-(min(CHData)/MeanData));    
-    resultsArrayTSKp(k, 13) = std(CHData);  
+    resultsArrayTSKp(k, 12) = abs(1-(min(CHData)/MeanData));
+    resultsArrayTSKp(k, 13) = std(CHData);
     
     % Froude length number
     roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
@@ -1347,13 +1347,13 @@ for k=startRun:endRun
     
     %# ********************************************************************
     %# Pressures: Time Series Output
-    %# ********************************************************************    
+    %# ********************************************************************
     
     %# ********************************************************************
     %# PLOTTING
     %# ********************************************************************
-    if enableTSPlot == 1    
-    
+    if enableTSPlot == 1
+        
         figurename = sprintf('%s:: Pressures Time Series Plot, Run %s', testName, num2str(runno));
         f = figure('Name',figurename,'NumberTitle','off');
         
@@ -1624,14 +1624,14 @@ for k=startRun:endRun
         plotsavename = sprintf('_plots/%s/Run_%s_CH_12-18_Pressures.png', 'TS', num2str(runno));
         saveas(f, plotsavename);                % Save plot as PNG
         close;
-    
+        
     end
     
     %# ********************************************************************
     %# Command Window Output
     %# ********************************************************************
     if enableDISP == 1
-
+        
         % PORT Station 6 Static Pressue
         MeanData = CH_12_Port_Stat_6_Mean;
         CHData   = CH_12_Port_Stat_6;
@@ -1757,81 +1757,81 @@ for k=startRun:endRun
         disp(stdstbdstation1a);
         
         disp('/////////////////////////////////////////////////');
-    
+        
     end
-
+    
     %# ********************************************************************
     %# Save data to aray then save to file
     %# ********************************************************************
     
     %# Add results to dedicated array for simple export
-    %# Results array columns: 
-        %[1]  Run No.
-        
-        %[2]  Channel
-        %[3]  PORT Station 6 Static Pressue: Averaged           (mmH2O)
-        %[4]  PORT Station 6 Static Pressue: Minimum            (mmH2O)
-        %[5]  PORT Station 6 Static Pressue: Maximum            (mmH2O)    
-        %[6]  PORT Station 6 Static Pressue: Diff. min to avg   (percent) 
-        %[7]  PORT Station 6 Static Pressue: Standard deviation (mmH2O)
-        
-        %[8]  Channel
-        %[9]  STBD Station 6 Static Pressue: Averaged           (mmH2O)
-        %[10] STBD Station 6 Static Pressue: Minimum            (mmH2O)
-        %[11] STBD Station 6 Static Pressue: Maximum            (mmH2O)    
-        %[12] STBD Station 6 Static Pressue: Diff. min to avg   (percent) 
-        %[13] STBD Station 6 Static Pressue: Standard deviation (mmH2O)
-        
-        %[14] Channel
-        %[15] STBD Station 5 Static Pressue: Averaged           (mmH2O)
-        %[16] STBD Station 5 Static Pressue: Minimum            (mmH2O)
-        %[17] STBD Station 5 Static Pressue: Maximum            (mmH2O)    
-        %[18] STBD Station 5 Static Pressue: Diff. min to avg   (percent) 
-        %[19] STBD Station 5 Static Pressue: Standard deviation (mmH2O)
-        
-        %[20] Channel
-        %[21] STBD Station 4 Static Pressue: Averaged           (mmH2O)
-        %[22] STBD Station 4 Static Pressue: Minimum            (mmH2O)
-        %[23] STBD Station 4 Static Pressue: Maximum            (mmH2O)    
-        %[24] STBD Station 4 Static Pressue: Diff. min to avg   (percent) 
-        %[25] STBD Station 4 Static Pressue: Standard deviation (mmH2O)
-        
-        %[26] Channel
-        %[27] STBD Station 3 Static Pressue: Averaged           (mmH2O)
-        %[28] STBD Station 3 Static Pressue: Minimum            (mmH2O)
-        %[29] STBD Station 3 Static Pressue: Maximum            (mmH2O)    
-        %[30] STBD Station 3 Static Pressue: Diff. min to avg   (percent) 
-        %[31] STBD Station 3 Static Pressue: Standard deviation (mmH2O)
-        
-        %[32] Channel
-        %[33] PORT Station 1a Static Pressue: Averaged           (mmH2O)
-        %[34] PORT Station 1a Static Pressue: Minimum            (mmH2O)
-        %[35] PORT Station 1a Static Pressue: Maximum            (mmH2O)    
-        %[36] PORT Station 1a Static Pressue: Diff. min to avg   (percent) 
-        %[37] PORT Station 1a Static Pressue: Standard deviation (mmH2O)
-        
-        %[38] Channel
-        %[39] STBD Station 1a Static Pressue: Averaged           (mmH2O)
-        %[40] STBD Station 1a Static Pressue: Minimum            (mmH2O)
-        %[41] STBD Station 1a Static Pressue: Maximum            (mmH2O)    
-        %[42] STBD Station 1a Static Pressue: Diff. min to avg   (percent) 
-        %[43] STBD Station 1a Static Pressue: Standard deviation (mmH2O)       
-        
-        %[44]  Froude length Number                     (-)
-        %[45]  Speed no. (i.e. 1=0.24, 2=0.26, 3=0.28)  (-)        
-        
-	% General data
+    %# Results array columns:
+    %[1]  Run No.
+    
+    %[2]  Channel
+    %[3]  PORT Station 6 Static Pressue: Averaged           (mmH2O)
+    %[4]  PORT Station 6 Static Pressue: Minimum            (mmH2O)
+    %[5]  PORT Station 6 Static Pressue: Maximum            (mmH2O)
+    %[6]  PORT Station 6 Static Pressue: Diff. min to avg   (percent)
+    %[7]  PORT Station 6 Static Pressue: Standard deviation (mmH2O)
+    
+    %[8]  Channel
+    %[9]  STBD Station 6 Static Pressue: Averaged           (mmH2O)
+    %[10] STBD Station 6 Static Pressue: Minimum            (mmH2O)
+    %[11] STBD Station 6 Static Pressue: Maximum            (mmH2O)
+    %[12] STBD Station 6 Static Pressue: Diff. min to avg   (percent)
+    %[13] STBD Station 6 Static Pressue: Standard deviation (mmH2O)
+    
+    %[14] Channel
+    %[15] STBD Station 5 Static Pressue: Averaged           (mmH2O)
+    %[16] STBD Station 5 Static Pressue: Minimum            (mmH2O)
+    %[17] STBD Station 5 Static Pressue: Maximum            (mmH2O)
+    %[18] STBD Station 5 Static Pressue: Diff. min to avg   (percent)
+    %[19] STBD Station 5 Static Pressue: Standard deviation (mmH2O)
+    
+    %[20] Channel
+    %[21] STBD Station 4 Static Pressue: Averaged           (mmH2O)
+    %[22] STBD Station 4 Static Pressue: Minimum            (mmH2O)
+    %[23] STBD Station 4 Static Pressue: Maximum            (mmH2O)
+    %[24] STBD Station 4 Static Pressue: Diff. min to avg   (percent)
+    %[25] STBD Station 4 Static Pressue: Standard deviation (mmH2O)
+    
+    %[26] Channel
+    %[27] STBD Station 3 Static Pressue: Averaged           (mmH2O)
+    %[28] STBD Station 3 Static Pressue: Minimum            (mmH2O)
+    %[29] STBD Station 3 Static Pressue: Maximum            (mmH2O)
+    %[30] STBD Station 3 Static Pressue: Diff. min to avg   (percent)
+    %[31] STBD Station 3 Static Pressue: Standard deviation (mmH2O)
+    
+    %[32] Channel
+    %[33] PORT Station 1a Static Pressue: Averaged           (mmH2O)
+    %[34] PORT Station 1a Static Pressue: Minimum            (mmH2O)
+    %[35] PORT Station 1a Static Pressue: Maximum            (mmH2O)
+    %[36] PORT Station 1a Static Pressue: Diff. min to avg   (percent)
+    %[37] PORT Station 1a Static Pressue: Standard deviation (mmH2O)
+    
+    %[38] Channel
+    %[39] STBD Station 1a Static Pressue: Averaged           (mmH2O)
+    %[40] STBD Station 1a Static Pressue: Minimum            (mmH2O)
+    %[41] STBD Station 1a Static Pressue: Maximum            (mmH2O)
+    %[42] STBD Station 1a Static Pressue: Diff. min to avg   (percent)
+    %[43] STBD Station 1a Static Pressue: Standard deviation (mmH2O)
+    
+    %[44]  Froude length Number                     (-)
+    %[45]  Speed no. (i.e. 1=0.24, 2=0.26, 3=0.28)  (-)
+    
+    % General data
     resultsArrayTSPressure(k, 1)  = k;
     
     % PORT Station 6 Static Pressue
     MeanData = CH_12_Port_Stat_6_Mean;
     CHData   = CH_12_Port_Stat_6;
     
-    resultsArrayTSPressure(k, 2)  = 12;    
+    resultsArrayTSPressure(k, 2)  = 12;
     resultsArrayTSPressure(k, 3)  = MeanData;
     resultsArrayTSPressure(k, 4)  = min(CHData);
     resultsArrayTSPressure(k, 5)  = max(CHData);
-    resultsArrayTSPressure(k, 6)  = abs(1-(min(CHData)/MeanData));    
+    resultsArrayTSPressure(k, 6)  = abs(1-(min(CHData)/MeanData));
     resultsArrayTSPressure(k, 7)  = std(CHData);
     
     % STBD Station 6 Static Pressue
@@ -1842,8 +1842,8 @@ for k=startRun:endRun
     resultsArrayTSPressure(k, 9)  = MeanData;
     resultsArrayTSPressure(k, 10) = min(CHData);
     resultsArrayTSPressure(k, 11) = max(CHData);
-    resultsArrayTSPressure(k, 12) = abs(1-(min(CHData)/MeanData));    
-    resultsArrayTSPressure(k, 13) = std(CHData);     
+    resultsArrayTSPressure(k, 12) = abs(1-(min(CHData)/MeanData));
+    resultsArrayTSPressure(k, 13) = std(CHData);
     
     % STBD Station 5 Static Pressue
     MeanData = CH_14_Stbd_Stat_5_Mean;
@@ -1853,7 +1853,7 @@ for k=startRun:endRun
     resultsArrayTSPressure(k, 15) = MeanData;
     resultsArrayTSPressure(k, 16) = min(CHData);
     resultsArrayTSPressure(k, 17) = max(CHData);
-    resultsArrayTSPressure(k, 18) = abs(1-(min(CHData)/MeanData));    
+    resultsArrayTSPressure(k, 18) = abs(1-(min(CHData)/MeanData));
     resultsArrayTSPressure(k, 19) = std(CHData);
     
     % STBD Station 4 Static Pressue
@@ -1864,8 +1864,8 @@ for k=startRun:endRun
     resultsArrayTSPressure(k, 21) = MeanData;
     resultsArrayTSPressure(k, 22) = min(CHData);
     resultsArrayTSPressure(k, 23) = max(CHData);
-    resultsArrayTSPressure(k, 24) = abs(1-(min(CHData)/MeanData));    
-    resultsArrayTSPressure(k, 25) = std(CHData);    
+    resultsArrayTSPressure(k, 24) = abs(1-(min(CHData)/MeanData));
+    resultsArrayTSPressure(k, 25) = std(CHData);
     
     % STBD Station 3 Static Pressue
     MeanData = CH_16_Stbd_Stat_3_Mean;
@@ -1875,8 +1875,8 @@ for k=startRun:endRun
     resultsArrayTSPressure(k, 27) = MeanData;
     resultsArrayTSPressure(k, 28) = min(CHData);
     resultsArrayTSPressure(k, 29) = max(CHData);
-    resultsArrayTSPressure(k, 30) = abs(1-(min(CHData)/MeanData));    
-    resultsArrayTSPressure(k, 31) = std(CHData);     
+    resultsArrayTSPressure(k, 30) = abs(1-(min(CHData)/MeanData));
+    resultsArrayTSPressure(k, 31) = std(CHData);
     
     % PORT Station 1a Static Pressue
     MeanData = CH_17_Port_Stat_1a_Mean;
@@ -1886,7 +1886,7 @@ for k=startRun:endRun
     resultsArrayTSPressure(k, 33) = MeanData;
     resultsArrayTSPressure(k, 34) = min(CHData);
     resultsArrayTSPressure(k, 35) = max(CHData);
-    resultsArrayTSPressure(k, 36) = abs(1-(min(CHData)/MeanData));    
+    resultsArrayTSPressure(k, 36) = abs(1-(min(CHData)/MeanData));
     resultsArrayTSPressure(k, 37) = std(CHData);
     
     % STBD Station 1a Static Pressue
@@ -1897,16 +1897,16 @@ for k=startRun:endRun
     resultsArrayTSPressure(k, 39) = MeanData;
     resultsArrayTSPressure(k, 40) = min(CHData);
     resultsArrayTSPressure(k, 41) = max(CHData);
-    resultsArrayTSPressure(k, 42) = abs(1-(min(CHData)/MeanData));    
+    resultsArrayTSPressure(k, 42) = abs(1-(min(CHData)/MeanData));
     resultsArrayTSPressure(k, 43) = std(CHData);
-
+    
     % Froude length number
     roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
     modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number
     resultsArrayTSPressure(k, 44)  = modelfrrounded;
     
     % Speed and depth number
-    resultsArrayTSPressure(k, 45)  = setSpeedCond;    
+    resultsArrayTSPressure(k, 45)  = setSpeedCond;
     
     
     %wtot = endRun - startRun;
@@ -1924,7 +1924,7 @@ end
 % Basic data: Speed, LVDTs, Drag
 M = resultsArrayTSBasic;
 M = M(any(M,2),:);                            % Remove zero rows
-csvwrite('resultsArrayTSBasic.dat', M)        % Export matrix M to a file delimited by the comma character  
+csvwrite('resultsArrayTSBasic.dat', M)        % Export matrix M to a file delimited by the comma character
 disp('Saved: resultsArrayTSBasic.dat');       % Display message in command window
 
 % Dynamometer data: Thrust and Torque

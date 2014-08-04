@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Resistance Test Analysis - Uncertainty Analysis
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  January 21, 2014
 %#
@@ -10,7 +10,7 @@
 %#
 %# Runs TSI   :  Runs 01-35   Turbulence Studs Investigation               (TSI)
 %#               |__Disp. & trim:   1,500t, level static trim
-%#               |__Conditions:     1 = No turbulence studs 
+%#               |__Conditions:     1 = No turbulence studs
 %#                                  2 = First row of turbulence studs
 %#                                  3 = First and second row of turbulence studs
 %#
@@ -39,8 +39,8 @@
 %#
 %# Speeds (FR)    :  0.1-0.47 (5.9-27.6 knots)
 %#
-%# Description    :  Uncertainty analysis for multiple tests as outlined 
-%#                   by ITTC including resistance, speed, sinkage and 
+%# Description    :  Uncertainty analysis for multiple tests as outlined
+%#                   by ITTC including resistance, speed, sinkage and
 %#                   trim measurements.
 %#
 %# ITTC Guidelines:  7.5-02-02-01
@@ -145,7 +145,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# Read results DAT file
 %# -------------------------------------------------------------------------
 if exist('full_resistance_data.dat', 'file') == 2
-    %# Results array columns: 
+    %# Results array columns:
     %[1]  Run No.                                                                  (-)
     %[2]  FS                                                                       (Hz)
     %[3]  No. of samples                                                           (-)
@@ -194,7 +194,7 @@ if exist('full_resistance_data.dat', 'file') == 2
     %[46] LVDT (FWD): Standard deviation                                           (mm)
     %[47] LVDT (AFT): Standard deviation                                           (mm)
     %[48] DRAG: Standard deviation                                                 (g)
-
+    
     results = csvread('full_resistance_data.dat');
     
     %# Remove zero rows
@@ -388,7 +388,7 @@ for j=1:ma
     end
     if A{j}(1,28) == 13
         cond13 = A{j};
-    end    
+    end
 end
 
 %# ------------------------------------------------------------------------
@@ -409,7 +409,7 @@ testName = 'Resistance uncertainty analysis';
 resultsArrayUARes = [];
 counter1 = 1;
 for condNo=7:12
-
+    
     % Set variables based on condition number
     if condNo == 7
         setCond   = cond7;
@@ -417,35 +417,35 @@ for condNo=7:12
         setModWsa = MSwsa1500;
         setModLwl = MSlwl1500;
         setBeam   = MSbeam1500;
-        setFormFactor = 0.12; 
+        setFormFactor = 0.12;
     elseif condNo == 8
         setCond   = cond8;
         setCondNo = 8;
         setModWsa = MSwsa1500bybow;
         setModLwl = MSlwl1500bybow;
         setBeam   = MSbeam1500;
-        setFormFactor = 0.12; 
+        setFormFactor = 0.12;
     elseif condNo == 9
         setCond   = cond9;
         setCondNo = 9;
         setModWsa = MSwsa1500bystern;
         setModLwl = MSlwl1500bystern;
         setBeam   = MSbeam1500;
-        setFormFactor = 0.12; 
+        setFormFactor = 0.12;
     elseif condNo == 10
         setCond   = cond10;
         setCondNo = 10;
         setModWsa = MSwsa1804;
         setModLwl = MSlwl1804;
         setBeam   = MSbeam1500;
-        setFormFactor = 0.12; 
+        setFormFactor = 0.12;
     elseif condNo == 11
         setCond   = cond11;
         setCondNo = 11;
         setModWsa = MSwsa1804bybow;
         setModLwl = MSlwl1804bybow;
         setBeam   = MSbeam1500;
-        setFormFactor = 0.12; 
+        setFormFactor = 0.12;
     elseif condNo == 12
         setCond   = cond12;
         setCondNo = 12;
@@ -456,21 +456,21 @@ for condNo=7:12
     else
         break;
     end
-
+    
     % Split into individual arrays based on Froude length numbers
     R = setCond;
     A = arrayfun(@(x) R(R(:,11) == x, :), unique(R(:,11)), 'uniformoutput', false);
     [ma,na] = size(A);      % Array dimensions
-        
+    
     % Loop though speeds of selected condition
-    for j=1:ma        
+    for j=1:ma
         [mas,nas] = size(A{j});      % Array dimensions
         
         %# ////////////////////////////////////////////////////////////////
         %# 4.0 Input variables
         %# ////////////////////////////////////////////////////////////////
         
-        % Model kinematic viscosity (m/s^2) 
+        % Model kinematic viscosity (m/s^2)
         setModKinVisc = modelkinviscosity;
         
         % Total Resistance Coefficient (average @ 15 deg C)
@@ -478,7 +478,7 @@ for condNo=7:12
         
         % Frictional resistance coeff. at measured temp, tw
         setCFtw       = 0.075/(log10((A{j}(1,5)*setModLwl)/setModKinVisc)-2)^2;
-               
+        
         %# ////////////////////////////////////////////////////////////////
         %# 3.0 Multiple test uncertainty
         %# ////////////////////////////////////////////////////////////////
@@ -511,14 +511,14 @@ for condNo=7:12
         
         % Standard deviation
         stdDev      = std(resultsArrayRT(:,1));
-
+        
         %# ////////////////////////////////////////////////////////////////
         %# 4.0 Input variables (continued)
         %# ////////////////////////////////////////////////////////////////
         
         % Coverage factor for standard deviation:
         %   K = 2 (confidence level of approx. 95%)
-        %   K = 3 (confidence level greater than 99%) 
+        %   K = 3 (confidence level greater than 99%)
         setK = 2;
         
         % Resistance average (N)
@@ -534,14 +534,14 @@ for condNo=7:12
         % NOTE: Number of repeats of this test (i.e. speed)
         setM = oas;
         
-%         if A{j}(1,11) == 0.20
-%             %resultsArrayRT
-%             avgCT
-%             avgCT15degC
-%             stdDev
-%             setMx
-%             setRx
-%         end
+        %         if A{j}(1,11) == 0.20
+        %             %resultsArrayRT
+        %             avgCT
+        %             avgCT15degC
+        %             stdDev
+        %             setMx
+        %             setRx
+        %         end
         
         %# ////////////////////////////////////////////////////////////////
         %# 6.0 Bias limits
@@ -568,22 +568,22 @@ for condNo=7:12
         % % Bs (Wetted Surface)          (m^2)
         % NOTE: Wetted surface bias
         setBs       = sqrt(setBs1^2+setBs2^2);
-        percentOfS  = (setBs/setModWsa)*100;        
+        percentOfS  = (setBs/setModWsa)*100;
         
         % Percentage of (Bs)^2
         percentOfBs1 = (setBs1^2/setBs^2)*100;
         percentOfBs2 = (setBs2^2/setBs^2)*100;
         
-%         if A{j}(1,11) == 0.20
-%             setModLwl
-%             setBs1
-%             setBs2
-%             percentOfBs1
-%             percentOfBs2
-%             setBs
-%             percentOfS
-%         end
-
+        %         if A{j}(1,11) == 0.20
+        %             setModLwl
+        %             setBs1
+        %             setBs2
+        %             percentOfBs1
+        %             percentOfBs2
+        %             setBs
+        %             percentOfS
+        %         end
+        
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         % 6.2 Speed
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -601,10 +601,10 @@ for condNo=7:12
         
         percentOfV  = (setBv/A{j}(1,5))*100;
         
-%         if A{j}(1,11) == 0.20
-%             setBv
-%             percentOfV
-%         end
+        %         if A{j}(1,11) == 0.20
+        %             setBv
+        %             percentOfV
+        %         end
         
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         % 6.3 Resistance
@@ -640,19 +640,19 @@ for condNo=7:12
         percentOfBMx3 = (setBMx3^2/setBMx^2)*100;
         percentOfBMx4 = (setBMx4^2/setBMx^2)*100;
         
-%         if A{j}(1,11) == 0.20
-%             setBMx1
-%             setBMx2
-%             setBMx3
-%             setBMx4
-%             percentOfBMx1
-%             percentOfBMx2
-%             percentOfBMx3
-%             percentOfBMx4
-%             setBMx
-%             percentOfBMx
-%         end
-                
+        %         if A{j}(1,11) == 0.20
+        %             setBMx1
+        %             setBMx2
+        %             setBMx3
+        %             setBMx4
+        %             percentOfBMx1
+        %             percentOfBMx2
+        %             percentOfBMx3
+        %             percentOfBMx4
+        %             setBMx
+        %             percentOfBMx
+        %         end
+        
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         % 6.4 Towing tank water properties
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -675,17 +675,17 @@ for condNo=7:12
         percentOfTw  = (setBtw/setTw)*100;
         percentOfRho = (setBRho/freshwaterdensity)*100;
         
-%         if A{j}(1,11) == 0.20
-%             setBtw
-%             setBRho
-%             percentOfTw
-%             percentOfRho
-%         end
-
+        %         if A{j}(1,11) == 0.20
+        %             setBtw
+        %             setBRho
+        %             percentOfTw
+        %             percentOfRho
+        %         end
+        
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         % 6.5 Sensitivity Coefficients
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+        
         % ?S (Wetted Surface)           (1/m^2)
         % NOTE: Sensitivity coefficient for wetted surface, S
         thetaS = (setRx/(0.5*freshwaterdensity*(A{j}(1,5)^2)))*(-1/(setModWsa^2));
@@ -705,14 +705,14 @@ for condNo=7:12
         % ??tw? (Water Temperature)     (1/Deg C)
         % NOTE: Sensitivity coefficient for water temperature, tw
         thetaRhoTw = abs(0.0638-(0.0173*15)+(0.000189*(15^2)));
-
-%         if A{j}(1,11) == 0.20
-%             thetaS
-%             thetaV
-%             thetaMx
-%             thetaRho
-%             thetaRhoTw
-%         end
+        
+        %         if A{j}(1,11) == 0.20
+        %             thetaS
+        %             thetaV
+        %             thetaMx
+        %             thetaRho
+        %             thetaRhoTw
+        %         end
         
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         % 6.6 Total Bias of Resistance Coefficient CT
@@ -731,11 +731,11 @@ for condNo=7:12
         
         percentOfCT15degC = (setBCT/avgCT15degC)*100;
         
-%         if A{j}(1,11) == 0.20
-%             setBCT
-%             percentOfCT15degC
-%         end
-
+        %         if A{j}(1,11) == 0.20
+        %             setBCT
+        %             percentOfCT15degC
+        %         end
+        
         %# ////////////////////////////////////////////////////////////////
         %# 7.0 Precision Limit
         %# ////////////////////////////////////////////////////////////////
@@ -750,12 +750,12 @@ for condNo=7:12
         % Percent of CT at 15 deg C
         percentOfCT15degC_2 = (setPCT/avgCT15degC)*100;
         
-%         if A{j}(1,11) == 0.20
-%             setM
-%             setSCT
-%             setPCT
-%             percentOfCT15degC_2
-%         end
+        %         if A{j}(1,11) == 0.20
+        %             setM
+        %             setSCT
+        %             setPCT
+        %             percentOfCT15degC_2
+        %         end
         
         %# ////////////////////////////////////////////////////////////////
         %# 8.0 Total Uncertainty
@@ -769,86 +769,86 @@ for condNo=7:12
         
         % Percentage of UCT at 15 deg C
         percentOfUCT152degC1 = (setBCT^2/setUCT152degC^2)*100;
-        percentOfUCT152degC2 = (setPCT^2/setUCT152degC^2)*100;     
+        percentOfUCT152degC2 = (setPCT^2/setUCT152degC^2)*100;
         
         % Display in command window
-%         disp(sprintf('Run No.: %s => BCT: %s, %% of UCT15 deg C: %s',num2str(A{j}(k,1)),num2str(setBCT),num2str(percentOfUCT152degC1)));
-%         disp(sprintf('Run No.: %s => PCT: %s, %% of UCT15 deg C: %s',num2str(A{j}(k,1)),num2str(setPCT),num2str(percentOfUCT152degC2)));
-%         disp(sprintf('Run No.: %s => UCT 15 deg C: %s, %% of CT 15 deg C: %s',num2str(A{j}(k,1)),num2str(setUCT152degC),num2str(percentOfCT152degC)));
-%         disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'); 
+        %         disp(sprintf('Run No.: %s => BCT: %s, %% of UCT15 deg C: %s',num2str(A{j}(k,1)),num2str(setBCT),num2str(percentOfUCT152degC1)));
+        %         disp(sprintf('Run No.: %s => PCT: %s, %% of UCT15 deg C: %s',num2str(A{j}(k,1)),num2str(setPCT),num2str(percentOfUCT152degC2)));
+        %         disp(sprintf('Run No.: %s => UCT 15 deg C: %s, %% of CT 15 deg C: %s',num2str(A{j}(k,1)),num2str(setUCT152degC),num2str(percentOfCT152degC)));
+        %         disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
         
-%         if A{j}(1,11) == 0.20
-%             setBCT
-%             setSCT
-%             setUCT152degC
-%             percentOfCT152degC
-%             percentOfUCT152degC1
-%             percentOfUCT152degC2
-%         end
+        %         if A{j}(1,11) == 0.20
+        %             setBCT
+        %             setSCT
+        %             setUCT152degC
+        %             percentOfCT152degC
+        %             percentOfUCT152degC1
+        %             percentOfUCT152degC2
+        %         end
         
         % /////////////////////////////////////////////////////////////////
         %# Populate resultsArrayUARes
-        % /////////////////////////////////////////////////////////////////        
+        % /////////////////////////////////////////////////////////////////
         
-        %# Results array columns: 
-            %[1] Run No.                                               (-)
-            %[2] Condition                                             (-)
-            %[3] Froude length number                                  (-)
+        %# Results array columns:
+        %[1] Run No.                                               (-)
+        %[2] Condition                                             (-)
+        %[3] Froude length number                                  (-)
         
-            % Section 8.0: Total Uncertainty
-            %[4] BCT                                                   (-)
-            %[5] % of UCT15 deg C                                      (-)
-            %[6] PCT                                                   (-)
-            %[7] % of UCT15 deg C                                      (-)
-            %[8] UCT 15 deg C                                          (-)
-            %[9] % of CT 15 deg C                                      (-)
-            
-            % Section 3.0: Single or Multiple Test Uncertainty
-            %[10] Average CT                                           (-) 
-            %[11] Average CT at 15 deg C                               (-) 
-            %[12] Standard deviation                                   (-) 
-            
-            % Section 4.0: Input variables
-            %[13] Mx, mass, total resistance in x-direction            (Kg)
-            %[14] Rx, resistance (average)                             (N)
-            %[15] CF at 15 deg C                                       (-)
-            %[16] CFtw, fric. resistance coeff. at measured temp, tw   (-)
-            
-            % Section 6.1: Wetted Surface
-            %[17] BS (Wetted Surface)                                  (m^2)
-            %[18] % of S                                               (-)
-            
-            % Section 6.2: Speed
-            %[19] BV (Speed)                                           (m/s)
-            %[20] % of V                                               (-)
-            
-            % Section 6.3: Resistance
-            %[21] BMx (Total Resistance Mass)                          (Kg)
-            %[22] % of Mx                                              (-)
-            
-            % Section 6.4: Towing Tank Water Properties
-            %[23] Btw (Water temperature)                              (Deg C)
-            %[24] % of tw                                              (-)
-            %[25] B? (Water density)                                   (Kg)
-            %[26] % of ?                                               (-)
-            
-            % Section 6.5: Sensitivity Coefficients
-            %[27] ?S (Wetted Surface)                                  (1/m^2)
-            %[28] ?V (Speed)                                           (1/(m/s))
-            %[29] ?Mx (Total Mass Resistance)                          (m/Ns^2)
-            %[30] ?? (Water Density)                                   (m^3/Kg)
-            %[31] ??tw? (Water Temperature)                            (1/Deg C)
-            
-            % Section 6.6: Total Bias of Resistance Coefficient CT
-            %[32] BCT (Resistance Coefficient CT)                      (-)
-            %[33] % of CT15degC                                        (-)
-            
-            % Section 7.0: Precision Limit
-            %[34] PCT (Resistance Coefficient CT)                      (-)
-            %[35] % of CT15degC                                        (-)
-            
-        %# Constants and identifiers ---------------------------------------            
-            
+        % Section 8.0: Total Uncertainty
+        %[4] BCT                                                   (-)
+        %[5] % of UCT15 deg C                                      (-)
+        %[6] PCT                                                   (-)
+        %[7] % of UCT15 deg C                                      (-)
+        %[8] UCT 15 deg C                                          (-)
+        %[9] % of CT 15 deg C                                      (-)
+        
+        % Section 3.0: Single or Multiple Test Uncertainty
+        %[10] Average CT                                           (-)
+        %[11] Average CT at 15 deg C                               (-)
+        %[12] Standard deviation                                   (-)
+        
+        % Section 4.0: Input variables
+        %[13] Mx, mass, total resistance in x-direction            (Kg)
+        %[14] Rx, resistance (average)                             (N)
+        %[15] CF at 15 deg C                                       (-)
+        %[16] CFtw, fric. resistance coeff. at measured temp, tw   (-)
+        
+        % Section 6.1: Wetted Surface
+        %[17] BS (Wetted Surface)                                  (m^2)
+        %[18] % of S                                               (-)
+        
+        % Section 6.2: Speed
+        %[19] BV (Speed)                                           (m/s)
+        %[20] % of V                                               (-)
+        
+        % Section 6.3: Resistance
+        %[21] BMx (Total Resistance Mass)                          (Kg)
+        %[22] % of Mx                                              (-)
+        
+        % Section 6.4: Towing Tank Water Properties
+        %[23] Btw (Water temperature)                              (Deg C)
+        %[24] % of tw                                              (-)
+        %[25] B? (Water density)                                   (Kg)
+        %[26] % of ?                                               (-)
+        
+        % Section 6.5: Sensitivity Coefficients
+        %[27] ?S (Wetted Surface)                                  (1/m^2)
+        %[28] ?V (Speed)                                           (1/(m/s))
+        %[29] ?Mx (Total Mass Resistance)                          (m/Ns^2)
+        %[30] ?? (Water Density)                                   (m^3/Kg)
+        %[31] ??tw? (Water Temperature)                            (1/Deg C)
+        
+        % Section 6.6: Total Bias of Resistance Coefficient CT
+        %[32] BCT (Resistance Coefficient CT)                      (-)
+        %[33] % of CT15degC                                        (-)
+        
+        % Section 7.0: Precision Limit
+        %[34] PCT (Resistance Coefficient CT)                      (-)
+        %[35] % of CT15degC                                        (-)
+        
+        %# Constants and identifiers ---------------------------------------
+        
         % General identifiers
         resultsArrayUARes(counter1, 1)  = A{j}(1,1);
         resultsArrayUARes(counter1, 2)  = setCondNo;
@@ -864,13 +864,13 @@ for condNo=7:12
         resultsArrayUARes(counter1, 8)  = setUCT152degC;
         resultsArrayUARes(counter1, 9)  = percentOfCT152degC;
         
-        %# Averages and standard deviation --------------------------------        
+        %# Averages and standard deviation --------------------------------
         
         % Section 3.0: Single or Multiple Test Uncertainty
         resultsArrayUARes(counter1, 10) = avgCT;
         resultsArrayUARes(counter1, 11) = avgCT15degC;
         resultsArrayUARes(counter1, 12) = stdDev;
-
+        
         %# Variables ------------------------------------------------------
         
         % Section 4.0: Input variables
@@ -878,7 +878,7 @@ for condNo=7:12
         resultsArrayUARes(counter1, 14) = setRx;
         resultsArrayUARes(counter1, 15) = setCF15degC;
         resultsArrayUARes(counter1, 16) = setCFtw;
-
+        
         %# Coefficients ---------------------------------------------------
         
         % Section 6.1: Wetted Surface
@@ -905,7 +905,7 @@ for condNo=7:12
         resultsArrayUARes(counter1, 29) = thetaMx;
         resultsArrayUARes(counter1, 30) = thetaRho;
         resultsArrayUARes(counter1, 31) = thetaRhoTw;
-
+        
         % Section 6.6: Total Bias of Resistance Coefficient CT
         resultsArrayUARes(counter1, 32) = setBCT;
         resultsArrayUARes(counter1, 33) = percentOfCT15degC;
@@ -916,7 +916,7 @@ for condNo=7:12
         
         counter1 = counter1 + 1;
     end
-
+    
 end
 
 
@@ -1101,7 +1101,7 @@ box on;
 
 % % Set marker size
 % setMarkerSize = 8;
-% 
+%
 % h = plot(X,A,'s',X,B,'o');
 % xlabel('{\bf Froude length number [-]}');
 % ylabel('{\bf % of U_{CT15 deg C}}');
@@ -1146,7 +1146,7 @@ box on;
 
 % % Set marker size
 % setMarkerSize = 8;
-% 
+%
 % h = plot(X,A,'s',X,B,'o');
 % xlabel('{\bf Froude length number [-]}');
 % ylabel('{\bf % of U_{CT15 deg C}}');
@@ -1187,7 +1187,7 @@ box on;
 
 % % Set marker size
 % setMarkerSize = 8;
-% 
+%
 % h = plot(X,A,'s',X,B,'o');
 % xlabel('{\bf Froude length number [-]}');
 % ylabel('{\bf % of U_{CT15 deg C}}');
@@ -1228,7 +1228,7 @@ box on;
 
 % % Set marker size
 % setMarkerSize = 8;
-% 
+%
 % h = plot(X,A,'s',X,B,'o');
 % xlabel('{\bf Froude length number [-]}');
 % ylabel('{\bf % of U_{CT15 deg C}}');
@@ -1269,7 +1269,7 @@ box on;
 
 % % Set marker size
 % setMarkerSize = 8;
-% 
+%
 % h = plot(X,A,'s',X,B,'o');
 % xlabel('{\bf Froude length number [-]}');
 % ylabel('{\bf % of U_{CT15 deg C}}');
@@ -1310,7 +1310,7 @@ box on;
 
 % % Set marker size
 % setMarkerSize = 8;
-% 
+%
 % h = plot(X,A,'s',X,B,'o');
 % xlabel('{\bf Froude length number [-]}');
 % ylabel('{\bf % of U_{CT15 deg C}}');
@@ -1387,7 +1387,7 @@ resultsArrayUAResShort = resultsArrayUAResShort(any(resultsArrayUAResShort,2),:)
 %# ------------------------------------------------------------------------
 
 M = resultsArrayUAResShort;
-csvwrite('resultsArrayUAResShort.dat', M)                                     % Export matrix M to a file delimited by the comma character      
+csvwrite('resultsArrayUAResShort.dat', M)                                     % Export matrix M to a file delimited by the comma character
 dlmwrite('resultsArrayUAResShort.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 
 %# ------------------------------------------------------------------------
@@ -1398,12 +1398,12 @@ dlmwrite('resultsArrayUAResShort.txt', M, 'delimiter', '\t', 'precision', 4)  % 
 %# ////////////////////////////////////////////////////////////////////////
 %# Clear variables
 %# ////////////////////////////////////////////////////////////////////////
-clearvars ttlength ttwidth ttwaterdepth ttcsa ttwatertemp gravconst modelkinviscosity fullscalekinvi freshwaterdensity saltwaterdensity distbetwposts FStoMSratio 
+clearvars ttlength ttwidth ttwaterdepth ttcsa ttwatertemp gravconst modelkinviscosity fullscalekinvi freshwaterdensity saltwaterdensity distbetwposts FStoMSratio
 clearvars MSlwl1500 MSwsa1500 MSdraft1500 MSAx1500 BlockCoeff1500 FSlwl1500 FSwsa1500 FSdraft1500 MSlwl1500bybow MSwsa1500bybow MSdraft1500bybow MSAx1500bybow BlockCoeff1500bybow FSlwl1500bybow FSwsa1500bybow FSdraft1500bybow MSlwl1500bystern MSwsa1500bystern MSdraft1500bystern MSAx1500bystern BlockCoeff1500bystern FSlwl1500bystern FSwsa1500bystern FSdraft1500bystern MSbeam1500 MSbeam1500bybow MSbeam1500bystern
 clearvars MSlwl1804 MSwsa1804 MSdraft1804 MSAx1804 BlockCoeff1804 FSlwl1804 FSwsa1804 FSdraft1804 MSlwl1804bybow MSwsa1804bybow MSdraft1804bybow MSAx1804bybow BlockCoeff1804bybow FSlwl1804bybow FSwsa1804bybow FSdraft1804bybow MSlwl1804bystern MSwsa1804bystern MSdraft1804bystern MSAx1804bystern BlockCoeff1804bystern FSlwl1804bystern FSwsa1804bystern FSdraft1804bystern MSbeam1804 MSbeam1804bybow MSbeam1804bystern
 clearvars XPlot YPlot XPlotMargin YPlotMargin XPlotSize YPlotSize
 clearvars setFormFactor
-clearvars ma na mas nas oas pas qas ras n results setCond setCondNo condNo counter1 counter2 h l f j k m A R M allPlots testName 
+clearvars ma na mas nas oas pas qas ras n results setCond setCondNo condNo counter1 counter2 h l f j k m A R M allPlots testName
 clearvars setBeam setModWsa avgCT avgCT15degC setCF15degC setCFtw setCurrentCT setK setModKinVisc setModLwl setMx setRx setTw stdDev
 clearvars cond1 cond2 cond3 cond4 cond5 cond6 cond13
 clearvars setBs1 setBs2 setBs percentOfBs1 percentOfBs2 percentOfS setBv percentOfV setBMx1 setBMx2 setBMx3 setBMx4 setBMx percentOfBMx percentOfBMx1 percentOfBMx2 percentOfBMx3 percentOfBMx4 setBtw setBRho percentOfTw percentOfRho

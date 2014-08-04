@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Resistance Test Analysis - Custome Plots
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  March 20, 2014
 %#
@@ -10,7 +10,7 @@
 %#
 %# Runs TSI   :  Runs 01-35   Turbulence Studs Investigation               (TSI)
 %#               |__Disp. & trim:   1,500t, level static trim
-%#               |__Conditions:     1 = No turbulence studs 
+%#               |__Conditions:     1 = No turbulence studs
 %#                                  2 = First row of turbulence studs
 %#                                  3 = First and second row of turbulence studs
 %#
@@ -41,7 +41,7 @@
 %#
 %# Description    :  Turbulence studs investigation, trim tab optimisation and
 %#                   standard resistance test using a single catamaran demihull.
-%#                   Form factor estimation has been carried out using prohaska 
+%#                   Form factor estimation has been carried out using prohaska
 %#                   method as described by ITTC 7.2-02-02-01.
 %#
 %# ITTC Guidelines:  7.5-02-02-01
@@ -144,7 +144,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# Read results DAT file
 %# -------------------------------------------------------------------------
 if exist('full_resistance_data.dat', 'file') == 2
-    %# Results array columns: 
+    %# Results array columns:
     %[1]  Run No.                                                                  (-)
     %[2]  FS                                                                       (Hz)
     %[3]  No. of samples                                                           (-)
@@ -193,7 +193,7 @@ if exist('full_resistance_data.dat', 'file') == 2
     %[46] LVDT (FWD): Standard deviation                                           (mm)
     %[47] LVDT (AFT): Standard deviation                                           (mm)
     %[48] DRAG: Standard deviation                                                 (g)
-
+    
     results = csvread('full_resistance_data.dat');
     
     %# Remove zero rows
@@ -267,7 +267,7 @@ for j=1:ma
     end
     if A{j}(1,28) == 13
         cond13 = A{j};
-    end    
+    end
 end
 
 %# *********************************************************************
@@ -312,27 +312,27 @@ testName = 'Custom Plots';
 
 % Complete set of averaged values for saving
 resultsAveragedArray = [
-        avgcond1;
-        avgcond2;
-        avgcond3;
-        avgcond4;
-        avgcond5;
-        avgcond6;
-        avgcond7;
-        avgcond8;
-        avgcond9;
-        avgcond10;
-        avgcond11;
-        avgcond12;
-        avgcond13
-];
+    avgcond1;
+    avgcond2;
+    avgcond3;
+    avgcond4;
+    avgcond5;
+    avgcond6;
+    avgcond7;
+    avgcond8;
+    avgcond9;
+    avgcond10;
+    avgcond11;
+    avgcond12;
+    avgcond13
+    ];
 
 % /////////////////////////////////////////////////////////////////////
 % START: Write results to CVS
 % ---------------------------------------------------------------------
 
 M = resultsAveragedArray;
-csvwrite('resultsAveragedArray.dat', M)                                     % Export matrix M to a file delimited by the comma character      
+csvwrite('resultsAveragedArray.dat', M)                                     % Export matrix M to a file delimited by the comma character
 dlmwrite('resultsAveragedArray.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 
 % ---------------------------------------------------------------------
@@ -380,7 +380,7 @@ MSVdisp1804         = MSdisp1804/freshwaterdensity;     % Model volumetric displ
 
 % *************************************************************************
 % 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
-% *************************************************************************     
+% *************************************************************************
 if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0
     
     startRun = 81;
@@ -393,15 +393,15 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     f = figure('Name',figurename,'NumberTitle','off');
     
     % Model speed vs. non dim ----------------------------------------
-    subplot(1,2,1) 
+    subplot(1,2,1)
     
     if length(avgcond7) ~= 0
         xavgcond7 = avgcond7(:,11); yavgcond7 = avgcond7(:,9);
-       
+        
         cond7Array = [];
         cond7Array(:,1) = xavgcond7;
         cond7Array(:,2) = yavgcond7;
-
+        
         [m,n] = size(cond7Array); % Array dimensions
         
         for j=1:m
@@ -451,7 +451,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         x9 = cond9Array(:,1); y9 = cond9Array(:,3);
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         xavgcond10 = avgcond10(:,11); yavgcond10 = avgcond10(:,9);
         
@@ -508,7 +508,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         x12 = cond12Array(:,1); y12 = cond12Array(:,3);
     else
         x12 = 0; y12 = 0;
-    end    
+    end
     
     h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
@@ -517,10 +517,10 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     grid on;
     box on;
     axis square;
-
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     % Colors and markers
     set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1); %,'LineStyle','-','linewidth',1
@@ -533,23 +533,23 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# Axis limitations
     set(gca,'XLim',[0.1 0.5]);
     set(gca,'XTick',[0.1:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
-
+    legend boxoff;
+    
     % Model speed vs. non dim ----------------------------------------
     subplot(1,2,2)
     
     if length(avgcond7) ~= 0
         xavgcond7 = avgcond7(:,11); yavgcond7 = avgcond7(:,9);
-       
+        
         cond7Array = [];
         cond7Array(:,1) = xavgcond7;
         cond7Array(:,2) = yavgcond7;
-
+        
         [m,n] = size(cond7Array); % Array dimensions
         
         for j=1:m
@@ -599,7 +599,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         x9 = cond9Array(:,1); y9 = cond9Array(:,3);
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         xavgcond10 = avgcond10(:,11); yavgcond10 = avgcond10(:,9);
         
@@ -656,7 +656,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         x12 = cond12Array(:,1); y12 = cond12Array(:,3);
     else
         x12 = 0; y12 = 0;
-    end    
+    end
     
     h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
@@ -665,10 +665,10 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     grid on;
     box on;
     axis square;
-
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     % Colors and markers
     set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1); %,'LineStyle','-','linewidth',1
@@ -681,34 +681,34 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# Axis limitations
     set(gca,'XLim',[0.1 0.5]);
     set(gca,'XTick',[0.1:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');      
-      
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Fr_vs_NonDim_Data_Plots_Averaged.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Fr_vs_NonDim_Data_Plots_Averaged.png', '_averaged', num2str(startRun), num2str(endRun));
-    saveas(f, plotsavename);                % Save plot as PNG    
+    saveas(f, plotsavename);                % Save plot as PNG
     
 end

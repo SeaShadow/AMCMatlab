@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Self-Propulsion Test - Fast Fourier Transforms
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  November 12, 2013
 %#
@@ -127,7 +127,7 @@ headerlinesZeroAndCalib = 33;  % Number of headerlines to zero and calibration f
 startSamplePos    = 1;
 
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from end)
-cutSamplesFromEnd = 0;   
+cutSamplesFromEnd = 0;
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -145,7 +145,7 @@ endRun   = 119;      % Stop at run y
 
 
 % *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED 
+% START: PLOT SWITCHES: 1 = ENABLED
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
@@ -161,7 +161,7 @@ enableRPMPlot          = 1; % RPM FFT plot
 %# ////////////////////////////////////////////////////////////////////////
 
 resultsArrayFFT = [];
-%w = waitbar(0,'Processed run files'); 
+%w = waitbar(0,'Processed run files');
 for k=startRun:endRun
     
     %# Allow for 1 to become 01 for run numbers
@@ -171,22 +171,22 @@ for k=startRun:endRun
         filename = sprintf('%s%s.run\\R%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
     end
     [pathstr, name, ext] = fileparts(filename);     % Get file details like path, filename and extension
-
+    
     %# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
     zAndCFData = importdata(filename, ' ', headerlines);
     zAndCF     = zAndCFData.data;
-
+    
     %# Calibration factors and zeros
     ZeroAndCalibData = importdata(filename, ' ', headerlinesZeroAndCalib);
     ZeroAndCalib     = ZeroAndCalibData.data;
-
+    
     %# Time series
     AllRawChannelData = importdata(filename, ' ', headerlines);
-
+    
     %# Create new variables in the base workspace from those fields.
     vars = fieldnames(AllRawChannelData);
     for i = 1:length(vars)
-       assignin('base', vars{i}, AllRawChannelData.(vars{i}));
+        assignin('base', vars{i}, AllRawChannelData.(vars{i}));
     end
     
     % /////////////////////////////////////////////////////////////////////
@@ -226,7 +226,7 @@ for k=startRun:endRun
     Raw_CH_8_StbdThrust    = data(:,10);      % Starboard thrust
     Raw_CH_9_StbdTorque    = data(:,11);      % Starboard torque
     Raw_CH_10_PortKP       = data(:,12);      % Port kiel probe
-    Raw_CH_11_StbdKP       = data(:,13);      % Starboard kiel probe  
+    Raw_CH_11_StbdKP       = data(:,13);      % Starboard kiel probe
     Raw_CH_12_Port_Stat_6  = data(:,14);      % Port static pressure ITTC station 6
     Raw_CH_13_Stbd_Stat_6  = data(:,15);      % Starboard static pressure ITTC station 6
     Raw_CH_14_Stbd_Stat_5  = data(:,16);      % Starboard static pressure ITTC station 5
@@ -261,9 +261,9 @@ for k=startRun:endRun
     CH_10_Zero = ZeroAndCalib(23);
     CH_10_CF   = ZeroAndCalib(24);
     CH_11_Zero = ZeroAndCalib(25);
-    CH_11_CF   = ZeroAndCalib(26);        
+    CH_11_CF   = ZeroAndCalib(26);
     CH_12_Zero = ZeroAndCalib(27);
-    CH_12_CF   = ZeroAndCalib(28);    
+    CH_12_CF   = ZeroAndCalib(28);
     CH_13_Zero = ZeroAndCalib(29);
     CH_13_CF   = ZeroAndCalib(30);
     CH_14_Zero = ZeroAndCalib(31);
@@ -287,7 +287,7 @@ for k=startRun:endRun
     %# --------------------------------------------------------------------
     %# Real units ---------------------------------------------------------
     %# --------------------------------------------------------------------
-
+    
     %[RPMStbd RPMPort] = analysis_rpm(k,name,Fs,timeData,Raw_CH_5_StbdRPM,Raw_CH_4_PortRPM);
     
     %# *******************************************************************
@@ -450,7 +450,7 @@ end
 % START: Write results to CVS
 % ---------------------------------------------------------------------
 %M = resultsArrayFFT;
-%csvwrite('resultsArrayFFT.dat', M)                                     % Export matrix M to a file delimited by the comma character      
+%csvwrite('resultsArrayFFT.dat', M)                                     % Export matrix M to a file delimited by the comma character
 %dlmwrite('resultsArrayFFT.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 % ---------------------------------------------------------------------
 % END: Write results to CVS

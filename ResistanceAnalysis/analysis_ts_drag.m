@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Resistance Test Analysis - TS analysis, drag only, for wall accuracy
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  March 20, 2014
 %#
@@ -10,7 +10,7 @@
 %#
 %# Runs TSI   :  Runs 01-35   Turbulence Studs Investigation               (TSI)
 %#               |__Disp. & trim:   1,500t, level static trim
-%#               |__Conditions:     1 = No turbulence studs 
+%#               |__Conditions:     1 = No turbulence studs
 %#                                  2 = First row of turbulence studs
 %#                                  3 = First and second row of turbulence studs
 %#
@@ -41,7 +41,7 @@
 %#
 %# Description    :  Turbulence studs investigation, trim tab optimisation and
 %#                   standard resistance test using a single catamaran demihull.
-%#                   Form factor estimation has been carried out using prohaska 
+%#                   Form factor estimation has been carried out using prohaska
 %#                   method as described by ITTC 7.2-02-02-01.
 %#
 %# ITTC Guidelines:  7.5-02-02-01
@@ -150,7 +150,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 startSamplePos    = 1000;   % Cut first 5 seconds
 
 % X seconds x sample frequency = X x FS = XFS samples (from end)
-%cutSamplesFromEnd = 0;   
+%cutSamplesFromEnd = 0;
 cutSamplesFromEnd = 400;    % Cut last 2 seconds
 
 %# ------------------------------------------------------------------------
@@ -175,7 +175,7 @@ endRun   = 141;   % Stop at run y
 %# Read results DAT file
 %# -------------------------------------------------------------------------
 if exist('full_resistance_data.dat', 'file') == 2
-    %# Results array columns: 
+    %# Results array columns:
     %[1]  Run No.                                                                  (-)
     %[2]  FS                                                                       (Hz)
     %[3]  No. of samples                                                           (-)
@@ -224,7 +224,7 @@ if exist('full_resistance_data.dat', 'file') == 2
     %[46] LVDT (FWD): Standard deviation                                           (mm)
     %[47] LVDT (AFT): Standard deviation                                           (mm)
     %[48] DRAG: Standard deviation                                                 (g)
-
+    
     results = csvread('full_resistance_data.dat');
     
     %# Remove zero rows
@@ -299,7 +299,7 @@ for j=1:ma
     end
     if A{j}(1,28) == 13
         cond13 = A{j};
-    end    
+    end
 end
 
 % -------------------------------------------------------------------------
@@ -308,7 +308,7 @@ end
 
 
 % *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED 
+% START: PLOT SWITCHES: 1 = ENABLED
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
@@ -324,12 +324,12 @@ if enableCond07Plot == 0 && enableCond08Plot == 0 && enableCond09Plot == 0 && en
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     disp('!!! WARNING: No plots enabled! !!!');
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    break;    
+    break;
 end
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
-% *************************************************************************  
+% *************************************************************************
 
 
 %# ------------------------------------------------------------------------
@@ -350,10 +350,10 @@ if enableCond07Plot == 1
         FroudeNo    = sortedArray{j}(1,11);
         RunCond     = sortedArray{j}(1,28);
         RunRepeats  = ms;
-
+        
         %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         %# PLOT: DRAG ONLY. WALL INACURACCY INVESTIGATION
-        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+        
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         
         figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Drag Data');
         f = figure('Name',figurename,'NumberTitle','off');
@@ -474,7 +474,7 @@ end % enableCond07Plot
 %# ------------------------------------------------------------------------
 
 if enableCond08Plot == 1
-
+    
     sortedArray = arrayfun(@(x) cond8(cond8(:,11) == x, :), unique(cond8(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
     
@@ -488,7 +488,7 @@ if enableCond08Plot == 1
         RunRepeats  = ms;
         
     end
-
+    
 end
 
 
@@ -497,7 +497,7 @@ end
 %# ------------------------------------------------------------------------
 
 if enableCond09Plot == 1
-
+    
     sortedArray = arrayfun(@(x) cond9(cond9(:,11) == x, :), unique(cond9(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
     
@@ -511,7 +511,7 @@ if enableCond09Plot == 1
         RunRepeats  = ms;
         
     end
-
+    
 end
 
 
@@ -520,7 +520,7 @@ end
 %# ------------------------------------------------------------------------
 
 if enableCond10Plot == 1
-
+    
     sortedArray = arrayfun(@(x) cond10(cond10(:,11) == x, :), unique(cond10(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
     
@@ -532,9 +532,9 @@ if enableCond10Plot == 1
         FroudeNo    = sortedArray{j}(1,11);
         RunCond     = sortedArray{j}(1,28);
         RunRepeats  = ms;
-
+        
     end
-
+    
 end
 
 
@@ -543,7 +543,7 @@ end
 %# ------------------------------------------------------------------------
 
 if enableCond11Plot == 1
-
+    
     sortedArray = arrayfun(@(x) cond11(cond11(:,11) == x, :), unique(cond11(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
     
@@ -557,7 +557,7 @@ if enableCond11Plot == 1
         RunRepeats  = ms;
         
     end
-
+    
 end
 
 %# ------------------------------------------------------------------------
@@ -565,7 +565,7 @@ end
 %# ------------------------------------------------------------------------
 
 if enableCond12Plot == 1
-
+    
     sortedArray = arrayfun(@(x) cond12(cond12(:,11) == x, :), unique(cond12(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
     
@@ -577,7 +577,7 @@ if enableCond12Plot == 1
         FroudeNo    = sortedArray{j}(1,11);
         RunCond     = sortedArray{j}(1,28);
         RunRepeats  = ms;
-
+        
     end
-
+    
 end

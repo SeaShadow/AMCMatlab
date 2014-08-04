@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Resistance Test Analysis - Time Series analysis
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  April 2, 2014
 %#
@@ -10,7 +10,7 @@
 %#
 %# Runs TSI   :  Runs 01-35   Turbulence Studs Investigation               (TSI)
 %#               |__Disp. & trim:   1,500t, level static trim
-%#               |__Conditions:     1 = No turbulence studs 
+%#               |__Conditions:     1 = No turbulence studs
 %#                                  2 = First row of turbulence studs
 %#                                  3 = First and second row of turbulence studs
 %#
@@ -41,7 +41,7 @@
 %#
 %# Description    :  Turbulence studs investigation, trim tab optimisation and
 %#                   standard resistance test using a single catamaran demihull.
-%#                   Form factor estimation has been carried out using prohaska 
+%#                   Form factor estimation has been carried out using prohaska
 %#                   method as described by ITTC 7.2-02-02-01.
 %#
 %# ITTC Guidelines:  7.5-02-02-01
@@ -150,7 +150,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 startSamplePos    = 1000;   % Cut first 5 seconds
 
 % X seconds x sample frequency = X x FS = XFS samples (from end)
-%cutSamplesFromEnd = 0;   
+%cutSamplesFromEnd = 0;
 cutSamplesFromEnd = 400;    % Cut last 2 seconds
 
 %# ------------------------------------------------------------------------
@@ -177,7 +177,7 @@ endRun   = 141;   % Stop at run y
 
 % Read full_resistance_data
 if exist('full_resistance_data.dat', 'file') == 2
-    %# Results array columns: 
+    %# Results array columns:
     
     %[1]  Run No.                                                                  (-)
     %[2]  FS                                                                       (Hz)
@@ -227,7 +227,7 @@ if exist('full_resistance_data.dat', 'file') == 2
     %[46] LVDT (FWD): Standard deviation                                           (mm)
     %[47] LVDT (AFT): Standard deviation                                           (mm)
     %[48] DRAG: Standard deviation                                                 (g)
-
+    
     results = csvread('full_resistance_data.dat');
     
     %# Remove zero rows
@@ -250,13 +250,13 @@ end
 % Read fft_frequency_data
 resultsFreqs = [];
 if exist('frequencyArrayFFT.dat', 'file') == 2
-    %# fft_frequency_data columns: 
+    %# fft_frequency_data columns:
     
     %[1]  Run No.                                              (-)
     %[2]  Length Froude Number                                 (-)
     %[3]  Condition                                            (-)
     %[4]  Max. frequency                                       (Hz)
-
+    
     resultsFreqs = csvread('fft_frequency_data.dat');
     
     %# Remove zero rows
@@ -327,7 +327,7 @@ for j=1:ma
     end
     if A{j}(1,28) == 13
         cond13 = A{j};
-    end    
+    end
 end
 
 % -------------------------------------------------------------------------
@@ -336,7 +336,7 @@ end
 
 
 % *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED 
+% START: PLOT SWITCHES: 1 = ENABLED
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
@@ -371,7 +371,7 @@ enablePFPlot            = 1; % Printer friendly plots
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
-% *************************************************************************  
+% *************************************************************************
 
 
 %# ------------------------------------------------------------------------
@@ -386,7 +386,7 @@ if enableCond07FreqPlot == 1
     setArray = resultsFreqs;
     sortedArray = arrayfun(@(x) setArray(setArray(:,3) == x, :), unique(setArray(:,3)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-
+    
     for j=1:ml
         
         if sortedArray{j}(1,3) == setCondition
@@ -396,15 +396,15 @@ if enableCond07FreqPlot == 1
             minRunNo = min(sortedArray{j}(:,1));
             maxRunNo = max(sortedArray{j}(:,1));
             RunCond  = sortedArray{j}(1,3);
-           
+            
             % Plots
-                        
+            
             figurename = sprintf('Condition %s:: Run %s to %s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), 'Maximum frequencies from drag FFT');
             fig = figure('Name',figurename,'NumberTitle','off');
-
+            
             % Plot frequencies (bar)
             
-            subplot(2,1,1);            
+            subplot(2,1,1);
             
             x = sortedArray{j}(:,2);
             y = sortedArray{j}(:,4);
@@ -425,7 +425,7 @@ if enableCond07FreqPlot == 1
             %# Set plot figure background to a defined color
             %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
             set(gcf,'Color',[1,1,1]);
-           
+            
             % Plot frequencies (scatter)
             
             subplot(2,1,2);
@@ -441,7 +441,7 @@ if enableCond07FreqPlot == 1
             grid on;
             box on;
             %axis square;
-
+            
             %# Axis limitations
             minX = min(x);
             maxX = max(x);
@@ -482,7 +482,7 @@ if enableCond07FreqPlot == 1
         end % If statement
         
     end % For loop
-
+    
 end % enableCond07FreqPlot
 
 %test = arrayfun(@(x) cond7(cond7(:,11) == x, :), unique(cond7(:,11)), 'uniformoutput', false);
@@ -506,18 +506,18 @@ if enableCond07Plot == 1
     polyfitArray   = [];
     FACounter = 1;
     for j=1:ml
-
+        
         [ms,ns] = size(sortedArray{j});
-
+        
         minRunNo    = min(sortedArray{j}(:,1));
         maxRunNo    = max(sortedArray{j}(:,1));
         FroudeNo    = sortedArray{j}(1,11);
         RunCond     = sortedArray{j}(1,28);
         RunRepeats  = ms;
-
+        
         %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         %# PLOT: DRAG ONLY. WALL INACURACCY INVESTIGATION
-        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+       
+        %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         
         figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Drag Data and FFT');
         fig = figure('Name',figurename,'NumberTitle','off');
@@ -558,7 +558,7 @@ if enableCond07Plot == 1
             
             % Define run filename
             filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
+            
             % Read DAT file
             if exist(filename, 'file') == 2
                 timeSeriesData = csvread(filename);
@@ -583,7 +583,7 @@ if enableCond07Plot == 1
             
             %# Store run data lengths -------------------------------------
             
-            runDataLength(k, 1) = length(y);            
+            runDataLength(k, 1) = length(y);
             
         end % For loop
         
@@ -610,7 +610,7 @@ if enableCond07Plot == 1
             
             % Define run filename
             filename = sprintf('_time_series_data/R%s.dat',runnumber);
-
+            
             % Read DAT file
             if exist(filename, 'file') == 2
                 timeSeriesData = csvread(filename);
@@ -641,7 +641,7 @@ if enableCond07Plot == 1
             
             % USING FILTER
             %fy = filter(b,a,y);
-                        
+            
             [tsm,tsn] = size(x);
             
             %# Detrending -------------------------------------------------
@@ -653,11 +653,11 @@ if enableCond07Plot == 1
             mu    = mean(y);
             
             % Calculate the standard deviation of each column
-            sigma = std(y);            
+            sigma = std(y);
             
             % Create a matrix of mean values by replicating the mu vector for n rows
             MeanMat = repmat(mu,tsm,1);
-
+            
             %# Subtract mean (i.e. remove baseline) -----------------------
             % See: http://www.psy.gla.ac.uk/~joachim/TSA/Time_series_analysis_tutorial1.pdf
             
@@ -668,25 +668,25 @@ if enableCond07Plot == 1
             % Similar approach to subtract mean and fit using DETREND
             % See: http://www.mathworks.com.au/help/matlab/ref/detrend.html
             %dy1      = detrend(y);              % Removes the best straight-line fit from vector y
-            %dy1      = detrend(y,'constant');   % Removes the mean value from vector y            
+            %dy1      = detrend(y,'constant');   % Removes the mean value from vector y
             
             % Testbed
             %dy2      = medfilt1(dy1,1000);
             %dy2      = dy1;
-
+            
             %# Store y data to runDataArray -------------------------------
             
             % Columns:
             
-                % [1] Run x: Raw data
-                % [2] Run y: Raw data
-                % [3] Run z: Raw data
-                % [n] Run n: Raw data
-
-                % [4] Run x: Raw data - mean (detrend)
-                % [5] Run y: Raw data - mean (detrend)
-                % [6] Run z: Raw data - mean (detrend)
-                % [n] Run n: Raw data
+            % [1] Run x: Raw data
+            % [2] Run y: Raw data
+            % [3] Run z: Raw data
+            % [n] Run n: Raw data
+            
+            % [4] Run x: Raw data - mean (detrend)
+            % [5] Run y: Raw data - mean (detrend)
+            % [6] Run z: Raw data - mean (detrend)
+            % [n] Run n: Raw data
             
             runDataArray(:,k)    = y(1:min(runDataLength));
             runDataArray(:,k+ms) = dy1(1:min(runDataLength));
@@ -698,8 +698,8 @@ if enableCond07Plot == 1
             minXValues(ms) = min(x);
             maxXValues(ms) = max(x);
             minYValues(ms) = min(y);
-            maxYValues(ms) = max(y);       
-
+            maxYValues(ms) = max(y);
+            
             %# Plot time vs. output ---------------------------------------
             
             subplot(ms,3,graphLeft)
@@ -707,7 +707,7 @@ if enableCond07Plot == 1
             % Linear fit through detrended data ---------------------------
             polyf = polyfit(x,dy1,1);
             polyv = polyval(polyf,x);
-
+            
             % Slope and intercept of linear fit ---------------------------
             slopeITTC     = polyf(1,1);         % Slope
             interceptITTC = polyf(1,2);         % Intercept
@@ -720,7 +720,7 @@ if enableCond07Plot == 1
                 chooseSign = '-';
                 interceptITTC = abs(interceptITTC);
             end
-
+            
             %disp('-------------------------------------------------------------');
             %slopeTextITTC = sprintf('Run %s:: y = %s*x %s %s, theta = %s', num2str(runnumber), sprintf('%.3f',slopeITTC), chooseSign, sprintf('%.3f',interceptITTC), sprintf('%.3f',theta));
             %disp(slopeTextITTC);
@@ -729,12 +729,12 @@ if enableCond07Plot == 1
             
             % Columns:
             
-                % [1] Run number            (-)            
-                % [2] Condition             (-)
-                % [3] Length Froude number  (-)
-                % [4] Slope                 (-)
-                % [5] Intercept             (g)
-                % [6] Theta                 (deg)
+            % [1] Run number            (-)
+            % [2] Condition             (-)
+            % [3] Length Froude number  (-)
+            % [4] Slope                 (-)
+            % [5] Intercept             (g)
+            % [6] Theta                 (deg)
             
             polyfitArray(FACounter, 1) = str2num(runnumber);
             polyfitArray(FACounter, 2) = RunCond;
@@ -754,7 +754,7 @@ if enableCond07Plot == 1
             grid on;
             box on;
             %axis square;
-    
+            
             % Line - Colors and markers
             set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle','-','linewidth',1);
             set(h(2),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle','-','linewidth',2);
@@ -806,7 +806,7 @@ if enableCond07Plot == 1
             T = 1/Fs;               % Sample time
             L = tsm;                % Length of signal
             t = (0:L-1)*T;          % Time vector
-
+            
             % Plot single-sided amplitude spectrum.
             
             NFFT = 2^nextpow2(L);   % Next power of 2 from length of y
@@ -827,10 +827,10 @@ if enableCond07Plot == 1
                     counter = counter + 1;
                 end
             end
-
+            
             % Array sizes
             [mpdn,npdn] = size(maxtabstbdnew);
-            [mfa,nfa]   = size(freqArray);            
+            [mfa,nfa]   = size(freqArray);
             
             % Sorting array by frequency
             % See: http://www.mathworks.com.au/help/matlab/ref/sortrows.html
@@ -879,7 +879,7 @@ if enableCond07Plot == 1
             %axis square;
             
             % Line - Colors and markers
-            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);      
+            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
             
             %# Legend
             hleg1 = legend(sprintf('Run %s',num2str(runnumber)));
@@ -901,7 +901,7 @@ if enableCond07Plot == 1
             h1 = plot(psdest);
             set(gca,'FontSize',10,'FontWeight','normal','linewidth',2);
             set(h1,'Color',setColor{k});
-
+            
             % Write data to array -----------------------------------------
             
             %# frequencyArray columns:
@@ -935,9 +935,9 @@ if enableCond07Plot == 1
             graphLeft   = graphLeft+3;
             graphCenter = graphCenter+3;
             graphRight  = graphRight+3;
-
+            
         end
-
+        
         %# Save plot as PNG -----------------------------------------------
         
         if enablePFPlot == 1
@@ -957,7 +957,7 @@ if enableCond07Plot == 1
         annotation('textbox', [0 0.9 1 0.1], ...
             'String', strcat('{\bf ', figurename, '}'), ...
             'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');        
+            'HorizontalAlignment', 'center');
         
         %# Save plots as PDF and PNG
         %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots_FFT.pdf', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
@@ -977,16 +977,16 @@ if enableCond07Plot == 1
         
         % Data (i.e. runDataArray) columns:
         
-            % [1] Run x: Raw data
-            % [2] Run y: Raw data
-            % [3] Run z: Raw data
-            % [n] Run n: Raw data
-
-            % [4] Run x: Raw data - mean (detrend)
-            % [5] Run y: Raw data - mean (detrend)
-            % [6] Run z: Raw data - mean (detrend)
-            % [n] Run n: Raw data
-            
+        % [1] Run x: Raw data
+        % [2] Run y: Raw data
+        % [3] Run z: Raw data
+        % [n] Run n: Raw data
+        
+        % [4] Run x: Raw data - mean (detrend)
+        % [5] Run y: Raw data - mean (detrend)
+        % [6] Run z: Raw data - mean (detrend)
+        % [n] Run n: Raw data
+        
         % Average run samples
         DA  = [];
         DAD = [];
@@ -994,9 +994,9 @@ if enableCond07Plot == 1
             if k == 1
                 DA(:,1)  = data(:,1);
                 DAD(:,1) = data(:,1+ms);
-            else    
+            else
                 DA(:,1)  = DA(:,1)+data(:,k);
-                DAD(:,1) = DAD(:,1)+data(:,k+ms);                
+                DAD(:,1) = DAD(:,1)+data(:,k+ms);
             end
         end
         avgDA  = DA(:,1)/ms;
@@ -1056,7 +1056,7 @@ if enableCond07Plot == 1
         set(h(1),'Color','k','Marker',setMarker{ms+1},'MarkerSize',1,'LineStyle','-','linewidth',1.5); %setColor{ms+1}
         set(h(2),'Color','k','Marker',setMarker{ms+1},'MarkerSize',1,'LineStyle','--','linewidth',1.5);
         set(h(3),'Color','k','Marker','*','MarkerSize',1,'LineStyle','-.','linewidth',1.5);
-
+        
         %# Set plot figure background to a defined color
         %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
         set(gcf,'Color',[1,1,1]);
@@ -1190,7 +1190,7 @@ if enableCond07Plot == 1
         set(hleg1,'Interpreter','none');
         %legend boxoff;
         
-        clearvars legendInfo;        
+        clearvars legendInfo;
         
         %# Save plot as PNG -----------------------------------------------
         
@@ -1212,28 +1212,28 @@ if enableCond07Plot == 1
             'String', strcat('{\bf ', figurename, '}'), ...
             'EdgeColor', 'none', ...
             'HorizontalAlignment', 'center');
- 
+        
         %# Save plots as PDF and PNG
         %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots_FFT_Averaged.pdf', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
         plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots_FFT_Averaged.png', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         saveas(fig, plotsavename);                % Save plot as PNG
-        %close;        
-
+        %close;
+        
         % ////////////////////////////////////////
-
+        
         % Run 3 loops to consider different amount of repeated runs
         %if j > 1
         %    break;
         %end
         %break;
-
+        
     end % For loop
-
+    
     % Plot identified frequencies (FFT)
     figurename = sprintf('Condition %s:: %s', num2str(RunCond), 'Identified frequencies (FFT)');
     fig = figure('Name',figurename,'NumberTitle','off');
-
+    
     x = freqArray(:,2);
     y = freqArray(:,3);
     
@@ -1299,10 +1299,10 @@ end % enableCond07Plot
 %# ------------------------------------------------------------------------
 
 if enableCond08Plot == 1
-
+    
     sortedArray = arrayfun(@(x) cond8(cond8(:,11) == x, :), unique(cond8(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-
+    
 end
 
 
@@ -1311,10 +1311,10 @@ end
 %# ------------------------------------------------------------------------
 
 if enableCond09Plot == 1
-
+    
     sortedArray = arrayfun(@(x) cond9(cond9(:,11) == x, :), unique(cond9(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-
+    
 end
 
 
@@ -1323,10 +1323,10 @@ end
 %# ------------------------------------------------------------------------
 
 if enableCond10Plot == 1
-
+    
     sortedArray = arrayfun(@(x) cond10(cond10(:,11) == x, :), unique(cond10(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-
+    
 end
 
 
@@ -1335,10 +1335,10 @@ end
 %# ------------------------------------------------------------------------
 
 if enableCond11Plot == 1
-
+    
     sortedArray = arrayfun(@(x) cond11(cond11(:,11) == x, :), unique(cond11(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-
+    
 end
 
 %# ------------------------------------------------------------------------
@@ -1346,10 +1346,10 @@ end
 %# ------------------------------------------------------------------------
 
 if enableCond12Plot == 1
-
+    
     sortedArray = arrayfun(@(x) cond12(cond12(:,11) == x, :), unique(cond12(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-
+    
 end
 
 
@@ -1358,11 +1358,11 @@ end
 % ---------------------------------------------------------------------
 
 if exist('frequencyArray','var') == 1
-
+    
     M = frequencyArray;
     csvwrite('frequencyArrayFFT.dat', M)                                     % Export matrix M to a file delimited by the comma character
     dlmwrite('frequencyArrayFFT.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
-
+    
 end
 
 % ---------------------------------------------------------------------

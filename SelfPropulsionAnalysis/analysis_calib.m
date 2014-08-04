@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# PST and DPT Calibration
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  December 10, 2013
 %#
@@ -78,7 +78,7 @@ delete(allPlots);   % Close all plots
 %# ------------------------------------------------------------------------
 
 %# Test name --------------------------------------------------------------
- testName = 'PST and DPT Calibration';
+testName = 'PST and DPT Calibration';
 % testName = 'Resistance Test';
 % testName = 'Boundary Layer Investigation';
 % testName = 'Waterjet Self-Propulsion Points';
@@ -146,7 +146,7 @@ headerlinesZeroAndCalib = 33;  % Number of headerlines to zero and calibration f
 startSamplePos    = 1;
 
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from end)
-cutSamplesFromEnd = 0;   
+cutSamplesFromEnd = 0;
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -179,7 +179,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 
 
 % *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED 
+% START: PLOT SWITCHES: 1 = ENABLED
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
@@ -196,7 +196,7 @@ enableTSPlot = 1; % Enable or disable time series plot
 %# ////////////////////////////////////////////////////////////////////////
 
 resultsArrayCalib = [];
-%w = waitbar(0,'Processed run files'); 
+%w = waitbar(0,'Processed run files');
 for k=startRun:endRun
     
     %# Allow for 1 to become 01 for run numbers
@@ -206,22 +206,22 @@ for k=startRun:endRun
         filename = sprintf('%s%s.run\\R%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
     end
     [pathstr, name, ext] = fileparts(filename);     % Get file details like path, filename and extension
-
+    
     %# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
     zAndCFData = importdata(filename, ' ', headerlines);
     zAndCF     = zAndCFData.data;
-
+    
     %# Calibration factors and zeros
     ZeroAndCalibData = importdata(filename, ' ', headerlinesZeroAndCalib);
     ZeroAndCalib     = ZeroAndCalibData.data;
-
+    
     %# Time series
     AllRawChannelData = importdata(filename, ' ', headerlines);
-
+    
     %# Create new variables in the base workspace from those fields.
     vars = fieldnames(AllRawChannelData);
     for i = 1:length(vars)
-       assignin('base', vars{i}, AllRawChannelData.(vars{i}));
+        assignin('base', vars{i}, AllRawChannelData.(vars{i}));
     end
     
     % /////////////////////////////////////////////////////////////////////
@@ -253,7 +253,7 @@ for k=startRun:endRun
     Raw_CH_0_Speed         = data(:,2);       % Speed
     Raw_CH_19_Inb_PST      = data(:,3);       % Inboard PST
     Raw_CH_20_Outb_PST     = data(:,4);       % Outboard PST
-
+    
     %# Zeros and calibration factors for each channel
     Time_Zero  = ZeroAndCalib(1);
     Time_CF    = ZeroAndCalib(2);
@@ -263,63 +263,63 @@ for k=startRun:endRun
     CH_19_CF   = ZeroAndCalib(6);
     CH_20_Zero = ZeroAndCalib(7);
     CH_20_CF   = ZeroAndCalib(8);
-
+    
     %# --------------------------------------------------------------------
     %# Real units ---------------------------------------------------------
     %# --------------------------------------------------------------------
     
     [CH_0_Speed CH_0_Speed_Mean]         = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
-
-    [CH_19_Inb_PST CH_19_Inb_PST_Mean]   = analysis_realunits(Raw_CH_19_Inb_PST,CH_19_Zero,CH_19_CF);
-    [CH_20_Outb_PST CH_20_Outb_PST_Mean] = analysis_realunits(Raw_CH_20_Outb_PST,CH_20_Zero,CH_20_CF);    
     
-%     [CH_1_LVDTFwd CH_1_LVDTFwd_Mean]             = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
-%     [CH_2_LVDTAft CH_2_LVDTAft_Mean]             = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
-%     [CH_3_Drag CH_3_Drag_Mean]                   = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);       
-% 
-%     [RPMStbd RPMPort]                            = analysis_rpm(k,name,Fs,timeData,Raw_CH_5_StbdRPM,Raw_CH_4_PortRPM);     
-%     
-%     [CH_6_PortThrust CH_6_PortThrust_Mean]       = analysis_realunits(Raw_CH_6_PortThrust,CH_6_Zero,CH_6_CF);
-%     [CH_7_PortTorque CH_7_PortTorque_Mean]       = analysis_realunits(Raw_CH_7_PortTorque,CH_7_Zero,CH_7_CF);
-%     [CH_8_StbdThrust CH_8_StbdThrust_Mean]       = analysis_realunits(Raw_CH_8_StbdThrust,CH_8_Zero,CH_8_CF);
-%     [CH_9_StbdTorque CH_9_StbdTorque_Mean]       = analysis_realunits(Raw_CH_9_StbdTorque,CH_9_Zero,CH_9_CF);
-%     
-%     [CH_12_Port_Stat_6 CH_12_Port_Stat_6_Mean]   = analysis_realunits(Raw_CH_12_Port_Stat_6,CH_12_Zero,CH_12_CF);
-%     [CH_13_Stbd_Stat_6 CH_13_Stbd_Stat_6_Mean]   = analysis_realunits(Raw_CH_13_Stbd_Stat_6,CH_13_Zero,CH_13_CF);
-%     [CH_14_Stbd_Stat_5 CH_14_Stbd_Stat_5_Mean]   = analysis_realunits(Raw_CH_14_Stbd_Stat_5,CH_14_Zero,CH_14_CF);
-%     [CH_15_Stbd_Stat_4 CH_15_Stbd_Stat_4_Mean]   = analysis_realunits(Raw_CH_15_Stbd_Stat_4,CH_15_Zero,CH_15_CF);
-%     [CH_16_Stbd_Stat_3 CH_16_Stbd_Stat_3_Mean]   = analysis_realunits(Raw_CH_16_Stbd_Stat_3,CH_16_Zero,CH_16_CF);
-%     [CH_17_Port_Stat_1a CH_17_Port_Stat_1a_Mean] = analysis_realunits(Raw_CH_17_Port_Stat_1a,CH_17_Zero,CH_17_CF);
-%     [CH_18_Stbd_Stat_1a CH_18_Stbd_Stat_1a_Mean] = analysis_realunits(Raw_CH_18_Stbd_Stat_1a,CH_18_Zero,CH_18_CF);
-
+    [CH_19_Inb_PST CH_19_Inb_PST_Mean]   = analysis_realunits(Raw_CH_19_Inb_PST,CH_19_Zero,CH_19_CF);
+    [CH_20_Outb_PST CH_20_Outb_PST_Mean] = analysis_realunits(Raw_CH_20_Outb_PST,CH_20_Zero,CH_20_CF);
+    
+    %     [CH_1_LVDTFwd CH_1_LVDTFwd_Mean]             = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
+    %     [CH_2_LVDTAft CH_2_LVDTAft_Mean]             = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
+    %     [CH_3_Drag CH_3_Drag_Mean]                   = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);
+    %
+    %     [RPMStbd RPMPort]                            = analysis_rpm(k,name,Fs,timeData,Raw_CH_5_StbdRPM,Raw_CH_4_PortRPM);
+    %
+    %     [CH_6_PortThrust CH_6_PortThrust_Mean]       = analysis_realunits(Raw_CH_6_PortThrust,CH_6_Zero,CH_6_CF);
+    %     [CH_7_PortTorque CH_7_PortTorque_Mean]       = analysis_realunits(Raw_CH_7_PortTorque,CH_7_Zero,CH_7_CF);
+    %     [CH_8_StbdThrust CH_8_StbdThrust_Mean]       = analysis_realunits(Raw_CH_8_StbdThrust,CH_8_Zero,CH_8_CF);
+    %     [CH_9_StbdTorque CH_9_StbdTorque_Mean]       = analysis_realunits(Raw_CH_9_StbdTorque,CH_9_Zero,CH_9_CF);
+    %
+    %     [CH_12_Port_Stat_6 CH_12_Port_Stat_6_Mean]   = analysis_realunits(Raw_CH_12_Port_Stat_6,CH_12_Zero,CH_12_CF);
+    %     [CH_13_Stbd_Stat_6 CH_13_Stbd_Stat_6_Mean]   = analysis_realunits(Raw_CH_13_Stbd_Stat_6,CH_13_Zero,CH_13_CF);
+    %     [CH_14_Stbd_Stat_5 CH_14_Stbd_Stat_5_Mean]   = analysis_realunits(Raw_CH_14_Stbd_Stat_5,CH_14_Zero,CH_14_CF);
+    %     [CH_15_Stbd_Stat_4 CH_15_Stbd_Stat_4_Mean]   = analysis_realunits(Raw_CH_15_Stbd_Stat_4,CH_15_Zero,CH_15_CF);
+    %     [CH_16_Stbd_Stat_3 CH_16_Stbd_Stat_3_Mean]   = analysis_realunits(Raw_CH_16_Stbd_Stat_3,CH_16_Zero,CH_16_CF);
+    %     [CH_17_Port_Stat_1a CH_17_Port_Stat_1a_Mean] = analysis_realunits(Raw_CH_17_Port_Stat_1a,CH_17_Zero,CH_17_CF);
+    %     [CH_18_Stbd_Stat_1a CH_18_Stbd_Stat_1a_Mean] = analysis_realunits(Raw_CH_18_Stbd_Stat_1a,CH_18_Zero,CH_18_CF);
+    
     
     % /////////////////////////////////////////////////////////////////////
     % DISPLAY RESULTS
     % /////////////////////////////////////////////////////////////////////
     
     %# Add results to dedicated array for simple export
-    %# Results array columns: 
-        %[1]  Run No.
-        %[2]  FS                              (Hz)
-        %[3]  No. of samples                  (-)
-        %[4]  Record time                     (s)
-        
-        %[5]  Model speed                     (m/s)
-        %[6]  Froude length number            (-)
-        
-        %[7]  CH_19: PST: TS mean             (V)
-        %[8]  CH_19: PST: Calibration factor  (-) 
-        %[9]  CH_19: PST: Zero value          (V)
-
-        %[10] CH_19: PST: CF*(x-zero) mean    (V)
-        %[11] CH_19: PST: Minimum             (V)
-        %[12] CH_19: PST: Maximum             (V)    
-        %[13] CH_19: PST: Diff. min to avg    (percent) 
-        %[14] CH_19: PST: Standard deviation  (V)        
-        
+    %# Results array columns:
+    %[1]  Run No.
+    %[2]  FS                              (Hz)
+    %[3]  No. of samples                  (-)
+    %[4]  Record time                     (s)
+    
+    %[5]  Model speed                     (m/s)
+    %[6]  Froude length number            (-)
+    
+    %[7]  CH_19: PST: TS mean             (V)
+    %[8]  CH_19: PST: Calibration factor  (-)
+    %[9]  CH_19: PST: Zero value          (V)
+    
+    %[10] CH_19: PST: CF*(x-zero) mean    (V)
+    %[11] CH_19: PST: Minimum             (V)
+    %[12] CH_19: PST: Maximum             (V)
+    %[13] CH_19: PST: Diff. min to avg    (percent)
+    %[14] CH_19: PST: Standard deviation  (V)
+    
     % General data
     resultsArrayCalib(k, 1)  = k;                                                       % Run No.
-    resultsArrayCalib(k, 2)  = round(length(timeData) / timeData(end));                 % FS (Hz)    
+    resultsArrayCalib(k, 2)  = round(length(timeData) / timeData(end));                 % FS (Hz)
     resultsArrayCalib(k, 3)  = length(timeData);                                        % Number of samples
     recordTime = length(timeData) / (round(length(timeData) / timeData(end)));
     resultsArrayCalib(k, 4)  = round(recordTime);                                       % Record time in seconds
@@ -332,18 +332,18 @@ for k=startRun:endRun
     
     % Variables
     MeanData                 = CH_19_Inb_PST_Mean;
-    CHData                   = CH_19_Inb_PST;    
+    CHData                   = CH_19_Inb_PST;
     
     % CH_19: PST data
     resultsArrayCalib(k, 7)  = mean(Raw_CH_19_Inb_PST);
     resultsArrayCalib(k, 8)  = CH_19_CF;
-    resultsArrayCalib(k, 9)  = CH_19_Zero; 
-  
-    % CH_19: Stats    
+    resultsArrayCalib(k, 9)  = CH_19_Zero;
+    
+    % CH_19: Stats
     resultsArrayCalib(k, 10) = MeanData;
     resultsArrayCalib(k, 11) = min(CHData);
     resultsArrayCalib(k, 12) = max(CHData);
-    resultsArrayCalib(k, 13) = abs(1-(min(CHData)/MeanData));    
+    resultsArrayCalib(k, 13) = abs(1-(min(CHData)/MeanData));
     resultsArrayCalib(k, 14) = std(CHData);
     
     
@@ -360,18 +360,18 @@ for k=startRun:endRun
     if enableTSPlot == 1
         
         figurename = sprintf('%s:: Time Series Plot, Run %s', testName, num2str(runno));
-        f = figure('Name',figurename,'NumberTitle','off');    
-
+        f = figure('Name',figurename,'NumberTitle','off');
+        
         % Calibration PST: Times series -----------------------------------
         subplot(2,1,1);
-
+        
         % Axis data
         x = timeData;
         y = Raw_CH_19_Inb_PST;
         
         %# Trendline
         polyf = polyfit(x,y,1);
-        polyv = polyval(polyf,x);       
+        polyv = polyval(polyf,x);
         
         h = plot(x,y,'-b',x,polyv,'-k');
         title('{\bf Times series}');
@@ -380,17 +380,17 @@ for k=startRun:endRun
         grid on;
         box on;
         %axis square;
-
+        
         %# Set plot figure background to a defined color
         %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-        set(gcf,'Color',[1,1,1]);    
-
+        set(gcf,'Color',[1,1,1]);
+        
         %# Axis limitations
         xlim([min(x) max(x)]);
         %set(gca,'XTick',[min(x):0.2:max(x)]);
         %set(gca,'YLim',[0 75]);
         %set(gca,'YTick',[0:5:75]);
-
+        
         %# Line width
         set(h(1),'linewidth',1);
         set(h(2),'linewidth',2);
@@ -402,7 +402,7 @@ for k=startRun:endRun
         
         % Calibration PST: Times series -----------------------------------
         subplot(2,1,2);
-
+        
         % Axis data
         x = timeData;
         y = CH_19_Inb_PST;
@@ -418,13 +418,13 @@ for k=startRun:endRun
         grid on;
         box on;
         %axis square;
-
+        
         %# Axis limitations
         xlim([min(x) max(x)]);
         %set(gca,'XTick',[min(x):0.2:max(x)]);
         %set(gca,'YLim',[0 75]);
         %set(gca,'YTick',[0:5:75]);
-
+        
         %# Line width
         set(h(1),'linewidth',1);
         set(h(2),'linewidth',2);
@@ -432,7 +432,7 @@ for k=startRun:endRun
         %# Legend
         hleg1 = legend('Output (real units)','Trendline');
         set(hleg1,'Location','NorthEast');
-        set(hleg1,'Interpreter','none');        
+        set(hleg1,'Interpreter','none');
         
         %# ********************************************************************
         %# Save plot as PNG
@@ -466,25 +466,25 @@ for k=startRun:endRun
     %# Command Window Output
     %# ********************************************************************
     if enableDISP == 1
-    
+        
         froudeno      = sprintf('%s:: Froude length number: %s [-]', runno, sprintf('%.2f',modelfrrounded));
         
         % Time series data
         inbpst        = sprintf('%s::Inboard PST (time series mean): %s [V]', runno, sprintf('%.2f',mean(Raw_CH_19_Inb_PST)));
-        %outbpst       = sprintf('%s::Outboard PST (time series mean): %s [V]', runno, sprintf('%.2f',mean(Raw_CH_20_Outb_PST)));      
+        %outbpst       = sprintf('%s::Outboard PST (time series mean): %s [V]', runno, sprintf('%.2f',mean(Raw_CH_20_Outb_PST)));
         
         % Calibration factors and zero values
         inbpstCFZero  = sprintf('%s::Inboard PST: CF = %s, Zero = %s', runno, num2str(CH_19_CF), num2str(CH_19_Zero));
-        %outbpstCFZero = sprintf('%s::Outboard PST: CF = %s, Zero = %s', runno, num2str(CH_20_CF), num2str(CH_20_Zero));      
+        %outbpstCFZero = sprintf('%s::Outboard PST: CF = %s, Zero = %s', runno, num2str(CH_20_CF), num2str(CH_20_Zero));
         
         % Averaged values with CF*(x-zero) applied
         inbpstAvgMean  = sprintf('%s::Inboard PST (CF*(x-zero) mean): %s [V]', runno, sprintf('%.2f',CH_19_Inb_PST_Mean));
         %outbpstAvgMean = sprintf('%s::Outboard PST (CF*(x-zero) mean): %s [V]', runno, sprintf('%.2f',CH_20_Outb_PST_Mean));
         
         %# Display strings ---------------------------------------------------
-
+        
         disp(froudeno);
-
+        
         disp('-------------------------------------------------');
         
         % CH_19
@@ -492,15 +492,15 @@ for k=startRun:endRun
         disp(inbpstCFZero);
         disp(inbpstAvgMean);
         
-%         disp('-------------------------------------------------');
-% 
-%         % CH_20
-%         disp(outbpst);
-%         disp(outbpstCFZero);  
-%         disp(outbpstAvgMean);
+        %         disp('-------------------------------------------------');
+        %
+        %         % CH_20
+        %         disp(outbpst);
+        %         disp(outbpstCFZero);
+        %         disp(outbpstAvgMean);
         
         disp('/////////////////////////////////////////////////');
-    
+        
     end
     
     %wtot = endRun - startRun;
@@ -515,7 +515,7 @@ end
 % START: Write results to CVS
 % ---------------------------------------------------------------------
 M = resultsArrayCalib;
-csvwrite('resultsArrayCalib.dat', M)                                     % Export matrix M to a file delimited by the comma character      
+csvwrite('resultsArrayCalib.dat', M)                                     % Export matrix M to a file delimited by the comma character
 dlmwrite('resultsArrayCalib.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 % ---------------------------------------------------------------------
 % END: Write results to CVS

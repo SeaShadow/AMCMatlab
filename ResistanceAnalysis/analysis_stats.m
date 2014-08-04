@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Resistance Test Analysis - Statistics and averaged run data
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  March 20, 2014
 %#
@@ -10,7 +10,7 @@
 %#
 %# Runs TSI   :  Runs 01-35   Turbulence Studs Investigation               (TSI)
 %#               |__Disp. & trim:   1,500t, level static trim
-%#               |__Conditions:     1 = No turbulence studs 
+%#               |__Conditions:     1 = No turbulence studs
 %#                                  2 = First row of turbulence studs
 %#                                  3 = First and second row of turbulence studs
 %#
@@ -41,7 +41,7 @@
 %#
 %# Description    :  Turbulence studs investigation, trim tab optimisation and
 %#                   standard resistance test using a single catamaran demihull.
-%#                   Form factor estimation has been carried out using prohaska 
+%#                   Form factor estimation has been carried out using prohaska
 %#                   method as described by ITTC 7.2-02-02-01.
 %#
 %# ITTC Guidelines:  7.5-02-02-01
@@ -269,7 +269,7 @@ for j=1:ma
     end
     if A{j}(1,28) == 13
         cond13 = A{j};
-    end    
+    end
 end
 
 %# *********************************************************************
@@ -304,30 +304,30 @@ testName = 'Resistance Test Summary';
 
 
 % *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED 
+% START: PLOT SWITCHES: 1 = ENABLED
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
 enableTurbStimPlot          = 0; % Turbulence stimulator investigation
 enableTrimTabPlot           = 0; % Trim tab investigation
-enableResistancePlot        = 0; % Resistance plots, Ctm, power, heave and trim
+enableResistancePlot        = 1; % Resistance plots, Ctm, power, heave and trim
 enableProhaskaPlot          = 0; % Prohaska plot, form factor at deep transom
 enableErrorPlot             = 0; % Error plots (% of max-avg to magnitude)
 enableMeanStdPlot           = 0; % Fr vs. mean of standard deviation
 enableStdPlot               = 0; % Fr vs. standard deviation
 %enableHeaveRtmHeaveTrimPlot = 1; % Heave vs. Rtm and Trim vs. Rtm for times series data at ONE speed
-enableRemVSCFmPlot          = 1;
+enableRemVSCFmPlot          = 0;
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
-% *************************************************************************  
+% *************************************************************************
 
 
 % *************************************************************************
 % TURBULENCE STIMULATOR CONDITIONS
-% *************************************************************************     
+% *************************************************************************
 if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || length(cond3) ~= 0)
-
+    
     startRun = 1;
     endRun   = 35;
     
@@ -337,9 +337,9 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     %# Plot repeat data ---------------------------------------------------
     subplot(1,2,1)
     
-    if length(cond1) ~= 0        
+    if length(cond1) ~= 0
         xcond1 = cond1(:,11); ycond1 = cond1(:,10);
-
+        
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond1); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond1 = cell2mat(Raw_Data);
         
@@ -349,7 +349,7 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     end
     if length(cond2) ~= 0
         xcond2 = cond2(:,11); ycond2 = cond2(:,10);
-
+        
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond2); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond2 = cell2mat(Raw_Data);
         
@@ -359,14 +359,14 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     end
     if length(cond3) ~= 0
         xcond3 = cond3(:,11); ycond3 = cond3(:,10);
-
-        %# Multiply resistance data by 1000 for better readibility        
+        
+        %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond3); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond3 = cell2mat(Raw_Data);
         
         x3 = xcond3; y3 = ycond3;
     else
         x3 = 0; y3 = 0;
-    end 
+    end
     
     h = plot(x1,y1,'*',x2,y2,'+',x3,y3,'x','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
@@ -374,7 +374,7 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     grid on;
     box on;
     axis square;
-
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
@@ -385,8 +385,8 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     setmaxy = max([max(y1),max(y2),max(y3)])*1.02;
     setminy = min([min(y1),min(y2),min(y3)])*0.98;
     %ylim([0 setmaxy]);
-    ylim([setminy setmaxy]); 
-
+    ylim([setminy setmaxy]);
+    
     %# Legend
     hleg1 = legend('Cond. 1: 1,500t (Barehull)','Cond. 2: 1,500t (1st row)','Cond. 3: 1,500t (1st and 2nd row)');
     set(hleg1,'Location','NorthWest');
@@ -396,10 +396,10 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     %# Plot averaged data -----------------------------------------------------
     subplot(1,2,2)
     
-    if length(avgcond1) ~= 0        
+    if length(avgcond1) ~= 0
         xavgcond1 = avgcond1(:,11); yavgcond1 = avgcond1(:,10);
-
-        %# Multiply resistance data by 1000 for better readibility        
+        
+        %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(yavgcond1); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond1 = cell2mat(Raw_Data);
         
         x1 = xavgcond1; y1 = yavgcond1;
@@ -408,9 +408,9 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     end
     if length(avgcond2) ~= 0
         xavgcond2 = avgcond2(:,11); yavgcond2 = avgcond2(:,10);
-
-        %# Multiply resistance data by 1000 for better readibility        
-        Raw_Data = num2cell(yavgcond2); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond2 = cell2mat(Raw_Data);                                         
+        
+        %# Multiply resistance data by 1000 for better readibility
+        Raw_Data = num2cell(yavgcond2); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond2 = cell2mat(Raw_Data);
         
         x2 = xavgcond2; y2 = yavgcond2;
     else
@@ -418,8 +418,8 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     end
     if length(avgcond3) ~= 0
         xavgcond3 = avgcond3(:,11); yavgcond3 = avgcond3(:,10);
-
-        %# Multiply resistance data by 1000 for better readibility        
+        
+        %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(yavgcond3); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond3 = cell2mat(Raw_Data);
         
         x3 = xavgcond3; y3 = yavgcond3;
@@ -433,38 +433,38 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     grid on;
     box on;
     axis square;
-
+    
     %# Axis limitations
     xlim([0.2 0.45]);
     set(gca,'XTick',[0.20 0.25 0.30 0.35 0.40 0.45]);
     setmaxy = max([max(y1),max(y2),max(y3)])*1.02;
     setminy = min([min(y1),min(y2),min(y3)])*0.98;
     %ylim([0 setmaxy]);
-    ylim([setminy setmaxy]); 
+    ylim([setminy setmaxy]);
     
     %# Legend
     hleg1 = legend('Cond. 1: 1,500t (Barehull)','Cond. 2: 1,500t (1st row)','Cond. 3: 1,500t (1st and 2nd row)');
     set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');    
+    set(hleg1,'Interpreter','none');
     legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');   
-
+    set(gcf, 'PaperOrientation','portrait');
+    
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');  
-
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Turbulence_Stimulator_Resistance_Data_Plots_Repeats.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
@@ -476,19 +476,19 @@ end
 
 % *************************************************************************
 % TRIM TAB CONDITIONS
-% *************************************************************************     
+% *************************************************************************
 if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length(cond6) ~= 0)
-
+    
     startRun = 36;
     endRun   = 62;
     
     figurename = sprintf('%s:: Trim Tab Investigation, Run %s to %s', testName, num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');   
+    f = figure('Name',figurename,'NumberTitle','off');
     
     %# Plot repeat data: Fr vs. Ctm ---------------------------------------
     subplot(2,2,1)
     
-    if length(cond4) ~= 0        
+    if length(cond4) ~= 0
         xcond4 = cond4(:,11); ycond4 = cond4(:,10);
         
         %# Multiply resistance data by 1000 for better readibility
@@ -510,7 +510,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     end
     if length(cond6) ~= 0
         xcond6 = cond6(:,11); ycond6 = cond6(:,10);
-
+        
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond6); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond6 = cell2mat(Raw_Data);
         
@@ -525,7 +525,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     grid on;
     box on;
     axis square;
-
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
@@ -537,7 +537,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     setminy = min([min(y4),min(y5),min(y6)])*0.98;
     %ylim([0 setmaxy]);
     ylim([setminy setmaxy]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 4: 1,500t (5 degrees)','Cond. 5: 1,500t (0 degrees)','Cond. 6: 1,500t (10 degrees)');
     set(hleg1,'Location','NorthEast');
@@ -547,9 +547,9 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     %# Plot averaged data: Fr vs. Ctm -------------------------------------
     subplot(2,2,2)
     
-    if length(avgcond4) ~= 0        
+    if length(avgcond4) ~= 0
         xavgcond4 = avgcond4(:,11); yavgcond4 = avgcond4(:,10);
-
+        
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(yavgcond4); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond4 = cell2mat(Raw_Data);
         
@@ -559,7 +559,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     end
     if length(avgcond5) ~= 0
         xavgcond5 = avgcond5(:,11); yavgcond5 = avgcond5(:,10);
-
+        
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(yavgcond5); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond5 = cell2mat(Raw_Data);
         
@@ -569,7 +569,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     end
     if length(avgcond6) ~= 0
         xavgcond6 = avgcond6(:,11); yavgcond6 = avgcond6(:,10);
-
+        
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(yavgcond6); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond6 = cell2mat(Raw_Data);
         
@@ -584,7 +584,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     grid on;
     box on;
     axis square;
-
+    
     %# Axis limitations
     xlim([0.42 0.48]);
     set(gca,'XTick',[0.42 0.43 0.44 0.45 0.46 0.47 0.48]);
@@ -597,14 +597,14 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     hleg1 = legend('Cond. 4: 1,500t (5 degrees)','Cond. 5: 1,500t (0 degrees)','Cond. 6: 1,500t (10 degrees)');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     %# Plot Fr vs. Trim  -----------------------------------------------------
     %subplot(2,2,3) % Merged plot over two columns
     %subplot(2,2,[3,4]);
     subplot(2,2,3)
     
-    if length(avgcond4) ~= 0        
+    if length(avgcond4) ~= 0
         xavgcond4 = avgcond4(:,11); yavgcond4 = avgcond4(:,13);
         x4 = xavgcond4; y4 = yavgcond4;
     else
@@ -621,7 +621,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
         x6 = xavgcond6; y6 = yavgcond6;
     else
         x6 = 0; y6 = 0;
-    end    
+    end
     
     h = plot(x4,y4,'-*',x5,y5,'-+',x6,y6,'-x','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
@@ -629,7 +629,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     grid on;
     box on;
     axis square;
-
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
@@ -640,21 +640,21 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     setmaxy = max([max(y4),max(y5),max(y6)])*1.02;
     setminy = min([min(y4),min(y5),min(y6)])*0.98;
     ylim([setminy setmaxy]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 4: 1,500t (5 degrees)','Cond. 5: 1,500t (0 degrees)','Cond. 6: 1,500t (10 degrees)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     %# Plot Trim vs. Crm  -----------------------------------------------------
     %subplot(2,2,3) % Merged plot over two columns
     %subplot(2,2,[3,4]);
     subplot(2,2,4)
     
-    if length(avgcond4) ~= 0        
+    if length(avgcond4) ~= 0
         xavgcond4 = avgcond4(:,13); yavgcond4 = avgcond4(:,19);
-
+        
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(yavgcond4); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond4 = cell2mat(Raw_Data);
         
@@ -664,7 +664,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     end
     if length(avgcond5) ~= 0
         xavgcond5 = avgcond5(:,13); yavgcond5 = avgcond5(:,19);
-
+        
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(yavgcond5); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond5 = cell2mat(Raw_Data);
         
@@ -674,14 +674,14 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     end
     if length(avgcond6) ~= 0
         xavgcond6 = avgcond6(:,13); yavgcond6 = avgcond6(:,19);
-
+        
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(yavgcond6); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond6 = cell2mat(Raw_Data);
         
         x6 = xavgcond6; y6 = yavgcond6;
     else
         x6 = 0; y6 = 0;
-    end    
+    end
     
     % Fr = 0.43 only
     fr043 = [];
@@ -700,7 +700,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     fr041s = [];
     fr041s(1,1) = avgcond9(5,13)+0.5;   % Condition 7: 1,500t, 0.5 by stern, Fr = 0.41
     fr041s(1,2) = avgcond9(5,19)*1000;  % Condition 7: 1,500t, 0.5 by stern, Fr = 0.41
-
+    
     % Sort arrays by rows
     fr043 = sortrows(fr043);
     
@@ -711,7 +711,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     grid on;
     box on;
     axis square;
-
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
@@ -727,55 +727,55 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     hleg1 = legend('Cond.4/5/6: Fr=0.43','Cond.7: Fr=0.43, level','Cond.8: Fr=0.41, -0.5 deg','Cond.9: Fr=0.42, 0.5 deg');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');   
-
+    set(gcf, 'PaperOrientation','portrait');
+    
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');  
-
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Trim_Tab_Resistance_Data_Plots_Repeats.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Trim_Tab_Resistance_Data_Plots_Repeats.png', '_averaged', num2str(startRun), num2str(endRun));
     saveas(f, plotsavename);                % Save plot as PNG
-    %close;       
-  
+    %close;
+    
 end
 
 % *************************************************************************
 % REPEATS: 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
-% ************************************************************************* 
+% *************************************************************************
 if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
     
     startRun = 81;
     endRun   = 231;
     
     figurename = sprintf('%s:: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');   
-
+    f = figure('Name',figurename,'NumberTitle','off');
+    
     % Fr vs. Rtm (#9) or Ctm (#10) ---------------------------------------------------------
     %subplot(2,2,1:2) % Merged plot over two columns
     subplot(2,2,1)
-
+    
     if length(cond7) ~= 0
         xcond7 = cond7(:,11); ycond7 = cond7(:,10);
         
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond7); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond7 = cell2mat(Raw_Data);
-                
+        
         x7 = xcond7; y7 = ycond7;
     else
         x7 = 0; y7 = 0;
@@ -785,7 +785,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond8); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond8 = cell2mat(Raw_Data);
-                
+        
         x8 = xcond8; y8 = ycond8;
     else
         x8 = 0; y8 = 0;
@@ -795,17 +795,17 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond9); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond9 = cell2mat(Raw_Data);
-                
+        
         x9 = xcond9; y9 = ycond9;
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(cond10) ~= 0
         xcond10 = cond10(:,11); ycond10 = cond10(:,10);
         
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond10); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond10 = cell2mat(Raw_Data);
-                
+        
         x10 = xcond10; y10 = ycond10;
     else
         x10 = 0; y10 = 0;
@@ -815,7 +815,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond11); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond11 = cell2mat(Raw_Data);
-                
+        
         x11 = xcond11; y11 = ycond11;
     else
         x11 = 0; y11 = 0;
@@ -825,7 +825,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond12); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond12 = cell2mat(Raw_Data);
-                
+        
         x12 = xcond12; y12 = ycond12;
     else
         x12 = 0; y12 = 0;
@@ -837,15 +837,15 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     xlim([0.1 0.5]);
     set(gca,'XTick',[0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
@@ -869,7 +869,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         x9 = cond9(:,15); y9 = cond9(:,26);
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(cond10) ~= 0
         x10 = cond10(:,15); y10 = cond10(:,26);
     else
@@ -884,7 +884,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         x12 = cond12(:,15); y12 = cond12(:,26);
     else
         x12 = 0; y12 = 0;
-    end    
+    end
     
     h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',7);
     xlabel('{\bf Full scale speed [knots]}');
@@ -892,13 +892,13 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     grid on;
     box on;
     axis square;
-
+    
     %# Axis limitations
     xlim([10 30]);
     set(gca,'XTick',[10 12 14 16 18 20 22 24 26 28 30]);
     %setmaxy = max([max(y7),max(y8),max(y9),max(y10),max(y11),max(y12)])*1.1
     %ylim([0 setmaxy]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
@@ -907,7 +907,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(2,2,3)
-
+    
     if length(cond7) ~= 0
         x7 = cond7(:,11); y7 = cond7(:,12);
     else
@@ -922,7 +922,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         x9 = cond9(:,11); y9 = cond9(:,12);
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(cond10) ~= 0
         x10 = cond10(:,11); y10 = cond10(:,12);
     else
@@ -937,7 +937,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         x12 = cond12(:,11); y12 = cond12(:,12);
     else
         x12 = 0; y12 = 0;
-    end    
+    end
     
     h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
@@ -945,15 +945,15 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     grid on;
     box on;
     axis square;
-
+    
     %# Axis limitations
     xlim([0.15 0.5]);
     set(gca,'XTick',[0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
+    set(hleg1,'Interpreter','none');
     legend boxoff;
     
     % Model speed vs. model trim (degrees) ------------------------------------
@@ -985,7 +985,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         x9 = xcond9; y9 = ycond9;
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(cond10) ~= 0
         x10 = cond10(:,11); y10 = cond10(:,13);
     else
@@ -1009,22 +1009,22 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond12); Raw_Data = cellfun(@(y) y+0.5, Raw_Data, 'UniformOutput', false); ycond12 = cell2mat(Raw_Data);
         
-        x12 = xcond12; y12 = ycond12;        
+        x12 = xcond12; y12 = ycond12;
     else
         x12 = 0; y12 = 0;
-    end     
-
+    end
+    
     h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
     ylabel('{\bf Running trim [deg]}');
     grid on;
     box on;
     axis square;
-
+    
     %# Axis limitations
     xlim([0.15 0.5]);
     set(gca,'XTick',[0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
@@ -1032,28 +1032,28 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');   
-
+    set(gcf, 'PaperOrientation','portrait');
+    
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');  
-
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Resistance_Data_Plots_Repeats.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Resistance_Data_Plots_Repeats.png', '_averaged', num2str(startRun), num2str(endRun));
     saveas(f, plotsavename);                % Save plot as PNG
-    %close;    
+    %close;
     
 end
 
@@ -1068,18 +1068,18 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     endRun   = 231;
     
     figurename = sprintf('Averaged %s:: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');   
-
+    f = figure('Name',figurename,'NumberTitle','off');
+    
     % Fr vs. Ctm ----------------------------------------------------------
     %subplot(2,2,1:2) % Merged plot over two columns
     subplot(2,2,1)
-
+    
     if length(avgcond7) ~= 0
         xavgcond7 = avgcond7(:,11); yavgcond7 = avgcond7(:,10);
         
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);
-                
+        
         x7 = xavgcond7; y7 = yavgcond7;
     else
         x7 = 0; y7 = 0;
@@ -1089,7 +1089,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(yavgcond8); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond8 = cell2mat(Raw_Data);
-                
+        
         x8 = xavgcond8; y8 = yavgcond8;
     else
         x8 = 0; y8 = 0;
@@ -1099,17 +1099,17 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(yavgcond9); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond9 = cell2mat(Raw_Data);
-                
+        
         x9 = xavgcond9; y9 = yavgcond9;
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         xavgcond10 = avgcond10(:,11); yavgcond10 = avgcond10(:,10);
         
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(yavgcond10); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond10 = cell2mat(Raw_Data);
-                
+        
         x10 = xavgcond10; y10 = yavgcond10;
     else
         x10 = 0; y10 = 0;
@@ -1119,7 +1119,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(yavgcond11); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond11 = cell2mat(Raw_Data);
-                
+        
         x11 = xavgcond11; y11 = yavgcond11;
     else
         x11 = 0; y11 = 0;
@@ -1129,7 +1129,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(yavgcond12); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond12 = cell2mat(Raw_Data);
-                
+        
         x12 = xavgcond12; y12 = yavgcond12;
     else
         x12 = 0; y12 = 0;
@@ -1144,12 +1144,12 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Line width
     %set(h(1),'linewidth',2);
     %set(h(2),'linewidth',2);
-    %set(h(3),'linewidth',2);    
+    %set(h(3),'linewidth',2);
     %set(h(4),'linewidth',1);
     %set(h(5),'linewidth',1);
     %set(h(6),'linewidth',1);
@@ -1157,7 +1157,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %# Axis limitations
     xlim([0.1 0.5]);
     set(gca,'XTick',[0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
@@ -1166,10 +1166,10 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
     % Full scale speed vs. full scale effective power ---------------------
     subplot(2,2,2)
-
+    
     %x = R(:,15);
     %y = R(:,26);
-
+    
     if length(avgcond7) ~= 0
         x7 = avgcond7(:,15); y7 = avgcond7(:,26);
     else
@@ -1184,7 +1184,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         x9 = avgcond9(:,15); y9 = avgcond9(:,26);
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         x10 = avgcond10(:,15); y10 = avgcond10(:,26);
     else
@@ -1199,7 +1199,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         x12 = avgcond12(:,15); y12 = avgcond12(:,26);
     else
         x12 = 0; y12 = 0;
-    end    
+    end
     
     h = plot(x7,y7,'-*',x8,y8,'-+',x9,y9,'-+',x10,y10,'--o',x11,y11,'--s',x12,y12,'--d','MarkerSize',5);
     xlabel('{\bf Full scale speed [knots]}');
@@ -1207,13 +1207,13 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     grid on;
     box on;
     axis square;
-
+    
     %# Axis limitations
     xlim([10 30]);
     set(gca,'XTick',[10 12 14 16 18 20 22 24 26 28 30]);
     %setmaxy = max([max(y7),max(y8),max(y9),max(y10),max(y11),max(y12)])*1.1
     %ylim([0 setmaxy]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
@@ -1222,10 +1222,10 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
     % Model speed vs. model heave (mm) ------------------------------------
     subplot(2,2,3)
-
+    
     %x = R(:,11);
     %y = R(:,12);
-
+    
     if length(avgcond7) ~= 0
         x7 = avgcond7(:,11); y7 = avgcond7(:,12);
     else
@@ -1240,7 +1240,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         x9 = avgcond9(:,11); y9 = avgcond9(:,12);
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         x10 = avgcond10(:,11); y10 = avgcond10(:,12);
     else
@@ -1255,7 +1255,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         x12 = avgcond12(:,11); y12 = avgcond12(:,12);
     else
         x12 = 0; y12 = 0;
-    end    
+    end
     
     h = plot(x7,y7,'-*',x8,y8,'-+',x9,y9,'-+',x10,y10,'--o',x11,y11,'--s',x12,y12,'--d','MarkerSize',5);
     xlabel('{\bf Froude length number [-]}');
@@ -1263,20 +1263,20 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     grid on;
     box on;
     axis square;
-
+    
     %# Axis limitations
     xlim([0.15 0.5]);
     set(gca,'XTick',[0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','none');    
+    set(hleg1,'Interpreter','none');
     legend boxoff;
     
     % Model speed vs. model trim (degrees) --------------------------------
     subplot(2,2,4)
-
+    
     %x = R(:,11);
     %y = R(:,13);
     
@@ -1292,7 +1292,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond8); Raw_Data = cellfun(@(y) y-0.5, Raw_Data, 'UniformOutput', false); ycond8 = cell2mat(Raw_Data);
         
-        x8 = xcond8; y8 = ycond8;        
+        x8 = xcond8; y8 = ycond8;
     else
         x8 = 0; y8 = 0;
     end
@@ -1303,10 +1303,10 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond9); Raw_Data = cellfun(@(y) y+0.5, Raw_Data, 'UniformOutput', false); ycond9 = cell2mat(Raw_Data);
         
-        x9 = xcond9; y9 = ycond9;        
+        x9 = xcond9; y9 = ycond9;
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         x10 = avgcond10(:,11); y10 = avgcond10(:,13);
     else
@@ -1319,7 +1319,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond11); Raw_Data = cellfun(@(y) y-0.5, Raw_Data, 'UniformOutput', false); ycond11 = cell2mat(Raw_Data);
         
-        x11 = xcond11; y11 = ycond11;         
+        x11 = xcond11; y11 = ycond11;
     else
         x11 = 0; y11 = 0;
     end
@@ -1330,22 +1330,22 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         %# Multiply resistance data by 1000 for better readibility
         Raw_Data = num2cell(ycond12); Raw_Data = cellfun(@(y) y+0.5, Raw_Data, 'UniformOutput', false); ycond12 = cell2mat(Raw_Data);
         
-        x12 = xcond12; y12 = ycond12;        
+        x12 = xcond12; y12 = ycond12;
     else
         x12 = 0; y12 = 0;
-    end     
-
+    end
+    
     h = plot(x7,y7,'-*',x8,y8,'-+',x9,y9,'-+',x10,y10,'--o',x11,y11,'--s',x12,y12,'--d','MarkerSize',5);
     xlabel('{\bf Froude length number [-]}');
     ylabel('{\bf Running trim [deg]}');
     grid on;
     box on;
     axis square;
-
+    
     %# Axis limitations
     xlim([0.15 0.5]);
     set(gca,'XTick',[0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
@@ -1353,48 +1353,48 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');   
-
+    set(gcf, 'PaperOrientation','portrait');
+    
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');  
-
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Resistance_Data_Plots_Averaged.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Resistance_Data_Plots_Averaged.png', '_averaged', num2str(startRun), num2str(endRun));
     saveas(f, plotsavename);                % Save plot as PNG
-    %close;    
+    %close;
     
 end
-    
+
 % *************************************************************************
 % REPEATS: 1,500 AND 1,804, Fr vs. Ctm and Fr vs. Crm
-% ************************************************************************* 
+% *************************************************************************
 if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
     
     startRun = 81;
     endRun   = 231;
     
     figurename = sprintf('%s:: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');   
-
+    f = figure('Name',figurename,'NumberTitle','off');
+    
     % Fr vs. Rtm ----------------------------------------------------------
     subplot(1,3,1)
-
+    
     if length(avgcond7) ~= 0
         xavgcond7 = avgcond7(:,11); yavgcond7 = avgcond7(:,9);
-        %Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);    
+        %Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);
         x7 = xavgcond7; y7 = yavgcond7;
     else
         x7 = 0; y7 = 0;
@@ -1412,7 +1412,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         x9 = xavgcond9; y9 = yavgcond9;
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         xavgcond10 = avgcond10(:,11); yavgcond10 = avgcond10(:,9);
         %Raw_Data = num2cell(yavgcond10); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond10 = cell2mat(Raw_Data);
@@ -1444,7 +1444,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Line width
     set(h(1),'Color',[0 0 1],'LineStyle','-','linewidth',1);
@@ -1457,19 +1457,19 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %# Axis limitations
     set(gca,'XLim',[[0.1 0.5]]);
     set(gca,'XTick',[0.1:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % Fr vs. Ctm ----------------------------------------------------------
     subplot(1,3,2)
-
+    
     if length(avgcond7) ~= 0
         xavgcond7 = avgcond7(:,11); yavgcond7 = avgcond7(:,10);
-        Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);    
+        Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);
         x7 = xavgcond7; y7 = yavgcond7;
     else
         x7 = 0; y7 = 0;
@@ -1487,7 +1487,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         x9 = xavgcond9; y9 = yavgcond9;
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         xavgcond10 = avgcond10(:,11); yavgcond10 = avgcond10(:,10);
         Raw_Data = num2cell(yavgcond10); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond10 = cell2mat(Raw_Data);
@@ -1519,7 +1519,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Line width
     set(h(1),'Color',[0 0 1],'LineStyle','-','linewidth',1);
@@ -1532,19 +1532,19 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %# Axis limitations
     set(gca,'XLim',[[0.1 0.5]]);
     set(gca,'XTick',[0.1:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % Fr vs. Ctm ----------------------------------------------------------
     subplot(1,3,3)
-
+    
     if length(avgcond7) ~= 0
         xavgcond7 = avgcond7(:,11); yavgcond7 = avgcond7(:,19);
-        Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);    
+        Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);
         x7 = xavgcond7; y7 = yavgcond7;
     else
         x7 = 0; y7 = 0;
@@ -1562,7 +1562,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         x9 = xavgcond9; y9 = yavgcond9;
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         xavgcond10 = avgcond10(:,11); yavgcond10 = avgcond10(:,19);
         Raw_Data = num2cell(yavgcond10); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond10 = cell2mat(Raw_Data);
@@ -1594,7 +1594,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Line width
     set(h(1),'Color',[0 0 1],'LineStyle','-','linewidth',1);
@@ -1607,49 +1607,49 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %# Axis limitations
     set(gca,'XLim',[[0.1 0.5]]);
     set(gca,'XTick',[0.1:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');   
-
+    set(gcf, 'PaperOrientation','portrait');
+    
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');  
-
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Resistance_Data_Plots_Fr_vs_Ctm_and_Crm_Averaged.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Resistance_Data_Plots_Fr_vs_Ctm_and_Crm_Averaged.png', '_averaged', num2str(startRun), num2str(endRun));
     saveas(f, plotsavename);                % Save plot as PNG
-    %close;    
+    %close;
     
 end
 
 % *************************************************************************
 % 1,804 TONNES RESISTANCE CONDITIONS
-% *************************************************************************     
+% *************************************************************************
 % if length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0
 %     disp('Conditions 10 to 12 available');
 % end
 
 % *************************************************************************
 % DEEP TRANSOM PROHASKA CONDITION
-% *************************************************************************   
+% *************************************************************************
 if enableProhaskaPlot == 1 && length(cond13) ~= 0
     
     startRun = 232;
@@ -1707,8 +1707,8 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     slopeTextITTC = sprintf('y = %s*x %s %s', sprintf('%.3f',slopeITTC), chooseSign, sprintf('%.3f',interceptITTC));
     
     %# Use CC1(1,2)
-    %# NOTE: A correlation coefficient with a magnitude near 1 (as in this case) 
-    %#       represents a good fit.  As the fit gets worse, the correlation 
+    %# NOTE: A correlation coefficient with a magnitude near 1 (as in this case)
+    %#       represents a good fit.  As the fit gets worse, the correlation
     %#       coefficient approaches zero.
     CC1    = corrcoef(x1,y1);
     
@@ -1731,9 +1731,9 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     slopeTextGrigson = sprintf('y = %s*x %s %s', sprintf('%.3f',slopeGrigson), chooseSign, sprintf('%.3f',interceptGrigson));
     
     %# Use CC2(1,2)
-    %# NOTE: A correlation coefficient with a magnitude near 1 (as in this case) 
-    %#       represents a good fit.  As the fit gets worse, the correlation 
-    %#       coefficient approaches zero.    
+    %# NOTE: A correlation coefficient with a magnitude near 1 (as in this case)
+    %#       represents a good fit.  As the fit gets worse, the correlation
+    %#       coefficient approaches zero.
     CC2    = corrcoef(x2,y2);
     
     %# END: Trendline for Grigson Friction Line ---------------------------
@@ -1762,7 +1762,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     set(gca,'XTick',[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7]);
     ylim([1 1.4]);
     set(gca,'YTick',[1 1.05 1.1 1.15 1.2 1.25 1.3 1.35 1.4]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 13: ITTC 1957','Cond. 13: Grigson','Cond. 13: ITTC 1957','Cond. 13: Grigson');
     set(hleg1,'Location','NorthWest');
@@ -1773,7 +1773,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     subplot(1,2,2)
     
     if length(avgcond13) ~= 0
-        xavgcond13 = avgcond13(:,11); 
+        xavgcond13 = avgcond13(:,11);
         
         %# Multiply resistance data by 1000 for better readibility
         yavgcond131 = avgcond13(:,32); Raw_Data = num2cell(yavgcond131); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond131 = cell2mat(Raw_Data);
@@ -1793,24 +1793,24 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
         y133 = 0;
         y134 = 0;
     end
-
+    
     h = plot(x13,y131,'*',x13,y132,'+',x13,y133,'x',x13,y134,'o','MarkerSize',7);
     xlabel('{\bf Froude length number [-]}');
     ylabel('{\bf Error to average [percent]}');
     grid on;
     box on;
     axis square;
-
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    %set(gca,'XLim',[0.1 0.5]); 
+    %set(gca,'XLim',[0.1 0.5]);
     %set(gca,'XTick',[0.1:0.05:0.5]);
     set(gca,'YLim',[0 60]);
     set(gca,'YTick',[0:5:60]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 13: Speed','Cond. 13: Fwd LVDT','Cond. 13: Aft LVDT','Cond. 13: Drag');
     set(hleg1,'Location','NorthEast');
@@ -1818,28 +1818,28 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');   
-
+    set(gcf, 'PaperOrientation','portrait');
+    
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');  
-
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Prohaska_Form_Factor_Resistance_Data_Plots_Repeats.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Prohaska_Form_Factor_Resistance_Data_Plots_Repeats.png', '_averaged', num2str(startRun), num2str(endRun));
     saveas(f, plotsavename);                % Save plot as PNG
-    %close;    
+    %close;
     
 end
 
@@ -1847,18 +1847,18 @@ end
 % ERRORS (REPEATS): 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
 % *************************************************************************
 if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
-
+    
     startRun = 81;
     endRun   = 231;
     
     figurename = sprintf('%s:: 1,500 and 1,804 tonnes, Run %s to %s', 'Errors to Average for Resistance Tests using Repeated Runs', num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');   
-
+    f = figure('Name',figurename,'NumberTitle','off');
+    
     % COND 7: Fr vs. Errors -----------------------------------------------
     subplot(2,3,1)
-
+    
     if length(cond7) ~= 0
-        xcond7 = cond7(:,11); 
+        xcond7 = cond7(:,11);
         
         %# Multiply resistance data by 1000 for better readibility
         ycond71 = cond7(:,32); Raw_Data = num2cell(ycond71); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); ycond71 = cell2mat(Raw_Data);
@@ -1886,19 +1886,19 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     %xlim([0.2 0.5]);
     %set(gca,'XTick',[0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-    set(gca,'XLim',[0.1 0.5]); 
+    set(gca,'XLim',[0.1 0.5]);
     set(gca,'XTick',[0.1:0.05:0.5]);
-    set(gca,'YLim',[0 75]);   
+    set(gca,'YLim',[0 75]);
     set(gca,'YTick',[0:5:75]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: Speed','Cond. 7: Fwd LVDT','Cond. 7: Aft LVDT','Cond. 7: Drag');
     set(hleg1,'Location','NorthEast');
@@ -1907,9 +1907,9 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % COND 8: Fr vs. Errors -----------------------------------------------
     subplot(2,3,2)
-
+    
     if length(cond8) ~= 0
-        xcond8 = cond8(:,11); 
+        xcond8 = cond8(:,11);
         
         %# Multiply resistance data by 1000 for better readibility
         ycond81 = cond8(:,32); Raw_Data = num2cell(ycond81); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); ycond81 = cell2mat(Raw_Data);
@@ -1937,30 +1937,30 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     %xlim([0.2 0.5]);
     %set(gca,'XTick',[0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-    set(gca,'XLim',[0.2 0.5]);   
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-    set(gca,'YLim',[0 75]);   
+    set(gca,'YLim',[0 75]);
     set(gca,'YTick',[0:5:75]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 8: Speed','Cond. 8: Fwd LVDT','Cond. 8: Aft LVDT','Cond. 8: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % COND 9: Fr vs. Errors -----------------------------------------------
     subplot(2,3,3)
-
+    
     if length(cond9) ~= 0
-        xcond9 = cond9(:,11); 
+        xcond9 = cond9(:,11);
         
         %# Multiply resistance data by 1000 for better readibility
         ycond91 = cond9(:,32); Raw_Data = num2cell(ycond91); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); ycond91 = cell2mat(Raw_Data);
@@ -1988,30 +1988,30 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     %xlim([0.2 0.5]);
     %set(gca,'XTick',[0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-    set(gca,'XLim',[0.2 0.5]);   
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-    set(gca,'YLim',[0 75]);   
+    set(gca,'YLim',[0 75]);
     set(gca,'YTick',[0:5:75]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 9: Speed','Cond. 9: Fwd LVDT','Cond. 9: Aft LVDT','Cond. 9: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % COND 10: Fr vs. Errors -----------------------------------------------
     subplot(2,3,4)
-
+    
     if length(cond10) ~= 0
-        xcond10 = cond10(:,11); 
+        xcond10 = cond10(:,11);
         
         %# Multiply resistance data by 1000 for better readibility
         ycond101 = cond10(:,32); Raw_Data = num2cell(ycond101); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); ycond101 = cell2mat(Raw_Data);
@@ -2039,19 +2039,19 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     %xlim([0.2 0.5]);
     %set(gca,'XTick',[0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-    set(gca,'XLim',[0.2 0.5]);   
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-    set(gca,'YLim',[0 75]);   
+    set(gca,'YLim',[0 75]);
     set(gca,'YTick',[0:5:75]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 10: Speed','Cond. 10: Fwd LVDT','Cond. 10: Aft LVDT','Cond. 10: Drag');
     set(hleg1,'Location','NorthEast');
@@ -2060,9 +2060,9 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % COND 11: Fr vs. Errors -----------------------------------------------
     subplot(2,3,5)
-
+    
     if length(cond11) ~= 0
-        xcond11 = cond11(:,11); 
+        xcond11 = cond11(:,11);
         
         %# Multiply resistance data by 1100 for better readibility
         ycond111 = cond11(:,32); Raw_Data = num2cell(ycond111); Raw_Data = cellfun(@(y) y*110, Raw_Data, 'UniformOutput', false); ycond111 = cell2mat(Raw_Data);
@@ -2090,30 +2090,30 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     %xlim([0.2 0.5]);
     %set(gca,'XTick',[0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-    set(gca,'XLim',[0.2 0.5]);   
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-    set(gca,'YLim',[0 75]);   
+    set(gca,'YLim',[0 75]);
     set(gca,'YTick',[0:5:75]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 11: Speed','Cond. 11: Fwd LVDT','Cond. 11: Aft LVDT','Cond. 11: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % COND 12: Fr vs. Errors -----------------------------------------------
     subplot(2,3,6)
-
+    
     if length(cond12) ~= 0
-        xcond12 = cond12(:,11); 
+        xcond12 = cond12(:,11);
         
         %# Multiply resistance data by 100 for better readibility
         ycond121 = cond12(:,32); Raw_Data = num2cell(ycond121); Raw_Data = cellfun(@(y) y*120, Raw_Data, 'UniformOutput', false); ycond121 = cell2mat(Raw_Data);
@@ -2141,19 +2141,19 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
     %xlim([0.2 0.5]);
     %set(gca,'XTick',[0.2 0.25 0.3 0.35 0.4 0.45 0.5])
-    set(gca,'XLim',[0.2 0.5]);   
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-    set(gca,'YLim',[0 75]);   
+    set(gca,'YLim',[0 75]);
     set(gca,'YTick',[0:5:75]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 12: Speed','Cond. 12: Fwd LVDT','Cond. 12: Aft LVDT','Cond. 12: Drag');
     set(hleg1,'Location','NorthEast');
@@ -2161,22 +2161,22 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');      
-      
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Errors_Resistance_Data_Plots_Repeats.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
@@ -2190,18 +2190,18 @@ end
 % ERRORS (AVERAGED): 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
 % *************************************************************************
 if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
-
+    
     startRun = 81;
     endRun   = 231;
     
     figurename = sprintf('%s:: 1,500 and 1,804 tonnes, Run %s to %s', 'Errors to Average for Resistance Tests using Averaged Runs', num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');   
-
+    f = figure('Name',figurename,'NumberTitle','off');
+    
     % COND 7: Fr vs. Errors -----------------------------------------------
     subplot(2,3,1)
-
+    
     if length(cond7) ~= 0
-        xavgcond7 = avgcond7(:,11); 
+        xavgcond7 = avgcond7(:,11);
         
         %# Multiply resistance data by 1000 for better readibility
         yavgcond71 = avgcond7(:,32); Raw_Data = num2cell(yavgcond71); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond71 = cell2mat(Raw_Data);
@@ -2229,23 +2229,23 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Line width
     set(h(1),'linewidth',1);
     set(h(2),'linewidth',1);
-    set(h(3),'linewidth',1);    
-    set(h(4),'linewidth',1);    
+    set(h(3),'linewidth',1);
+    set(h(4),'linewidth',1);
     
     %# Axis limitations
-    set(gca,'XLim',[0.1 0.5]); 
+    set(gca,'XLim',[0.1 0.5]);
     set(gca,'XTick',[0.1:0.05:0.5]);
-    set(gca,'YLim',[0 75]);   
+    set(gca,'YLim',[0 75]);
     set(gca,'YTick',[0:5:75]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 7: Speed','Cond. 7: Fwd LVDT','Cond. 7: Aft LVDT','Cond. 7: Drag');
     set(hleg1,'Location','NorthEast');
@@ -2254,9 +2254,9 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % COND 8: Fr vs. Errors -----------------------------------------------
     subplot(2,3,2)
-
+    
     if length(cond8) ~= 0
-        xavgcond8 = avgcond8(:,11); 
+        xavgcond8 = avgcond8(:,11);
         
         %# Multiply resistance data by 1000 for better readibility
         yavgcond81 = avgcond8(:,32); Raw_Data = num2cell(yavgcond81); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond81 = cell2mat(Raw_Data);
@@ -2284,34 +2284,34 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Line width
     set(h(1),'linewidth',1);
     set(h(2),'linewidth',1);
-    set(h(3),'linewidth',1);    
-    set(h(4),'linewidth',1);    
+    set(h(3),'linewidth',1);
+    set(h(4),'linewidth',1);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]);   
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-    set(gca,'YLim',[0 75]);   
+    set(gca,'YLim',[0 75]);
     set(gca,'YTick',[0:5:75]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 8: Speed','Cond. 8: Fwd LVDT','Cond. 8: Aft LVDT','Cond. 8: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % COND 9: Fr vs. Errors -----------------------------------------------
     subplot(2,3,3)
-
+    
     if length(cond9) ~= 0
-        xavgcond9 = avgcond9(:,11); 
+        xavgcond9 = avgcond9(:,11);
         
         %# Multiply resistance data by 1000 for better readibility
         yavgcond91 = avgcond9(:,32); Raw_Data = num2cell(yavgcond91); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond91 = cell2mat(Raw_Data);
@@ -2339,34 +2339,34 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Line width
     set(h(1),'linewidth',1);
     set(h(2),'linewidth',1);
-    set(h(3),'linewidth',1);    
-    set(h(4),'linewidth',1);    
+    set(h(3),'linewidth',1);
+    set(h(4),'linewidth',1);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]);   
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-    set(gca,'YLim',[0 75]);   
+    set(gca,'YLim',[0 75]);
     set(gca,'YTick',[0:5:75]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 9: Speed','Cond. 9: Fwd LVDT','Cond. 9: Aft LVDT','Cond. 9: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % COND 10: Fr vs. Errors -----------------------------------------------
     subplot(2,3,4)
-
+    
     if length(cond10) ~= 0
-        xavgcond10 = avgcond10(:,11); 
+        xavgcond10 = avgcond10(:,11);
         
         %# Multiply resistance data by 1000 for better readibility
         yavgcond101 = avgcond10(:,32); Raw_Data = num2cell(yavgcond101); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond101 = cell2mat(Raw_Data);
@@ -2394,23 +2394,23 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Line width
     set(h(1),'linewidth',1);
     set(h(2),'linewidth',1);
-    set(h(3),'linewidth',1);    
-    set(h(4),'linewidth',1);    
+    set(h(3),'linewidth',1);
+    set(h(4),'linewidth',1);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]);   
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-    set(gca,'YLim',[0 75]);   
+    set(gca,'YLim',[0 75]);
     set(gca,'YTick',[0:5:75]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 10: Speed','Cond. 10: Fwd LVDT','Cond. 10: Aft LVDT','Cond. 10: Drag');
     set(hleg1,'Location','NorthEast');
@@ -2419,9 +2419,9 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % COND 11: Fr vs. Errors -----------------------------------------------
     subplot(2,3,5)
-
+    
     if length(cond11) ~= 0
-        xavgcond11 = avgcond11(:,11); 
+        xavgcond11 = avgcond11(:,11);
         
         %# Multiply resistance data by 1100 for better readibility
         yavgcond111 = avgcond11(:,32); Raw_Data = num2cell(yavgcond111); Raw_Data = cellfun(@(y) y*110, Raw_Data, 'UniformOutput', false); yavgcond111 = cell2mat(Raw_Data);
@@ -2449,34 +2449,34 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Line width
     set(h(1),'linewidth',1);
     set(h(2),'linewidth',1);
-    set(h(3),'linewidth',1);    
-    set(h(4),'linewidth',1);    
+    set(h(3),'linewidth',1);
+    set(h(4),'linewidth',1);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]);   
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-    set(gca,'YLim',[0 75]);   
+    set(gca,'YLim',[0 75]);
     set(gca,'YTick',[0:5:75]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 11: Speed','Cond. 11: Fwd LVDT','Cond. 11: Aft LVDT','Cond. 11: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % COND 12: Fr vs. Errors -----------------------------------------------
     subplot(2,3,6)
-
+    
     if length(cond12) ~= 0
-        xavgcond12 = avgcond12(:,11); 
+        xavgcond12 = avgcond12(:,11);
         
         %# Multiply resistance data by 100 for better readibility
         yavgcond121 = avgcond12(:,32); Raw_Data = num2cell(yavgcond121); Raw_Data = cellfun(@(y) y*120, Raw_Data, 'UniformOutput', false); yavgcond121 = cell2mat(Raw_Data);
@@ -2504,23 +2504,23 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Line width
     set(h(1),'linewidth',1);
     set(h(2),'linewidth',1);
-    set(h(3),'linewidth',1);    
-    set(h(4),'linewidth',1);    
+    set(h(3),'linewidth',1);
+    set(h(4),'linewidth',1);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]);   
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-    set(gca,'YLim',[0 75]);   
+    set(gca,'YLim',[0 75]);
     set(gca,'YTick',[0:5:75]);
-
+    
     %# Legend
     hleg1 = legend('Cond. 12: Speed','Cond. 12: Fwd LVDT','Cond. 12: Aft LVDT','Cond. 12: Drag');
     set(hleg1,'Location','NorthEast');
@@ -2528,22 +2528,22 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');      
-      
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Errors_Resistance_Data_Plots_Averaged.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
@@ -2557,13 +2557,13 @@ end
 % MEAN STANDARD DEVIATION: 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
 % *************************************************************************
 if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
-
+    
     startRun = 81;
     endRun   = 231;
     
     figurename = sprintf('%s:: 1,500 and 1,804 tonnes, Run %s to %s', 'Averaged Mean of Standard Deviation', num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');   
-
+    f = figure('Name',figurename,'NumberTitle','off');
+    
     % Fr vs. Mean of Standard Deviation -----------------------------------
     subplot(2,3,1)
     
@@ -2587,15 +2587,15 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.1 0.5]); 
+    set(gca,'XLim',[0.1 0.5]);
     set(gca,'XTick',[0.1:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
     set(hleg1,'Location','NorthWest');
@@ -2625,20 +2625,20 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % Fr vs. Mean of Standard Deviation -----------------------------------
     subplot(2,3,3)
@@ -2663,15 +2663,15 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
     set(hleg1,'Location','NorthWest');
@@ -2701,20 +2701,20 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % Fr vs. Mean of Standard Deviation -----------------------------------
     subplot(2,3,5)
@@ -2739,20 +2739,20 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     grid on;
     box on;
     axis square;
-        
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % Fr vs. Mean of Standard Deviation -----------------------------------
     subplot(2,3,6)
@@ -2777,15 +2777,15 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     grid on;
     box on;
     axis square;
-
+    
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
     set(hleg1,'Location','NorthWest');
@@ -2793,22 +2793,22 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');      
-      
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Fr_vs_Standard_Deviation_Mean_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
@@ -2822,13 +2822,13 @@ end
 % STANDARD DEVIATION: 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
 % *************************************************************************
 if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
-
+    
     startRun = 81;
     endRun   = 231;
     
     figurename = sprintf('%s:: 1,500 and 1,804 tonnes, Run %s to %s', 'Averaged Standard Deviation', num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');   
-
+    f = figure('Name',figurename,'NumberTitle','off');
+    
     % Fr vs. Standard Deviation -------------------------------------------
     subplot(2,3,1)
     
@@ -2854,21 +2854,21 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     grid on;
     box on;
     axis square;
-        
-    % Colors and markers    
+    
+    % Colors and markers
     set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
     set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
     set(h(3),'Color',[1 0 0],'Marker','x','LineStyle','-.','linewidth',1);
-    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);     
+    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.1 0.5]); 
+    set(gca,'XLim',[0.1 0.5]);
     set(gca,'XTick',[0.1:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
     set(hleg1,'Location','NorthWest');
@@ -2900,26 +2900,26 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     grid on;
     box on;
     axis square;
-        
-    % Colors and markers    
+    
+    % Colors and markers
     set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
     set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
     set(h(3),'Color',[1 0 0],'Marker','x','LineStyle','-.','linewidth',1);
-    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);     
+    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % Fr vs. Standard Deviation -------------------------------------------
     subplot(2,3,3)
@@ -2946,21 +2946,21 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     grid on;
     box on;
     axis square;
-        
-    % Colors and markers    
+    
+    % Colors and markers
     set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
     set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
     set(h(3),'Color',[1 0 0],'Marker','x','LineStyle','-.','linewidth',1);
-    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);     
+    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
     set(hleg1,'Location','NorthWest');
@@ -2992,26 +2992,26 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     grid on;
     box on;
     axis square;
-        
+    
     % Colors and markers
     set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
     set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
     set(h(3),'Color',[1 0 0],'Marker','x','LineStyle','-.','linewidth',1);
-    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);     
+    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % Fr vs. Standard Deviation -------------------------------------------
     subplot(2,3,5)
@@ -3038,26 +3038,26 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     grid on;
     box on;
     axis square;
-
-    % Colors and markers    
+    
+    % Colors and markers
     set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
     set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
     set(h(3),'Color',[1 0 0],'Marker','x','LineStyle','-.','linewidth',1);
-    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);     
+    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % Fr vs. Standard Deviation -------------------------------------------
     subplot(2,3,6)
@@ -3084,21 +3084,21 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     grid on;
     box on;
     axis square;
-
-    % Colors and markers    
+    
+    % Colors and markers
     set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
     set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
     set(h(3),'Color',[1 0 0],'Marker','x','LineStyle','-.','linewidth',1);
-    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);     
+    set(h(4),'Color',[1 0 1],'Marker','o','LineStyle',':','linewidth',1);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]); 
+    set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-
+    
     %# Legend
     hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
     set(hleg1,'Location','NorthWest');
@@ -3106,22 +3106,22 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');      
-      
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Fr_vs_Standard_Deviation_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
@@ -3135,19 +3135,19 @@ end
 % REYNOLDS NUMBER VS FRICTIONAL RESISTANCE COEFFICIENT
 % *************************************************************************
 if enableRemVSCFmPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
-   
+    
     startRun = 81;
     endRun   = 231;
     
     figurename = sprintf('%s:: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');   
-
+    f = figure('Name',figurename,'NumberTitle','off');
+    
     % Rem vs. Cfm (ITTC'57) -----------------------------------------------
     subplot(1,2,1)
-
+    
     if length(avgcond7) ~= 0
         xavgcond7 = avgcond7(:,16); yavgcond7 = avgcond7(:,17);
-        Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);    
+        Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);
         x7 = xavgcond7; y7 = yavgcond7;
     else
         x7 = 0; y7 = 0;
@@ -3165,7 +3165,7 @@ if enableRemVSCFmPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || lengt
         x9 = xavgcond9; y9 = yavgcond9;
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         xavgcond10 = avgcond10(:,16); yavgcond10 = avgcond10(:,17);
         Raw_Data = num2cell(yavgcond10); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond10 = cell2mat(Raw_Data);
@@ -3198,15 +3198,15 @@ if enableRemVSCFmPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || lengt
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Line width
-%     set(h(1),'Color',[0 0 1],'LineStyle','-','linewidth',1);
-%     set(h(2),'Color',[0 0.5 0],'LineStyle','--','linewidth',1);
-%     set(h(3),'Color',[1 0 0],'LineStyle','-.','linewidth',1);
-%     set(h(4),'Color',[0 0.75 0.75],'LineStyle','-','linewidth',1);
-%     set(h(5),'Color',[0.75 0 0.75],'LineStyle','--','linewidth',1);
-%     set(h(6),'Color',[0.75 0.75 0],'LineStyle','-.','linewidth',1);
+    %     set(h(1),'Color',[0 0 1],'LineStyle','-','linewidth',1);
+    %     set(h(2),'Color',[0 0.5 0],'LineStyle','--','linewidth',1);
+    %     set(h(3),'Color',[1 0 0],'LineStyle','-.','linewidth',1);
+    %     set(h(4),'Color',[0 0.75 0.75],'LineStyle','-','linewidth',1);
+    %     set(h(5),'Color',[0.75 0 0.75],'LineStyle','--','linewidth',1);
+    %     set(h(6),'Color',[0.75 0.75 0],'LineStyle','-.','linewidth',1);
     
     %# Axis limitations
     set(gca,'XLim',[[2E6 13E6]]);
@@ -3218,14 +3218,14 @@ if enableRemVSCFmPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || lengt
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % Rem vs. Cfm (Grigson) -----------------------------------------------
     subplot(1,2,2)
-
+    
     if length(avgcond7) ~= 0
         xavgcond7 = avgcond7(:,16); yavgcond7 = avgcond7(:,18);
-        Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);    
+        Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);
         x7 = xavgcond7; y7 = yavgcond7;
     else
         x7 = 0; y7 = 0;
@@ -3243,7 +3243,7 @@ if enableRemVSCFmPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || lengt
         x9 = xavgcond9; y9 = yavgcond9;
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         xavgcond10 = avgcond10(:,16); yavgcond10 = avgcond10(:,18);
         Raw_Data = num2cell(yavgcond10); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond10 = cell2mat(Raw_Data);
@@ -3276,15 +3276,15 @@ if enableRemVSCFmPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || lengt
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
+    set(gcf,'Color',[1,1,1]);
     
     %# Line width
-%     set(h(1),'Color',[0 0 1],'LineStyle','-','linewidth',1);
-%     set(h(2),'Color',[0 0.5 0],'LineStyle','--','linewidth',1);
-%     set(h(3),'Color',[1 0 0],'LineStyle','-.','linewidth',1);
-%     set(h(4),'Color',[0 0.75 0.75],'LineStyle','-','linewidth',1);
-%     set(h(5),'Color',[0.75 0 0.75],'LineStyle','--','linewidth',1);
-%     set(h(6),'Color',[0.75 0.75 0],'LineStyle','-.','linewidth',1);
+    %     set(h(1),'Color',[0 0 1],'LineStyle','-','linewidth',1);
+    %     set(h(2),'Color',[0 0.5 0],'LineStyle','--','linewidth',1);
+    %     set(h(3),'Color',[1 0 0],'LineStyle','-.','linewidth',1);
+    %     set(h(4),'Color',[0 0.75 0.75],'LineStyle','-','linewidth',1);
+    %     set(h(5),'Color',[0.75 0 0.75],'LineStyle','--','linewidth',1);
+    %     set(h(6),'Color',[0.75 0.75 0],'LineStyle','-.','linewidth',1);
     
     %# Axis limitations
     set(gca,'XLim',[[2E6 13E6]]);
@@ -3299,27 +3299,27 @@ if enableRemVSCFmPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || lengt
     legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');   
-
+    set(gcf, 'PaperOrientation','portrait');
+    
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');  
-
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Resistance_Data_Plots_Rem_vs_Cfm_Averaged.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Resistance_Data_Plots_Rem_vs_Cfm_Averaged.png', '_averaged', num2str(startRun), num2str(endRun));
     saveas(f, plotsavename);                % Save plot as PNG
-    %close;    
+    %close;
     
 end

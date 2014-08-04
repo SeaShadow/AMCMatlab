@@ -1,7 +1,7 @@
 %# ------------------------------------------------------------------------
 %# Resistance Test Analysis - LVDT Comparisons
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
 %# Date       :  September 23, 2013
 %#
@@ -10,7 +10,7 @@
 %#
 %# Runs TSI   :  Runs 01-35   Turbulence Studs Investigation               (TSI)
 %#               |__Disp. & trim:   1,500t, level static trim
-%#               |__Conditions:     1 = No turbulence studs 
+%#               |__Conditions:     1 = No turbulence studs
 %#                                  2 = First row of turbulence studs
 %#                                  3 = First and second row of turbulence studs
 %#
@@ -41,7 +41,7 @@
 %#
 %# Description    :  Turbulence studs investigation, trim tab optimisation and
 %#                   standard resistance test using a single catamaran demihull.
-%#                   Form factor estimation has been carried out using prohaska 
+%#                   Form factor estimation has been carried out using prohaska
 %#                   method as described by ITTC 7.2-02-02-01.
 %#
 %# ITTC Guidelines:  7.5-02-02-01
@@ -144,7 +144,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# Read results DAT file
 %# -------------------------------------------------------------------------
 if exist('full_resistance_data.dat', 'file') == 2
-    %# Results array columns: 
+    %# Results array columns:
     %[1]  Run No.                                                                  (-)
     %[2]  FS                                                                       (Hz)
     %[3]  No. of samples                                                           (-)
@@ -193,7 +193,7 @@ if exist('full_resistance_data.dat', 'file') == 2
     %[46] LVDT (FWD): Standard deviation                                           (mm)
     %[47] LVDT (AFT): Standard deviation                                           (mm)
     %[48] DRAG: Standard deviation                                                 (g)
-
+    
     results = csvread('full_resistance_data.dat');
     
     %# Remove zero rows
@@ -267,7 +267,7 @@ for j=1:ma
     end
     if A{j}(1,28) == 13
         cond13 = A{j};
-    end    
+    end
 end
 
 %# *********************************************************************
@@ -312,7 +312,7 @@ testName = 'LVDT Investigation';
 
 % *************************************************************************
 % 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
-% *************************************************************************     
+% *************************************************************************
 if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0
     
     startRun = 81;
@@ -325,7 +325,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     f = figure('Name',figurename,'NumberTitle','off');
     
     % Model speed vs. model heave (mm) ----------------------------------------
-    subplot(1,2,1)    
+    subplot(1,2,1)
     
     x7       = avgcond7(:,11);
     y7heave  = avgcond7(:,12);
@@ -333,27 +333,27 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     y7aft    = avgcond7(:,7);
     
     x8       = avgcond8(:,11);
-    y8heave  = avgcond8(:,12);    
+    y8heave  = avgcond8(:,12);
     y8fwd    = avgcond8(:,6);
     y8aft    = avgcond8(:,7);
     
     x9       = avgcond9(:,11);
-    y9heave  = avgcond9(:,12);    
+    y9heave  = avgcond9(:,12);
     y9fwd    = avgcond9(:,6);
     y9aft    = avgcond9(:,7);
     
     x10      = avgcond10(:,11);
-    y10heave = avgcond10(:,12);    
+    y10heave = avgcond10(:,12);
     y10fwd   = avgcond10(:,6);
     y10aft   = avgcond10(:,7);
     
     x11      = avgcond11(:,11);
-    y11heave = avgcond11(:,12);    
+    y11heave = avgcond11(:,12);
     y11fwd   = avgcond11(:,6);
     y11aft   = avgcond11(:,7);
     
     x12      = avgcond12(:,11);
-    y12heave = avgcond12(:,12);    
+    y12heave = avgcond12(:,12);
     y12fwd   = avgcond12(:,6);
     y12aft   = avgcond12(:,7);
     
@@ -364,7 +364,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     grid on;
     box on;
     axis square;
-
+    
     % Colors and markers
     set(h(1),'Color',[0 0 1],'LineStyle','-','linewidth',2); %,'Marker','*'
     set(h(2),'Color',[0 0 1],'Marker','+','LineStyle','--','linewidth',1);
@@ -376,7 +376,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
-
+    
     %# Axis limitations
     set(gca,'XLim',[0.1 0.5]);
     set(gca,'XTick',[0.1:0.05:0.5]);
@@ -390,7 +390,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     legend boxoff;
     
     % Model speed vs. trim (degrees) ----------------------------------------
-    subplot(1,2,2)     
+    subplot(1,2,2)
     
     if length(avgcond7) ~= 0
         x7 = avgcond7(:,11); y7 = avgcond7(:,13);
@@ -400,17 +400,17 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     if length(avgcond8) ~= 0
         xcond8 = cond8(:,11); ycond8 = cond8(:,13);
         Raw_Data = num2cell(ycond8); Raw_Data = cellfun(@(y) y-0.5, Raw_Data, 'UniformOutput', false); ycond8 = cell2mat(Raw_Data);
-        x8 = xcond8; y8 = ycond8;        
+        x8 = xcond8; y8 = ycond8;
     else
         x8 = 0; y8 = 0;
     end
     if length(avgcond9) ~= 0
         xcond9 = cond9(:,11); ycond9 = cond9(:,13);
         Raw_Data = num2cell(ycond9); Raw_Data = cellfun(@(y) y+0.5, Raw_Data, 'UniformOutput', false); ycond9 = cell2mat(Raw_Data);
-        x9 = xcond9; y9 = ycond9;        
+        x9 = xcond9; y9 = ycond9;
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         x10 = avgcond10(:,11); y10 = avgcond10(:,13);
     else
@@ -419,25 +419,25 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     if length(avgcond11) ~= 0
         xcond11 = cond11(:,11); ycond11 = cond11(:,13);
         Raw_Data = num2cell(ycond11); Raw_Data = cellfun(@(y) y-0.5, Raw_Data, 'UniformOutput', false); ycond11 = cell2mat(Raw_Data);
-        x11 = xcond11; y11 = ycond11;         
+        x11 = xcond11; y11 = ycond11;
     else
         x11 = 0; y11 = 0;
     end
     if length(avgcond12) ~= 0
         xcond12 = cond12(:,11); ycond12 = cond12(:,13);
         Raw_Data = num2cell(ycond12); Raw_Data = cellfun(@(y) y+0.5, Raw_Data, 'UniformOutput', false); ycond12 = cell2mat(Raw_Data);
-        x12 = xcond12; y12 = ycond12;        
+        x12 = xcond12; y12 = ycond12;
     else
         x12 = 0; y12 = 0;
-    end     
-
+    end
+    
     h = plot(x7,y7,'-*',x10,y10,'--o','MarkerSize',8);
     xlabel('{\bf Froude length number [-]}');
     ylabel('{\bf Running trim [deg]}');
     grid on;
     box on;
     axis square;
-
+    
     % Colors and markers
     set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
     set(h(2),'Color',[1 0 0],'Marker','o','LineStyle','-','linewidth',1);
@@ -445,45 +445,45 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# Axis limitations
     set(gca,'XLim',[0.1 0.5]);
     set(gca,'XTick',[0.1:0.05:0.5]);
-
+    
     %# Legend
     %hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     hleg1 = legend('Cond. 7: 1,500t, level','Cond. 10: 1,804t, level');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
-
+    legend boxoff;
+    
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');      
-      
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_LVDT_Data_Plots_Averaged_Cond_7_11.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_LVDT_Data_Plots_Averaged_Cond_7_11.png', '_averaged', num2str(startRun), num2str(endRun));
-    saveas(f, plotsavename);                % Save plot as PNG    
+    saveas(f, plotsavename);                % Save plot as PNG
     
     % *********************************************************************
     % CONDITIONS 8 and 11
     % *********************************************************************
     figurename = sprintf('%s (using repeated runs):: 1,500 and 1,804 tonnes, -0.5 degrees, Run %s to %s, Cond. 8 and 11', testName, num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');    
+    f = figure('Name',figurename,'NumberTitle','off');
     
     % Model speed vs. model heave (mm) ----------------------------------------
-    subplot(1,2,1)    
+    subplot(1,2,1)
     
     x7       = avgcond7(:,11);
     y7heave  = avgcond7(:,12);
@@ -491,27 +491,27 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     y7aft    = avgcond7(:,7);
     
     x8       = avgcond8(:,11);
-    y8heave  = avgcond8(:,12);    
+    y8heave  = avgcond8(:,12);
     y8fwd    = avgcond8(:,6);
     y8aft    = avgcond8(:,7);
     
     x9       = avgcond9(:,11);
-    y9heave  = avgcond9(:,12);    
+    y9heave  = avgcond9(:,12);
     y9fwd    = avgcond9(:,6);
     y9aft    = avgcond9(:,7);
     
     x10      = avgcond10(:,11);
-    y10heave = avgcond10(:,12);    
+    y10heave = avgcond10(:,12);
     y10fwd   = avgcond10(:,6);
     y10aft   = avgcond10(:,7);
     
     x11      = avgcond11(:,11);
-    y11heave = avgcond11(:,12);    
+    y11heave = avgcond11(:,12);
     y11fwd   = avgcond11(:,6);
     y11aft   = avgcond11(:,7);
     
     x12      = avgcond12(:,11);
-    y12heave = avgcond12(:,12);    
+    y12heave = avgcond12(:,12);
     y12fwd   = avgcond12(:,6);
     y12aft   = avgcond12(:,7);
     
@@ -522,7 +522,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     grid on;
     box on;
     axis square;
-
+    
     % Colors and markers
     set(h(1),'Color',[0 0 1],'LineStyle','-','linewidth',2); %,'Marker','*'
     set(h(2),'Color',[0 0 1],'Marker','+','LineStyle','--','linewidth',1);
@@ -533,8 +533,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
-
+    set(gcf,'Color',[1,1,1]);
+    
     %# Axis limitations
     set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
@@ -548,7 +548,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     legend boxoff;
     
     % Model speed vs. trim (degrees) ----------------------------------------
-    subplot(1,2,2)     
+    subplot(1,2,2)
     
     if length(avgcond7) ~= 0
         x7 = avgcond7(:,11); y7 = avgcond7(:,13);
@@ -558,17 +558,17 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     if length(avgcond8) ~= 0
         xcond8 = cond8(:,11); ycond8 = cond8(:,13);
         Raw_Data = num2cell(ycond8); Raw_Data = cellfun(@(y) y-0.5, Raw_Data, 'UniformOutput', false); ycond8 = cell2mat(Raw_Data);
-        x8 = xcond8; y8 = ycond8;        
+        x8 = xcond8; y8 = ycond8;
     else
         x8 = 0; y8 = 0;
     end
     if length(avgcond9) ~= 0
         xcond9 = cond9(:,11); ycond9 = cond9(:,13);
         Raw_Data = num2cell(ycond9); Raw_Data = cellfun(@(y) y+0.5, Raw_Data, 'UniformOutput', false); ycond9 = cell2mat(Raw_Data);
-        x9 = xcond9; y9 = ycond9;        
+        x9 = xcond9; y9 = ycond9;
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         x10 = avgcond10(:,11); y10 = avgcond10(:,13);
     else
@@ -577,25 +577,25 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     if length(avgcond11) ~= 0
         xcond11 = cond11(:,11); ycond11 = cond11(:,13);
         Raw_Data = num2cell(ycond11); Raw_Data = cellfun(@(y) y-0.5, Raw_Data, 'UniformOutput', false); ycond11 = cell2mat(Raw_Data);
-        x11 = xcond11; y11 = ycond11;         
+        x11 = xcond11; y11 = ycond11;
     else
         x11 = 0; y11 = 0;
     end
     if length(avgcond12) ~= 0
         xcond12 = cond12(:,11); ycond12 = cond12(:,13);
         Raw_Data = num2cell(ycond12); Raw_Data = cellfun(@(y) y+0.5, Raw_Data, 'UniformOutput', false); ycond12 = cell2mat(Raw_Data);
-        x12 = xcond12; y12 = ycond12;        
+        x12 = xcond12; y12 = ycond12;
     else
         x12 = 0; y12 = 0;
-    end     
-
+    end
+    
     h = plot(x8,y8,'-*',x11,y11,'--o','MarkerSize',8);
     xlabel('{\bf Froude length number [-]}');
     ylabel('{\bf Running trim [deg]}');
     grid on;
     box on;
     axis square;
-
+    
     % Colors and markers
     set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
     set(h(2),'Color',[1 0 0],'Marker','o','LineStyle','-','linewidth',1);
@@ -603,45 +603,45 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# Axis limitations
     set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-
+    
     %# Legend
     %hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     hleg1 = legend('Cond. 8: 1,500t, -0.5 deg','Cond. 11: 1,804t, -0.5 deg');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');      
-      
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_LVDT_Data_Plots_Averaged_Cond_8_11.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
     plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_LVDT_Data_Plots_Averaged_Cond_8_11.png', '_averaged', num2str(startRun), num2str(endRun));
-    saveas(f, plotsavename);                % Save plot as PNG    
+    saveas(f, plotsavename);                % Save plot as PNG
     
     % *********************************************************************
     % CONDITIONS 9 and 12
-    % *********************************************************************    
+    % *********************************************************************
     figurename = sprintf('%s (using repeated runs):: 1,500 and 1,804 tonnes, 0.5 degrees, Run %s to %s, Cond. 9 and 12', testName, num2str(startRun), num2str(endRun));
-    f = figure('Name',figurename,'NumberTitle','off');    
+    f = figure('Name',figurename,'NumberTitle','off');
     
     % Model speed vs. model heave (mm) ----------------------------------------
-    subplot(1,2,1)    
+    subplot(1,2,1)
     
     x7       = avgcond7(:,11);
     y7heave  = avgcond7(:,12);
@@ -649,27 +649,27 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     y7aft    = avgcond7(:,7);
     
     x8       = avgcond8(:,11);
-    y8heave  = avgcond8(:,12);    
+    y8heave  = avgcond8(:,12);
     y8fwd    = avgcond8(:,6);
     y8aft    = avgcond8(:,7);
     
     x9       = avgcond9(:,11);
-    y9heave  = avgcond9(:,12);    
+    y9heave  = avgcond9(:,12);
     y9fwd    = avgcond9(:,6);
     y9aft    = avgcond9(:,7);
     
     x10      = avgcond10(:,11);
-    y10heave = avgcond10(:,12);    
+    y10heave = avgcond10(:,12);
     y10fwd   = avgcond10(:,6);
     y10aft   = avgcond10(:,7);
     
     x11      = avgcond11(:,11);
-    y11heave = avgcond11(:,12);    
+    y11heave = avgcond11(:,12);
     y11fwd   = avgcond11(:,6);
     y11aft   = avgcond11(:,7);
     
     x12      = avgcond12(:,11);
-    y12heave = avgcond12(:,12);    
+    y12heave = avgcond12(:,12);
     y12fwd   = avgcond12(:,6);
     y12aft   = avgcond12(:,7);
     
@@ -680,7 +680,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     grid on;
     box on;
     axis square;
-
+    
     % Colors and markers
     set(h(1),'Color',[0 0 1],'LineStyle','-','linewidth',2); %,'Marker','*'
     set(h(2),'Color',[0 0 1],'Marker','+','LineStyle','--','linewidth',1);
@@ -691,8 +691,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);    
-
+    set(gcf,'Color',[1,1,1]);
+    
     %# Axis limitations
     set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
@@ -703,10 +703,10 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 9: 1,500t, 0.5 deg (heave)','Cond. 9: 1,500t, 0.5 deg (fwd LVDT)','Cond. 9: 1,500t, 0.5 deg (aft LVDT)','Cond. 12: 1,804t, 0.5 deg (heave)','Cond. 12: 1,804t, 0.5 deg (fwd LVDT)','Cond. 12: 1,804t, 0.5 deg (aft LVDT)');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
-    legend boxoff;    
+    legend boxoff;
     
     % Model speed vs. trim (degrees) ----------------------------------------
-    subplot(1,2,2)     
+    subplot(1,2,2)
     
     if length(avgcond7) ~= 0
         x7 = avgcond7(:,11); y7 = avgcond7(:,13);
@@ -716,17 +716,17 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     if length(avgcond8) ~= 0
         xcond8 = cond8(:,11); ycond8 = cond8(:,13);
         Raw_Data = num2cell(ycond8); Raw_Data = cellfun(@(y) y-0.5, Raw_Data, 'UniformOutput', false); ycond8 = cell2mat(Raw_Data);
-        x8 = xcond8; y8 = ycond8;        
+        x8 = xcond8; y8 = ycond8;
     else
         x8 = 0; y8 = 0;
     end
     if length(avgcond9) ~= 0
         xcond9 = cond9(:,11); ycond9 = cond9(:,13);
         Raw_Data = num2cell(ycond9); Raw_Data = cellfun(@(y) y+0.5, Raw_Data, 'UniformOutput', false); ycond9 = cell2mat(Raw_Data);
-        x9 = xcond9; y9 = ycond9;        
+        x9 = xcond9; y9 = ycond9;
     else
         x9 = 0; y9 = 0;
-    end    
+    end
     if length(avgcond10) ~= 0
         x10 = avgcond10(:,11); y10 = avgcond10(:,13);
     else
@@ -735,25 +735,25 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     if length(avgcond11) ~= 0
         xcond11 = cond11(:,11); ycond11 = cond11(:,13);
         Raw_Data = num2cell(ycond11); Raw_Data = cellfun(@(y) y-0.5, Raw_Data, 'UniformOutput', false); ycond11 = cell2mat(Raw_Data);
-        x11 = xcond11; y11 = ycond11;         
+        x11 = xcond11; y11 = ycond11;
     else
         x11 = 0; y11 = 0;
     end
     if length(avgcond12) ~= 0
         xcond12 = cond12(:,11); ycond12 = cond12(:,13);
         Raw_Data = num2cell(ycond12); Raw_Data = cellfun(@(y) y+0.5, Raw_Data, 'UniformOutput', false); ycond12 = cell2mat(Raw_Data);
-        x12 = xcond12; y12 = ycond12;        
+        x12 = xcond12; y12 = ycond12;
     else
         x12 = 0; y12 = 0;
-    end     
-
+    end
+    
     h = plot(x9,y9,'-*',x12,y12,'--o','MarkerSize',8);
     xlabel('{\bf Froude length number [-]}');
     ylabel('{\bf Running trim [deg]}');
     grid on;
     box on;
     axis square;
-
+    
     % Colors and markers
     set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
     set(h(2),'Color',[1 0 0],'Marker','o','LineStyle','-','linewidth',1);
@@ -761,7 +761,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# Axis limitations
     set(gca,'XLim',[0.2 0.5]);
     set(gca,'XTick',[0.2:0.05:0.5]);
-
+    
     %# Legend
     %hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     hleg1 = legend('Cond. 9: 1,500t, 0.5 deg','Cond. 12: 1,804t, 0.5 deg');
@@ -770,22 +770,22 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     legend boxoff;
     
     %# Save plot as PNG -------------------------------------------------------
-
+    
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
+    
     %# Figure size printed on paper
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');    
+    set(gcf, 'PaperOrientation','portrait');
     
     %# Plot title -------------------------------------------------------------
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');      
-      
+        'HorizontalAlignment', 'center');
+    
     %# Save plots as PDF and PNG
     %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_LVDT_Data_Plots_Averaged_Cond_9_12.pdf', '_averaged', num2str(startRun), num2str(endRun));
     %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
