@@ -3,15 +3,15 @@
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  June 11, 2013
+%# Date       :  August 19, 2014
 %#
-%# Test date  :  June 5-14, 2013
+%# Test date  :  August 25-28, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
 %# Runs       :  1-86
-%# Speeds     :  500-3,000 RPM
+%# Speeds     :  500-3,400 RPM
 %#
-%# Description:  Analyse flow rate measurement data and save results as
-%#               array and DAT file for further analysis.
+%# Description:  Repeated analyse flow rate measurement data and save results
+%#               as array and DAT file for further analysis.
 %#
 %# ------------------------------------------------------------------------
 %#
@@ -48,6 +48,7 @@
 %#               17/06/2013 - Added switches for plotting and RPM results
 %#               20/06/2013 - Removed Excel related code, save as DAT file
 %#               28/06/2013 - Added tab delimeted saving for plotting
+%#               20/08/2014 - Used subplots for time series data
 %#               dd/mm/yyyy - ...
 %#
 %# ------------------------------------------------------------------------
@@ -92,9 +93,11 @@ headerlinesZeroAndCalib = 23;  % Number of headerlines to zero and calibration f
 
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from start)
 startSamplePos    = 8000;
+%startSamplePos    = 1;
 
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from end)
-cutSamplesFromEnd = 8000;   
+cutSamplesFromEnd = 8000;
+%cutSamplesFromEnd = 0;
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START FILE LOOP FOR RUNS startRun to endRun
@@ -104,10 +107,7 @@ startRun = 9;      % Start at run x
 endRun   = 9;      % Stop at run y
 
 %startRun = 1;      % Start at run x
-%endRun   = 86;      % Stop at run y
-
-%startRun = 1;      % Start at run x
-%endRun   = 86;      % Stop at run y
+%endRun   = 20;     % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
@@ -118,26 +118,23 @@ endRun   = 9;      % Stop at run y
 %# START DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS
 %# ------------------------------------------------------------------------
 
-% RunNosTest = [1:8];          % Prelimnary testing only
-% RunNosPort = [9:29 59:63];   % Port propulsion system only
-% RunNosComb = [30:50 55:58];  % Combined propulsion systems
-% RunNosStbd = [64:86];        % Starboard propulsion system only
-% RunNosStat = [51:53];        % Static flow rates due to head difference of waterlevels of basin and bucket
+% RunNosTest = [1:4];       % Prelimnary testing only
+% RunNosPort = [5:32];      % Port propulsion system only
+% RunNosStbd = [33:60];     % Starboard propulsion system only
+% RunNosBoth = [61:88];     % Both waterjet systems
 
 % NOTE: If statement bellow is for use in LOOPS only!!!!
 %
 % if any(RunNosTest==k)
-%     disp('TEST');
+%     disp('Preliminary testing only');
 % elseif any(RunNosPort==k)
-%     disp('PORT');
-% elseif any(RunNosComb==k)
-%     disp('COMBINED');    
+%     disp('Port waterjet only');
 % elseif any(RunNosStbd==k)
-%     disp('STBD');    
-% elseif any(RunNosStat==k)
-%     disp('STATIC');    
+%     disp('Stbd waterjet only');
+% elseif any(RunNosBoth==k)
+%     disp('Both waterjets');
 % else
-%     disp('OTHER');        
+%     disp('Other');
 % end
 
 %# ------------------------------------------------------------------------
@@ -161,13 +158,13 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# PLOTTING & SAVING SWITCH
+%# PLOTTING & SAVING SWITCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# ------------------------------------------------------------------------
 
 plotting_on = 1;    %TRUE (1) or FALSE (0)
 
 %# ------------------------------------------------------------------------
-%# PLOTTING & SAVING SWITCH
+%# PLOTTING & SAVING SWITCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -222,8 +219,8 @@ for k=startRun:endRun
     Time_Zero  = ZeroAndCalib(1);
     Time_CF    = ZeroAndCalib(2);
     CH_0_Zero  = ZeroAndCalib(3);
-    %CH_0_CF    = ZeroAndCalib(4);
-    CH_0_CF    = 46.001;                % Custom calibration factor
+    CH_0_CF    = ZeroAndCalib(4);
+    %CH_0_CF    = 46.001;                % Custom calibration factor
     CH_1_Zero  = ZeroAndCalib(5);
     CH_1_CF    = ZeroAndCalib(6);
     CH_2_Zero  = ZeroAndCalib(7);
@@ -591,17 +588,17 @@ for k=startRun:endRun
         %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
         plotsavename = sprintf('_plots/%s/Run_%s_Wave_Probe_and_Time_Series_Plot.png', '_time_series', num2str(k));
         saveas(f, plotsavename);                % Save plot as PNG
-        close;                                  % Close current plot window
+        %close;                                  % Close current plot window
         
     end    
        
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     %# RPM AND POWER SWITCH SWITCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    %# --------------------------------------------------------------------
     
     rpm_power_on = 1;    % TRUE (1) or FALSE (0)
     
-    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    %# --------------------------------------------------------------------
     %# RPM AND POWER SWITCH SWITCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
