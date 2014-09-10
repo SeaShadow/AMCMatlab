@@ -1448,7 +1448,7 @@ annotation('textbox', [0 0.9 1 0.1], ...
 %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
 plotsavename = sprintf('_plots/%s/Run_70_to_109_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot.png', 'SPP');
 saveas(f, plotsavename);                % Save plot as PNG
-%close;
+close;
 
 
 % -------------------------------------------------------------------------

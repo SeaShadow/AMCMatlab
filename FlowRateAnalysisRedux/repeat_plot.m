@@ -1,15 +1,15 @@
 %# ------------------------------------------------------------------------
 %# function fft_plot( input )
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author:       K. Zürcher (kzurcher@amc.edu.au)
-%# Date:         June 26, 2013
-%# 
-%# Function   :  Plot data of repeated runs 
-%# 
+%# Date:         September 8, 2014
+%#
+%# Function   :  Plot data of repeated runs
+%#
 %# Description:  Plot data of repeated runs, carry out single factor ANOVA
 %#               Statistics and save figure as PNG.
-%# 
+%#
 %# Parameters :  timeData     = Time series data
 %#               resultsArray = 3*x results array
 %#               runArray     = Array with run numbers (i.e. 1,2,3)
@@ -20,16 +20,16 @@
 %#               name         = Run file name (e.g. R12-02_moving)
 %#
 %# Return     :  NONE
-%# 
-%# Examples of Usage: 
-%# 
-%#    >> timeData     = [ 1 2 3 4 5 6 7 8 9 10 ]; 
-%#    >> resultsArray = [ 1 2 3 4 5 6 7 8 9 10; 1 2 3 4 5 6 7 8 9 10; 1 2 3 4 5 6 7 8 9 10]; 
+%#
+%# Examples of Usage:
+%#
+%#    >> timeData     = [ 1 2 3 4 5 6 7 8 9 10 ];
+%#    >> resultsArray = [ 1 2 3 4 5 6 7 8 9 10; 1 2 3 4 5 6 7 8 9 10; 1 2 3 4 5 6 7 8 9 10];
 %#    >> runArray     = [ 1 2 3 ];
 %#    >> rpmValue     = 500;
-%#    >> examineTitle = 'CH_2 PORT Kiel Probe 2720 RPM'; 
-%#    >> examineUnit  = 'V'; 
-%#    >> savename     = 'CH_2_PORT_Kiel_Probe_2720_RPM'; 
+%#    >> examineTitle = 'CH_2 PORT Kiel Probe 2720 RPM';
+%#    >> examineUnit  = 'V';
+%#    >> savename     = 'CH_2_PORT_Kiel_Probe_2720_RPM';
 %#    >> name         = 'R12-02_moving'.
 %#    >> repeat_plot(timeData,resultsArray,runArray,examineTitle,examineUnit,savename,name)
 %#    ans = NONE
@@ -78,33 +78,33 @@ endData     = length(timeData);
 fPath = '_plots/';
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
-else    
-    mkdir(fPath);
-end    
-
-%# RUN directory
-fPath = sprintf('_plots/%s', name(1:3));
-if isequal(exist(fPath, 'dir'),7)
-    % Do nothing as directory exists
-else    
+else
     mkdir(fPath);
 end
+
+% %# RUN directory
+% fPath = sprintf('_plots/%s', name(1:3));
+% if isequal(exist(fPath, 'dir'),7)
+%     % Do nothing as directory exists
+% else
+%     mkdir(fPath);
+% end
 
 %# Repeat directory
 fPath = sprintf('_plots/%s', '_repeats');
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
-else    
+else
     mkdir(fPath);
 end
 
-%# Repeat directory
-fPath = sprintf('_plots/%s/%s', '_repeats', 'PDF');
-if isequal(exist(fPath, 'dir'),7)
-    % Do nothing as directory exists
-else    
-    mkdir(fPath);
-end
+% # Repeat directory
+% fPath = sprintf('_plots/%s/%s', '_repeats', 'PDF');
+% if isequal(exist(fPath, 'dir'),7)
+%     Do nothing as directory exists
+% else
+%     mkdir(fPath);
+% end
 
 %# Variables
 x  = timeData(startData:endData);
@@ -227,7 +227,7 @@ set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
 
 %# Set figure to full screen
-%set(f,'Units','Normalized','OuterPosition',[0 0 1 1])  
+%set(f,'Units','Normalized','OuterPosition',[0 0 1 1])
 
 %# ------------------------------------------------------------------------
 %# Mean values -----------------------------------------------------

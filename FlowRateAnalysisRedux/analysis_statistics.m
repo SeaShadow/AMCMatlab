@@ -3,14 +3,14 @@
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  July 5, 2013
+%# Date       :  September 8, 2014
 %#
-%# Test date  :  June 5-14, 2013
+%# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
-%# Runs       :  1-86
-%# Speeds     :  500-3,000 RPM
+%# Runs       :  1-67
+%# Speeds     :  800-3,400 RPM
 %#
-%# Description:  Statisitcal analysis of run data.
+%# Description:  Statistics for time series data.
 %#
 %# -------------------------------------------------------------------------
 %#
@@ -19,7 +19,7 @@
 %#
 %# -------------------------------------------------------------------------
 %#
-%# CHANGES    :  05/07/2013 - File creation
+%# CHANGES    :  08/09/2014 - File creation
 %#               dd/mm/yyyy - ...
 %#
 %# -------------------------------------------------------------------------
@@ -55,8 +55,8 @@ Fs = 800;       % Sampling frequency = 800Hz
 %# -------------------------------------------------------------------------
 %# Number of headerlines in DAT file
 %# -------------------------------------------------------------------------
-headerlines             = 29;  % Number of headerlines to data
-headerlinesZeroAndCalib = 23;  % Number of headerlines to zero and calibration factors
+headerlines             = 27;  % Number of headerlines to data
+headerlinesZeroAndCalib = 21;  % Number of headerlines to zero and calibration factors
 
 %# ------------------------------------------------------------------------------
 %# Omit first 10 seconds of data due to acceleration ----------------------------
@@ -72,7 +72,7 @@ cutSamplesFromEnd = 8000;
 %# START FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-startRun = 9;      % Start at run x
+startRun = 1;      % Start at run x
 endRun   = 9;      % Stop at run y
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -133,41 +133,41 @@ for k=startRun:endRun
     Raw_CH_0_WaveProbe   = data(:,2);       % Wave probe data
     Raw_CH_1_KPStbd      = data(:,3);       % Kiel probe stbd data
     Raw_CH_2_KPPort      = data(:,4);       % Kiel probe port data
-    Raw_CH_3_StaticStbd  = data(:,5);       % Static stbd data
-    Raw_CH_4_StaticPort  = data(:,6);       % Static port data
-    Raw_CH_5_RPMStbd     = data(:,7);       % RPM stbd data
-    Raw_CH_6_RPMPort     = data(:,8);       % RPM port data
-    Raw_CH_7_ThrustStbd  = data(:,9);       % Thrust stbd data
-    Raw_CH_8_ThrustPort  = data(:,10);      % Thrust port data
-    Raw_CH_9_TorqueStbd  = data(:,11);      % Torque stbd data
-    Raw_CH_10_TorquePort = data(:,12);      % Torque port data
+    %Raw_CH_3_StaticStbd  = data(:,5);       % Static stbd data
+    %Raw_CH_4_StaticPort  = data(:,6);       % Static port data
+    Raw_CH_5_RPMStbd     = data(:,5);       % RPM stbd data
+    Raw_CH_6_RPMPort     = data(:,6);       % RPM port data
+    Raw_CH_7_ThrustStbd  = data(:,7);       % Thrust stbd data
+    Raw_CH_8_ThrustPort  = data(:,8);       % Thrust port data
+    Raw_CH_9_TorqueStbd  = data(:,9);       % Torque stbd data
+    Raw_CH_10_TorquePort = data(:,10);      % Torque port data
     
     %# Zeros and calibration factors for each channel
     Time_Zero  = ZeroAndCalib(1);
     Time_CF    = ZeroAndCalib(2);
     CH_0_Zero  = ZeroAndCalib(3);
-    %CH_0_CF    = ZeroAndCalib(4);
-    CH_0_CF    = 46.001;                % Custom calibration factor
+    CH_0_CF    = ZeroAndCalib(4);
+    %CH_0_CF    = 46.001;                % Custom calibration factor
     CH_1_Zero  = ZeroAndCalib(5);
     CH_1_CF    = ZeroAndCalib(6);
     CH_2_Zero  = ZeroAndCalib(7);
     CH_2_CF    = ZeroAndCalib(8);
-    CH_3_Zero  = ZeroAndCalib(9);
-    CH_3_CF    = ZeroAndCalib(10);
-    CH_4_Zero  = ZeroAndCalib(11);
-    CH_4_CF    = ZeroAndCalib(12);
-    CH_5_Zero  = ZeroAndCalib(13);
-    CH_5_CF    = ZeroAndCalib(14);
-    CH_6_Zero  = ZeroAndCalib(15);
-    CH_6_CF    = ZeroAndCalib(16);
-    CH_7_Zero  = ZeroAndCalib(17);
-    CH_7_CF    = ZeroAndCalib(18);
-    CH_8_Zero  = ZeroAndCalib(19);
-    CH_8_CF    = ZeroAndCalib(20);
-    CH_9_Zero  = ZeroAndCalib(21);
-    CH_9_CF    = ZeroAndCalib(22);
-    CH_10_Zero = ZeroAndCalib(23);
-    CH_10_CF   = ZeroAndCalib(24);
+    %CH_3_Zero  = ZeroAndCalib(9);
+    %CH_3_CF    = ZeroAndCalib(10);
+    %CH_4_Zero  = ZeroAndCalib(11);
+    %CH_4_CF    = ZeroAndCalib(12);
+    CH_5_Zero  = ZeroAndCalib(9);
+    CH_5_CF    = ZeroAndCalib(10);
+    CH_6_Zero  = ZeroAndCalib(11);
+    CH_6_CF    = ZeroAndCalib(12);
+    CH_7_Zero  = ZeroAndCalib(13);
+    CH_7_CF    = ZeroAndCalib(14);
+    CH_8_Zero  = ZeroAndCalib(15);
+    CH_8_CF    = ZeroAndCalib(16);
+    CH_9_Zero  = ZeroAndCalib(17);
+    CH_9_CF    = ZeroAndCalib(18);
+    CH_10_Zero = ZeroAndCalib(19);
+    CH_10_CF   = ZeroAndCalib(20);
     
     %# --------------------------------------------------------------------
     %# Get real units by applying calibration factors and zeros
@@ -189,6 +189,8 @@ for k=startRun:endRun
     %# Dynamometer: Torque
     [CH_9_TorqueStbd CH_9_TorqueStbd_Mean]   = analysis_realunits(Raw_CH_9_TorqueStbd,CH_9_Zero,CH_9_CF);
     [CH_10_TorquePort CH_10_TorquePort_Mean] = analysis_realunits(Raw_CH_10_TorquePort,CH_10_Zero,CH_10_CF);
+    
+    [RPMStbd RPMPort]                        = analysis_rpm(k,name,Fs,timeData,Raw_CH_5_RPMStbd,Raw_CH_6_RPMPort);
     
     %# Cut first X and last X seconds from data
     KPStbd      = CH_1_KPStbd(startSamplePos:end-cutSamplesFromEnd);
@@ -212,9 +214,8 @@ for k=startRun:endRun
         %[11 12 13] Mean, std stdmean >> PORT: Dynamometer: Thrust (g)
         %[14 15 16] Mean, std stdmean >> STBD: Dynamometer: Torque (Nm)
         %[17 18 19] Mean, std stdmean >> PORT: Dynamometer: Torque (Nm)
-        %[20]       Set Shaft Speed   (RPM)
-        %[21]       STBD: Shaft Speed (RPM)
-        %[22]       PORT: Shaft Speed (RPM)
+        %[20]       STBD: Shaft Speed (RPM)
+        %[21]       PORT: Shaft Speed (RPM)
 
     statisticsArray(k, 1) = k;
     
@@ -253,39 +254,12 @@ for k=startRun:endRun
     statisticsArray(k, 17) = mean(dataset);
     statisticsArray(k, 18) = std(dataset);
     statisticsArray(k, 19) = std(dataset)/sqrt(length(dataset));
-    
-    %# Add set shaft RPM
-    if ismember(k,[9:11 64:66 30:32]) == 1
-        statisticsArray(k, 20) = 500;
-    elseif ismember(k,[59;67;54]) == 1
-        statisticsArray(k, 20) = 750;  
-    elseif ismember(k,[12:14 68:70 33:35]) == 1
-        statisticsArray(k, 20) = 1000;   
-    elseif ismember(k,[60;71;55]) == 1
-        statisticsArray(k, 20) = 1250;
-    elseif ismember(k,[15:17 72:74 36:38]) == 1
-        statisticsArray(k, 20) = 1500;      
-    elseif ismember(k,[61;75;56]) == 1
-        statisticsArray(k, 20) = 1750;     
-    elseif ismember(k,[18:20 76:78 39:41]) == 1
-        statisticsArray(k, 20) = 2000;   
-    elseif ismember(k,[62;79;57]) == 1
-        statisticsArray(k, 20) = 2250;          
-    elseif ismember(k,[21:23 80:82 42:44]) == 1
-        statisticsArray(k, 20) = 2500;   
-    elseif ismember(k,[63;83;58]) == 1
-        statisticsArray(k, 20) = 2750;   
-    elseif ismember(k,[24:29 84:86 45:50]) == 1
-        statisticsArray(k, 20) = 3000;         
-    else
-        statisticsArray(k, 20) = 0;
-    end
-    
+ 
     %# STBD: Measured shaft RPM
-    statisticsArray(k, 21) = 0; %RPMStbd
+    statisticsArray(k, 20) = RPMStbd;
     
     %# PORT: Measured shaft RPM
-    statisticsArray(k, 22) = 0; %RPMPort
+    statisticsArray(k, 21) = RPMPort;
         
     %wtot = endRun - startRun;
     %w = waitbar(k/wtot,w,['iteration: ',num2str(k)]);

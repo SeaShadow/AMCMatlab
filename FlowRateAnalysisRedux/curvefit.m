@@ -14,7 +14,6 @@
 %# Parameters :  run     = Run number
 %#               x       = X-axis data
 %#               y       = X-axis data
-%#               channel = Channel number (sensor)
 %#
 %# Return     :  results = Nx1 array
 %# 
@@ -23,9 +22,8 @@
 %#    >> run             = 29;
 %#    >> x               = [1;2;3;4;5]; 
 %#    >> y               = [6;7;8;9;10];
-%#    >> channel         = 1 (e.g. 1 = wave probe);
-%#    >> [results]       = stats_avg(run,x,y,channel)
-%#    ans =              [1 2 3 4 5 6 7 8 9]
+%#    >> [results]       = stats_avg(run,x,y)
+%#    ans =              [1 2 3 4 5 6 7 8]
 %#
 %# Rresults columns
 %#                      %[1]  Run number
@@ -36,11 +34,10 @@
 %#                      %[6]  Error intercept
 %#                      %[7]  Relative slope error
 %#                      %[8]  Relative intercept error 
-%#                      %[9]  Channel number
 %#
 %# ------------------------------------------------------------------------
 
-function [results] = curvefit(run,x,y,channel)
+function [results] = curvefit(run,x,y)
 
 %# Cross-check data for calcuations (see wave probe calibation Excel spread sheet)
 %x = [1.01;1.27;1.85;2.38;2.83;3.13;3.96;4.91];
@@ -56,7 +53,7 @@ p  = polyfit(x,y,1);
 p2 = polyval(p,x);
 
 % Slope of trendline => Y = (a * X ) + b
-slope{2} = polyfit(x,y,1);
+slope{2} = p;
 slopeVal = slope{1,2}(1);   % Slope     = a
 intcpVal = slope{1,2}(2);   % Intercept = b    
 
@@ -136,4 +133,3 @@ results(:,5) = errorSlope;
 results(:,6) = errorIntercept;
 results(:,7) = relSloperError;
 results(:,8) = relInterceptError;
-results(:,9) = channel;

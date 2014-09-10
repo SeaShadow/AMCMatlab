@@ -3,18 +3,20 @@
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  June 17, 2013
+%# Date       :  September 8, 2014
 %#
-%# Test date  :  June 5-14, 2013
+%# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
-%# Runs       :  1-86
-%# Speeds     :  500-3,000 RPM
+%# Runs       :  1-67
+%# Speeds     :  800-3,400 RPM
 %#
-%# Description:  Plotting results of flow rate measurement analysis.
+%# Description:  Repeated flow rate measurement test for validation and
+%#               uncertainty analysis reasons.
 %#
 %# -------------------------------------------------------------------------
 %#
-%# CHANGES    :  dd/mm/yyyy - ...
+%# CHANGES    :  08/09/2014 - File creation
+%#               dd/mm/yyyy - ...
 %#
 %# -------------------------------------------------------------------------
 
@@ -84,5 +86,14 @@ powerPort   = results(:,15);
 %# Plotting
 %# -------------------------------------------------------------------------
 figurename = sprintf('Plotting: %s', 'Kiel probe voltage vs. mass flow rate');
-f = figure('Name',figurename,'NumberTitle','off');        
-h = plot(kpPort,flowRate,'x');grid on;box on;xlabel('Kiel probe [V]');ylabel('Mass flow rate [Kg/s]');
+f = figure('Name',figurename,'NumberTitle','off');
+
+h = plot(kpPort,flowRate,'x');
+grid on;
+box on;
+xlabel('{\bf Kiel probe [V]}');
+ylabel('{\bf Mass flow rate [Kg/s]}');
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);

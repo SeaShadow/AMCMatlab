@@ -1,17 +1,17 @@
 %# ------------------------------------------------------------------------
 %# Flow Rate Analysis
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  August 19, 2014
+%# Date       :  September 8, 2014
 %#
-%# Test date  :  August 25-28, 2014
+%# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
-%# Runs       :  1-86
-%# Speeds     :  500-3,400 RPM
+%# Runs       :  1-67
+%# Speeds     :  800-3,400 RPM
 %#
-%# Description:  Repeated analyse flow rate measurement data and save results
-%#               as array and DAT file for further analysis.
+%# Description:  Repeated flow rate measurement test for validation and
+%#               uncertainty analysis reasons.
 %#
 %# ------------------------------------------------------------------------
 %#
@@ -31,7 +31,7 @@
 %#               => analysis_plot.m           Plotting V vs. Q
 %#                                            NOTE: Plot data directly from resultsArray
 %#
-%#               => analysis_stats.m          Averaged plots V vs. Q
+%#               => analysis_stats.m          Averaged plots V vs. ? Qj
 %#                                            NOTE: Create averaged flow rate plots
 %#
 %#               => analysis_statistics.m     Statistics
@@ -44,11 +44,7 @@
 %#
 %# ------------------------------------------------------------------------
 %#
-%# CHANGES    :  11/06/2013 - Removed RPM results due to 2007 Matlab version
-%#               17/06/2013 - Added switches for plotting and RPM results
-%#               20/06/2013 - Removed Excel related code, save as DAT file
-%#               28/06/2013 - Added tab delimeted saving for plotting
-%#               20/08/2014 - Used subplots for time series data
+%# CHANGES    :  08/09/2014 - File creation
 %#               dd/mm/yyyy - ...
 %#
 %# ------------------------------------------------------------------------
@@ -84,8 +80,8 @@ Fs = 800;       % Sampling frequency = 800Hz
 %# ------------------------------------------------------------------------
 %# Number of headerlines in DAT file
 %# ------------------------------------------------------------------------
-headerlines             = 29;  % Number of headerlines to data
-headerlinesZeroAndCalib = 23;  % Number of headerlines to zero and calibration factors
+headerlines             = 27;  % Number of headerlines to data
+headerlinesZeroAndCalib = 21;  % Number of headerlines to zero and calibration factors
 
 %# ------------------------------------------------------------------------
 %# Omit first 10 seconds of data due to acceleration
@@ -103,8 +99,8 @@ cutSamplesFromEnd = 8000;
 %# START FILE LOOP FOR RUNS startRun to endRun
 %# ------------------------------------------------------------------------
 
-startRun = 9;      % Start at run x
-endRun   = 9;      % Stop at run y
+startRun = 1;       % Start at run x
+endRun   = 67;      % Stop at run y
 
 %startRun = 1;      % Start at run x
 %endRun   = 20;     % Stop at run y
@@ -183,22 +179,22 @@ for k=startRun:endRun
         filename = sprintf('%s%s.run\\R%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
     end
     [pathstr, name, ext] = fileparts(filename);     % Get file details like path, filename and extension
-
+    
     %# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
     zAndCFData = importdata(filename, ' ', headerlines);
     zAndCF     = zAndCFData.data;
-
+    
     %# Calibration factors and zeros
     ZeroAndCalibData = importdata(filename, ' ', headerlinesZeroAndCalib);
     ZeroAndCalib     = ZeroAndCalibData.data;
-
+    
     %# Time series
     AllRawChannelData = importdata(filename, ' ', headerlines);
-
+    
     %# Create new variables in the base workspace from those fields.
     vars = fieldnames(AllRawChannelData);
     for i = 1:length(vars)
-       assignin('base', vars{i}, AllRawChannelData.(vars{i}));
+        assignin('base', vars{i}, AllRawChannelData.(vars{i}));
     end
     
     %# Columns as variables (RAW DATA)
@@ -206,14 +202,14 @@ for k=startRun:endRun
     Raw_CH_0_WaveProbe   = data(:,2);       % Wave probe data
     Raw_CH_1_KPStbd      = data(:,3);       % Kiel probe stbd data
     Raw_CH_2_KPPort      = data(:,4);       % Kiel probe port data
-    Raw_CH_3_StaticStbd  = data(:,5);       % Static stbd data
-    Raw_CH_4_StaticPort  = data(:,6);       % Static port data
-    Raw_CH_5_RPMStbd     = data(:,7);       % RPM stbd data
-    Raw_CH_6_RPMPort     = data(:,8);       % RPM port data
-    Raw_CH_7_ThrustStbd  = data(:,9);       % Thrust stbd data
-    Raw_CH_8_ThrustPort  = data(:,10);      % Thrust port data
-    Raw_CH_9_TorqueStbd  = data(:,11);      % Torque stbd data
-    Raw_CH_10_TorquePort = data(:,12);      % Torque port data
+    %Raw_CH_3_StaticStbd  = data(:,5);       % Static stbd data
+    %Raw_CH_4_StaticPort  = data(:,6);       % Static port data
+    Raw_CH_5_RPMStbd     = data(:,5);       % RPM stbd data
+    Raw_CH_6_RPMPort     = data(:,6);       % RPM port data
+    Raw_CH_7_ThrustStbd  = data(:,7);       % Thrust stbd data
+    Raw_CH_8_ThrustPort  = data(:,8);       % Thrust port data
+    Raw_CH_9_TorqueStbd  = data(:,9);       % Torque stbd data
+    Raw_CH_10_TorquePort = data(:,10);      % Torque port data
     
     %# Zeros and calibration factors for each channel
     Time_Zero  = ZeroAndCalib(1);
@@ -225,23 +221,23 @@ for k=startRun:endRun
     CH_1_CF    = ZeroAndCalib(6);
     CH_2_Zero  = ZeroAndCalib(7);
     CH_2_CF    = ZeroAndCalib(8);
-    CH_3_Zero  = ZeroAndCalib(9);
-    CH_3_CF    = ZeroAndCalib(10);
-    CH_4_Zero  = ZeroAndCalib(11);
-    CH_4_CF    = ZeroAndCalib(12);
-    CH_5_Zero  = ZeroAndCalib(13);
-    CH_5_CF    = ZeroAndCalib(14);
-    CH_6_Zero  = ZeroAndCalib(15);
-    CH_6_CF    = ZeroAndCalib(16);
-    CH_7_Zero  = ZeroAndCalib(17);
-    CH_7_CF    = ZeroAndCalib(18);
-    CH_8_Zero  = ZeroAndCalib(19);
-    CH_8_CF    = ZeroAndCalib(20);
-    CH_9_Zero  = ZeroAndCalib(21);
-    CH_9_CF    = ZeroAndCalib(22);
-    CH_10_Zero = ZeroAndCalib(23);
-    CH_10_CF   = ZeroAndCalib(24);
-   
+    %CH_3_Zero  = ZeroAndCalib(9);
+    %CH_3_CF    = ZeroAndCalib(10);
+    %CH_4_Zero  = ZeroAndCalib(11);
+    %CH_4_CF    = ZeroAndCalib(12);
+    CH_5_Zero  = ZeroAndCalib(9);
+    CH_5_CF    = ZeroAndCalib(10);
+    CH_6_Zero  = ZeroAndCalib(11);
+    CH_6_CF    = ZeroAndCalib(12);
+    CH_7_Zero  = ZeroAndCalib(13);
+    CH_7_CF    = ZeroAndCalib(14);
+    CH_8_Zero  = ZeroAndCalib(15);
+    CH_8_CF    = ZeroAndCalib(16);
+    CH_9_Zero  = ZeroAndCalib(17);
+    CH_9_CF    = ZeroAndCalib(18);
+    CH_10_Zero = ZeroAndCalib(19);
+    CH_10_CF   = ZeroAndCalib(20);
+    
     
     %# --------------------------------------------------------------------
     %# Exception case for cutting samples when sample length is only 20 seconds
@@ -250,7 +246,7 @@ for k=startRun:endRun
         %# 2 seconds x sample frequency = 2 x 800 = 1600 samples
         startSamplePos    = 1600;
         %# 2 seconds x sample frequency = 2 x 800 = 1600 samples
-        cutSamplesFromEnd = 1600;   
+        cutSamplesFromEnd = 1600;
     end
     %# --------------------------------------------------------------------
     
@@ -258,41 +254,41 @@ for k=startRun:endRun
     % /////////////////////////////////////////////////////////////////////
     % START: CREATE PLOTS AND RUN DIRECTORY
     % ---------------------------------------------------------------------
-
+    
     %# _PLOTS directory
     fPath = '_plots/';
     if isequal(exist(fPath, 'dir'),7)
         % Do nothing as directory exists
-    else    
+    else
         mkdir(fPath);
-    end    
+    end
     
-%     %# RUN directory
-%     fPath = sprintf('_plots/%s', name(1:3));
-%     if isequal(exist(fPath, 'dir'),7)
-%         % Do nothing as directory exists
-%     else    
-%         mkdir(fPath);
-%     end
+    %     %# RUN directory
+    %     fPath = sprintf('_plots/%s', name(1:3));
+    %     if isequal(exist(fPath, 'dir'),7)
+    %         % Do nothing as directory exists
+    %     else
+    %         mkdir(fPath);
+    %     end
     
     %# Time series directory
     fPath = sprintf('_plots/%s', '_time_series');
     if isequal(exist(fPath, 'dir'),7)
         % Do nothing as directory exists
-    else    
+    else
         mkdir(fPath);
-    end    
+    end
     
     % ---------------------------------------------------------------------
     % END: CREATE PLOTS AND RUN DIRECTORY
-    % ///////////////////////////////////////////////////////////////////// 
+    % /////////////////////////////////////////////////////////////////////
     
     
     % /////////////////////////////////////////////////////////////////////
     % START: WAVE PROBE ANALYSIS
     % ---------------------------------------------------------------------
     
-    %# Get real units by applying calibration factors and zeros    
+    %# Get real units by applying calibration factors and zeros
     [CH_0_WaveProbe CH_0_WaveProbe_Mean] = analysis_realunits(Raw_CH_0_WaveProbe,CH_0_Zero,CH_0_CF);
     
     x = timeData(startSamplePos:end-cutSamplesFromEnd);
@@ -301,7 +297,7 @@ for k=startRun:endRun
     %# Linear fit
     p  = polyfit(x,y,1);
     p2 = polyval(p,x);
-        
+    
     % Slope of Linear fit => Y = (slope1 * X ) + slope2
     slope{i}   = polyfit(x,y,1);
     slope1     = slope{1,2}(1);   % Slope
@@ -385,7 +381,7 @@ for k=startRun:endRun
         grid on;
         box on;
         axis square;
-
+        
         %# Set plot figure background to a defined color
         %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
         set(gcf,'Color',[1,1,1]);
@@ -396,7 +392,7 @@ for k=startRun:endRun
         
         %# Axis limitations
         xlim([x(1) x(end)]);
-                
+        
         %# Add results to array for comparison and save as TXT and DAT file
         % Slope of Linear fit => Y = (slope1 * X ) + slope2
         slopesArray(k, 1) = k;          % Run number
@@ -421,12 +417,12 @@ for k=startRun:endRun
         hleg1 = legend('Wave probe',linfittxt);
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
-        %legend boxoff;        
+        %legend boxoff;
         
         %# ----------------------------------------------------------------
         %# END: WAVE PROBE ANALYSIS
         %# ////////////////////////////////////////////////////////////////
-    
+        
         %# ////////////////////////////////////////////////////////////////
         %# START: KIEL PROBE
         %# ----------------------------------------------------------------
@@ -465,7 +461,7 @@ for k=startRun:endRun
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
         %legend boxoff;
-
+        
         %# ----------------------------------------------------------------
         %# END: KIEL PROBE
         %# ////////////////////////////////////////////////////////////////
@@ -512,11 +508,11 @@ for k=startRun:endRun
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
         %legend boxoff;
-
+        
         %# ----------------------------------------------------------------
         %# END: THRUST
         %# ////////////////////////////////////////////////////////////////
-    
+        
         %# ////////////////////////////////////////////////////////////////
         %# START: TORQUE
         %# ----------------------------------------------------------------
@@ -559,7 +555,7 @@ for k=startRun:endRun
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
         %legend boxoff;
-                
+        
         %# ----------------------------------------------------------------
         %# END: TORQUE
         %# ////////////////////////////////////////////////////////////////
@@ -588,10 +584,10 @@ for k=startRun:endRun
         %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
         plotsavename = sprintf('_plots/%s/Run_%s_Wave_Probe_and_Time_Series_Plot.png', '_time_series', num2str(k));
         saveas(f, plotsavename);                % Save plot as PNG
-        %close;                                  % Close current plot window
+        close;                                  % Close current plot window
         
-    end    
-       
+    end
+    
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     %# RPM AND POWER SWITCH SWITCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     %# --------------------------------------------------------------------
@@ -618,33 +614,33 @@ for k=startRun:endRun
     
     %# ////////////////////////////////////////////////////////////////////
     %# CREATE RESULTS ARRAY
-    %# ////////////////////////////////////////////////////////////////////    
-        
+    %# ////////////////////////////////////////////////////////////////////
+    
     %# Add results to dedicated array for simple export
-    %# Results array columns: 
-        %[1]  Run No.
-        %[2]  FS                    (Hz)
-        %[3]  No. of samples        (-)
-        %[4]  Record time           (s)
-        %[5]  Mass flow rate        (Kg/s)
-        %[6]  Kiel probe STBD       (V)
-        %[7]  Kiel probe PORT       (V)
-        %[8]  Thrust STBD           (N)
-        %[9]  Thrust PORT           (N)
-        %[10] Torque STBD           (Nm)
-        %[11] Torque PORT           (Nm)
-        %[12] Shaft Speed STBD      (RPM)
-        %[13] Shaft Speed PORT      (RPM)
-        %[14] Power STBD            (W)
-        %[15] Power PORT            (W)
+    %# Results array columns:
+    %[1]  Run No.
+    %[2]  FS                    (Hz)
+    %[3]  No. of samples        (-)
+    %[4]  Record time           (s)
+    %[5]  Mass flow rate        (Kg/s)
+    %[6]  Kiel probe STBD       (V)
+    %[7]  Kiel probe PORT       (V)
+    %[8]  Thrust STBD           (N)
+    %[9]  Thrust PORT           (N)
+    %[10] Torque STBD           (Nm)
+    %[11] Torque PORT           (Nm)
+    %[12] Shaft Speed STBD      (RPM)
+    %[13] Shaft Speed PORT      (RPM)
+    %[14] Power STBD            (W)
+    %[15] Power PORT            (W)
     %# Added columns: 18/8/2014
-        %[16] Mass flow rate (1s only)                                  (Kg/s)
-        %[17] Mass flow rate (mean, 1s intervals)                       (Kg/s)
-        %[18] Mass flow rate (overall, Q/t)                             (Kg/s)
-        %[19] Diff. mass flow rate (mean, 1s intervals)/(overall, Q/t)  (%)
-        
+    %[16] Mass flow rate (1s only)                                  (Kg/s)
+    %[17] Mass flow rate (mean, 1s intervals)                       (Kg/s)
+    %[18] Mass flow rate (overall, Q/t)                             (Kg/s)
+    %[19] Diff. mass flow rate (mean, 1s intervals)/(overall, Q/t)  (%)
+    
     resultsArray(k, 1) = k;                                                          % Run No.
-    resultsArray(k, 2) = round(length(timeData) / timeData(end));                    % FS (Hz)    
+    resultsArray(k, 2) = round(length(timeData) / timeData(end));                    % FS (Hz)
     resultsArray(k, 3) = length(timeData);                                           % Number of samples
     recordTime = length(timeData) / (round(length(timeData) / timeData(end)));
     resultsArray(k, 4) = round(recordTime);                                          % Record time in seconds
@@ -653,7 +649,7 @@ for k=startRun:endRun
     resultsArray(k, 7) = mean(Raw_CH_2_KPPort);                                      % Kiel probe PORT (V)
     resultsArray(k, 8) = abs(((CH_7_ThrustStbd_Mean/1000)*9.806));                   % Thrust STBD (N)
     resultsArray(k, 9) = abs(((CH_8_ThrustPort_Mean/1000)*9.806));                   % Thrust PORT (N)
-    resultsArray(k, 10) = abs(CH_9_TorqueStbd_Mean);                                 % Torque STBD (Nm)      
+    resultsArray(k, 10) = abs(CH_9_TorqueStbd_Mean);                                 % Torque STBD (Nm)
     resultsArray(k, 11) = abs(CH_10_TorquePort_Mean);                                % Torque PORT (Nm)
     if rpm_power_on == 1
         resultsArray(k, 12) = RPMStbd;                                               % Shaft Speed STBD (RPM)
@@ -664,7 +660,7 @@ for k=startRun:endRun
     resultsArray(k, 16) = abs(flowrate);                                             % Mass flow rate (1s) (Kg/s)
     resultsArray(k, 17) = abs(getMeanMFR);                                           % Mass flow rate (mean, 1s intervals) (Kg/s)
     resultsArray(k, 18) = abs(getOverallMFR);                                        % Mass flow rate (overall, Q/t) (Kg/s)
-    resultsArray(k, 19) = abs(getCalDiffMFR*100);                                    % Diff. mass flow rate (mean, 1s intervals)/(overall, Q/t) (%) 
+    resultsArray(k, 19) = abs(getCalDiffMFR);                                        % Diff. mass flow rate (mean, 1s intervals)/(overall, Q/t) (%)
     
     %# Prepare strings for display
     name = num2str(k);
@@ -677,29 +673,29 @@ for k=startRun:endRun
     torqueport       = sprintf('R%s:: Torque PORT (mean): %s [Nm]', name, sprintf('%.2f',abs(CH_10_TorquePort_Mean)));
     if rpm_power_on == 1
         shaftrpmstbd     = sprintf('R%s:: Shaft speed STBD: %s [RPM]', name, sprintf('%.0f',RPMStbd));
-        shaftrpmport     = sprintf('R%s:: Shaft speed PORT: %s [RPM]', name, sprintf('%.0f',RPMPort));    
+        shaftrpmport     = sprintf('R%s:: Shaft speed PORT: %s [RPM]', name, sprintf('%.0f',RPMPort));
         powerstbd        = sprintf('R%s:: Power STBD: %s [W]', name, sprintf('%.2f',((abs(CH_9_TorqueStbd_Mean)*RPMStbd)/9549)*1000));
-        powerport        = sprintf('R%s:: Power PORT: %s [W]', name, sprintf('%.2f',((abs(CH_10_TorquePort_Mean)*RPMPort)/9549)*1000)); 
+        powerport        = sprintf('R%s:: Power PORT: %s [W]', name, sprintf('%.2f',((abs(CH_10_TorquePort_Mean)*RPMPort)/9549)*1000));
     end
     
     %# Display strings
-    disp(massflowrate);  
-    %disp('-------------------------------------------------');  
+    disp(massflowrate);
+    %disp('-------------------------------------------------');
     disp(kielprobestbd);
     disp(kielprobeport);
-    %disp('-------------------------------------------------');  
+    %disp('-------------------------------------------------');
     disp(thruststbd);
     disp(thrustport);
-    %disp('-------------------------------------------------');  
+    %disp('-------------------------------------------------');
     disp(torquestbd);
-    disp(torqueport);        
+    disp(torqueport);
     if rpm_power_on == 1
-        %disp('-------------------------------------------------');  
+        %disp('-------------------------------------------------');
         disp(shaftrpmstbd);
         disp(shaftrpmport);
-        %disp('-------------------------------------------------');  
+        %disp('-------------------------------------------------');
         disp(powerstbd);
-        disp(powerport);    
+        disp(powerport);
     end
     
     disp('/////////////////////////////////////////////////');
@@ -710,10 +706,10 @@ end
 %# START: Write results to CVS
 %# ------------------------------------------------------------------------
 M = resultsArray;
-csvwrite('resultsArray.dat', M)                                     % Export matrix M to a file delimited by the comma character      
+csvwrite('resultsArray.dat', M)                                     % Export matrix M to a file delimited by the comma character
 dlmwrite('resultsArray.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 M = slopesArray;
-csvwrite('slopesArray.dat', M)                                      % Export matrix M to a file delimited by the comma character      
+csvwrite('slopesArray.dat', M)                                      % Export matrix M to a file delimited by the comma character
 dlmwrite('slopesArray.txt', M, 'delimiter', '\t', 'precision', 4)   % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 %# ------------------------------------------------------------------------
 %# END: Write results to CVS
