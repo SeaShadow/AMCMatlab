@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  July 15, 2014
+%# Date       :  September 8, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -72,6 +72,19 @@ clc
 %# ------------------------------------------------------------------------
 allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
+
+
+% *************************************************************************
+% START: PLOT SWITCHES: 1 = ENABLED
+%                       0 = DISABLED
+% -------------------------------------------------------------------------
+
+enableSept2014FRMValues = 1;    % Use enable uses flow rate values established September 2014
+
+% -------------------------------------------------------------------------
+% END: PLOT SWITCHES
+% *************************************************************************
+
 
 %# ------------------------------------------------------------------------
 %# GENERAL SETTINGS AND CONSTANTS
@@ -326,7 +339,7 @@ if exist('resultsArraySPP.dat', 'file') == 0
         Raw_CH_7_PortTorque  = data(:,9);       % Port torque
         Raw_CH_8_StbdThrust  = data(:,10);      % Starboard thrust
         Raw_CH_9_StbdTorque  = data(:,11);      % Starboard torque
-        Raw_CH_10_PortKP     = data(:,12);     % Port kiel probe
+        Raw_CH_10_PortKP     = data(:,12);      % Port kiel probe
         Raw_CH_11_StbdKP     = data(:,13);      % Starboard kiel probe
         
         %# Zeros and calibration factors for each channel
@@ -526,19 +539,26 @@ if exist('resultsArraySPP.dat', 'file') == 0
         PortKP = resultsArraySPP(k, 17);                                                % PORT: Kiel probe (V)
         StbdKP = resultsArraySPP(k, 18);                                                % STBD: Kiel probe (V)
         
-        % PORT: Mass flow rate (Kg/s)
-        if PortKP > 1.86
-            PortMfr = 0.1133*PortKP^3-1.0326*PortKP^2+4.3652*PortKP-2.6737;
+        %# START Handle mass flow rate ------------------------------------
+        if enableSept2014FRMValues == 1
+            % PORT and STBD (September 2014 FRM test): Mass flow rate (Kg/s)
+            PortMfr = -0.042*PortKP^4+0.572*PortKP^3-2.952*PortKP^2+7.852*PortKP-5.198;
+            StbdMfr = -0.095*StbdKP^4+1.126*StbdKP^3-5.007*StbdKP^2+11.090*StbdKP-6.870;
         else
-            PortMfr = 0.4186*PortKP^5-4.5094*PortKP^4+19.255*PortKP^3-41.064*PortKP^2+45.647*PortKP-19.488;
+            % PORT (June 2013 FRM test): Mass flow rate (Kg/s)
+            if PortKP > 1.86
+                PortMfr = 0.1133*PortKP^3-1.0326*PortKP^2+4.3652*PortKP-2.6737;
+            else
+                PortMfr = 0.4186*PortKP^5-4.5094*PortKP^4+19.255*PortKP^3-41.064*PortKP^2+45.647*PortKP-19.488;
+            end
+            % STBD (June 2013 FRM test): Mass flow rate (Kg/s)
+            if StbdKP > 1.86
+                StbdMfr = 0.1133*StbdKP^3-1.0326*StbdKP^2+4.3652*StbdKP-2.6737;
+            else
+                StbdMfr = 0.4186*StbdKP^5-4.5094*StbdKP^4+19.255*StbdKP^3-41.064*StbdKP^2+45.647*StbdKP-19.488;
+            end
         end
-        
-        % STBD: Mass flow rate (Kg/s)
-        if StbdKP > 1.86
-            StbdMfr = 0.1133*StbdKP^3-1.0326*StbdKP^2+4.3652*StbdKP-2.6737;
-        else
-            StbdMfr = 0.4186*StbdKP^5-4.5094*StbdKP^4+19.255*StbdKP^3-41.064*StbdKP^2+45.647*StbdKP-19.488;
-        end
+        %# END Handle mass flow rate --------------------------------------
         
         % Mass flow rate and jet velocity
         resultsArraySPP(k, 30)  = PortMfr;                                   % PORT: Mass flow rate (Kg/s)
