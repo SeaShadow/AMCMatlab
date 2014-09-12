@@ -37,9 +37,11 @@ delete(allPlots);   % Close all plots
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
-enablePlotTitle     = 0;    % Show plot title above plot
-enablePlotMainTitle = 0;    % Show plot title in saved file
-enableTextOnPlot    = 1;    % Show equation of fit text on plot
+enablePlotTitle         = 0;      % Show plot title above plot
+enablePlotMainTitle     = 0;      % Show plot title in saved file
+enableTextOnPlot        = 0;      % Show equation of fit text on plot
+enableAvgPortStbdPlot   = 1;      % Show averaged port and stbd curve
+enableBlackAndWhitePlot = 1;      % Show plot in black and white
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
@@ -171,7 +173,29 @@ else
     break;
 end
 
-% PORT (averaged repeated runs)
+%# Averaging port and stbd repeated runs ----------------------------------
+
+%# Columns:
+    %[1]  Set shaft speed                       (RPM)
+    %[2]  Prop. system                          (1 = Port, 2 = Stbd)
+    %[3]  Measured shaft Speed STBD             (RPM)
+    %[4]  Measured shaft Speed PORT             (RPM)
+    %[5]  Mass Flow rate                        (Kg/s)
+    %[6]  Kiel probe STBD                       (V)
+    %[7]  Kiel probe PORT                       (V)
+    %[8]  Thrust STBD                           (N)
+    %[9]  Thrust PORT                           (N)
+    %[10] Torque STBD                           (Nm)
+    %[11] Torque PORT                           (Nm)
+    %[12] Volumetric flow rate                  (m3/s)
+    %[13] Flow coefficient                      (-)
+    %[14] Jet velocity                          (m/s)
+%# Values added: 10/09/2014
+    %[15] Mass Flow rate (1s only)              (Kg/s)
+    %[16] Mass flow rate (mean, 1s intervals)   (Kg/s)
+    %[17] Mass flow rate (overall, Q/t)         (Kg/s)
+
+%# PORT (averaged repeated runs) ------------------------------------------
 portAvgArray = [];
 portAvgArray = [portAvgArray;stats_avg(1,800,results(8,:))];
 portAvgArray = [portAvgArray;stats_avg(1,1000,results(9:11,:))];
@@ -188,7 +212,7 @@ portAvgArray = [portAvgArray;stats_avg(1,3000,results(31:33,:))];
 portAvgArray = [portAvgArray;stats_avg(1,3200,results(34,:))];
 portAvgArray = [portAvgArray;stats_avg(1,3400,results(35:37,:))];
 
-% STBD (averaged repeated runs)
+%# STBD (averaged repeated runs) ------------------------------------------
 stbdAvgArray = [];
 stbdAvgArray = [stbdAvgArray;stats_avg(2,800,results(40,:))];
 stbdAvgArray = [stbdAvgArray;stats_avg(2,1000,results([38 41:43],:))];
@@ -204,6 +228,43 @@ stbdAvgArray = [stbdAvgArray;stats_avg(2,2800,results(60,:))];
 stbdAvgArray = [stbdAvgArray;stats_avg(2,3000,results(61:63,:))];
 stbdAvgArray = [stbdAvgArray;stats_avg(2,3200,results(64,:))];
 stbdAvgArray = [stbdAvgArray;stats_avg(2,3400,results(65:67,:))];
+
+%# Averaged mean runs -----------------------------------------------------
+stbdportAvgArray = [];
+
+[mpaa,npaa] = size(portAvgArray);
+[msaa,nsaa] = size(stbdAvgArray);
+
+% Brake script averaged arrays are not the same size
+if mpaa ~= msaa
+    disp('----------------------------------------------------');
+    disp('portAvgArray and stbdAvgArray are not the same size!');
+    disp('----------------------------------------------------');
+    break;
+end
+
+% Average portAvgArray and stbdAvgArray arrays
+
+%# Columns:
+    %[1]  Set shaft speed                       (RPM)
+    %[2]  Measured shaft Speed                  (RPM)
+    %[3]  Mass Flow rate                        (Kg/s)
+    %[4]  Kiel probe                            (V)
+    %[5]  Torque                                (Nm)
+    %[6]  Volumetric flow rate                  (m3/s)
+    %[7]  Flow coefficient                      (-)
+    %[8]  Jet velocity                          (m/s)
+
+for k=1:mpaa
+    stbdportAvgArray(k,1) = mean([stbdAvgArray(k,1) portAvgArray(k,1)]);
+    stbdportAvgArray(k,2) = round(mean([stbdAvgArray(k,3) portAvgArray(k,4)]));
+    stbdportAvgArray(k,3) = mean([stbdAvgArray(k,5) portAvgArray(k,5)]);
+    stbdportAvgArray(k,4) = mean([stbdAvgArray(k,6) portAvgArray(k,7)]);
+    stbdportAvgArray(k,5) = mean([stbdAvgArray(k,10) portAvgArray(k,11)]);
+    stbdportAvgArray(k,6) = mean([stbdAvgArray(k,12) portAvgArray(k,12)]);
+    stbdportAvgArray(k,7) = mean([stbdAvgArray(k,13) portAvgArray(k,13)]);
+    stbdportAvgArray(k,8) = mean([stbdAvgArray(k,14) portAvgArray(k,14)]);
+end
 
 %# ------------------------------------------------------------------------
 %# Plot kiel probe voltage against mass flow rate
@@ -238,10 +299,12 @@ set(0,'DefaultTextFontSize',14);
 %# Markes and colors ------------------------------------------------------
 
 setMarker = {'x';'+';'*';'o';'s';'d';'*';'^';'<';'>'};
-% Colours
+% Coloured curves
 setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
-% B&W
-setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+% B&W curves
+if enableBlackAndWhitePlot == 1
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
 
 % X and Y values ----------------------------------------------------------
 
@@ -261,16 +324,23 @@ yPort14 = portAvgArray(:,5);
 xStbd14 = stbdAvgArray(:,6);
 yStbd14 = stbdAvgArray(:,5);
 
+% Port and Stbd averaged (Sept. 2014)
+if enableAvgPortStbdPlot == 1
+    xPortStbdAvg14 = stbdportAvgArray(:,4);
+    yPortStbdAvg14 = stbdportAvgArray(:,3);
+end
+
 % Polynomial fit ----------------------------------------------------------
 
 setPolyOrder = 4;
 
 % Port (June 2013)
-pfPort13 = polyfit(xPort13,yPort13,setPolyOrder);
-pvPort13 = polyval(pfPort13,xPort13);
-
 x = xPort13;
 y = yPort13;
+
+pfPort13 = polyfit(x,y,setPolyOrder);
+pvPort13 = polyval(pfPort13,x);
+
 ypred = pvPort13;           % Predictions
 dev = y - mean(y);          % Deviations - measure of spread
 SST = sum(dev.^2);          % Total variation to be accounted for
@@ -279,11 +349,12 @@ SSE = sum(resid.^2);        % Variation NOT accounted for
 Rsq1 = 1 - SSE/SST;         % Percent of error explained
 
 % Stbd (June 2013)
-pfStbd13 = polyfit(xStbd13,yStbd13,setPolyOrder);
-pvStbd13 = polyval(pfStbd13,xStbd13);
-
 x = xStbd13;
 y = yStbd13;
+
+pfStbd13 = polyfit(x,y,setPolyOrder);
+pvStbd13 = polyval(pfStbd13,x);
+
 ypred = pvStbd13;           % Predictions
 dev = y - mean(y);          % Deviations - measure of spread
 SST = sum(dev.^2);          % Total variation to be accounted for
@@ -292,11 +363,12 @@ SSE = sum(resid.^2);        % Variation NOT accounted for
 Rsq2 = 1 - SSE/SST;         % Percent of error explained
 
 % Port (Sept. 2014)
-pfPort14 = polyfit(xPort14,yPort14,setPolyOrder);
-pvPort14 = polyval(pfPort14,xPort14);
-
 x = xPort14;
 y = yPort14;
+
+pfPort14 = polyfit(x,y,setPolyOrder);
+pvPort14 = polyval(pfPort14,x);
+
 ypred = pvPort14;           % Predictions
 dev = y - mean(y);          % Deviations - measure of spread
 SST = sum(dev.^2);          % Total variation to be accounted for
@@ -305,17 +377,34 @@ SSE = sum(resid.^2);        % Variation NOT accounted for
 Rsq3 = 1 - SSE/SST;         % Percent of error explained
 
 % Stbd (Sept. 2014)
-pfStbd14 = polyfit(xStbd14,yStbd14,setPolyOrder);
-pvStbd14 = polyval(pfStbd14,xStbd14);
-
 x = xStbd14;
 y = yStbd14;
+
+pfStbd14 = polyfit(x,y,setPolyOrder);
+pvStbd14 = polyval(pfStbd14,x);
+
 ypred = pvStbd14;           % Predictions
 dev = y - mean(y);          % Deviations - measure of spread
 SST = sum(dev.^2);          % Total variation to be accounted for
 resid = y - ypred;          % Residuals - measure of mismatch
 SSE = sum(resid.^2);        % Variation NOT accounted for
 Rsq4 = 1 - SSE/SST;         % Percent of error explained
+
+% Port and Stbd averaged (Sept. 2014)
+if enableAvgPortStbdPlot == 1
+    x = xPortStbdAvg14;
+    y = yPortStbdAvg14;
+    
+    pfPortStbd14 = polyfit(x,y,setPolyOrder);
+    pvPortStbd14 = polyval(pfPortStbd14,x);
+    
+    ypred = pvPortStbd14;       % Predictions
+    dev = y - mean(y);          % Deviations - measure of spread
+    SST = sum(dev.^2);          % Total variation to be accounted for
+    resid = y - ypred;          % Residuals - measure of mismatch
+    SSE = sum(resid.^2);        % Variation NOT accounted for
+    Rsq5 = 1 - SSE/SST;         % Percent of error explained
+end
 
 % Using Curve Fitting Toolbox
 % pvPort13 = fit(yPort13,xPort13,'poly4','Normalize','on');
@@ -325,145 +414,196 @@ Rsq4 = 1 - SSE/SST;         % Percent of error explained
 
 % Display in command window -----------------------------------------------
 
+% Set number of decimals in command window output
+setPostDecimals = '+%0.3f';
+setNeutDecimals = '%0.3f';
+
 % Port (June 2013)
 fitEqn = pfPort13;
 if fitEqn(1) > 0
-    var1 = sprintf('+%0.3f',fitEqn(1));
+    var1 = sprintf(setPostDecimals,fitEqn(1));
 else
-    var1 = sprintf('%0.3f',fitEqn(1));
+    var1 = sprintf(setNeutDecimals,fitEqn(1));
 end
 if fitEqn(2) > 0
-    var2 = sprintf('+%0.3f',fitEqn(2));
+    var2 = sprintf(setPostDecimals,fitEqn(2));
 else
-    var2 = sprintf('%0.3f',fitEqn(2));
+    var2 = sprintf(setNeutDecimals,fitEqn(2));
 end
 if fitEqn(3) > 0
-    var3 = sprintf('+%0.3f',fitEqn(3));
+    var3 = sprintf(setPostDecimals,fitEqn(3));
 else
-    var3 = sprintf('%0.3f',fitEqn(3));
+    var3 = sprintf(setNeutDecimals,fitEqn(3));
 end
 if fitEqn(4) > 0
-    var4 = sprintf('+%0.3f',fitEqn(4));
+    var4 = sprintf(setPostDecimals,fitEqn(4));
 else
-    var4 = sprintf('%0.3f',fitEqn(4));
+    var4 = sprintf(setNeutDecimals,fitEqn(4));
 end
 if fitEqn(5) > 0
-    var5 = sprintf('+%0.3f',fitEqn(5));
+    var5 = sprintf(setPostDecimals,fitEqn(5));
 else
-    var5 = sprintf('%0.3f',fitEqn(5));
+    var5 = sprintf(setNeutDecimals,fitEqn(5));
 end
 % Equation of fit (poly4)
-rSquared = sprintf('%0.3f',Rsq1);
-EQoFit1 = sprintf('Port (June 2013): %sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+rSquared = sprintf(setNeutDecimals,Rsq1);
+EQoFit1  = sprintf('Port (June 2013): %sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
 disp(EQoFit1);
 
 % Stbd (June 2013)
 fitEqn = pfStbd13;
 if fitEqn(1) > 0
-    var1 = sprintf('+%0.3f',fitEqn(1));
+    var1 = sprintf(setPostDecimals,fitEqn(1));
 else
-    var1 = sprintf('%0.3f',fitEqn(1));
+    var1 = sprintf(setNeutDecimals,fitEqn(1));
 end
 if fitEqn(2) > 0
-    var2 = sprintf('+%0.3f',fitEqn(2));
+    var2 = sprintf(setPostDecimals,fitEqn(2));
 else
-    var2 = sprintf('%0.3f',fitEqn(2));
+    var2 = sprintf(setNeutDecimals,fitEqn(2));
 end
 if fitEqn(3) > 0
-    var3 = sprintf('+%0.3f',fitEqn(3));
+    var3 = sprintf(setPostDecimals,fitEqn(3));
 else
-    var3 = sprintf('%0.3f',fitEqn(3));
+    var3 = sprintf(setNeutDecimals,fitEqn(3));
 end
 if fitEqn(4) > 0
-    var4 = sprintf('+%0.3f',fitEqn(4));
+    var4 = sprintf(setPostDecimals,fitEqn(4));
 else
-    var4 = sprintf('%0.3f',fitEqn(4));
+    var4 = sprintf(setNeutDecimals,fitEqn(4));
 end
 if fitEqn(5) > 0
-    var5 = sprintf('+%0.3f',fitEqn(5));
+    var5 = sprintf(setPostDecimals,fitEqn(5));
 else
-    var5 = sprintf('%0.3f',fitEqn(5));
+    var5 = sprintf(setNeutDecimals,fitEqn(5));
 end
 % Equation of fit (poly4)
-rSquared = sprintf('%0.3f',Rsq2);
-EQoFit2 = sprintf('Stbd (June 2013): %sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+rSquared = sprintf(setNeutDecimals,Rsq2);
+EQoFit2  = sprintf('Stbd (June 2013): %sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
 disp(EQoFit2);
 
 % Port (Sept. 2014)
 fitEqn = pfPort14;
 if fitEqn(1) > 0
-    var1 = sprintf('+%0.3f',fitEqn(1));
+    var1 = sprintf(setPostDecimals,fitEqn(1));
 else
-    var1 = sprintf('%0.3f',fitEqn(1));
+    var1 = sprintf(setNeutDecimals,fitEqn(1));
 end
 if fitEqn(2) > 0
-    var2 = sprintf('+%0.3f',fitEqn(2));
+    var2 = sprintf(setPostDecimals,fitEqn(2));
 else
-    var2 = sprintf('%0.3f',fitEqn(2));
+    var2 = sprintf(setNeutDecimals,fitEqn(2));
 end
 if fitEqn(3) > 0
-    var3 = sprintf('+%0.3f',fitEqn(3));
+    var3 = sprintf(setPostDecimals,fitEqn(3));
 else
-    var3 = sprintf('%0.3f',fitEqn(3));
+    var3 = sprintf(setNeutDecimals,fitEqn(3));
 end
 if fitEqn(4) > 0
-    var4 = sprintf('+%0.3f',fitEqn(4));
+    var4 = sprintf(setPostDecimals,fitEqn(4));
 else
-    var4 = sprintf('%0.3f',fitEqn(4));
+    var4 = sprintf(setNeutDecimals,fitEqn(4));
 end
 if fitEqn(5) > 0
-    var5 = sprintf('+%0.3f',fitEqn(5));
+    var5 = sprintf(setPostDecimals,fitEqn(5));
 else
-    var5 = sprintf('%0.3f',fitEqn(5));
+    var5 = sprintf(setNeutDecimals,fitEqn(5));
 end
 % Equation of fit (poly4)
-rSquared = sprintf('%0.3f',Rsq3);
-EQoFit3 = sprintf('Port (Sept. 2014): %sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+rSquared = sprintf(setNeutDecimals,Rsq3);
+EQoFit3  = sprintf('Port (Sept. 2014): %sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
 disp(EQoFit3);
 
 % Stbd (Sept. 2014)
 fitEqn = pfStbd14;
 if fitEqn(1) > 0
-    var1 = sprintf('+%0.3f',fitEqn(1));
+    var1 = sprintf(setPostDecimals,fitEqn(1));
 else
-    var1 = sprintf('%0.3f',fitEqn(1));
+    var1 = sprintf(setNeutDecimals,fitEqn(1));
 end
 if fitEqn(2) > 0
-    var2 = sprintf('+%0.3f',fitEqn(2));
+    var2 = sprintf(setPostDecimals,fitEqn(2));
 else
-    var2 = sprintf('%0.3f',fitEqn(2));
+    var2 = sprintf(setNeutDecimals,fitEqn(2));
 end
 if fitEqn(3) > 0
-    var3 = sprintf('+%0.3f',fitEqn(3));
+    var3 = sprintf(setPostDecimals,fitEqn(3));
 else
-    var3 = sprintf('%0.3f',fitEqn(3));
+    var3 = sprintf(setNeutDecimals,fitEqn(3));
 end
 if fitEqn(4) > 0
-    var4 = sprintf('+%0.3f',fitEqn(4));
+    var4 = sprintf(setPostDecimals,fitEqn(4));
 else
-    var4 = sprintf('%0.3f',fitEqn(4));
+    var4 = sprintf(setNeutDecimals,fitEqn(4));
 end
 if fitEqn(5) > 0
-    var5 = sprintf('+%0.3f',fitEqn(5));
+    var5 = sprintf(setPostDecimals,fitEqn(5));
 else
-    var5 = sprintf('%0.3f',fitEqn(5));
+    var5 = sprintf(setNeutDecimals,fitEqn(5));
 end
 % Equation of fit (poly4)
-rSquared = sprintf('%0.3f',Rsq4);
-EQoFit4 = sprintf('Stbd (Sept. 2014): %sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+rSquared = sprintf(setNeutDecimals,Rsq4);
+EQoFit4  = sprintf('Stbd (Sept. 2014): %sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
 disp(EQoFit4);
 
-% Plotting ----------------------------------------------------------------
+% Port and Stbd averaged (Sept. 2014)
+if enableAvgPortStbdPlot == 1
+    fitEqn = pfPortStbd14;
+    if fitEqn(1) > 0
+        var1 = sprintf(setPostDecimals,fitEqn(1));
+    else
+        var1 = sprintf(setNeutDecimals,fitEqn(1));
+    end
+    if fitEqn(2) > 0
+        var2 = sprintf(setPostDecimals,fitEqn(2));
+    else
+        var2 = sprintf(setNeutDecimals,fitEqn(2));
+    end
+    if fitEqn(3) > 0
+        var3 = sprintf(setPostDecimals,fitEqn(3));
+    else
+        var3 = sprintf(setNeutDecimals,fitEqn(3));
+    end
+    if fitEqn(4) > 0
+        var4 = sprintf(setPostDecimals,fitEqn(4));
+    else
+        var4 = sprintf(setNeutDecimals,fitEqn(4));
+    end
+    if fitEqn(5) > 0
+        var5 = sprintf(setPostDecimals,fitEqn(5));
+    else
+        var5 = sprintf(setNeutDecimals,fitEqn(5));
+    end
+    % Equation of fit (poly4)
+    rSquared = sprintf(setNeutDecimals,Rsq5);
+    EQoFit5  = sprintf('Avg. Port/Stbd (Sept. 2014): %sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+    disp(EQoFit5);
+end
 
-h1 = plot(xPort13,yPort13,setMarker{1},...
-    xStbd13,yStbd13,setMarker{2},...
-    xPort14,yPort14,setMarker{5},...
-    xStbd14,yStbd14,setMarker{8});
-hold on;
-h2 = plot(xPort13,pvPort13,'-.',...
-    xStbd13,pvStbd13,'-.',...
-    xPort14,pvPort14,'-.',...
-    xStbd14,pvStbd14,'-.');
+% Plotting ----------------------------------------------------------------
+if enableAvgPortStbdPlot == 1
+    h1 = plot(xPort13,yPort13,setMarker{1},...
+        xStbd13,yStbd13,setMarker{2},...
+        xPort14,yPort14,setMarker{5},...
+        xStbd14,yStbd14,setMarker{8},...
+        xPortStbdAvg14,yPortStbdAvg14,setMarker{4});
+    hold on;
+    h2 = plot(xPort13,pvPort13,'-.',...
+        xStbd13,pvStbd13,'-.',...
+        xPort14,pvPort14,'-.',...
+        xStbd14,pvStbd14,'-.',...
+        xPortStbdAvg14,pvPortStbd14,'--');
+else
+    h1 = plot(xPort13,yPort13,setMarker{1},...
+        xStbd13,yStbd13,setMarker{2},...
+        xPort14,yPort14,setMarker{5},...
+        xStbd14,yStbd14,setMarker{8});
+    hold on;
+    h2 = plot(xPort13,pvPort13,'-.',...
+        xStbd13,pvStbd13,'-.',...
+        xPort14,pvPort14,'-.',...
+        xStbd14,pvStbd14,'-.');
+end
 if enablePlotTitle == 1
     title('{\bf Kiel Probe Output vs. Mass Flow Rate}','FontSize',setGeneralFontSize);
 end
@@ -510,13 +650,22 @@ set(h2(3),'Color',setColor{1},'LineStyle',setLineStyle,'LineWidth',setLineWidth)
 set(h1(4),'Color',setColor{3},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h2(4),'Color',setColor{3},'LineStyle',setLineStyle,'LineWidth',setLineWidth);
 
+% Port and Stbd averaged (Sept. 2014)
+if enableAvgPortStbdPlot == 1
+    set(h1(5),'Color',setColor{6},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h2(5),'Color',setColor{6},'LineStyle','--','LineWidth',setLineWidth);
+end
+
 %# Text on plot -----------------------------------------------------------
 
 if enableTextOnPlot == 1
-    text(1.8, 0.8, EQoFit1, 'Color', 'k');
-    text(1.8, 0.6, EQoFit2, 'Color', 'k');    
-    text(1.8, 0.4, EQoFit3, 'Color', 'k');
-    text(1.8, 0.2, EQoFit4, 'Color', 'k');
+    text(1.8, 1.0, EQoFit1, 'Color', 'k');
+    text(1.8, 0.8, EQoFit2, 'Color', 'k');    
+    text(1.8, 0.6, EQoFit3, 'Color', 'k');
+    text(1.8, 0.4, EQoFit4, 'Color', 'k');
+    if enableAvgPortStbdPlot == 1
+        text(1.8, 0.2, EQoFit5, 'Color', 'k');
+    end
 end
     
 %# Axis limitations -------------------------------------------------------
@@ -528,7 +677,11 @@ ylim([0 5.5]);
 %# Legend -----------------------------------------------------------------
 
 %hleg1 = legend('Port (June 2013)','Fit','Starboard (June 2013)','Fit','Port (Sept. 2014)','Fit','Starboard (Sept. 2014)','Fit');
-hleg1 = legend(h1, 'Port (June 2013)','Starboard (June 2013)','Port (Sept. 2014)','Starboard (Sept. 2014)');
+if enableAvgPortStbdPlot == 1
+    hleg1 = legend(h1, 'Port (June 2013)','Starboard (June 2013)','Port (Sept. 2014)','Starboard (Sept. 2014)','Averaged Port/Starboard (Sept. 2014)');
+else
+    hleg1 = legend(h1, 'Port (June 2013)','Starboard (June 2013)','Port (Sept. 2014)','Starboard (Sept. 2014)');    
+end
 set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
 set(hleg1,'FontSize',setGeneralFontSize);
@@ -548,6 +701,7 @@ end
 %# Save plots as PDF, PNG and EPS -----------------------------------------
 minRun = min(portRuns(:,1));
 maxRun = max(stbdRuns(:,1));
+% Enable renderer for vector graphics output
 set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
@@ -561,11 +715,17 @@ end
 %# Clear variables
 %# ------------------------------------------------------------------------
 
-clearvars f h
-clearvars m n minRun maxRun fPath figurename hleg1 plotsavename
+clearvars x y f h h1 h2 k
+clearvars setPostDecimals setNeutDecimals
+clearvars m n mpaa npaa msaa nsaa maaa naaa
+clearvars minRun maxRun fPath figurename hleg1 plotsavename
 clearvars setGeneralFontSize setBorderLineWidth setMarkerSize setSpeed
-clearvars setMarker setColor
+clearvars setMarker setColor setFileFormat setGeneralFontName setSaveFormat setLineStyle setLineWidth setLineWidthMarker setPolyOrder
 clearvars XPlot YPlot XPlotMargin YPlotMargin XPlotSize YPlotSize allPlots
 clearvars portSpeed1 portSpeed2 portSpeed3 portSpeed4 portSpeed5 portSpeed6 portSpeed7 portSpeed8 portSpeed9 portSpeed10 portSpeed11 portSpeed12 portSpeed13 portSpeed14
 clearvars stbdSpeed1 stbdSpeed2 stbdSpeed3 stbdSpeed4 stbdSpeed5 stbdSpeed6 stbdSpeed7 stbdSpeed8 stbdSpeed9 stbdSpeed10 stbdSpeed11 stbdSpeed12 stbdSpeed13 stbdSpeed14
-clearvars pfPort13 pvPort13 pfStbd13 pvStbd13 pfPort14 pvPort14 pfStbd14 pvStbd14
+clearvars pfPort13 pvPort13 pfStbd13 pvStbd13 pfPort14 pvPort14 pfStbd14 pvStbd14 pfPortStbd14 pvPortStbd14
+clearvars EQoFit1 EQoFit2 EQoFit3 EQoFit4 EQoFit5 var1 var2 var3 var4 var5
+clearvars dev SST resid SSE rSquared fitEqn Rsq1 Rsq2 Rsq3 Rsq4 Rsq5
+clearvars June13Comb June13Port June13Stbd
+clearvars xPort13 yPort13 xStbd13 yStbd13 xPort14 yPort14 xStbd14 yStbd14 xPortStbdAvg14 yPortStbdAvg14 ypred

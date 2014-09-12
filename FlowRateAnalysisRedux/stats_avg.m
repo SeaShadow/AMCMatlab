@@ -63,25 +63,25 @@ massflowrate3  = results(:,18);        % Mass flow rate (overall, Q/t)        (K
 
 %# Averaged array columns -------------------------------------------------
 
-%# Original columns:
-%[1]  Set motor RPM                         (RPM)
-%[2]  Prop. system                          (1 = Port, 2 = Stbd)
-%[3]  Shaft Speed STBD                      (RPM)
-%[4]  Shaft Speed PORT                      (RPM)
-%[5]  Mass Flow rate                        (Kg/s)
-%[6]  Kiel probe STBD                       (V)
-%[7]  Kiel probe PORT                       (V)
-%[8]  Thrust STBD                           (N)
-%[9]  Thrust PORT                           (N)
-%[10] Torque STBD                           (Nm)
-%[11] Torque PORT                           (Nm)
-%[12] Volumetric flow rate                  (m3/s)
-%[13] Flow coefficient                      (-)
-%[14] Jet velocity                          (m/s)
+%# Columns:
+    %[1]  Set shaft speed                       (RPM)
+    %[2]  Prop. system                          (1 = Port, 2 = Stbd)
+    %[3]  Measured shaft Speed STBD             (RPM)
+    %[4]  Measured shaft Speed PORT             (RPM)
+    %[5]  Mass Flow rate                        (Kg/s)
+    %[6]  Kiel probe STBD                       (V)
+    %[7]  Kiel probe PORT                       (V)
+    %[8]  Thrust STBD                           (N)
+    %[9]  Thrust PORT                           (N)
+    %[10] Torque STBD                           (Nm)
+    %[11] Torque PORT                           (Nm)
+    %[12] Volumetric flow rate                  (m3/s)
+    %[13] Flow coefficient                      (-)
+    %[14] Jet velocity                          (m/s)
 %# Values added: 10/09/2014
-%[15] Mass Flow rate (1s only)              (Kg/s)
-%[16] Mass flow rate (mean, 1s intervals)   (Kg/s)
-%[17] Mass flow rate (overall, Q/t)         (Kg/s)
+    %[15] Mass Flow rate (1s only)              (Kg/s)
+    %[16] Mass flow rate (mean, 1s intervals)   (Kg/s)
+    %[17] Mass flow rate (overall, Q/t)         (Kg/s)
 
 averagedArray = [];
 averagedArray(:,1)  = setRPM;
