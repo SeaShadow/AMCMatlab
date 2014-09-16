@@ -37,11 +37,12 @@ delete(allPlots);   % Close all plots
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
-enablePlotTitle         = 0;      % Show plot title above plot
-enablePlotMainTitle     = 0;      % Show plot title in saved file
-enableTextOnPlot        = 0;      % Show equation of fit text on plot
-enableAvgPortStbdPlot   = 1;      % Show averaged port and stbd curve
-enableBlackAndWhitePlot = 1;      % Show plot in black and white
+enablePlotTitle         = 0;    % Show plot title above plot
+enablePlotMainTitle     = 0;    % Show plot title in saved file
+enableTextOnPlot        = 0;    % Show equation of fit text on plot
+enableAvgPortStbdPlot   = 0;    % Show averaged port and stbd curve
+enableBlackAndWhitePlot = 1;    % Show plot in black and white
+enableEqnOfFitPlot      = 1;    % Show equations of fit
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
@@ -146,10 +147,6 @@ if m ~= 67
 end
 
 %# Distinguish between PORT and STBD --------------------------------------
-% testRuns = 1:7;
-% portRuns = 8:37;
-% stbdRuns = 38:67;
-
 testRuns = results(1:7,:);
 portRuns = results(8:37,:);
 stbdRuns = results(38:end,:);
@@ -243,7 +240,7 @@ if mpaa ~= msaa
     break;
 end
 
-% Average portAvgArray and stbdAvgArray arrays
+% Average portAvgArray and stbdAvgArray arrays ----------------------------
 
 %# Columns:
     %[1]  Set shaft speed                       (RPM)
@@ -587,22 +584,26 @@ if enableAvgPortStbdPlot == 1
         xPort14,yPort14,setMarker{5},...
         xStbd14,yStbd14,setMarker{8},...
         xPortStbdAvg14,yPortStbdAvg14,setMarker{4});
-    hold on;
-    h2 = plot(xPort13,pvPort13,'-.',...
-        xStbd13,pvStbd13,'-.',...
-        xPort14,pvPort14,'-.',...
-        xStbd14,pvStbd14,'-.',...
-        xPortStbdAvg14,pvPortStbd14,'--');
+    if enableEqnOfFitPlot == 1
+        hold on;
+        h2 = plot(xPort13,pvPort13,'-.',...
+            xStbd13,pvStbd13,'-.',...
+            xPort14,pvPort14,'-.',...
+            xStbd14,pvStbd14,'-.',...
+            xPortStbdAvg14,pvPortStbd14,'--');
+    end
 else
     h1 = plot(xPort13,yPort13,setMarker{1},...
         xStbd13,yStbd13,setMarker{2},...
         xPort14,yPort14,setMarker{5},...
         xStbd14,yStbd14,setMarker{8});
-    hold on;
-    h2 = plot(xPort13,pvPort13,'-.',...
-        xStbd13,pvStbd13,'-.',...
-        xPort14,pvPort14,'-.',...
-        xStbd14,pvStbd14,'-.');
+    if enableEqnOfFitPlot == 1
+        hold on;
+        h2 = plot(xPort13,pvPort13,'-.',...
+            xStbd13,pvStbd13,'-.',...
+            xPort14,pvPort14,'-.',...
+            xStbd14,pvStbd14,'-.');
+    end
 end
 if enablePlotTitle == 1
     title('{\bf Kiel Probe Output vs. Mass Flow Rate}','FontSize',setGeneralFontSize);
@@ -614,7 +615,6 @@ box on;
 axis square;
 
 % Box thickness, axes font size, etc. -------------------------------------
-
 set(gca,'TickDir','in',...
     'FontSize',12,...
     'LineWidth',2,...
@@ -629,47 +629,55 @@ set(gca,'TickDir','in',...
 set(gcf,'Color',[1,1,1]);
 
 %# Line, colors and markers -----------------------------------------------
-setMarkerSize      = 9;
+setMarkerSize      = 10;
 setLineWidth       = 1;
 setLineWidthMarker = 2;
 setLineStyle       = '-.';
 
 % Port (June 2013)
 set(h1(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-set(h2(1),'Color',setColor{2},'LineStyle',setLineStyle,'LineWidth',setLineWidth);
+if enableEqnOfFitPlot == 1
+    set(h2(1),'Color',setColor{2},'LineStyle',setLineStyle,'LineWidth',setLineWidth);
+end
 
 % Stbd (June 2013)
 set(h1(2),'Color',setColor{5},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-set(h2(2),'Color',setColor{5},'LineStyle',setLineStyle,'LineWidth',setLineWidth);
+if enableEqnOfFitPlot == 1
+    set(h2(2),'Color',setColor{5},'LineStyle',setLineStyle,'LineWidth',setLineWidth);
+end
 
 % Port (Sept. 2014)
 set(h1(3),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-set(h2(3),'Color',setColor{1},'LineStyle',setLineStyle,'LineWidth',setLineWidth);
+if enableEqnOfFitPlot == 1
+    set(h2(3),'Color',setColor{1},'LineStyle',setLineStyle,'LineWidth',setLineWidth);
+end
 
 % Stbd (Sept. 2014)
 set(h1(4),'Color',setColor{3},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-set(h2(4),'Color',setColor{3},'LineStyle',setLineStyle,'LineWidth',setLineWidth);
+if enableEqnOfFitPlot == 1
+    set(h2(4),'Color',setColor{3},'LineStyle',setLineStyle,'LineWidth',setLineWidth);
+end
 
 % Port and Stbd averaged (Sept. 2014)
 if enableAvgPortStbdPlot == 1
     set(h1(5),'Color',setColor{6},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    set(h2(5),'Color',setColor{6},'LineStyle','--','LineWidth',setLineWidth);
+    if enableEqnOfFitPlot == 1
+        set(h2(5),'Color',setColor{6},'LineStyle','--','LineWidth',setLineWidth);
+    end
 end
 
 %# Text on plot -----------------------------------------------------------
-
 if enableTextOnPlot == 1
-    text(1.8, 1.0, EQoFit1, 'Color', 'k');
-    text(1.8, 0.8, EQoFit2, 'Color', 'k');    
-    text(1.8, 0.6, EQoFit3, 'Color', 'k');
-    text(1.8, 0.4, EQoFit4, 'Color', 'k');
+    text(1.5, 1.0, EQoFit1, 'Color', 'k');
+    text(1.5, 0.8, EQoFit2, 'Color', 'k');    
+    text(1.5, 0.6, EQoFit3, 'Color', 'k');
+    text(1.5, 0.4, EQoFit4, 'Color', 'k');
     if enableAvgPortStbdPlot == 1
-        text(1.8, 0.2, EQoFit5, 'Color', 'k');
+        text(1.5, 0.2, EQoFit5, 'Color', 'k');
     end
 end
     
 %# Axis limitations -------------------------------------------------------
-
 xlim([1 4.5]);
 %ylim([y(1) y(end)]);
 ylim([0 5.5]);

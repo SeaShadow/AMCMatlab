@@ -88,11 +88,13 @@ headerlinesZeroAndCalib = 21;  % Number of headerlines to zero and calibration f
 %# ------------------------------------------------------------------------
 
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from start)
-startSamplePos    = 8000;
+%startSamplePos    = 8000;
+startSamplePos    = 4000;
 %startSamplePos    = 1;
 
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from end)
-cutSamplesFromEnd = 8000;
+%cutSamplesFromEnd = 8000;
+cutSamplesFromEnd = 4000;
 %cutSamplesFromEnd = 0;
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
