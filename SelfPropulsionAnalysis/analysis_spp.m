@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  September 8, 2014
+%# Date       :  September 16, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -56,7 +56,7 @@
 %#
 %# ------------------------------------------------------------------------
 %#
-%# CHANGES    :  12/11/2013 - Created new script
+%# CHANGES    :  16/09/2014 - Created new script
 %#               dd/mm/yyyy - ...
 %#
 %# ------------------------------------------------------------------------
@@ -73,27 +73,11 @@ clc
 allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
 
-
-% *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED
-%                       0 = DISABLED
-% -------------------------------------------------------------------------
-
-enableSept2014FRMValues = 1;    % Use enable uses flow rate values established September 2014
-
-% -------------------------------------------------------------------------
-% END: PLOT SWITCHES
-% *************************************************************************
-
-
 %# ------------------------------------------------------------------------
 %# GENERAL SETTINGS AND CONSTANTS
 %# ------------------------------------------------------------------------
 
 %# Test name --------------------------------------------------------------
-% testName = 'Resistance Test';
-% testName = 'Boundary Layer Investigation';
-% testName = 'Waterjet Self-Propulsion Points';
 testName = 'Waterjet Self-Propulsion Test';
 
 % -------------------------------------------------------------------------
@@ -180,7 +164,6 @@ BlockCoeff      = 0.592;                         % Mode block coefficient       
 FSlwl           = MSlwl*FStoMSratio;             % Full scale length waterline     (m)
 FSwsa           = MSwsa*FStoMSratio^2;           % Full scale wetted surface area  (m^2)
 FSdraft         = MSdraft*FStoMSratio;           % Full scale draft                (m)
-
 %# ------------------------------------------------------------------------
 %# END CONSTANTS AND PARTICULARS
 %# ************************************************************************
@@ -191,9 +174,9 @@ FSdraft         = MSdraft*FStoMSratio;           % Full scale draft             
 headerlines             = 39;  % Number of headerlines to data
 headerlinesZeroAndCalib = 33;  % Number of headerlines to zero and calibration factors
 
-%# ------------------------------------------------------------------------------
-%# Omit first 10 seconds of data due to acceleration ----------------------------
-%# ------------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
+%# Omit first 10 seconds of data due to acceleration
+%# ------------------------------------------------------------------------
 
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from start)
 startSamplePos    = 1;
@@ -203,22 +186,22 @@ cutSamplesFromEnd = 0;
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START FILE LOOP FOR RUNS startRun to endRun
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ------------------------------------------------------------------------
 
-% startRun = 70;      % Start at run x
-% endRun   = 70;      % Stop at run y
+% startRun = 70;      % Start run
+% endRun   = 70;      % Stop run
 
-startRun = 70;       % Start at run x
-endRun   = 109;      % Stop at run y
+startRun = 70;       % Start run
+endRun   = 109;      % Stop run
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START DEFINE PLOT SIZE
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ------------------------------------------------------------------------
 %# Centimeters units
 XPlot = 42.0;                           %# A3 paper size
 YPlot = 29.7;                           %# A3 paper size
@@ -226,14 +209,14 @@ XPlotMargin = 1;                        %# left/right margins from page borders
 YPlotMargin = 1;                        %# bottom/top margins from page borders
 XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
 YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ------------------------------------------------------------------------
 %# END DEFINE PLOT SIZE
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START Load shaft speed list (variable name is shaftSpeedList by default)
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ------------------------------------------------------------------------
 if exist('shaftSpeedListRuns90to109.mat', 'file') == 2
     % Load file into shaftSpeedList variable
     load('shaftSpeedListRuns90to109.mat');
@@ -243,7 +226,7 @@ else
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     break;
 end
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ------------------------------------------------------------------------
 %# END Load shaft speed list (variable name is shaftSpeedList by default)
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -251,7 +234,6 @@ end
 %# ////////////////////////////////////////////////////////////////////////
 %# START REPEAT RUN NUMBERS
 %# ------------------------------------------------------------------------
-
 RunsForSpeed1 = [101 102 103 107];          % Fr = 0.24
 RunsForSpeed2 = [98 99 100 108];            % Fr = 0.26
 RunsForSpeed3 = [95 96 97 109];             % Fr = 0.28
@@ -261,9 +243,80 @@ RunsForSpeed6 = [79 80 81];                 % Fr = 0.34
 RunsForSpeed7 = [82 83 84];                 % Fr = 0.36
 RunsForSpeed8 = [85 86 87 88 89 105 106];   % Fr = 0.38
 RunsForSpeed9 = [90 91 92 93 94];           % Fr = 0.40
-
 %# ------------------------------------------------------------------------
 %# END REPEAT RUN NUMBERS
+%# ////////////////////////////////////////////////////////////////////////
+
+
+% *************************************************************************
+% START: PLOT SWITCHES: 1 = ENABLED
+%                       0 = DISABLED
+% -------------------------------------------------------------------------
+
+% Decide if June 2013 or September 2014 data is used for calculations
+enableSept2014FRMValues = 1;    % Use enable uses flow rate values established September 2014
+
+% Plot titles, colours, etc.
+enablePlotMainTitle     = 1;    % Show plot title in saved file
+enablePlotTitle         = 1;    % Show plot title above plot
+enableBlackAndWhitePlot = 1;    % Show plot in black and white only
+enableTowingForceFDPlot = 1;    % Show towing force (FD)
+
+% Decide which plot to show TG=p QJ vj (Allison) or TG=p QJ (vj-vi) (Bose)
+enableTGAllisonPlot     = 1;    % Show plots where TG = p Q vj
+enableTGBosePlot        = 1;    % Show plots where TG = p Q (vj - vi)
+
+% -------------------------------------------------------------------------
+% END: PLOT SWITCHES
+% *************************************************************************
+
+
+%# ////////////////////////////////////////////////////////////////////////
+%# START: CREATE PLOTS AND RUN DIRECTORY
+%# ------------------------------------------------------------------------
+
+%# _PLOTS directory
+fPath = '_plots/';
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# _plots/SPP directory
+fPath = sprintf('_plots/%s', 'SPP');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PDF directory
+fPath = sprintf('_plots/%s/%s', 'SPP', 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('_plots/%s/%s', 'SPP', 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('_plots/%s/%s', 'SPP', 'EPS');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# ------------------------------------------------------------------------
+%# END: CREATE PLOTS AND RUN DIRECTORY
 %# ////////////////////////////////////////////////////////////////////////
 
 
@@ -302,30 +355,6 @@ if exist('resultsArraySPP.dat', 'file') == 0
         for i = 1:length(vars)
             assignin('base', vars{i}, AllRawChannelData.(vars{i}));
         end
-        
-        % /////////////////////////////////////////////////////////////////////
-        % START: CREATE PLOTS AND RUN DIRECTORY
-        % ---------------------------------------------------------------------
-        
-        %# _PLOTS directory
-        fPath = '_plots/';
-        if isequal(exist(fPath, 'dir'),7)
-            % Do nothing as directory exists
-        else
-            mkdir(fPath);
-        end
-        
-        %# _plots/SPP directory
-        fPath = sprintf('_plots/%s', 'SPP');
-        if isequal(exist(fPath, 'dir'),7)
-            % Do nothing as directory exists
-        else
-            mkdir(fPath);
-        end
-        
-        % ---------------------------------------------------------------------
-        % END: CREATE PLOTS AND RUN DIRECTORY
-        % /////////////////////////////////////////////////////////////////////
         
         %# Columns as variables (RAW DATA)
         timeData             = data(:,1);       % Timeline
@@ -445,12 +474,12 @@ if exist('resultsArraySPP.dat', 'file') == 0
         %[38] PORT: Inlet velocity, vi    (m/s)
         %[39] STBD: Inlet velocity, vi    (m/s)
         
-        % Gross thrust = TG = ? Q (vj - vi)
+        % Gross thrust = TG = p Q (vj - vi)
         %[40] PORT: Gross thrust, TG      (N)
         %[41] STBD: Gross thrust, TG      (N)
         %[42] Total gross thrust, TG      (N)
         
-        % Gross thrust = TG = ? Q vj
+        % Gross thrust = TG = p Q vj
         %[43] PORT: Gross thrust, TG      (N)
         %[44] STBD: Gross thrust, TG      (N)
         %[45] Total gross thrust, TG      (N)
@@ -542,8 +571,8 @@ if exist('resultsArraySPP.dat', 'file') == 0
         %# START Handle mass flow rate ------------------------------------
         if enableSept2014FRMValues == 1
             % PORT and STBD (September 2014 FRM test): Mass flow rate (Kg/s)
-            PortMfr = -0.042*PortKP^4+0.572*PortKP^3-2.952*PortKP^2+7.852*PortKP-5.198;
-            StbdMfr = -0.095*StbdKP^4+1.126*StbdKP^3-5.007*StbdKP^2+11.090*StbdKP-6.870;
+            PortMfr = -0.0421*PortKP^4+0.5718*PortKP^3-2.9517*PortKP^2+7.8517*PortKP-5.1976;
+            StbdMfr = -0.0946*StbdKP^4+1.1259*StbdKP^3-5.0067*StbdKP^2+11.0896*StbdKP-6.8705;
         else
             % PORT (June 2013 FRM test): Mass flow rate (Kg/s)
             if PortKP > 1.86
@@ -629,7 +658,7 @@ if exist('resultsArraySPP.dat', 'file') == 0
         PortInlVel = resultsArraySPP(k, 38);         % Port inlet velocity (m/s)
         StbdInlVel = resultsArraySPP(k, 39);         % Stbd inlet velocity (m/s)
         
-        % Gross thrust = TG = \rho Q (vj - vi)
+        % Gross thrust = TG = p Q (vj - vi)
         TG1Port = PortMfr*(PortJetVel-PortInlVel);
         TG1Stbd = StbdMfr*(StbdJetVel-StbdInlVel);
         
@@ -637,7 +666,7 @@ if exist('resultsArraySPP.dat', 'file') == 0
         resultsArraySPP(k, 41)  = TG1Stbd;           % STBD: Gross thrust, TG (N)
         resultsArraySPP(k, 42)  = TG1Port+TG1Stbd;   % TOTAL gross thrust, TG (N)
         
-        % Gross thrust = TG = \rho Q vj
+        % Gross thrust = TG = p Q vj
         TG2Port  = PortMfr*PortJetVel;
         TG2Stbd  = StbdMfr*StbdJetVel;
         
@@ -703,6 +732,9 @@ end
 %# 1. Plot gross thrust (TG) vs. towing force (F)
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
+% Froude numbers for nince (9) speeds
+FroudeNos = [0.24 0.26 0.28 0.30 0.32 0.34 0.36 0.38 0.40];
+
 % Remove zero rows
 resultsArraySPP = resultsArraySPP(any(resultsArraySPP,2),:);
 
@@ -712,21 +744,23 @@ A = arrayfun(@(x) R(R(:,5) == x, :), unique(R(:,5)), 'uniformoutput', false);
 [ma,na] = size(A);      % Array dimensions
 
 % Loop through speeds
-TGA_at_FDArray = [];  % Gross thrust = TG = \rho Q vj
-TGB_at_FDArray = [];  % Gross thrust = TG = \rho Q (vj - vi)
-FA_at_TGZero   = [];  % Gross thrust = TG = \rho Q vj
-FB_at_TGZero   = [];  % Gross thrust = TG = \rho Q (vj - vi)
+TGA_at_FDArray = [];  % Gross thrust = TG = p Q vj
+TGB_at_FDArray = [];  % Gross thrust = TG = p Q (vj - vi)
+FA_at_TGZero   = [];  % Gross thrust = TG = p Q vj
+FB_at_TGZero   = [];  % Gross thrust = TG = p Q (vj - vi)
+thrustDedFracArrayA = [];
+thrustDedFracArrayB = [];
 for k=1:ma
     [mb,nb] = size(A{k});
     
     %# TG at FD -----------------------------------------------------------
     
-    y1 = A{k}(:,45);   % Gross thrust = TG = \rho Q vj        (N)
-    y2 = A{k}(:,42);   % Gross thrust = TG = \rho Q (vj - vi) (N)
+    y1 = A{k}(:,45);   % Gross thrust = TG = p Q vj        (N)
+    y2 = A{k}(:,42);   % Gross thrust = TG = p Q (vj - vi) (N)
     x  = A{k}(:,10);   % Bare hull resistance                 (N)
     xq = A{k}(1,28);   % Towing force, FD                     (N)
     
-    %# Gross thrust = TG = \rho Q vj --------------------------------------
+    %# Gross thrust = TG = p Q vj -----------------------------------------
     polyf = polyfit(x,y1,1);
     polyv = polyval(polyf,x);
     TGA_at_FDArray{k}(1, 1) = spline(x,polyv,xq); % Gross thrust, TG (x-axis)
@@ -734,11 +768,23 @@ for k=1:ma
     TGA_at_FDArray{k}(2, 1) = spline(x,polyv,xq);
     TGA_at_FDArray{k}(2, 2) = 0;
     
+    % Thrust deduction array
+    GrossThrustAtFD     = spline(x,polyv,xq);
+    TowingForceFD       = A{k}(1,28);
+    CalmWaterResistance = -7932.12*FroudeNos(k)^5+13710.12*FroudeNos(k)^4-9049.96*FroudeNos(k)^3+2989.46*FroudeNos(k)^2-386.61*FroudeNos(k)+18.6;
+    
+    % Froude number
+    thrustDedFracArrayA(k, 1) = FroudeNos(k);
+    % t=(TM+FD-RC)/TM
+    thrustDedFracArrayA(k, 2) = (GrossThrustAtFD+TowingForceFD-CalmWaterResistance)/GrossThrustAtFD;
+    % RCW=TG(1-t)+FD ==>> t=1-((RCW-FD)/T)
+    thrustDedFracArrayA(k, 3) = 1-((CalmWaterResistance-TowingForceFD)/GrossThrustAtFD);
+    
     % Towing for at zero gross thrust
     FA_at_TGZero(k, 1)      = 0;                  % Gross thrust, TG (x-axis)
     FA_at_TGZero(k, 2)      = spline(polyv,x,0);  % Towing force     (y-axis)
     
-    %# Gross thrust = TG = \rho Q (vj - vi) -------------------------------
+    %# Gross thrust = TG = p Q (vj - vi) ----------------------------------
     polyf = polyfit(x,y2,1);
     polyv = polyval(polyf,x);
     TGB_at_FDArray{k}(1, 1) = spline(x,polyv,xq); % Gross thrust, TG (x-axis)
@@ -746,13 +792,21 @@ for k=1:ma
     TGB_at_FDArray{k}(2, 1) = spline(x,polyv,xq);
     TGB_at_FDArray{k}(2, 2) = 0;
     
+    % Thrust deduction array
+    GrossThrustAtFD     = spline(x,polyv,xq);
+    TowingForceFD       = A{k}(1,28);
+    CalmWaterResistance = -7932.12*FroudeNos(k)^5+13710.12*FroudeNos(k)^4-9049.96*FroudeNos(k)^3+2989.46*FroudeNos(k)^2-386.61*FroudeNos(k)+18.6;
+    
+    % Froude number
+    thrustDedFracArrayB(k, 1) = FroudeNos(k);
+    % t=(TM+FD-RC)/TM
+    thrustDedFracArrayB(k, 2) = (GrossThrustAtFD+TowingForceFD-CalmWaterResistance)/GrossThrustAtFD;
+    % RCW=TG(1-t)+FD ==>> t=1-((RCW-FD)/T)
+    thrustDedFracArrayB(k, 3) = 1-((CalmWaterResistance-TowingForceFD)/GrossThrustAtFD);
+    
     % Towing for at zero gross thrust
     FB_at_TGZero(k, 1)      = 0;                  % Gross thrust, TG (x-axis)
     FB_at_TGZero(k, 2)      = spline(polyv,x,0);  % Towing force     (y-axis)
-    
-    %     for j=1:mb
-    %         A{k}(j,1)
-    %     end
 end
 
 % Transpose rows array to column array
@@ -762,317 +816,357 @@ end
 %# Only plot if all (9) datasets are available
 if ma == 9
     
-    %# Plotting gross thrust vs. towing force
-    figurename = 'Self-Propulsion Points: Gross Thrust vs. Towing Force';
-    %figurename = sprintf('%s:: RPM Logger (Raw Data), Run %s', testName, num2str(runno));
-    f = figure('Name',figurename,'NumberTitle','off');
+    % TG = p Q vj
+    slopesArrayA = [];
+    % TG = p Q (vj - vi)
+    slopesArrayB = [];
     
-    %# Border lines thickness
-    setGeneralFontSize = 11;
-    setBorderLineWidth = 2;
-    
-    %# Change default text fonts for plot title
-    set(0,'DefaultTextFontname', 'Helvetica');
-    set(0,'DefaultTextFontSize', 14);
-    
-    %# Markes and colors
-    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
-    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
-    
-    %# Gross thrust = TG = \rho Q vj ------------------------------------------
-    subplot(1,2,1);
-    
-    %# X and Y axes data, create variables for speeds 1 to 9
-    %# Note for future self: Next time use structures or arrays!!!!
-    for k=1:ma
-        x = A{k}(:,45);
-        y = A{k}(:,10);
-        eval(sprintf('x%d = x', k));
-        eval(sprintf('y%d = y', k));
+    if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         
-        % Linear fit
-        P = polyfit(x,y,1);
-        V = polyval(P,x);
-        eval(sprintf('polyv%d = V', k));
+        %# Plotting gross thrust vs. towing force
+        figurename = 'Self-Propulsion Points: Gross Thrust vs. Towing Force';
+        f = figure('Name',figurename,'NumberTitle','off');
         
-        % Extend linear fit using equation of fit
-        xx = 0:max(x)*1.1;
-        yy = P(1)*xx+P(2);
-        eval(sprintf('xLF%d = xx', k));
-        eval(sprintf('yLF%d = yy', k));
+        %# Paper size settings ------------------------------------------------
+        
+        % set(gcf, 'PaperSize', [19 19]);
+        % set(gcf, 'PaperPositionMode', 'manual');
+        % set(gcf, 'PaperPosition', [0 0 19 19]);
+        %
+        % set(gcf, 'PaperUnits', 'centimeters');
+        % set(gcf, 'PaperSize', [19 19]);
+        % set(gcf, 'PaperPositionMode', 'manual');
+        % set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        % Fonts and colours ---------------------------------------------------
+        setGeneralFontName = 'Helvetica';
+        setGeneralFontSize = 14;
+        setBorderLineWidth = 2;
+        
+        %# Change default text fonts for plot title
+        set(0,'DefaultTextFontname',setGeneralFontName);
+        set(0,'DefaultTextFontSize',14);
+        
+        %# Box thickness, axes font size, etc. --------------------------------
+        set(gca,'TickDir','in',...
+            'FontSize',12,...
+            'LineWidth',2,...
+            'FontName',setGeneralFontName,...
+            'Clipping','off',...
+            'Color',[1 1 1],...
+            'LooseInset',get(gca,'TightInset'));
+        
+        %# Markes and colors ------------------------------------------------------
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+        % Colored curves
+        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+        if enableBlackAndWhitePlot == 1
+            % Black and white curves
+            setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+        end
+        
+        %# Gross thrust = TG = p Q vj -----------------------------------------
+        if enableTGAllisonPlot == 1
+            
+            if enableTGAllisonPlot == 1 && enableTGBosePlot == 1
+                subplot(1,2,1);
+            end
+            
+            %# X and Y axes data, create variables for speeds 1 to 9
+            %# Note for future self: Next time use structures or arrays!!!!
+            disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+            disp('!Equations of fit                                        !');
+            disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+            for k=1:ma
+                x = A{k}(:,45);
+                y = A{k}(:,10);
+                eval(sprintf('x%d = x;', k));
+                eval(sprintf('y%d = y;', k));
+                
+                % Linear fit
+                P = polyfit(x,y,1);
+                V = polyval(P,x);
+                eval(sprintf('polyv%d = V;', k));
+                % Record slopes
+                FroudeNos = [0.24 0.26 0.28 0.30 0.32 0.34 0.36 0.38 0.40];
+                % Columns:
+                %[1]  Froude number                 (-)
+                %[2]  Slope (i.e. -(1-t))           (-)
+                %[3]  Thrust deduction, t           (-)
+                if P(2) < 0
+                    setDecimals = '%0.3f';
+                else
+                    setDecimals = '+%0.3f';
+                end
+                slopesArrayA(k,1) = FroudeNos(k);
+                slopesArrayA(k,2) = P(1);
+                slopesArrayA(k,3) = P(1)+1;
+                disp(sprintf('Speed %s (TG = p QJ vj): Equation of fit = %sx%s',num2str(k),sprintf('%0.3f',P(1)),sprintf(setDecimals,P(2))));
+                
+                % Extend linear fit using equation of fit
+                xx = 0:max(x)*1.1;
+                yy = P(1)*xx+P(2);
+                eval(sprintf('xLF%d = xx;', k));
+                eval(sprintf('yLF%d = yy;', k));
+            end
+            
+            % Model self-propulsion points (i.e. gross thrus TG at towing force FD)
+            TGatFD = TGA_at_FDArray;
+            
+            % Towing force at zero thrust
+            FatTGZ = FA_at_TGZero;
+            
+            %# Plotting
+            h1 = plot(x1,y1,setMarker{1},x2,y2,setMarker{2},x3,y3,setMarker{3},x4,y4,setMarker{4},x5,y5,setMarker{5},x6,y6,setMarker{6},x7,y7,setMarker{7},x8,y8,setMarker{8},x9,y9,setMarker{9});
+            %# Linear fit
+            %hold on;
+            %h2 = plot(x1,polyv1,x2,polyv2,x3,polyv3,x4,polyv4,x5,polyv5,x6,polyv6,x7,polyv7,x8,polyv8,x9,polyv9);
+            %# Gross thrus TG at towing force FD
+            if enableTowingForceFDPlot == 1
+                for k=1:ma
+                    hold on;
+                    h3 = plot(TGatFD{k}(:,1),TGatFD{k}(:,2));
+                    set(h3(1),'Color','k','Marker','o','MarkerSize',8,'LineStyle','-.','linewidth',1);
+                end
+            end
+            hold on;
+            %# Extended linear fit
+            h4 = plot(xLF1,yLF1,xLF2,yLF2,xLF3,yLF3,xLF4,yLF4,xLF5,yLF5,xLF6,yLF6,xLF7,yLF7,xLF8,yLF8,xLF9,yLF9);
+            %# Towing force at zero thrust
+            h5 = plot(FatTGZ(:,1),FatTGZ(:,2),'Color','k','Marker','s','MarkerSize',8);
+            if enablePlotTitle == 1
+                title('{\bf Gross thrust defined as T_{G} = p Q v_{j}}','FontSize',setGeneralFontSize);
+            end
+            xlabel('{\bf Gross thrust, T_{G} (N)}','FontSize',setGeneralFontSize);
+            ylabel('{\bf Towing force (N)}','FontSize',setGeneralFontSize);
+            grid on;
+            box on;
+            axis square;
+            
+            %# Font sizes and border
+            set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+            
+            %# Line, colors and markers
+            setMarkerSize      = 8;
+            setLineWidthMarker = 1;
+            setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=7;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=8;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=9;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            
+            %# Extended linear curve fit
+            setLineWidth = 1;
+            setLineStyle = '-';
+            setSpeed=1;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=2;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=3;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=4;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=5;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=6;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=7;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=8;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=9;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            
+            %# Set plot figure background to a defined color
+            %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+            set(gcf,'Color',[1,1,1]);
+            
+            %# Axis limitations
+            set(gca,'XLim',[0 60]);
+            set(gca,'XTick',[0:5:60]);
+            set(gca,'YLim',[-5 35]);
+            set(gca,'YTick',[-5:5:35]);
+            
+            %# Legend
+            %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+            hleg1 = legend('Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+            set(hleg1,'Location','NorthEast');
+            set(hleg1,'Interpreter','none');
+            if enableTowingForceFDPlot == 1
+                [LEGH,OBJH,OUTH,OUTM] = legend;
+                legend([OUTH;h3],OUTM{:},'SPP: TG at FD');
+            end
+            [LEGH,OBJH,OUTH,OUTM] = legend;
+            legend([OUTH;h5],OUTM{:},'Force at TG=0');
+            %legend boxoff;
+            
+        end
+        
+        %# Gross thrust = TG = p Q (vj - vi) ----------------------------------
+        if enableTGBosePlot == 1
+            
+            if enableTGAllisonPlot == 1 && enableTGBosePlot == 1
+                subplot(1,2,2);
+            end
+            
+            %# X and Y axes data, create variables for speeds 1 to 9
+            %# Note for future self: Next time use structures or arrays!!!!
+            for k=1:ma
+                x = A{k}(:,42);
+                y = A{k}(:,10);
+                eval(sprintf('x%d = x;', k));
+                eval(sprintf('y%d = y;', k));
+                
+                % Linear fit
+                P = polyfit(x,y,1);
+                V = polyval(P,x);
+                eval(sprintf('polyv%d = V;', k));
+                % Record slopes
+                FroudeNos = [0.24 0.26 0.28 0.30 0.32 0.34 0.36 0.38 0.40];
+                % Columns:
+                %[1]  Froude number                 (-)
+                %[2]  Slope (i.e. -(1-t))           (-)
+                %[3]  Thrust deduction, t           (-)
+                if P(2) < 0
+                    setDecimals = '%0.3f';
+                else
+                    setDecimals = '+%0.3f';
+                end
+                slopesArrayB(k,1) = FroudeNos(k);
+                slopesArrayB(k,2) = P(1);
+                slopesArrayB(k,3) = P(1)+1;
+                disp(sprintf('Speed %s (TG = p QJ (vj - vi)): Equation of fit = %sx%s',num2str(k),sprintf('%0.3f',P(1)),sprintf(setDecimals,P(2))));
+                
+                % Extend linear fit using equation of fit
+                xx = 0:max(x)*1.1;
+                yy = P(1)*xx+P(2);
+                eval(sprintf('xLF%d = xx;', k));
+                eval(sprintf('yLF%d = yy;', k));
+            end
+            
+            % Model self-propulsion points (i.e. gross thrus TG at towing force FD)
+            TGatFD = TGB_at_FDArray;
+            
+            % Towing force at zero thrust
+            FatTGZ = FB_at_TGZero;
+            
+            %# Plotting
+            h1 = plot(x1,y1,setMarker{1},x2,y2,setMarker{2},x3,y3,setMarker{3},x4,y4,setMarker{4},x5,y5,setMarker{5},x6,y6,setMarker{6},x7,y7,setMarker{7},x8,y8,setMarker{8},x9,y9,setMarker{9});
+            %# Linear fit
+            %hold on;
+            %h2 = plot(x1,polyv1,x2,polyv2,x3,polyv3,x4,polyv4,x5,polyv5,x6,polyv6,x7,polyv7,x8,polyv8,x9,polyv9);
+            %# Gross thrus TG at towing force FD
+            if enableTowingForceFDPlot == 1
+                for k=1:ma
+                    hold on;
+                    h3 = plot(TGatFD{k}(:,1),TGatFD{k}(:,2));
+                    set(h3(1),'Color','k','Marker','o','MarkerSize',8,'LineStyle','-.','linewidth',1);
+                end
+            end
+            hold on;
+            %# Extended linear fit
+            h4 = plot(xLF1,yLF1,xLF2,yLF2,xLF3,yLF3,xLF4,yLF4,xLF5,yLF5,xLF6,yLF6,xLF7,yLF7,xLF8,yLF8,xLF9,yLF9);
+            %# Towing force at zero thrust
+            h5 = plot(FatTGZ(:,1),FatTGZ(:,2),'Color','k','Marker','s','MarkerSize',8);
+            if enablePlotTitle == 1
+                title('{\bf Gross thrust defined as T_{G} = p Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
+            end
+            xlabel('{\bf Gross thrust, T_{G} (N)}','FontSize',setGeneralFontSize);
+            ylabel('{\bf Towing force (N)}','FontSize',setGeneralFontSize);
+            grid on;
+            box on;
+            axis square;
+            
+            %# Font sizes and border
+            set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+            
+            %# Set plot figure background to a defined color
+            %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+            set(gcf,'Color',[1,1,1]);
+            
+            %# Line, colors and markers
+            setMarkerSize      = 8;
+            setLineWidthMarker = 1;
+            setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=7;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=8;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=9;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            
+            %# Extended linear curve fit
+            setLineWidth = 1;
+            setLineStyle = '-';
+            setSpeed=1;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=2;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=3;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=4;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=5;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=6;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=7;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=8;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setSpeed=9;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            
+            %# Axis limitations
+            set(gca,'XLim',[0 40]);
+            set(gca,'XTick',[0:5:40]);
+            set(gca,'YLim',[-5 25]);
+            set(gca,'YTick',[-5:5:25]);
+            
+            %# Legend
+            %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+            hleg1 = legend('Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+            set(hleg1,'Location','NorthEast');
+            set(hleg1,'Interpreter','none');
+            if enableTowingForceFDPlot == 1
+                [LEGH,OBJH,OUTH,OUTM] = legend;
+                legend([OUTH;h3],OUTM{:},'SPP: TG at FD');
+            end
+            [LEGH,OBJH,OUTH,OUTM] = legend;
+            legend([OUTH;h5],OUTM{:},'Force at TG=0');
+            %legend boxoff;
+            
+        end
+        
+        %# ********************************************************************
+        %# Save plot as PNG
+        %# ********************************************************************
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        
+        %# Plot title ---------------------------------------------------------
+        if enablePlotMainTitle == 1
+            annotation('textbox', [0 0.9 1 0.1], ...
+                'String', strcat('{\bf ', figurename, '}'), ...
+                'EdgeColor', 'none', ...
+                'HorizontalAlignment', 'center');
+        end
+        
+        %# Save plots as PDF, PNG and EPS -------------------------------------
+        minRun = min(resultsArraySPP(:,1));
+        maxRun = max(resultsArraySPP(:,1));
+        % Enable renderer for vector graphics output
+        set(gcf, 'renderer', 'painters');
+        setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+        setFileFormat = {'PDF' 'PNG' 'EPS'};
+        for k=1:3
+            plotsavename = sprintf('_plots/%s/%s/Run_%s_to_%s_Thrust_vs_Towing_Force_Plot.%s', 'SPP', setFileFormat{k}, num2str(minRun), num2str(maxRun), setFileFormat{k});
+            print(gcf, setSaveFormat{k}, plotsavename);
+        end
+        %close;
+        
     end
     
-    %     x1 = A{1}(:,45); y1 = A{1}(:,10);
-    %     polyf1 = polyfit(x1,y1,1); polyv1 = polyval(polyf1,x1);
-    %     x2 = A{2}(:,45); y2 = A{2}(:,10);
-    %     polyf2 = polyfit(x2,y2,1); polyv2 = polyval(polyf2,x2);
-    %     x3 = A{3}(:,45); y3 = A{3}(:,10);
-    %     polyf3 = polyfit(x3,y3,1); polyv3 = polyval(polyf3,x3);
-    %     x4 = A{4}(:,45); y4 = A{4}(:,10);
-    %     polyf4 = polyfit(x4,y4,1); polyv4 = polyval(polyf4,x4);
-    %     x5 = A{5}(:,45); y5 = A{5}(:,10);
-    %     polyf5 = polyfit(x5,y5,1); polyv5 = polyval(polyf5,x5);
-    %     x6 = A{6}(:,45); y6 = A{6}(:,10);
-    %     polyf6 = polyfit(x6,y6,1); polyv6 = polyval(polyf6,x6);
-    %     x7 = A{7}(:,45); y7 = A{7}(:,10);
-    %     polyf7 = polyfit(x7,y7,1); polyv7 = polyval(polyf7,x7);
-    %     x8 = A{8}(:,45); y8 = A{8}(:,10);
-    %     polyf8 = polyfit(x8,y8,1); polyv8 = polyval(polyf8,x8);
-    %     x9 = A{9}(:,45); y9 = A{9}(:,10);
-    %     polyf9 = polyfit(x9,y9,1); polyv9 = polyval(polyf9,x9);
-    
-    % Model self-propulsion points (i.e. gross thrus TG at towing force FD)
-    TGatFD = TGA_at_FDArray;
-    
-    % Towing force at zero thrust
-    FatTGZ = FA_at_TGZero;
-    
-    %# Plotting
-    h1 = plot(x1,y1,setMarker{1},x2,y2,setMarker{2},x3,y3,setMarker{3},x4,y4,setMarker{4},x5,y5,setMarker{5},x6,y6,setMarker{6},x7,y7,setMarker{7},x8,y8,setMarker{8},x9,y9,setMarker{9});
-    %# Linear fit
-    %hold on;
-    %h2 = plot(x1,polyv1,x2,polyv2,x3,polyv3,x4,polyv4,x5,polyv5,x6,polyv6,x7,polyv7,x8,polyv8,x9,polyv9);
-    %# Gross thrus TG at towing force FD
-    for k=1:ma
-        hold on;
-        h3 = plot(TGatFD{k}(:,1),TGatFD{k}(:,2));
-        set(h3(1),'Color','k','Marker','o','MarkerSize',8,'LineStyle','-.','linewidth',1);
-    end
-    hold on;
-    %# Extended linear fit
-    h4 = plot(xLF1,yLF1,xLF2,yLF2,xLF3,yLF3,xLF4,yLF4,xLF5,yLF5,xLF6,yLF6,xLF7,yLF7,xLF8,yLF8,xLF9,yLF9);
-    %# Towing force at zero thrust
-    h5 = plot(FatTGZ(:,1),FatTGZ(:,2),'Color','k','Marker','s','MarkerSize',8);
-    title('{\bf Gross thrust defined as T_{G} = \rho Q v_{j}}','FontSize',setGeneralFontSize);
-    xlabel('{\bf Gross thrust, T_{G} (N)}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Towing force (N)}','FontSize',setGeneralFontSize);
-    grid on;
-    box on;
-    axis square;
-    
-    %# Font sizes and border
-    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-    
-    %# Line, colors and markers
-    setMarkerSize = 8;
-    setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=7;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=8;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=9;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    
-    %# Linear curve fit
-    setLineWidth = 1;
-    setLineStyle = '-';
-    %     setSpeed=1;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=2;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=3;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=4;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=5;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=6;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=7;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=8;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=9;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    
-    %# Extended linear curve fit
-    setSpeed=1;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=2;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=3;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=4;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=5;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=6;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=7;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=8;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=9;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    %# Axis limitations
-    set(gca,'XLim',[0 60]);
-    set(gca,'XTick',[0:5:60]);
-    set(gca,'YLim',[-5 35]);
-    set(gca,'YTick',[-5:5:35]);
-    
-    %# Legend
-    %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-    hleg1 = legend('Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    [LEGH,OBJH,OUTH,OUTM] = legend;
-    legend([OUTH;h3],OUTM{:},'SPP: TG at FD');
-    [LEGH,OBJH,OUTH,OUTM] = legend;
-    legend([OUTH;h5],OUTM{:},'Force at TG=0');
-    %legend boxoff;
-    
-    %# Gross thrust = TG = \rho Q (vj - vi) -----------------------------------
-    subplot(1,2,2);
-    
-    %# X and Y axes data, create variables for speeds 1 to 9
-    %# Note for future self: Next time use structures or arrays!!!!
-    for k=1:ma
-        x = A{k}(:,42);
-        y = A{k}(:,10);
-        eval(sprintf('x%d = x', k));
-        eval(sprintf('y%d = y', k));
-        
-        % Linear fit
-        P = polyfit(x,y,1);
-        V = polyval(P,x);
-        eval(sprintf('polyv%d = V', k));
-        
-        % Extend linear fit using equation of fit
-        xx = 0:max(x)*1.1;
-        yy = P(1)*xx+P(2);
-        eval(sprintf('xLF%d = xx', k));
-        eval(sprintf('yLF%d = yy', k));
-    end
-    
-    %# X and Y axes data
-    %     x1 = A{1}(:,42); y1 = A{1}(:,10);
-    %     polyf1 = polyfit(x1,y1,1); polyv1 = polyval(polyf1,x1);
-    %     x2 = A{2}(:,42); y2 = A{2}(:,10);
-    %     polyf2 = polyfit(x2,y2,1); polyv2 = polyval(polyf2,x2);
-    %     x3 = A{3}(:,42); y3 = A{3}(:,10);
-    %     polyf3 = polyfit(x3,y3,1); polyv3 = polyval(polyf3,x3);
-    %     x4 = A{4}(:,42); y4 = A{4}(:,10);
-    %     polyf4 = polyfit(x4,y4,1); polyv4 = polyval(polyf4,x4);
-    %     x5 = A{5}(:,42); y5 = A{5}(:,10);
-    %     polyf5 = polyfit(x5,y5,1); polyv5 = polyval(polyf5,x5);
-    %     x6 = A{6}(:,42); y6 = A{6}(:,10);
-    %     polyf6 = polyfit(x6,y6,1); polyv6 = polyval(polyf6,x6);
-    %     x7 = A{7}(:,42); y7 = A{7}(:,10);
-    %     polyf7 = polyfit(x7,y7,1); polyv7 = polyval(polyf7,x7);
-    %     x8 = A{8}(:,42); y8 = A{8}(:,10);
-    %     polyf8 = polyfit(x8,y8,1); polyv8 = polyval(polyf8,x8);
-    %     x9 = A{9}(:,42); y9 = A{9}(:,10);
-    %     polyf9 = polyfit(x9,y9,1); polyv9 = polyval(polyf9,x9);
-    
-    % Model self-propulsion points (i.e. gross thrus TG at towing force FD)
-    TGatFD = TGB_at_FDArray;
-    
-    % Towing force at zero thrust
-    FatTGZ = FB_at_TGZero;
-    
-    %# Plotting
-    h1 = plot(x1,y1,setMarker{1},x2,y2,setMarker{2},x3,y3,setMarker{3},x4,y4,setMarker{4},x5,y5,setMarker{5},x6,y6,setMarker{6},x7,y7,setMarker{7},x8,y8,setMarker{8},x9,y9,setMarker{9});
-    %# Linear fit
-    %hold on;
-    %h2 = plot(x1,polyv1,x2,polyv2,x3,polyv3,x4,polyv4,x5,polyv5,x6,polyv6,x7,polyv7,x8,polyv8,x9,polyv9);
-    %# Gross thrus TG at towing force FD
-    for k=1:ma
-        hold on;
-        h3 = plot(TGatFD{k}(:,1),TGatFD{k}(:,2));
-        set(h3(1),'Color','k','Marker','o','MarkerSize',8,'LineStyle','-.','linewidth',1);
-    end
-    hold on;
-    %# Extended linear fit
-    h4 = plot(xLF1,yLF1,xLF2,yLF2,xLF3,yLF3,xLF4,yLF4,xLF5,yLF5,xLF6,yLF6,xLF7,yLF7,xLF8,yLF8,xLF9,yLF9);
-    %# Towing force at zero thrust
-    h5 = plot(FatTGZ(:,1),FatTGZ(:,2),'Color','k','Marker','s','MarkerSize',8);
-    title('{\bf Gross thrust defined as T_{G} = \rho Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
-    xlabel('{\bf Gross thrust, T_{G} (N)}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Towing force (N)}','FontSize',setGeneralFontSize);
-    grid on;
-    box on;
-    axis square;
-    
-    %# Font sizes and border
-    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    %# Line, colors and markers
-    setMarkerSize = 8;
-    setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=7;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=8;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    setSpeed=9;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize);
-    %# Linear curve fit
-    setLineWidth = 1;
-    setLineStyle = '-';
-    %     setSpeed=1;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=2;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=3;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=4;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=5;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=6;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=7;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=8;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    %     setSpeed=9;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    
-    
-    %# Extended linear curve fit
-    setSpeed=1;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=2;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=3;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=4;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=5;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=6;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=7;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=8;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=9;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    
-    %# Axis limitations
-    set(gca,'XLim',[0 40]);
-    set(gca,'XTick',[0:5:40]);
-    set(gca,'YLim',[-5 25]);
-    set(gca,'YTick',[-5:5:25]);
-    
-    %# Legend
-    %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-    hleg1 = legend('Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    [LEGH,OBJH,OUTH,OUTM] = legend;
-    legend([OUTH;h3],OUTM{:},'SPP: TG at FD');
-    [LEGH,OBJH,OUTH,OUTM] = legend;
-    legend([OUTH;h5],OUTM{:},'Force at TG=0');
-    %legend boxoff;
-    
-    %# ********************************************************************
-    %# Save plot as PNG
-    %# ********************************************************************
-    
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-    
-    %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-    
-    %# Plot title ---------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-    
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintff('_plots/%s/Run_70_to_109_Thrust_vs_Towing_Force_Plot.pdf', 'SPP');
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Run_70_to_109_Thrust_vs_Towing_Force_Plot.png', 'SPP');
-    saveas(f, plotsavename);                % Save plot as PNG
-    %close;
-    
-    % -------------------------------------------------------------------------
+    % ---------------------------------------------------------------------
     % Display gross thrust at towing force, FD
-    % -------------------------------------------------------------------------
+    % ---------------------------------------------------------------------
     
-    %# Gross thrust = TG = \rho Q vj ------------------------------------------
+    %# Gross thrust = TG = p Q vj -----------------------------------------
     
     TGA_at_FDArray = TGA_at_FDArray';
     [mc,nc] = size(TGA_at_FDArray);
@@ -1080,7 +1174,7 @@ if ma == 9
     ATG_and_F_at_T0 = [];
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     disp('!Self-propulsion points at model scale                   !');
-    disp('!Gross thrust (TG = \rho Q vj) at towing force, FD       !');
+    disp('!Gross thrust (TG = p Q vj) at towing force, FD          !');
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     for k=1:mc
         disp1 = A{k}(1,5);
@@ -1095,7 +1189,7 @@ if ma == 9
         disp(dispString);
     end
     
-    %# Gross thrust = TG = \rho Q (vj - vi) -----------------------------------
+    %# Gross thrust = TG = p Q (vj - vi) ----------------------------------
     
     TGB_at_FDArray = TGB_at_FDArray';
     [mc,nc] = size(TGB_at_FDArray);
@@ -1103,7 +1197,7 @@ if ma == 9
     BTG_and_F_at_T0 = [];
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     disp('!Self-propulsion points at model scale                   !');
-    disp('!Gross thrust (TG = \rho Q (vj - vi)) at towing force, FD!');
+    disp('!Gross thrust (TG = p Q (vj - vi)) at towing force, FD   !');
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     for k=1:mc
         disp1 = A{k}(1,5);
@@ -1134,9 +1228,7 @@ end
 if exist('Marin112mJHSVData.mat', 'file') == 2
     % Load file into shaftSpeedList variable
     load('Marin112mJHSVData.mat');
-    
     %# Results array columns:
-    
     %[1]  Full scale ship speed          (knots)
     %[2]  Full scale ship speed          (m/s)
     %[3]  Model scale ship speed         (m/s)
@@ -1147,7 +1239,6 @@ if exist('Marin112mJHSVData.mat', 'file') == 2
     %# Conditions:
     %# T5 (datasets 1-28)
     %# T5 (datasets 29-54)
-    
 else
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     disp('WARNING: Required data file for MARIN 112m JHSV data (Marin112mJHSVData.mat) does not exist!');
@@ -1158,170 +1249,227 @@ end
 %# END Load shaft speed list (variable name is shaftSpeedList by default)
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-%# Plotting gross thrust vs. towing force
-figurename = 'Thrust Deduction Fractions';
-f = figure('Name',figurename,'NumberTitle','off');
-
-%# Border lines thickness
-setGeneralFontSize = 11;
-setBorderLineWidth = 2;
-
-%# Change default text fonts for plot title
-set(0,'DefaultTextFontname', 'Helvetica');
-set(0,'DefaultTextFontSize', 14);
-
-%# Markes and colors
-setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
-setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};1
-
-%# Gross thrust = TG = \rho Q vj ------------------------------------------
-subplot(1,2,1);
-
-%# Plotting
-
-mx1 = Marin112mJHSVData(1:28,4);
-my1 = Marin112mJHSVData(1:28,5);
-
-mx2 = Marin112mJHSVData(29:54,4);
-my2 = Marin112mJHSVData(29:54,5);
-
-tx1 = [0];
-ty1 = [0];
-
-tx2 = [0];
-ty2 = [0];
-
-tx3 = [0];
-ty3 = [0];
-
-h1 = plot(tx1,ty1,'o',tx2,ty2,'s',tx3,ty3,'d',mx1,my1,mx2,my2);
-title('{\bf Gross thrust defined as T_{G} = \rho Q v_{j}}','FontSize',setGeneralFontSize);
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
-ylabel('{\bf Thrust deduction fraction, t (N)}','FontSize',setGeneralFontSize);
-grid on;
-box on;
-axis square;
-
-%# Font sizes and border
-set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-%# Set plot figure background to a defined color
-%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-set(gcf,'Color',[1,1,1]);
-
-%# Line, colors and markers
-setMarkerSize = 10;
-setLineWidth  = 1;
-setLineStyle  = '-';
-set(h1(1),'Color',setColor{1},'Marker','o ','MarkerSize',setMarkerSize);
-set(h1(2),'Color',setColor{2},'Marker','s','MarkerSize',setMarkerSize);
-set(h1(3),'Color',setColor{3},'Marker','d','MarkerSize',setMarkerSize);
-set(h1(4),'Color',setColor{4},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h1(5),'Color',setColor{5},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-
-%# Axis limitations
-setXLL = 0.14;
-setXUL = 0.70;
-set(gca,'XLim',[setXLL setXUL]);
-set(gca,'XTick',[setXLL:0.04:setXUL]);
-setYLL = -0.3;
-setYUL = 0.7;
-set(gca,'YLim',[setYLL setYUL]);
-set(gca,'YTick',[setYLL:0.1:setYUL]);
-
-%# Legend
-hleg1 = legend('98m by slope','98m t=(TM+FD-RC)/TM where TM at FD','98m using RCW=TG(1-t)+FD where TG at FD','112m MARIN JHSV Cond. T5','112m MARIN JHSV Cond. T4');
-set(hleg1,'Location','NorthEast');
-set(hleg1,'Interpreter','none');
-%legend boxoff;
-
-%# Gross thrust = TG = \rho Q (vj - vi) -----------------------------------
-subplot(1,2,2);
-
-%# Plotting
-
-mx1 = Marin112mJHSVData(1:28,4);
-my1 = Marin112mJHSVData(1:28,5);
-
-mx2 = Marin112mJHSVData(29:54,4);
-my2 = Marin112mJHSVData(29:54,5);
-
-tx1 = [0];
-ty1 = [0];
-
-tx2 = [0];
-ty2 = [0];
-
-tx3 = [0];
-ty3 = [0];
-
-h1 = plot(tx1,ty1,'o',tx2,ty2,'s',tx3,ty3,'d',mx1,my1,mx2,my2);
-title('{\bf Gross thrust defined as T_{G} = \rho Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
-ylabel('{\bf Thrust deduction fraction, t (N)}','FontSize',setGeneralFontSize);
-grid on;
-box on;
-axis square;
-
-%# Font sizes and border
-set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-%# Set plot figure background to a defined color
-%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-set(gcf,'Color',[1,1,1]);
-
-%# Line, colors and markers
-setMarkerSize = 10;
-setLineWidth  = 1;
-setLineStyle  = '-';
-set(h1(1),'Color',setColor{1},'Marker','o ','MarkerSize',setMarkerSize);
-set(h1(2),'Color',setColor{2},'Marker','s','MarkerSize',setMarkerSize);
-set(h1(3),'Color',setColor{3},'Marker','d','MarkerSize',setMarkerSize);
-set(h1(4),'Color',setColor{4},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h1(5),'Color',setColor{5},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-
-%# Axis limitations
-setXLL = 0.14;
-setXUL = 0.70;
-set(gca,'XLim',[setXLL setXUL]);
-set(gca,'XTick',[setXLL:0.04:setXUL]);
-setYLL = -0.3;
-setYUL = 0.7;
-set(gca,'YLim',[setYLL setYUL]);
-set(gca,'YTick',[setYLL:0.1:setYUL]);
-
-%# Legend
-hleg1 = legend('98m by slope','98m t=(TM+FD-RC)/TM where TM at FD','98m using RCW=TG(1-t)+FD where TG at FD','112m MARIN JHSV Cond. T5','112m MARIN JHSV Cond. T4');
-set(hleg1,'Location','NorthEast');
-set(hleg1,'Interpreter','none');
-%legend boxoff;
-
-%# ********************************************************************
-%# Save plot as PNG
-%# ********************************************************************
-
-%# Figure size on screen (50% scaled, but same aspect ratio)
-set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-%# Figure size printed on paper
-set(gcf, 'PaperUnits','centimeters');
-set(gcf, 'PaperSize',[XPlot YPlot]);
-set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-set(gcf, 'PaperOrientation','portrait');
-
-%# Plot title ---------------------------------------------------------
-annotation('textbox', [0 0.9 1 0.1], ...
-    'String', strcat('{\bf ', figurename, '}'), ...
-    'EdgeColor', 'none', ...
-    'HorizontalAlignment', 'center');
-
-%# Save plots as PDF and PNG
-%plotsavenamePDF = sprintff('_plots/%s/Run_70_to_109_Fr_vs_Thrust_Deduction_Fraction_Plot.pdf', 'SPP');
-%saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-plotsavename = sprintf('_plots/%s/Run_70_to_109_Fr_vs_Thrust_Deduction_Fraction_Plot.png', 'SPP');
-saveas(f, plotsavename);                % Save plot as PNG
-%close;
-
+if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
+    
+    %# Plotting gross thrust vs. towing force
+    figurename = 'Thrust Deduction Fractions';
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ----------------------------------------------------
+    
+    % set(gcf, 'PaperSize', [19 19]);
+    % set(gcf, 'PaperPositionMode', 'manual');
+    % set(gcf, 'PaperPosition', [0 0 19 19]);
+    %
+    % set(gcf, 'PaperUnits', 'centimeters');
+    % set(gcf, 'PaperSize', [19 19]);
+    % set(gcf, 'PaperPositionMode', 'manual');
+    % set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    % Fonts and colours -------------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. ------------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
+    
+    %# Gross thrust = TG = p Q vj ---------------------------------------------
+    if enableTGAllisonPlot == 1
+        
+        if enableTGAllisonPlot == 1 && enableTGBosePlot == 1
+            subplot(1,2,1);
+        end
+        
+        %# Plotting
+        
+        mx1 = Marin112mJHSVData(1:28,4);
+        my1 = Marin112mJHSVData(1:28,5);
+        
+        mx2 = Marin112mJHSVData(29:54,4);
+        my2 = Marin112mJHSVData(29:54,5);
+        
+        tx1 = slopesArrayA(:,1);
+        ty1 = slopesArrayA(:,3);
+        
+        tx2 = thrustDedFracArrayA(:,1);
+        ty2 = thrustDedFracArrayA(:,2);
+        
+        tx3 = thrustDedFracArrayA(:,1);
+        ty3 = thrustDedFracArrayA(:,3);
+        
+        h1 = plot(tx1,ty1,'o',tx2,ty2,'s',tx3,ty3,'d',mx1,my1,mx2,my2);
+        if enablePlotTitle == 1
+            title('{\bf Gross thrust defined as T_{G} = p Q v_{j}}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Thrust deduction fraction, t (N)}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Font sizes and border
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Line, colors and markers
+        setMarkerSize1 = 10;
+        setMarkerSize2 = 8;
+        setLineWidth  = 1;
+        setLineStyle1 = '--';
+        setLineStyle2 = '-.';
+        set(h1(1),'Color',setColor{1},'Marker','x','MarkerSize',setMarkerSize1);
+        set(h1(2),'Color',setColor{2},'Marker','s','MarkerSize',setMarkerSize1);
+        set(h1(3),'Color',setColor{3},'Marker','*','MarkerSize',setMarkerSize2);
+        set(h1(4),'Color',setColor{4},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        set(h1(5),'Color',setColor{5},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        
+        %# Axis limitations
+        setXLL = 0.14;
+        setXUL = 0.70;
+        set(gca,'XLim',[setXLL setXUL]);
+        set(gca,'XTick',[setXLL:0.04:setXUL]);
+        setYLL = -0.5;
+        setYUL = 0.7;
+        set(gca,'YLim',[setYLL setYUL]);
+        set(gca,'YTick',[setYLL:0.1:setYUL]);
+        
+        %# Legend
+        hleg1 = legend('98m by slope','98m t=(TM+FD-RC)/TM','98m using RCW=TG(1-t)+FD','112m MARIN JHSV Cond. T5','112m MARIN JHSV Cond. T4');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        %legend boxoff;
+        
+    end
+    
+    %# Gross thrust = TG = p Q (vj - vi) --------------------------------------
+    if enableTGBosePlot == 1
+        
+        if enableTGAllisonPlot == 1 && enableTGBosePlot == 1
+            subplot(1,2,2);
+        end
+        
+        %# Plotting
+        
+        mx1 = Marin112mJHSVData(1:28,4);
+        my1 = Marin112mJHSVData(1:28,5);
+        
+        mx2 = Marin112mJHSVData(29:54,4);
+        my2 = Marin112mJHSVData(29:54,5);
+        
+        tx1 = slopesArrayB(:,1);
+        ty1 = slopesArrayB(:,3);
+        
+        tx2 = thrustDedFracArrayB(:,1);
+        ty2 = thrustDedFracArrayB(:,2);
+        
+        tx3 = thrustDedFracArrayB(:,1);
+        ty3 = thrustDedFracArrayB(:,3);
+        
+        h1 = plot(tx1,ty1,'o',tx2,ty2,'s',tx3,ty3,'d',mx1,my1,mx2,my2);
+        if enablePlotTitle == 1
+            title('{\bf Gross thrust defined as T_{G} = p Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Thrust deduction fraction, t (N)}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Font sizes and border
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Line, colors and markers
+        setMarkerSize1 = 10;
+        setMarkerSize2 = 8;
+        setLineWidth  = 1;
+        setLineStyle1 = '--';
+        setLineStyle2 = '-.';
+        set(h1(1),'Color',setColor{1},'Marker','x','MarkerSize',setMarkerSize1);
+        set(h1(2),'Color',setColor{2},'Marker','s','MarkerSize',setMarkerSize1);
+        set(h1(3),'Color',setColor{3},'Marker','*','MarkerSize',setMarkerSize2);
+        set(h1(4),'Color',setColor{4},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        set(h1(5),'Color',setColor{5},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        
+        %# Axis limitations
+        setXLL = 0.14;
+        setXUL = 0.70;
+        set(gca,'XLim',[setXLL setXUL]);
+        set(gca,'XTick',[setXLL:0.04:setXUL]);
+        setYLL = -0.5;
+        setYUL = 0.7;
+        set(gca,'YLim',[setYLL setYUL]);
+        set(gca,'YTick',[setYLL:0.1:setYUL]);
+        
+        %# Legend
+        hleg1 = legend('98m by slope','98m t=(TM+FD-RC)/TM','98m using RCW=TG(1-t)+FD','112m MARIN JHSV Cond. T5','112m MARIN JHSV Cond. T4');
+        set(hleg1,'Location','NorthEast');
+        set(hleg1,'Interpreter','none');
+        %legend boxoff;
+        
+    end
+    
+    %# ************************************************************************
+    %# Save plot as PNG
+    %# ************************************************************************
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+    
+    %# Plot title -------------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
+    
+    %# Save plots as PDF, PNG and EPS -----------------------------------------
+    minRun = min(resultsArraySPP(:,1));
+    maxRun = max(resultsArraySPP(:,1));
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_%s_Fr_vs_Thrust_Deduction_Fraction_Plot.%s', 'SPP', setFileFormat{k}, num2str(minRun), num2str(maxRun), setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;
+    
+end
 
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 %# 3. Resistance vs. TG at Towing Force (FD) and F at zero Thrust (FT=0)
@@ -1333,150 +1481,201 @@ for k=1:ma
 end
 [resistance] = calBHResistanceBasedOnFr(Froude_Numbers);
 
-%# Plotting gross thrust vs. towing force
-figurename = 'Resistance vs. Gross Thrust at Towing Force F_{D} and Force at Zero Thrust F_{T=0}';
-%figurename = sprintf('%s:: RPM Logger (Raw Data), Run %s', testName, num2str(runno));
-f = figure('Name',figurename,'NumberTitle','off');
-
-%# Border lines thickness
-setGeneralFontSize = 11;
-setBorderLineWidth = 2;
-
-%# Change default text fonts for plot title
-set(0,'DefaultTextFontname', 'Helvetica');
-set(0,'DefaultTextFontSize', 14);
-
-%# Gross thrust = TG = \rho Q vj ------------------------------------------
-subplot(1,2,1);
-
-%# Plotting
-TA = ATG_and_F_at_T0;
-
-x = resistance(:,1);
-y = resistance(:,2);
-x1 = TA(:,1);
-y1 = TA(:,2);
-x2 = TA(:,1);
-y2 = TA(:,3);
-
-h1 = plot(x,y,x1,y1,'s',x2,y2,'d');
-title('{\bf Gross thrust defined as T_{G} = \rho Q v_{j}}','FontSize',setGeneralFontSize);
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
-ylabel('{\bf Resistance and Gross Thrust, T_{G} (N)}','FontSize',setGeneralFontSize);
-grid on;
-box on;
-axis square;
-
-%# Font sizes and border
-set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-%# Set plot figure background to a defined color
-%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-set(gcf,'Color',[1,1,1]);
-
-%# Line, colors and markers
-setMarkerSize = 10;
-setLineWidth  = 2;
-setLineStyle  = '-';
-set(h1(1),'Color','k','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h1(2),'Color','b','Marker','s','MarkerSize',setMarkerSize);
-set(h1(3),'Color','r','Marker','d','MarkerSize',setMarkerSize);
-
-%# Axis limitations
-set(gca,'XLim',[0.22 0.42]);
-set(gca,'XTick',[0.22:0.02:0.42]);
-set(gca,'YLim',[0 40]);
-set(gca,'YTick',[0:5:40]);
-
-%# Legend
-%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-hleg1 = legend('Resistance (RBH)','Gross thrust (TG) at towing force (FD)','Towing force at zero thrust');
-set(hleg1,'Location','NorthWest');
-set(hleg1,'Interpreter','none');
-%legend boxoff;
-
-%# Gross thrust = TG = \rho Q (vj - vi) -----------------------------------
-subplot(1,2,2);
-
-%# Plotting
-TA = BTG_and_F_at_T0;
-
-x = resistance(:,1);
-y = resistance(:,2);
-x1 = TA(:,1);
-y1 = TA(:,2);
-x2 = TA(:,1);
-y2 = TA(:,3);
-
-h1 = plot(x,y,x1,y1,'s',x2,y2,'d');
-title('{\bf Gross thrust defined as T_{G} = \rho Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
-ylabel('{\bf Resistance and Gross Thrust, T_{G} (N)}','FontSize',setGeneralFontSize);
-grid on;
-box on;
-axis square;
-
-%# Font sizes and border
-set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-%# Set plot figure background to a defined color
-%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-set(gcf,'Color',[1,1,1]);
-
-%# Line, colors and markers
-setMarkerSize = 10;
-setLineWidth  = 2;
-setLineStyle  = '-';
-set(h1(1),'Color','k','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h1(2),'Color','b','Marker','s','MarkerSize',setMarkerSize);
-set(h1(3),'Color','r','Marker','d','MarkerSize',setMarkerSize);
-
-%# Axis limitations
-set(gca,'XLim',[0.22 0.42]);
-set(gca,'XTick',[0.22:0.02:0.42]);
-set(gca,'YLim',[0 40]);
-set(gca,'YTick',[0:5:40]);
-
-%# Legend
-%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-hleg1 = legend('Resistance (RBH)','Gross thrust (TG) at towing force (FD)','Towing force at zero thrust');
-set(hleg1,'Location','NorthWest');
-set(hleg1,'Interpreter','none');
-%legend boxoff;
-
-%# ********************************************************************
-%# Save plot as PNG
-%# ********************************************************************
-
-%# Figure size on screen (50% scaled, but same aspect ratio)
-set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-%# Figure size printed on paper
-set(gcf, 'PaperUnits','centimeters');
-set(gcf, 'PaperSize',[XPlot YPlot]);
-set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-set(gcf, 'PaperOrientation','portrait');
-
-%# Plot title ---------------------------------------------------------
-annotation('textbox', [0 0.9 1 0.1], ...
-    'String', strcat('{\bf ', figurename, '}'), ...
-    'EdgeColor', 'none', ...
-    'HorizontalAlignment', 'center');
-
-%# Save plots as PDF and PNG
-%plotsavenamePDF = sprintff('_plots/%s/Run_70_to_109_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot.pdf', 'SPP');
-%saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-plotsavename = sprintf('_plots/%s/Run_70_to_109_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot.png', 'SPP');
-saveas(f, plotsavename);                % Save plot as PNG
-close;
-
-
-% -------------------------------------------------------------------------
-% Clear variables
-% -------------------------------------------------------------------------
-%clearvars timeData Raw_CH_0_Speed Raw_CH_1_LVDTFwd Raw_CH_2_LVDTAftRaw_CH_3_Drag  Raw_CH_4_PortRPM Raw_CH_5_StbdRPM Raw_CH_6_PortThrust Raw_CH_7_PortTorque Raw_CH_8_StbdThrust Raw_CH_9_StbdTorque Raw_CH_10_PortKP Raw_CH_11_StbdKP
-%clearvars Time_Zero Time_CF CH_0_Zero CH_0_CF CH_1_Zero CH_1_CF CH_2_Zero CH_2_CF CH_3_Zero CH_3_CF CH_4_Zero CH_4_CF CH_5_Zero CH_5_CF CH_6_Zero CH_6_CF CH_7_Zero CH_7_CF CH_8_Zero CH_8_CF CH_9_Zero CH_9_CF CH_10_Zero CH_10_CF CH_11_Zero CH_11_CF
-
+if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
+    
+    %# Plotting gross thrust vs. towing force
+    figurename = 'Resistance vs. Gross Thrust at Towing Force F_{D} and Force at Zero Thrust F_{T=0}';
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ----------------------------------------------------
+    
+    % set(gcf, 'PaperSize', [19 19]);
+    % set(gcf, 'PaperPositionMode', 'manual');
+    % set(gcf, 'PaperPosition', [0 0 19 19]);
+    %
+    % set(gcf, 'PaperUnits', 'centimeters');
+    % set(gcf, 'PaperSize', [19 19]);
+    % set(gcf, 'PaperPositionMode', 'manual');
+    % set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    % Fonts and colours -------------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. ------------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
+    
+    %# Gross thrust = TG = p Q vj ---------------------------------------------
+    if enableTGAllisonPlot == 1
+        
+        if enableTGAllisonPlot == 1 && enableTGBosePlot == 1
+            subplot(1,2,1);
+        end
+        
+        %# Plotting
+        TA = ATG_and_F_at_T0;
+        
+        x = resistance(:,1);
+        y = resistance(:,2);
+        x1 = TA(:,1);
+        y1 = TA(:,2);
+        x2 = TA(:,1);
+        y2 = TA(:,3);
+        
+        h1 = plot(x,y,x1,y1,'s',x2,y2,'d');
+        if enablePlotTitle == 1
+            title('{\bf Gross thrust defined as T_{G} = p Q v_{j}}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Resistance and Gross Thrust, T_{G} (N)}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Font sizes and border
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Line, colors and markers
+        setMarkerSize1     = 10;
+        setMarkerSize2     = 9;
+        setLineWidth       = 2;
+        setLineWidthMarker = 1;
+        setLineStyle       = '-';
+        set(h1(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+        set(h1(2),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+        set(h1(3),'Color',setColor{1},'Marker',setMarker{8},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+        
+        %# Axis limitations
+        set(gca,'XLim',[0.22 0.42]);
+        set(gca,'XTick',[0.22:0.02:0.42]);
+        set(gca,'YLim',[0 40]);
+        set(gca,'YTick',[0:5:40]);
+        
+        %# Legend
+        %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+        hleg1 = legend('Resistance (RBH)','Gross thrust (TG) at towing force (FD)','Towing force at zero thrust');
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        %legend boxoff;
+    end
+    
+    %# Gross thrust = TG = p Q (vj - vi) --------------------------------------
+    if enableTGBosePlot == 1
+        
+        if enableTGAllisonPlot == 1 && enableTGBosePlot == 1
+            subplot(1,2,2);
+        end
+        
+        %# Plotting
+        TA = BTG_and_F_at_T0;
+        
+        x = resistance(:,1);
+        y = resistance(:,2);
+        x1 = TA(:,1);
+        y1 = TA(:,2);
+        x2 = TA(:,1);
+        y2 = TA(:,3);
+        
+        h1 = plot(x,y,x1,y1,'s',x2,y2,'d');
+        if enablePlotTitle == 1
+            title('{\bf Gross thrust defined as T_{G} = p Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Resistance and Gross Thrust, T_{G} (N)}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Font sizes and border
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Line, colors and markers
+        setMarkerSize1     = 10;
+        setMarkerSize2     = 9;
+        setLineWidth       = 2;
+        setLineWidthMarker = 1;
+        setLineStyle       = '-';
+        set(h1(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+        set(h1(2),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+        set(h1(3),'Color',setColor{1},'Marker',setMarker{8},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+        
+        %# Axis limitations
+        set(gca,'XLim',[0.22 0.42]);
+        set(gca,'XTick',[0.22:0.02:0.42]);
+        set(gca,'YLim',[0 40]);
+        set(gca,'YTick',[0:5:40]);
+        
+        %# Legend
+        %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+        hleg1 = legend('Resistance (RBH)','Gross thrust (TG) at towing force (FD)','Towing force at zero thrust');
+        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Interpreter','none');
+        %legend boxoff;
+    end
+    
+    %# ************************************************************************
+    %# Save plot as PNG
+    %# ************************************************************************
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+    
+    %# Plot title -------------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
+    
+    %# Save plots as PDF, PNG and EPS -----------------------------------------
+    minRun = min(resultsArraySPP(:,1));
+    maxRun = max(resultsArraySPP(:,1));
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_%s_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot.%s', 'SPP', setFileFormat{k}, num2str(minRun), num2str(maxRun), setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;
+    
+end
 
 % -------------------------------------------------------------------------
 % View profile
