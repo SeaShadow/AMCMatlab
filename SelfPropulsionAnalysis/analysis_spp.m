@@ -2,8 +2,8 @@
 %# Self-Propulsion Test Analysis
 %# ------------------------------------------------------------------------
 %#
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  September 16, 2014
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  September 22, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -125,19 +125,23 @@ CorrCoeff  = 0;                               % Correlation coefficient, Ca
 
 % Pump diameter, Dp, (m)
 FS_PumpDia     = 1.2;
-MS_PumpDia     = 0.056;
+%MS_PumpDia     = 0.056;
+MS_PumpDia     = FS_PumpDia/FStoMSratio;
 
-% Effective nozzle diamter, Dn, (m)
+% Effective nozzle diameter, Dn, (m)
 FS_EffNozzDia  = 0.72;
-MS_EffNozzDia  = 0.033;
+%MS_EffNozzDia  = 0.033;
+MS_EffNozzDia  = FS_EffNozzDia/FStoMSratio;
 
 % Nozzle area, An, (m^2)
-FS_NozzArea    = 0.41;
-MS_NozzArea    = 0.00087;
+FS_NozzArea    = 0.4072;
+%MS_NozzArea    = 0.00087;
+MS_NozzArea    = ((FS_EffNozzDia/2)/FStoMSratio)^2*pi;
 
 % Impeller diameter, Di, (m)
 FS_ImpDia      = 1.582;
-MS_ImpDia      = 0.073;
+%MS_ImpDia      = 0.073;
+MS_ImpDia      = FS_ImpDia/FStoMSratio;
 
 % Pump inlet area, A4, (m^2)
 FS_PumpInlArea = 1.99;
@@ -147,11 +151,20 @@ MS_PumpInlArea = 0.004;
 FS_PumpMaxArea = 0.67;
 MS_PumpMaxArea = 0.001;
 
+
+%# ************************************************************************
 % Wake fractions (from self-propulsion test) for 9 speeds
 % Order of wake fractions is based on Fr=0.24, 0.26, 0.28 to 0.40
 % See Excel file: Run Sheet - Self-Propulsion Test.xlsx
-PortWakeFractions = [0.781 0.780 0.782 0.783 0.783 0.779 0.780 0.778 0.780];
-StbdWakeFractions = [0.784 0.783 0.785 0.784 0.786 0.780 0.782 0.780 0.782];
+%# ************************************************************************
+
+% Constant n (i.e. 6.675) value
+PortWakeFractions = [0.808 0.805 0.806 0.807 0.809 0.806 0.810 0.812 0.820];
+StbdWakeFractions = [0.811 0.808 0.809 0.808 0.811 0.807 0.812 0.815 0.822];
+
+% n value based on fitted equation (polynomial)
+%PortWakeFractions = [0.794 0.792 0.796 0.798 0.801 0.799 0.805 0.809 0.818];
+%StbdWakeFractions = [0.798 0.796 0.798 0.799 0.803 0.801 0.807 0.811 0.820];
 
 %# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 %# CONDITION: 1,500 tonnes, level static trim, trim tab at 5 degrees
@@ -188,8 +201,8 @@ cutSamplesFromEnd = 0;
 %# START FILE LOOP FOR RUNS startRun to endRun
 %# ------------------------------------------------------------------------
 
-% startRun = 70;      % Start run
-% endRun   = 70;      % Stop run
+%startRun = 70;      % Start run
+%endRun   = 70;      % Stop run
 
 startRun = 70;       % Start run
 endRun   = 109;      % Stop run
@@ -408,12 +421,12 @@ if exist('resultsArraySPP.dat', 'file') == 0
         [CH_2_LVDTAft CH_2_LVDTAft_Mean]       = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
         [CH_3_Drag CH_3_Drag_Mean]             = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);
         
-        [RPMStbd RPMPort]                      = analysis_rpm(k,name,Fs,timeData,Raw_CH_5_StbdRPM,Raw_CH_4_PortRPM);
-        
         [CH_6_PortThrust CH_6_PortThrust_Mean] = analysis_realunits(Raw_CH_6_PortThrust,CH_6_Zero,CH_6_CF);
         [CH_7_PortTorque CH_7_PortTorque_Mean] = analysis_realunits(Raw_CH_7_PortTorque,CH_7_Zero,CH_7_CF);
         [CH_8_StbdThrust CH_8_StbdThrust_Mean] = analysis_realunits(Raw_CH_8_StbdThrust,CH_8_Zero,CH_8_CF);
         [CH_9_StbdTorque CH_9_StbdTorque_Mean] = analysis_realunits(Raw_CH_9_StbdTorque,CH_9_Zero,CH_9_CF);
+        
+        [RPMStbd RPMPort]                      = analysis_rpm(k,name,Fs,timeData,Raw_CH_5_StbdRPM,Raw_CH_4_PortRPM);
         
         % /////////////////////////////////////////////////////////////////////
         % DISPLAY RESULTS
@@ -518,13 +531,13 @@ if exist('resultsArraySPP.dat', 'file') == 0
         
         % New columns added 15/7/2014
         sslIndex = find(shaftSpeedList == k);
-        
         if isempty(sslIndex) == 1
             shaftSpeedRPM = 0;
         else
-            shaftSpeedRPM = shaftSpeedList(sslIndex,2);
+            %shaftSpeedRPM = shaftSpeedList(sslIndex,2);
+            % Actual (averaged PORT and STBD) shaft speed (i.e. measured shaft speed)
+            shaftSpeedRPM = (RPMStbd+RPMPort)/2;
         end
-        
         resultsArraySPP(k, 19)  = shaftSpeedRPM;                                        % Shaft/motor speed (RPM)
         
         MSspeed = CH_0_Speed_Mean;
@@ -640,6 +653,8 @@ if exist('resultsArraySPP.dat', 'file') == 0
             %disp('Speed 9');
             setPortWF = PortWakeFractions(9);
             setStbdWF = StbdWakeFractions(9);
+        else
+            disp('Oops.. something is wrong here, run is not in speed list!');
         end
         
         % Wake fraction
@@ -705,7 +720,7 @@ if exist('resultsArraySPP.dat', 'file') == 0
     %close(w);
     
     % /////////////////////////////////////////////////////////////////////
-    % START: Write results to CVS
+    % START: Write results to DAT and TXT
     % ---------------------------------------------------------------------
     
     resultsArraySPP = resultsArraySPP(any(resultsArraySPP,2),:);           % Remove zero rows
@@ -715,7 +730,7 @@ if exist('resultsArraySPP.dat', 'file') == 0
     %dlmwrite('resultsArraySPP.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
     
     % ---------------------------------------------------------------------
-    % END: Write results to CVS
+    % END: Write results to DAT and TXT
     % /////////////////////////////////////////////////////////////////////
     
 else
@@ -796,7 +811,7 @@ for k=1:ma
     GrossThrustAtFD     = spline(x,polyv,xq);
     TowingForceFD       = A{k}(1,28);
     CalmWaterResistance = -7932.12*FroudeNos(k)^5+13710.12*FroudeNos(k)^4-9049.96*FroudeNos(k)^3+2989.46*FroudeNos(k)^2-386.61*FroudeNos(k)+18.6;
-    
+
     % Froude number
     thrustDedFracArrayB(k, 1) = FroudeNos(k);
     % t=(TM+FD-RC)/TM
