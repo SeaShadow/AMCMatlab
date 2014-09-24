@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  September 22, 2014
+%# Date       :  September 24, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -117,11 +117,31 @@ saltwaterdensity    = 1025;                   % Salt water scale water density  
 distbetwposts       = 1150;                   % Distance between carriage posts  (mm)
 FStoMSratio         = 21.6;                   % Full scale to model scale ratio  (-)
 
+%# ************************************************************************
+%# CONDITION: 1,500 tonnes, level static trim, trim tab at 5 degrees
+%# ------------------------------------------------------------------------
+MSlwl           = 4.30;                          % Model length waterline          (m)
+MSwsa           = 1.501;                         % Model scale wetted surface area (m^2)
+MSdraft         = 0.133;                         % Model draft                     (m)
+MSAx            = 0.024;                         % Model area of max. transverse section (m^2)
+BlockCoeff      = 0.592;                         % Mode block coefficient          (-)
+FSlwl           = MSlwl*FStoMSratio;             % Full scale length waterline     (m)
+FSwsa           = MSwsa*FStoMSratio^2;           % Full scale wetted surface area  (m^2)
+FSdraft         = MSdraft*FStoMSratio;           % Full scale draft                (m)
+%# ------------------------------------------------------------------------
+%# END CONSTANTS AND PARTICULARS
+%# ************************************************************************
+
 % Form factors and correlaction coefficient
 FormFactor = 1.18;                            % Form factor (1+k)
 CorrCoeff  = 0;                               % Correlation coefficient, Ca
+% Correlation coefficient, typical value. See Bose (2008), equation 2-4, page 6.
+%CorrCoeff  = (105*((150*10^(-6))/MSlwl)^(1/3)-0.64)*10^(-3);
 
-% Waterjet constants (FS = full scale and MS = model scale)
+% Waterjet constants (FS = full scale and MS = model scale) ---------------
+
+% Width factor (typical value, source??)
+WidthFactor    = 1.3;
 
 % Pump diameter, Dp, (m)
 FS_PumpDia     = 1.2;
@@ -151,35 +171,11 @@ MS_PumpInlArea = 0.004;
 FS_PumpMaxArea = 0.67;
 MS_PumpMaxArea = 0.001;
 
+% Boundary layer: Power law factors (-)
+BLPLFactorArray  = [6.675 6.675 6.675 6.675 6.675 6.675 6.675 6.675 6.675];
 
-%# ************************************************************************
-% Wake fractions (from self-propulsion test) for 9 speeds
-% Order of wake fractions is based on Fr=0.24, 0.26, 0.28 to 0.40
-% See Excel file: Run Sheet - Self-Propulsion Test.xlsx
-%# ************************************************************************
-
-% Constant n (i.e. 6.675) value
-PortWakeFractions = [0.808 0.805 0.806 0.807 0.809 0.806 0.810 0.812 0.820];
-StbdWakeFractions = [0.811 0.808 0.809 0.808 0.811 0.807 0.812 0.815 0.822];
-
-% n value based on fitted equation (polynomial)
-%PortWakeFractions = [0.794 0.792 0.796 0.798 0.801 0.799 0.805 0.809 0.818];
-%StbdWakeFractions = [0.798 0.796 0.798 0.799 0.803 0.801 0.807 0.811 0.820];
-
-%# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-%# CONDITION: 1,500 tonnes, level static trim, trim tab at 5 degrees
-%# ------------------------------------------------------------------------
-MSlwl           = 4.30;                          % Model length waterline          (m)
-MSwsa           = 1.501;                         % Model scale wetted surface area (m^2)
-MSdraft         = 0.133;                         % Model draft                     (m)
-MSAx            = 0.024;                         % Model area of max. transverse section (m^2)
-BlockCoeff      = 0.592;                         % Mode block coefficient          (-)
-FSlwl           = MSlwl*FStoMSratio;             % Full scale length waterline     (m)
-FSwsa           = MSwsa*FStoMSratio^2;           % Full scale wetted surface area  (m^2)
-FSdraft         = MSdraft*FStoMSratio;           % Full scale draft                (m)
-%# ------------------------------------------------------------------------
-%# END CONSTANTS AND PARTICULARS
-%# ************************************************************************
+% Boundary layer: Thickness (m)
+BLThicknessArray = [0.0449 0.0451 0.0450 0.0445 0.0436 0.0425 0.0410 0.0392 0.0370];
 
 %# -------------------------------------------------------------------------
 %# Number of headerlines in DAT file
@@ -441,7 +437,7 @@ if exist('resultsArraySPP.dat', 'file') == 0
         %[4]  Record time                 (s)
         
         %[5]  Froude length number        (-)
-        %[6]  Speed                       (m/s)
+        %[6]  Speed (vm)                  (m/s)
         %[7]  Forward LVDT                (mm)
         %[8]  Aft LVDT                    (mm)
         %[9]  Drag                        (g)
@@ -458,29 +454,29 @@ if exist('resultsArraySPP.dat', 'file') == 0
         
         % New columns added 15/7/2014
         %[19] Shaft/motor speed           (RPM)
-        %[20] Ship speed                  (m/s)
-        %[21] Ship speed                  (knots)
+        %[20] Ship speed (vs)             (m/s)
+        %[21] Ship speed (vs)             (knots)
         
-        %[22] Model scale Reynolds number (-)
-        %[23] Full scale Reynolds number  (-)
+        %[22] Model scale Reynolds number (Rem) (-)
+        %[23] Full scale Reynolds number (Res)  (-)
         
         %[24] Model scale frictional resistance coefficient (Grigson), CFm (-)
         %[25] Full scale Frictional resistance coefficient (Grigson), CFs  (-)
         %[26] Correleation coefficient, Ca                                 (-)
-        %[27] Form factor                                                  (-)
-        %[28] Towing force, FD                                             (N)
-        %[29] Towing force coefficient, CFD                                (-)
+        %[27] Form factor (1+k)                                            (-)
+        %[28] Towing force, (FD)                                           (N)
+        %[29] Towing force coefficient, (CFD)                              (-)
         
         % Mass flow rate and jet velocity
-        %[30] PORT: Mass flow rate        (Kg/s)
-        %[31] STBD: Mass flow rate        (Kg/s)
-        %[32] PORT: Mass flow rate        (m^3/s)
-        %[33] STBD: Mass flow rate        (m^3/s)
+        %[30] PORT: Mass flow rate (pQJ)  (Kg/s)
+        %[31] STBD: Mass flow rate (pQJ)  (Kg/s)
+        %[32] PORT: Mass flow rate (QJ)   (m^3/s)
+        %[33] STBD: Mass flow rate (QJ)   (m^3/s)
         
-        %[34] PORT: Jet velocity          (m/s)
-        %[35] STBD: Jet velocity          (m/s)
+        %[34] PORT: Jet velocity (vj)     (m/s)
+        %[35] STBD: Jet velocity (vj)     (m/s)
         
-        % Wake fraction and gross thrust
+        % Wake fraction
         %[36] PORT: Wake fraction (1-w)   (-)
         %[37] STBD: Wake fraction (1-w)   (-)
         
@@ -496,6 +492,13 @@ if exist('resultsArraySPP.dat', 'file') == 0
         %[43] PORT: Gross thrust, TG      (N)
         %[44] STBD: Gross thrust, TG      (N)
         %[45] Total gross thrust, TG      (N)
+        
+        % New values added on 24/9/2014
+        %[46] Power law factor                             (-)
+        %[47] Boundary layer thickness                     (m)
+        %[48] Volume flow rate inside boundary layer (Qbl) (m^3/s)
+        %[49] PORT: Wake fraction (w)                      (-)
+        %[50] STBD: Wake fraction (w)                      (-)
         
         % General data
         resultsArraySPP(k, 1)  = k;                                                     % Run No.
@@ -607,65 +610,60 @@ if exist('resultsArraySPP.dat', 'file') == 0
         resultsArraySPP(k, 31)  = StbdMfr;                                   % STBD: Mass flow rate (Kg/s)
         
         % Volume flow rate
-        resultsArraySPP(k, 32)  = PortMfr/freshwaterdensity;                 % PORT: Volume flow rate (m^3/s)
-        resultsArraySPP(k, 33)  = StbdMfr/freshwaterdensity;                 % STBD: Volume flow rate (m^3/s)
+        PortVfr = PortMfr/freshwaterdensity;
+        StbdVfr = StbdMfr/freshwaterdensity;
+        resultsArraySPP(k, 32)  = PortVfr;                                   % PORT: Volume flow rate (m^3/s)
+        resultsArraySPP(k, 33)  = StbdVfr;                                   % STBD: Volume flow rate (m^3/s)
         
         % Jet velocity
         resultsArraySPP(k, 34)  = (PortMfr/freshwaterdensity)/MS_NozzArea;   % PORT: Jet velocity (m/s)
         resultsArraySPP(k, 35)  = (StbdMfr/freshwaterdensity)/MS_NozzArea;   % STBD: Jet velocity (m/s)
         
         % Wake fraction and gross thrust
-        setPortWF = 1;
-        setStbdWF = 1;
         if any(k==RunsForSpeed1)
-            %disp('Speed 1');
-            setPortWF = PortWakeFractions(1);
-            setStbdWF = StbdWakeFractions(1);
+            setSpeed = 1;
         elseif any(k==RunsForSpeed2)
-            %disp('Speed 2');
-            setPortWF = PortWakeFractions(2);
-            setStbdWF = StbdWakeFractions(2);
+            setSpeed = 2;
         elseif any(k==RunsForSpeed3)
-            %disp('Speed 3');
-            setPortWF = PortWakeFractions(3);
-            setStbdWF = StbdWakeFractions(3);
+            setSpeed = 3;
         elseif any(k==RunsForSpeed4)
-            %disp('Speed 4');
-            setPortWF = PortWakeFractions(4);
-            setStbdWF = StbdWakeFractions(4);
+            setSpeed = 4;
         elseif any(k==RunsForSpeed5)
-            %disp('Speed 5');
-            setPortWF = PortWakeFractions(5);
-            setStbdWF = StbdWakeFractions(5);
+            setSpeed = 5;
         elseif any(k==RunsForSpeed6)
-            %disp('Speed 6');
-            setPortWF = PortWakeFractions(6);
-            setStbdWF = StbdWakeFractions(6);
+            setSpeed = 6;
         elseif any(k==RunsForSpeed7)
-            %disp('Speed 7');
-            setPortWF = PortWakeFractions(7);
-            setStbdWF = StbdWakeFractions(7);
+            setSpeed = 7;
         elseif any(k==RunsForSpeed8)
-            %disp('Speed 8');
-            setPortWF = PortWakeFractions(8);
-            setStbdWF = StbdWakeFractions(8);
+            setSpeed = 8;
         elseif any(k==RunsForSpeed9)
-            %disp('Speed 9');
-            setPortWF = PortWakeFractions(9);
-            setStbdWF = StbdWakeFractions(9);
+            setSpeed = 9;
         else
             disp('Oops.. something is wrong here, run is not in speed list!');
         end
         
-        % Wake fraction
-        resultsArraySPP(k, 36)  = setPortWF;         % PORT: Wake fraction (1-w) (-)
-        resultsArraySPP(k, 37)  = setStbdWF;         % STBD: Wake fraction (1-w) (-)
+        if any(k==RunsForSpeed1) || any(k==RunsForSpeed2) || any(k==RunsForSpeed3) || any(k==RunsForSpeed4) || any(k==RunsForSpeed5) || any(k==RunsForSpeed6) || any(k==RunsForSpeed7) || any(k==RunsForSpeed8) || any(k==RunsForSpeed9)
+            %disp(sprintf('Speed: %s',num2str(setSpeed)));
+            BLPLFactor  = BLPLFactorArray(setSpeed);
+            BLThickness = BLThicknessArray(setSpeed);
+            QBL         = CH_0_Speed_Mean*WidthFactor*MS_PumpDia*BLThickness*(BLPLFactor/(BLPLFactor+1));
+            setPortWF   = 1-((BLPLFactor+1)/(BLPLFactor+2))*(PortVfr/QBL)^(1/(BLPLFactor+1));
+            setStbdWF   = 1-((BLPLFactor+1)/(BLPLFactor+2))*(StbdVfr/QBL)^(1/(BLPLFactor+1));
+        else
+            BLPLFactor  = 0;
+            BLThickness = 0;
+            QBL         = 0;
+            setPortWF   = 1;
+            setStbdWF   = 1;
+        end
+        
+        % Wake fraction (1-w)
+        resultsArraySPP(k, 36)  = 1-setPortWF;       % PORT: Wake fraction (1-w) (-)
+        resultsArraySPP(k, 37)  = 1-setStbdWF;       % STBD: Wake fraction (1-w) (-)
         
         % Inlet velocity
-        PortWF = resultsArraySPP(k, 36);
-        StbdWF = resultsArraySPP(k, 37);
-        resultsArraySPP(k, 38)  = MSspeed*PortWF;    % PORT: Inlet velocity, vi (m/s)
-        resultsArraySPP(k, 39)  = MSspeed*StbdWF;    % STBD: Inlet velocity, vi (m/s)
+        resultsArraySPP(k, 38)  = MSspeed*resultsArraySPP(k, 36); % PORT: Inlet velocity, vi (m/s)
+        resultsArraySPP(k, 39)  = MSspeed*resultsArraySPP(k, 37); % STBD: Inlet velocity, vi (m/s)
         
         % Variables for gross thrust (TG)
         PortJetVel = resultsArraySPP(k, 34);         % Port jet velocity (m/s)
@@ -676,7 +674,6 @@ if exist('resultsArraySPP.dat', 'file') == 0
         % Gross thrust = TG = p Q (vj - vi)
         TG1Port = PortMfr*(PortJetVel-PortInlVel);
         TG1Stbd = StbdMfr*(StbdJetVel-StbdInlVel);
-        
         resultsArraySPP(k, 40)  = TG1Port;           % PORT: Gross thrust, TG (N)
         resultsArraySPP(k, 41)  = TG1Stbd;           % STBD: Gross thrust, TG (N)
         resultsArraySPP(k, 42)  = TG1Port+TG1Stbd;   % TOTAL gross thrust, TG (N)
@@ -684,10 +681,18 @@ if exist('resultsArraySPP.dat', 'file') == 0
         % Gross thrust = TG = p Q vj
         TG2Port  = PortMfr*PortJetVel;
         TG2Stbd  = StbdMfr*StbdJetVel;
-        
         resultsArraySPP(k, 43)  = TG2Port;           % PORT: Gross thrust, TG (N)
         resultsArraySPP(k, 44)  = TG2Stbd;           % STBD: Gross thrust, TG (N)
         resultsArraySPP(k, 45)  = TG2Port+TG2Stbd;   % TOTAL gross thrust, TG (N)
+        
+        % New values added on 24/9/2014
+        resultsArraySPP(k, 46) = BLPLFactor;
+        resultsArraySPP(k, 47) = BLThickness;
+        resultsArraySPP(k, 48) = QBL;
+        
+        % Wake fraction w
+        resultsArraySPP(k, 49) = setPortWF;
+        resultsArraySPP(k, 50) = setStbdWF;
         
         %# Prepare strings for display ----------------------------------------
         
@@ -811,7 +816,7 @@ for k=1:ma
     GrossThrustAtFD     = spline(x,polyv,xq);
     TowingForceFD       = A{k}(1,28);
     CalmWaterResistance = -7932.12*FroudeNos(k)^5+13710.12*FroudeNos(k)^4-9049.96*FroudeNos(k)^3+2989.46*FroudeNos(k)^2-386.61*FroudeNos(k)+18.6;
-
+    
     % Froude number
     thrustDedFracArrayB(k, 1) = FroudeNos(k);
     % t=(TM+FD-RC)/TM
@@ -1121,10 +1126,14 @@ if ma == 9
             setSpeed=9;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
             
             %# Axis limitations
-            set(gca,'XLim',[0 40]);
-            set(gca,'XTick',[0:5:40]);
-            set(gca,'YLim',[-5 25]);
-            set(gca,'YTick',[-5:5:25]);
+            %set(gca,'XLim',[0 40]);
+            %set(gca,'XTick',[0:5:40]);
+            %set(gca,'YLim',[-5 25]);
+            %set(gca,'YTick',[-5:5:25]);
+            set(gca,'XLim',[0 60]);
+            set(gca,'XTick',[0:5:60]);
+            set(gca,'YLim',[-5 35]);
+            set(gca,'YTick',[-5:5:35]);
             
             %# Legend
             %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
