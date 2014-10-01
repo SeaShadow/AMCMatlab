@@ -3,13 +3,13 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  September 23, 2014
+%# Date       :  October 1, 2014
 %#
 %# Description:  Pumpcurve analysis for different RPM in full scale.
 %#
 %# ------------------------------------------------------------------------
 %#
-%# CHANGES    :  23/09/2014 - File creation
+%# CHANGES    :  01/10/2014 - File creation
 %#               dd/mm/yyyy - ...
 %#
 %# ------------------------------------------------------------------------
@@ -33,11 +33,21 @@ delete(allPlots);   % Close all plots
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
-enablePlotMainTitle     = 0;    % Show plot title in saved file
-enablePlotTitle         = 0;    % Show plot title above plot
-enableTextOnPlot        = 0;    % Show text on plot
-enableBlackAndWhitePlot = 1;    % Show plot in black and white
-enableEqnOfFitPlot      = 0;    % Show equations of fit
+% Main and plot titles
+enablePlotMainTitle       = 0;    % Show plot title in saved file
+enablePlotTitle           = 0;    % Show plot title above plot
+
+% Text on plot
+enableTextOnPlot          = 0;    % Show text on plot
+
+% Plot color
+enableBlackAndWhitePlot   = 1;    % Show plot in black and white
+
+% Equation of fit
+enableEqnOfFitPlot        = 1;    % Show equations of fit
+
+% Command window output
+enableCommandWindowOutput = 1;    % Show command windown ouput
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
@@ -51,19 +61,19 @@ if exist('LJ120EPumpcurveData568RPM.mat', 'file') == 2
     %# Load file into LJ120EPCData variable
     
     %# Waterjet details:
-        % Full scale data
-        % Shaft speed:      568 RPM
-        DefaultPCShaftSpeedRPM = 568;
-        DefaultPCShaftSpeedRPS = DefaultPCShaftSpeedRPM/60;
-        % Inlet diameter:   1.2m
+    % Full scale data
+    % Shaft speed:      568 RPM
+    DefaultPCShaftSpeedRPM = 568;
+    DefaultPCShaftSpeedRPS = DefaultPCShaftSpeedRPM/60;
+    % Inlet diameter:   1.2m
     
     %# Columns:
-        %[1]  Flow coefficient                          (-)
-        %[2]  Head coefficient                          (-)
-        %[3]  Pump efficiency                           (-)
-        %[4]  NPSH (Net positive suction head) 1%/H     (-)
-        %[5]  Volume flow rate                          (m^3/s)
-        %[6]  Pump head                                 (-)
+    %[1]  Flow coefficient                          (-)
+    %[2]  Head coefficient                          (-)
+    %[3]  Pump efficiency                           (-)
+    %[4]  NPSH (Net positive suction head) 1%/H     (-)
+    %[5]  Volume flow rate                          (m^3/s)
+    %[6]  Pump head                                 (-)
     
     load('LJ120EPumpcurveData568RPM.mat');
 else
@@ -206,14 +216,14 @@ end
 % MSPortShaftRPM = [2640];
 % MSStbdShaftRPM = [2640];
 % MSAvgShaftRPM  = [2640];
-% 
+%
 % MSPortShaftRPM = [1000 2000];
 % MSStbdShaftRPM = [1000 2000];
 % MSAvgShaftRPM  = [1000 2000];
 
-MSPortShaftRPM = [1745.733 1853.208 1983.190 2088.459 2201.762 2285.104 2370.432 2497.063 2658.391];
-MSStbdShaftRPM = [1745.733 1853.208 1983.190 2088.459 2201.762 2285.104 2370.432 2497.063 2658.391];
-MSAvgShaftRPM  = [1745.733 1853.208 1983.190 2088.459 2201.762 2285.104 2370.432 2497.063 2658.391];
+MSPortShaftRPM = [1745.177 1852.405 1982.722 2063.672 2201.594 2283.808 2368.157 2497.740 2657.814];
+MSStbdShaftRPM = [1746.288 1854.011 1983.657 2113.248 2201.936 2286.400 2372.713 2496.387 2658.970];
+MSAvgShaftRPM  = [1745.732 1853.208 1983.189 2088.460 2201.765 2285.104 2370.435 2497.063 2658.392];
 
 % Active shaft RPM list
 activeShaftRPMList = MSPortShaftRPM;
@@ -229,7 +239,7 @@ activeShaftRPMList = MSPortShaftRPM;
 resultsArrayLJ120EPc = [];
 PcArray = [];
 for k=1:np
-    
+
     [mra,nra] = size(resultsArrayLJ120EPc);
     
     % Define MS and FS shaft speed variables
@@ -251,22 +261,22 @@ for k=1:np
     
     %# Add results to dedicated array for simple export
     %# Columns:
-        %[1]  Speed number                              (#)
-        %[2]  Model scale (MS) shaft speed              (RPM)
-        %[3]  Model scale (MS) shaft speed              (RPS)
-        %[4]  Full scale (FS) shaft speed               (RPM)
-        %[5]  Full scale (FS) shaft speed               (RPS)
-        %[6]  Volume flow rate (QJ)                     (m^3/s)
-        %[7]  Pump head (H35)                           (-)
-        %[8]  Flow coefficient                          (-)
-        %[9]  Head coefficient                          (-)
-        %[10] Pump efficiency                           (-)
-        %[11] Mass flow rate                            (Kg/s)
-        %[12] Jet velocity (vj)                         (m/s)
+    %[1]  Speed number                              (#)
+    %[2]  Model scale (MS) shaft speed              (RPM)
+    %[3]  Model scale (MS) shaft speed              (RPS)
+    %[4]  Full scale (FS) shaft speed               (RPM)
+    %[5]  Full scale (FS) shaft speed               (RPS)
+    %[6]  Volume flow rate (QJ)                     (m^3/s)
+    %[7]  Pump head (H35)                           (-)
+    %[8]  Flow coefficient                          (-)
+    %[9]  Head coefficient                          (-)
+    %[10] Pump efficiency                           (-)
+    %[11] Mass flow rate                            (Kg/s)
+    %[12] Jet velocity (vj)                         (m/s)
     % Power:
-        %[13] Pump effective power (PPE)                (W)
-        %[14] Delivered power (PD)                      (W)
-
+    %[13] Pump effective power (PPE)                (W)
+    %[14] Delivered power (PD)                      (W)
+    
     % Add the different pumpcurve values
     for kl=1:m
         PcArray(kl, 1)  = k;
@@ -278,7 +288,7 @@ for k=1:np
         PcArray(kl, 7)  = LJ120EPCData(kl,5)/((DefaultPCShaftSpeedRPS/FSShaftRPS)^2*(FS_PumpDia/FS_PumpDia)^2);
         PcArray(kl, 8)  = PcArray(kl, 6)/(FSShaftRPS*FS_PumpDia^3);
         PcArray(kl, 9)  = (gravconst*PcArray(kl,7))/(FSShaftRPS*FS_PumpDia)^2;
-        PcArray(kl, 10) = 0;
+        PcArray(kl, 10) = LJ120EPCData(kl, 3);
         PcArray(kl, 11) = PcArray(kl, 6)*saltwaterdensity;
         PcArray(kl, 12) = PcArray(kl, 6)/FS_NozzArea;
         PcArray(kl, 13) = saltwaterdensity*gravconst*PcArray(kl, 6)*PcArray(kl, 7);
@@ -311,7 +321,7 @@ hold all;
 ah = gca;
 
 %# Paper size settings ----------------------------------------------------
-        
+
 % set(gcf, 'PaperSize', [19 19]);
 % set(gcf, 'PaperPositionMode', 'manual');
 % set(gcf, 'PaperPosition', [0 0 19 19]);
@@ -359,11 +369,13 @@ x = M(1:9,6);
 y = M(1:9,7);
 
 % Plotting ----------------------------------------------------------------
-% Add curves to plot with loop: 
+% Add curves to plot with loop:
 % http://stackoverflow.com/questions/12134406/several-graphs-in-1-loop-each-iteration-adds-a-line-on-every-figure
 
 setMarkerSize      = 8;
 setLineWidthMarker = 1;
+setLineWidth       = 1;
+setLineStyle       = '-.';
 
 count1 = 1;
 count2 = 9;
@@ -372,17 +384,120 @@ for k=1:nac+1
         x = LJ120EPCData(:,4);
         y = LJ120EPCData(:,5);
         
-        h = plot(ah,x,y,'*','Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{k}
+        % Plotting
+        h = plot(ah,x,y,'*');
+        set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{k}
         legendInfo{k} = '568 RPM (Wartsila)';
     else
         x = M(count1:count2,6);
         y = M(count1:count2,7);
-
-        h = plot(ah,x,y,'*','Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        
+        % Plotting
+        h = plot(ah,x,y,'*');
+        set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         legendInfo{k} = [num2str(round(M(count1,4))) ' RPM'];
-
+        
         count1 = count1+9;
         count2 = count2+9;
+    end
+end
+if enableEqnOfFitPlot == 1
+    hold on;
+    count1 = 1;
+    count2 = 9;
+    for k=1:nac+1
+        if k == nac+1
+            x = LJ120EPCData(:,4);
+            y = LJ120EPCData(:,5);
+            
+            % Polynomial fit
+            polyf = polyfit(x,y,4);
+            polyv = polyval(polyf,x);
+            
+            ypred = polyv;              % Predictions
+            dev   = y - mean(y);        % Deviations - measure of spread
+            SST   = sum(dev.^2);        % Total variation to be accounted for
+            resid = y - ypred;          % Residuals - measure of mismatch
+            SSE   = sum(resid.^2);      % Variation NOT accounted for
+            Rsquared = 1 - SSE/SST;     % Percent of error explained
+            
+            if enableCommandWindowOutput == 1
+                % Display in command line (poly4)
+                setDecimals1 = '%0.3f';
+                setDecimals2 = '+%0.3f';
+                setDecimals3 = '+%0.3f';
+                setDecimals4 = '+%0.3f';
+                setDecimals5 = '+%0.3f';
+                if polyf(1) < 0
+                    setDecimals1 = '%0.3f';
+                end
+                if polyf(2) < 0
+                    setDecimals2 = '%0.3f';
+                end
+                if polyf(3) < 0
+                    setDecimals3 = '%0.3f';
+                end
+                if polyf(4) < 0
+                    setDecimals4 = '%0.3f';
+                end
+                if polyf(5) < 0
+                    setDecimals5 = '%0.3f';
+                end
+                setRPMcw = 568;
+                disp(sprintf('H vs. QJ Plot: %s RPM: Equation of fit = %sx^4%sx^3%sx^2%sx%s | R^2: %s',num2str(setRPMcw),sprintf(setDecimals1,polyf(1)),sprintf(setDecimals2,polyf(2)),sprintf(setDecimals3,polyf(3)),sprintf(setDecimals4,polyf(4)),sprintf(setDecimals5,polyf(5)),sprintf('%0.4f',Rsquared)));
+            end
+            
+            % Plotting
+            h = plot(x,polyv,'-');
+            set(h(1),'Color',setColor{k},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+        else
+            x = M(count1:count2,6);
+            y = M(count1:count2,7);
+            
+            % Polynomial fit
+            polyf = polyfit(x,y,4);
+            polyv = polyval(polyf,x);
+            
+            ypred = polyv;              % Predictions
+            dev   = y - mean(y);        % Deviations - measure of spread
+            SST   = sum(dev.^2);        % Total variation to be accounted for
+            resid = y - ypred;          % Residuals - measure of mismatch
+            SSE   = sum(resid.^2);      % Variation NOT accounted for
+            Rsquared = 1 - SSE/SST;     % Percent of error explained
+            
+            if enableCommandWindowOutput == 1
+                % Display in command line (poly4)
+                setDecimals1 = '%0.3f';
+                setDecimals2 = '+%0.3f';
+                setDecimals3 = '+%0.3f';
+                setDecimals4 = '+%0.3f';
+                setDecimals5 = '+%0.3f';
+                if polyf(1) < 0
+                    setDecimals1 = '%0.3f';
+                end
+                if polyf(2) < 0
+                    setDecimals2 = '%0.3f';
+                end
+                if polyf(3) < 0
+                    setDecimals3 = '%0.3f';
+                end
+                if polyf(4) < 0
+                    setDecimals4 = '%0.3f';
+                end
+                if polyf(5) < 0
+                    setDecimals5 = '%0.3f';
+                end
+                setRPMcw = round(M(count1,4));
+                disp(sprintf('H vs. QJ Plot: %s RPM: Equation of fit = %sx^4%sx^3%sx^2%sx%s | R^2: %s',num2str(setRPMcw),sprintf(setDecimals1,polyf(1)),sprintf(setDecimals2,polyf(2)),sprintf(setDecimals3,polyf(3)),sprintf(setDecimals4,polyf(4)),sprintf(setDecimals5,polyf(5)),sprintf('%0.4f',Rsquared)));
+            end
+            
+            % Plotting
+            h = plot(x,polyv,'-');
+            set(h(1),'Color',setColor{k},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            
+            count1 = count1+9;
+            count2 = count2+9;
+        end
     end
 end
 if enablePlotTitle == 1
@@ -464,13 +579,13 @@ set(gca,'YTick',minY:setYIncr:maxY);
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
 %hleg1 = legend(ah,'1','2','3','4','5','6','7','8','9');
 hleg1 = legend(legendInfo);
-set(hleg1,'Location','NorthWest');
+set(hleg1,'Location','SouthWest');
 set(hleg1,'Interpreter','none');
 legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
-%set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
 %# ************************************************************************
 %# Save plot as PNG
@@ -508,7 +623,7 @@ hold all;
 ah = gca;
 
 %# Paper size settings ----------------------------------------------------
-        
+
 % set(gcf, 'PaperSize', [19 19]);
 % set(gcf, 'PaperPositionMode', 'manual');
 % set(gcf, 'PaperPosition', [0 0 19 19]);
@@ -556,7 +671,7 @@ x = M(1:9,6);
 y = M(1:9,10);
 
 % Plotting ----------------------------------------------------------------
-% Add curves to plot with loop: 
+% Add curves to plot with loop:
 % http://stackoverflow.com/questions/12134406/several-graphs-in-1-loop-each-iteration-adds-a-line-on-every-figure
 
 setMarkerSize      = 8;
@@ -574,12 +689,106 @@ for k=1:nac+1
     else
         x = M(count1:count2,6);
         y = M(count1:count2,10);
-
+        
         h = plot(ah,x,y,'*','Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         legendInfo{k} = [num2str(round(M(count1,4))) ' RPM'];
-
+        
         count1 = count1+9;
         count2 = count2+9;
+    end
+end
+if enableEqnOfFitPlot == 1
+    if enableCommandWindowOutput == 1
+        disp('-----------------------------------------------------------------------------------------------------');
+    end
+    hold on;
+    count1 = 1;
+    count2 = 9;
+    for k=1:nac+1
+        if k == nac+1
+            x = LJ120EPCData(:,4);
+            y = LJ120EPCData(:,3);
+            
+            % Polynomial fit
+            polyf = polyfit(x,y,3);
+            polyv = polyval(polyf,x);
+            
+            ypred = polyv;              % Predictions
+            dev   = y - mean(y);        % Deviations - measure of spread
+            SST   = sum(dev.^2);        % Total variation to be accounted for
+            resid = y - ypred;          % Residuals - measure of mismatch
+            SSE   = sum(resid.^2);      % Variation NOT accounted for
+            Rsquared = 1 - SSE/SST;     % Percent of error explained
+            
+            if enableCommandWindowOutput == 1
+                % Display in command line (poly4)
+                setDecimals1 = '%0.3f';
+                setDecimals2 = '+%0.3f';
+                setDecimals3 = '+%0.3f';
+                setDecimals4 = '+%0.3f';
+                if polyf(1) < 0
+                    setDecimals1 = '%0.3f';
+                end
+                if polyf(2) < 0
+                    setDecimals2 = '%0.3f';
+                end
+                if polyf(3) < 0
+                    setDecimals3 = '%0.3f';
+                end
+                if polyf(4) < 0
+                    setDecimals4 = '%0.3f';
+                end
+                setRPMcw = 568;
+                disp(sprintf('Pump eff. vs. QJ Plot: %s RPM: Equation of fit = %sx^3%sx^2%sx%s | R^2: %s',num2str(setRPMcw),sprintf(setDecimals1,polyf(1)),sprintf(setDecimals2,polyf(2)),sprintf(setDecimals3,polyf(3)),sprintf(setDecimals4,polyf(4)),sprintf('%0.4f',Rsquared)));
+            end
+            
+            % Plotting
+            h = plot(x,polyv,'-');
+            set(h(1),'Color',setColor{k},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+        else
+            x = M(count1:count2,6);
+            y = M(count1:count2,10);
+            
+            % Polynomial fit
+            polyf = polyfit(x,y,3);
+            polyv = polyval(polyf,x);
+            
+            ypred = polyv;              % Predictions
+            dev   = y - mean(y);        % Deviations - measure of spread
+            SST   = sum(dev.^2);        % Total variation to be accounted for
+            resid = y - ypred;          % Residuals - measure of mismatch
+            SSE   = sum(resid.^2);      % Variation NOT accounted for
+            Rsquared = 1 - SSE/SST;     % Percent of error explained
+            
+            if enableCommandWindowOutput == 1
+                % Display in command line (poly4)
+                setDecimals1 = '%0.3f';
+                setDecimals2 = '+%0.3f';
+                setDecimals3 = '+%0.3f';
+                setDecimals4 = '+%0.3f';
+                if polyf(1) < 0
+                    setDecimals1 = '%0.3f';
+                end
+                if polyf(2) < 0
+                    setDecimals2 = '%0.3f';
+                end
+                if polyf(3) < 0
+                    setDecimals3 = '%0.3f';
+                end
+                if polyf(4) < 0
+                    setDecimals4 = '%0.3f';
+                end
+                setRPMcw = round(M(count1,4));
+                disp(sprintf('Pump eff. vs. QJ Plot: %s RPM: Equation of fit = %sx^3%sx^2%sx%s | R^2: %s',num2str(setRPMcw),sprintf(setDecimals1,polyf(1)),sprintf(setDecimals2,polyf(2)),sprintf(setDecimals3,polyf(3)),sprintf(setDecimals4,polyf(4)),sprintf('%0.4f',Rsquared)));
+            end
+            
+            % Plotting
+            h = plot(x,polyv,'-');
+            set(h(1),'Color',setColor{k},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            
+            count1 = count1+9;
+            count2 = count2+9;
+        end
     end
 end
 if enablePlotTitle == 1
@@ -643,7 +852,7 @@ for i=1:ndiv
     end
     if mod(maxY-minY,divider(i)) == 0;
         setYIncr = divider(i);
-    end    
+    end
 end
 
 % Manual increment overwrite
@@ -653,7 +862,7 @@ setYIncr = 0.1;
 % Manual min, max overwrite
 %minX  = 0;
 %maxX  = 10;
-minY  = 0;
+minY  = 0.5;
 maxY  = 1;
 
 % Set limitations
@@ -667,13 +876,13 @@ set(gca,'YTick',minY:setYIncr:maxY);
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
 %hleg1 = legend(ah,'1','2','3','4','5','6','7','8','9');
 hleg1 = legend(legendInfo);
-set(hleg1,'Location','NorthWest');
+set(hleg1,'Location','SouthEast');
 set(hleg1,'Interpreter','none');
 legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
-%set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
 %# ************************************************************************
 %# Save plot as PNG

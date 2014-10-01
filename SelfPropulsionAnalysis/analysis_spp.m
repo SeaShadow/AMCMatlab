@@ -616,8 +616,8 @@ if exist('resultsArraySPP.dat', 'file') == 0
         resultsArraySPP(k, 33)  = StbdVfr;                                   % STBD: Volume flow rate (m^3/s)
         
         % Jet velocity
-        resultsArraySPP(k, 34)  = (PortMfr/freshwaterdensity)/MS_NozzArea;   % PORT: Jet velocity (m/s)
-        resultsArraySPP(k, 35)  = (StbdMfr/freshwaterdensity)/MS_NozzArea;   % STBD: Jet velocity (m/s)
+        resultsArraySPP(k, 34)  = PortVfr/MS_NozzArea;                       % PORT: Jet velocity (m/s)
+        resultsArraySPP(k, 35)  = StbdVfr/MS_NozzArea;                       % STBD: Jet velocity (m/s)
         
         % Wake fraction and gross thrust
         if any(k==RunsForSpeed1)

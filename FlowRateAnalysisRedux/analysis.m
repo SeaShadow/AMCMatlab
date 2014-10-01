@@ -2,8 +2,8 @@
 %# Flow Rate Analysis
 %# ------------------------------------------------------------------------
 %#
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  September 8, 2014
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  October 1, 2014
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -619,27 +619,27 @@ for k=startRun:endRun
     %# ////////////////////////////////////////////////////////////////////
     
     %# Add results to dedicated array for simple export
-    %# Results array columns:
-    %[1]  Run No.
-    %[2]  FS                    (Hz)
-    %[3]  No. of samples        (-)
-    %[4]  Record time           (s)
-    %[5]  Mass flow rate        (Kg/s)
-    %[6]  Kiel probe STBD       (V)
-    %[7]  Kiel probe PORT       (V)
-    %[8]  Thrust STBD           (N)
-    %[9]  Thrust PORT           (N)
-    %[10] Torque STBD           (Nm)
-    %[11] Torque PORT           (Nm)
-    %[12] Shaft Speed STBD      (RPM)
-    %[13] Shaft Speed PORT      (RPM)
-    %[14] Power STBD            (W)
-    %[15] Power PORT            (W)
+    %# Columns:
+        %[1]  Run No.
+        %[2]  FS                                                        (Hz)
+        %[3]  No. of samples                                            (-)
+        %[4]  Record time                                               (s)
+        %[5]  Mass flow rate                                            (Kg/s)
+        %[6]  Kiel probe STBD                                           (V)
+        %[7]  Kiel probe PORT                                           (V)
+        %[8]  Thrust STBD                                               (N)
+        %[9]  Thrust PORT                                               (N)
+        %[10] Torque STBD                                               (Nm)
+        %[11] Torque PORT                                               (Nm)
+        %[12] Shaft Speed STBD                                          (RPM)
+        %[13] Shaft Speed PORT                                          (RPM)
+        %[14] Power STBD                                                (W)
+        %[15] Power PORT                                                (W)
     %# Added columns: 18/8/2014
-    %[16] Mass flow rate (1s only)                                  (Kg/s)
-    %[17] Mass flow rate (mean, 1s intervals)                       (Kg/s)
-    %[18] Mass flow rate (overall, Q/t)                             (Kg/s)
-    %[19] Diff. mass flow rate (mean, 1s intervals)/(overall, Q/t)  (%)
+        %[16] Mass flow rate (1s only)                                  (Kg/s)
+        %[17] Mass flow rate (mean, 1s intervals)                       (Kg/s)
+        %[18] Mass flow rate (overall, Q/t)                             (Kg/s)
+        %[19] Diff. mass flow rate (mean, 1s intervals)/(overall, Q/t)  (%)
     
     resultsArray(k, 1) = k;                                                          % Run No.
     resultsArray(k, 2) = round(length(timeData) / timeData(end));                    % FS (Hz)
@@ -705,7 +705,7 @@ for k=startRun:endRun
 end
 
 %# ////////////////////////////////////////////////////////////////////////
-%# START: Write results to CVS
+%# START: Write results to DAT and TXT
 %# ------------------------------------------------------------------------
 M = resultsArray;
 csvwrite('resultsArray.dat', M)                                     % Export matrix M to a file delimited by the comma character
@@ -714,7 +714,7 @@ M = slopesArray;
 csvwrite('slopesArray.dat', M)                                      % Export matrix M to a file delimited by the comma character
 dlmwrite('slopesArray.txt', M, 'delimiter', '\t', 'precision', 4)   % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 %# ------------------------------------------------------------------------
-%# END: Write results to CVS
+%# END: Write results to DAT and TXT
 %# ////////////////////////////////////////////////////////////////////////
 
 

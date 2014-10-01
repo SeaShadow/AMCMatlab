@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  November 12, 2013
+%# Date       :  October 1, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -57,6 +57,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# CHANGES    :  02/12/2013 - Created new script
+%#               01/10/2014 - Script update and changed plots
 %#               dd/mm/yyyy - ...
 %#
 %# ------------------------------------------------------------------------
@@ -73,9 +74,32 @@ clc
 allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
 
+
+% *************************************************************************
+% START: PLOT SWITCHES: 1 = ENABLED
+%                       0 = DISABLED
+% -------------------------------------------------------------------------
+
+% Time series data
+enableTSDataSave          = 0;    % Enable time series data saving
+
+% Main and plot titles
+enablePlotMainTitle       = 0;    % Show plot title in saved file
+enablePlotTitle           = 0;    % Show plot title above plot
+enableTextOnPlot          = 0;    % Show text on plot
+enableBlackAndWhitePlot   = 1;    % Show plot in black and white
+enableEqnOfFitPlot        = 0;    % Show equations of fit
+enableCommandWindowOutput = 0;    % Show command windown ouput
+enableAveragedRunsPlot    = 0;    % Show averaged runs plot
+
+% -------------------------------------------------------------------------
+% END: PLOT SWITCHES
+% *************************************************************************
+
+
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# START DEFINE PLOT SIZE
+%# ------------------------------------------------------------------------
 %# Centimeters units
 XPlot = 42.0;                           %# A3 paper size
 YPlot = 29.7;                           %# A3 paper size
@@ -83,19 +107,17 @@ XPlotMargin = 1;                        %# left/right margins from page borders
 YPlotMargin = 1;                        %# bottom/top margins from page borders
 XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
 YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
+%# ------------------------------------------------------------------------
+%# END DEFINE PLOT SIZE
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# END DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 %# ------------------------------------------------------------------------
 %# GENERAL SETTINGS AND CONSTANTS
 %# ------------------------------------------------------------------------
 
 %# Test name --------------------------------------------------------------
-% testName = 'Resistance Test';
 testName = 'Boundary Layer Measurements';
-% testName = 'Waterjet Self-Propulsion Points';
-% testName = 'Waterjet Self-Propulsion Test';
 
 % -------------------------------------------------------------------------
 % Enable profile
@@ -108,20 +130,20 @@ testName = 'Boundary Layer Measurements';
 %runfilespath = 'D:\\Flow Rate MTB Backup\\KZ Flow Rate\\';
 runfilespath = '..\\';      % Relative path from Matlab directory
 
-%# -------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
 %# GENERAL SETTINGS
-%# -------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
 Fs = 800;       % Sampling frequency = 800Hz
 
-%# -------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
 %# Number of headerlines in DAT file
-%# -------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
 headerlines             = 39;  % Number of headerlines to data
 headerlinesZeroAndCalib = 33;  % Number of headerlines to zero and calibration factors
 
-%# ------------------------------------------------------------------------------
-%# Omit first 10 seconds of data due to acceleration ----------------------------
-%# ------------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
+%# Omit first 10 seconds of data due to acceleration
+%# ------------------------------------------------------------------------
 
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from start)
 startSamplePos    = 1;
@@ -133,8 +155,8 @@ cutSamplesFromEnd = 0;
 %# START FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-startRun = 29;      % Start at run x
-endRun   = 29;      % Stop at run y
+%startRun = 29;      % Start at run x
+%endRun   = 29;      % Stop at run y
 
 startRun = 29;      % Start at run x
 endRun   = 69;      % Stop at run y
@@ -181,206 +203,239 @@ FSdraft1500         = MSdraft1500*FStoMSratio;           % Full scale draft     
 %# ************************************************************************
 
 
-% *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED
-%                       0 = DISABLED
+% /////////////////////////////////////////////////////////////////////////
+% START: CREATE PLOTS AND RUN DIRECTORY
 % -------------------------------------------------------------------------
 
-enableDISP         = 1; % Enable or disable values in command window
+%# _PLOTS directory
+fPath = '_plots/';
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
 
-enableVolAndRDSave = 1; % Enable voltage and real data save
-enableTSDataSave   = 1; % Enable time series data saving
-%enableZeroDataSave = 1; % Enable zero data saving
+%# RUN directory
+fPath = sprintf('_plots/%s', 'Bounday_Layer');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PDF directory
+fPath = sprintf('_plots/%s/%s', 'Bounday_Layer', 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('_plots/%s/%s', 'Bounday_Layer', 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('_plots/%s/%s', 'Bounday_Layer', 'EPS');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
 
 % -------------------------------------------------------------------------
-% END: PLOT SWITCHES
-% *************************************************************************
+% END: CREATE PLOTS AND RUN DIRECTORY
+% /////////////////////////////////////////////////////////////////////////
 
 
-%# ////////////////////////////////////////////////////////////////////////
-%# LOOP THROUGH ALL RUN FILES (depending on startRun and endRun settings)
-%# ////////////////////////////////////////////////////////////////////////
-
-% Arrays; save to file
-resultsArrayBlm          = [];   % BL Data
-%resultsArrayBlmZero      = [];   % BL ZERO data
-resultsArrayBlmTS        = [];   % BL TS data
-resultsArrayBlmVandRData = [];   % Voltage and real data using CF est. in PST calibration runs
-
-%w = waitbar(0,'Processed run files');
-for k=startRun:endRun
+%# ------------------------------------------------------------------------
+%# Read results DAT file
+%# ------------------------------------------------------------------------
+if exist('resultsArrayBlm_copy.dat', 'file') == 2
     
-    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    %# START DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS !!!!!!!!!!!!!!!!
-    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    %# Results array columns:
+    %[1]  Run No.
+    %[2]  Froude length Number                     (-)
+    %[3]  Speed no. (i.e. 1=0.30, 2=0.35, 3=0.40)  (-)
+    %[4]  Distance from model hull                      (mm)
+    %[5]  Averaged zero value (Inboard)            (V)
+    %[6]  Averaged zero value (Outboard)           (V)
+    %[7]  Outboard: Calibration factor CF          (V to m/s)
+    %[8]  Outboard: Calibration factor CF          (V to m/s)
+    %[9]  PST: Voltage (Inboard)                   (V)
+    %[10] PST: Voltage (Outboard)                  (V)
+    %[11] PST: Real units using CF (Inboard)       (m/s)
+    %[12] PST: Real units using CF (Outboard)      (m/s)
+    %[13] u/U0 (Inboard)                           (-)
+    %[14] u/U0 (Outboard)                          (-)
     
-    % NOTE: If statement bellow is for use in LOOPS only!!!!
+    resultsArrayBlm = csvread('resultsArrayBlm_copy.dat');
     
-    % Runs at respective speeds
-    RunsAtFr30 = [56 58 59 45 61 48 63 51 65 54 68];                              % i.e. Fr=0.30
-    RunsAtFr35 = [41 42 43 38 39 40 44 35 36 37 47 32 33 34 50 52 66 29 30 31];   % i.e. Fr=0.35
-    RunsAtFr40 = [57 60 46 62 49 64 53 67 55 69];                                 % i.e. Fr=0.40
+    %# Remove zero rows
+    resultsArrayBlm(all(resultsArrayBlm==0,2),:)=[];
     
-    % Runs at respective depths
-    Depth1 = [41 42 43 56 57 58];       % i.e.  3 mm
-    Depth2 = [38 39 40 59 60];          % i.e. 13 mm
-    Depth3 = [44 45 56];                % i.e. 23 mm
-    Depth4 = [35 36 37 61 62];          % i.e. 33 mm
-    Depth5 = [47 48 49];                % i.e. 43 mm
-    Depth6 = [32 33 34 63 64];          % i.e. 53 mm
-    Depth7 = [50 51 52 53 65 66 67];    % i.e. 63 mm
-    Depth8 = [29 30 31 54 55 68 69];    % i.e. 73 mm
+else
     
-    % SPEED: IF, ELSE statement
-    if any(RunsAtFr30==k)
-        setSpeedCond = 1;
-    elseif any(RunsAtFr35==k)
-        setSpeedCond = 2;
-    elseif any(RunsAtFr40==k)
-        setSpeedCond = 3;
-    else
-        %disp('OTHER');
-    end
+    %# ////////////////////////////////////////////////////////////////////////
+    %# LOOP THROUGH ALL RUN FILES (depending on startRun and endRun settings)
+    %# ////////////////////////////////////////////////////////////////////////
     
-    % DEPTH: IF, ELSE statement
-    if any(Depth1==k)
-        %setDepthCond = 1;
-        setDepthCond = 3;
-    elseif any(Depth2==k)
-        %setDepthCond = 2;
-        setDepthCond = 13;
-    elseif any(Depth3==k)
-        %setDepthCond = 3;
-        setDepthCond = 23;
-    elseif any(Depth4==k)
-        %setDepthCond = 4;
-        setDepthCond = 33;
-    elseif any(Depth5==k)
-        %setDepthCond = 5;
-        setDepthCond = 43;
-    elseif any(Depth6==k)
-        %setDepthCond = 6;
-        setDepthCond = 53;
-    elseif any(Depth7==k)
-        %setDepthCond = 7;
-        setDepthCond = 63;
-    elseif any(Depth8==k)
-        %setDepthCond = 8;
-        setDepthCond = 73;
-    else
-        %disp('OTHER');
-    end
+    % Arrays; save to file
+    resultsArrayBlmTS        = [];   % BL TS data
+    resultsArrayBlm = [];   % Voltage and real data using CF est. in PST calibration runs
     
-    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    %# END DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS !!!!!!!!!!!!!!!!!!
-    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
-    %# Allow for 1 to become 01 for run numbers
-    if k < 10
-        filename = sprintf('%s0%s.run\\R0%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
-    else
-        filename = sprintf('%s%s.run\\R%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
-    end
-    [pathstr, name, ext] = fileparts(filename);     % Get file details like path, filename and extension
-    
-    %# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
-    zAndCFData = importdata(filename, ' ', headerlines);
-    zAndCF     = zAndCFData.data;
-    
-    %# Calibration factors and zeros
-    ZeroAndCalibData = importdata(filename, ' ', headerlinesZeroAndCalib);
-    ZeroAndCalib     = ZeroAndCalibData.data;
-    
-    %# Time series
-    AllRawChannelData = importdata(filename, ' ', headerlines);
-    
-    %# Create new variables in the base workspace from those fields.
-    vars = fieldnames(AllRawChannelData);
-    for i = 1:length(vars)
-        assignin('base', vars{i}, AllRawChannelData.(vars{i}));
-    end
-    
-    % /////////////////////////////////////////////////////////////////////
-    % START: CREATE PLOTS AND RUN DIRECTORY
-    % ---------------------------------------------------------------------
-    
-    %# _PLOTS directory
-    fPath = '_plots/';
-    if isequal(exist(fPath, 'dir'),7)
-        % Do nothing as directory exists
-    else
-        mkdir(fPath);
-    end
-    
-    %# RUN directory
-    fPath = sprintf('_plots/%s', 'BLM');
-    if isequal(exist(fPath, 'dir'),7)
-        % Do nothing as directory exists
-    else
-        mkdir(fPath);
-    end
-    
-    % ---------------------------------------------------------------------
-    % END: CREATE PLOTS AND RUN DIRECTORY
-    % /////////////////////////////////////////////////////////////////////
-    
-    %# Columns as variables (RAW DATA)
-    timeData               = data(:,1);       % Timeline
-    Raw_CH_0_Speed         = data(:,2);       % Speed
-    Raw_CH_1_LVDTFwd       = data(:,3);       % Forward LVDT
-    Raw_CH_2_LVDTAft       = data(:,4);       % Aft LVDT
-    Raw_CH_3_Drag          = data(:,5);       % Load cell (drag)
-    Raw_CH_19_PSTInboard   = data(:,6);       % Inboard PST for BL measurements
-    Raw_CH_20_PSTOutboard  = data(:,7);       % Outboard PST for BL measurements
-    
-    %# Zeros and calibration factors for each channel
-    Time_Zero  = ZeroAndCalib(1);
-    Time_CF    = ZeroAndCalib(2);
-    CH_0_Zero  = ZeroAndCalib(3);
-    CH_0_CF    = ZeroAndCalib(4);
-    CH_1_Zero  = ZeroAndCalib(5);
-    CH_1_CF    = ZeroAndCalib(6);
-    CH_2_Zero  = ZeroAndCalib(7);
-    CH_2_CF    = ZeroAndCalib(8);
-    CH_3_Zero  = ZeroAndCalib(9);
-    CH_3_CF    = ZeroAndCalib(10);
-    CH_19_Zero = ZeroAndCalib(11);
-    CH_19_CF   = ZeroAndCalib(12);
-    CH_20_Zero = ZeroAndCalib(13);
-    CH_20_CF   = ZeroAndCalib(14);
-    
-    %# --------------------------------------------------------------------
-    %# Real units ---------------------------------------------------------
-    %# --------------------------------------------------------------------
-    
-    % CWR Data
-    [CH_0_Speed CH_0_Speed_Mean]                 = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
-    [CH_1_LVDTFwd CH_1_LVDTFwd_Mean]             = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
-    [CH_2_LVDTAft CH_2_LVDTAft_Mean]             = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
-    [CH_3_Drag CH_3_Drag_Mean]                   = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);
-    
-    % PST Data for BL Measurements
-    [CH_19_PSTInboard CH_19_PSTInboard_Mean]     = analysis_realunits(Raw_CH_19_PSTInboard,CH_19_Zero,CH_19_CF);
-    [CH_20_PSTOutboard CH_20_PSTOutboard_Mean]   = analysis_realunits(Raw_CH_20_PSTOutboard,CH_20_Zero,CH_20_CF);
-    
-    % Change from 2 to 3 digits -------------------------------------------
-    if k > 99
-        runno = name(2:4);
-    else
-        runno = name(1:3);
-    end
-    
-    %# ////////////////////////////////////////////////////////////////////
-    %# ////////////////////////////////////////////////////////////////////
-    %# Boundary Layer - Real data, plots, etc.
-    %# ////////////////////////////////////////////////////////////////////
-    %# ////////////////////////////////////////////////////////////////////
-    
-    if enableVolAndRDSave == 1
+    %w = waitbar(0,'Processed run files');
+    for k=startRun:endRun
         
-        %# ********************************************************************
+        %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        %# START DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS
+        %# --------------------------------------------------------------------
+        
+        % NOTE: If statement bellow is for use in LOOPS only!!!!
+        
+        % Runs at respective speeds -------------------------------------------
+        
+        % Speed: Fr = 0.30
+        RunsAtFr30 = [56 58 59 45 61 48 63 51 65 54 68];
+        
+        % Speed: Fr = 0.35
+        RunsAtFr35 = [41 42 43 38 39 40 44 35 36 37 47 32 33 34 50 52 66 29 30 31];
+        
+        % Speed: Fr = 0.40
+        RunsAtFr40 = [57 60 46 62 49 64 53 67 55 69];
+        
+        % Runs at respective depths -------------------------------------------
+        Depth1 = [41 42 43 56 57 58];       % i.e.  3 mm
+        Depth2 = [38 39 40 59 60];          % i.e. 13 mm
+        Depth3 = [44 45 56];                % i.e. 23 mm
+        Depth4 = [35 36 37 61 62];          % i.e. 33 mm
+        Depth5 = [47 48 49];                % i.e. 43 mm
+        Depth6 = [32 33 34 63 64];          % i.e. 53 mm
+        Depth7 = [50 51 52 53 65 66 67];    % i.e. 63 mm
+        Depth8 = [29 30 31 54 55 68 69];    % i.e. 73 mm
+        
+        % SPEED: IF, ELSE statement
+        if any(RunsAtFr30==k)
+            setSpeedCond = 1;
+        elseif any(RunsAtFr35==k)
+            setSpeedCond = 2;
+        elseif any(RunsAtFr40==k)
+            setSpeedCond = 3;
+        end
+        
+        % DEPTH: IF, ELSE statement
+        if any(Depth1==k)
+            %setDepthCond = 1;
+            setDepthCond = 3;
+        elseif any(Depth2==k)
+            %setDepthCond = 2;
+            setDepthCond = 13;
+        elseif any(Depth3==k)
+            %setDepthCond = 3;
+            setDepthCond = 23;
+        elseif any(Depth4==k)
+            %setDepthCond = 4;
+            setDepthCond = 33;
+        elseif any(Depth5==k)
+            %setDepthCond = 5;
+            setDepthCond = 43;
+        elseif any(Depth6==k)
+            %setDepthCond = 6;
+            setDepthCond = 53;
+        elseif any(Depth7==k)
+            %setDepthCond = 7;
+            setDepthCond = 63;
+        elseif any(Depth8==k)
+            %setDepthCond = 8;
+            setDepthCond = 73;
+        end
+        
+        %# --------------------------------------------------------------------
+        %# END DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS
+        %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        
+        %# Allow for 1 to become 01 for run numbers
+        if k < 10
+            filename = sprintf('%s0%s.run\\R0%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
+        else
+            filename = sprintf('%s%s.run\\R%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
+        end
+        [pathstr, name, ext] = fileparts(filename);     % Get file details like path, filename and extension
+        
+        %# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
+        zAndCFData = importdata(filename, ' ', headerlines);
+        zAndCF     = zAndCFData.data;
+        
+        %# Calibration factors and zeros
+        ZeroAndCalibData = importdata(filename, ' ', headerlinesZeroAndCalib);
+        ZeroAndCalib     = ZeroAndCalibData.data;
+        
+        %# Time series
+        AllRawChannelData = importdata(filename, ' ', headerlines);
+        
+        %# Create new variables in the base workspace from those fields.
+        vars = fieldnames(AllRawChannelData);
+        for i = 1:length(vars)
+            assignin('base', vars{i}, AllRawChannelData.(vars{i}));
+        end
+        
+        %# Columns as variables (RAW DATA)
+        timeData               = data(:,1);       % Timeline
+        Raw_CH_0_Speed         = data(:,2);       % Speed
+        Raw_CH_1_LVDTFwd       = data(:,3);       % Forward LVDT
+        Raw_CH_2_LVDTAft       = data(:,4);       % Aft LVDT
+        Raw_CH_3_Drag          = data(:,5);       % Load cell (drag)
+        Raw_CH_19_PSTInboard   = data(:,6);       % Inboard PST for BL measurements
+        Raw_CH_20_PSTOutboard  = data(:,7);       % Outboard PST for BL measurements
+        
+        %# Zeros and calibration factors for each channel
+        Time_Zero  = ZeroAndCalib(1);
+        Time_CF    = ZeroAndCalib(2);
+        CH_0_Zero  = ZeroAndCalib(3);
+        CH_0_CF    = ZeroAndCalib(4);
+        CH_1_Zero  = ZeroAndCalib(5);
+        CH_1_CF    = ZeroAndCalib(6);
+        CH_2_Zero  = ZeroAndCalib(7);
+        CH_2_CF    = ZeroAndCalib(8);
+        CH_3_Zero  = ZeroAndCalib(9);
+        CH_3_CF    = ZeroAndCalib(10);
+        CH_19_Zero = ZeroAndCalib(11);
+        CH_19_CF   = ZeroAndCalib(12);
+        CH_20_Zero = ZeroAndCalib(13);
+        CH_20_CF   = ZeroAndCalib(14);
+        
+        %# --------------------------------------------------------------------
+        %# Real units ---------------------------------------------------------
+        %# --------------------------------------------------------------------
+        
+        % CWR Data
+        [CH_0_Speed CH_0_Speed_Mean]                 = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
+        [CH_1_LVDTFwd CH_1_LVDTFwd_Mean]             = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
+        [CH_2_LVDTAft CH_2_LVDTAft_Mean]             = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
+        [CH_3_Drag CH_3_Drag_Mean]                   = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);
+        
+        % PST Data for BL Measurements
+        [CH_19_PSTInboard CH_19_PSTInboard_Mean]     = analysis_realunits(Raw_CH_19_PSTInboard,CH_19_Zero,CH_19_CF);
+        [CH_20_PSTOutboard CH_20_PSTOutboard_Mean]   = analysis_realunits(Raw_CH_20_PSTOutboard,CH_20_Zero,CH_20_CF);
+        
+        % Change from 2 to 3 digits -------------------------------------------
+        if k > 99
+            runno = name(2:4);
+        else
+            runno = name(1:3);
+        end
+        
+        %# ////////////////////////////////////////////////////////////////////
+        %# Boundary Layer - Real data, plots, etc.
+        %# ////////////////////////////////////////////////////////////////////
+        
+        %# ****************************************************************
         %# Save data to aray then save to file
-        %# ********************************************************************
+        %# ****************************************************************
         
         %# Add results to dedicated array for simple export
         %# Results array columns:
@@ -390,557 +445,751 @@ for k=startRun:endRun
         %[3]  Speed no. (i.e. 1=0.30, 2=0.35, 3=0.40)  (-)
         %[4]  Depth no. (i.e. 1 to 8)                  (-)
         
-        %[5]  Inboard: Averaged zero value             (V)
-        %[6]  Inboard: Averaged zero value             (V)
+        %[5]  Averaged zero value (Inboard)            (V)
+        %[6]  Averaged zero value (Outboard)           (V)
         
         %[7]  Outboard: Calibration factor CF          (V to m/s)
         %[8]  Outboard: Calibration factor CF          (V to m/s)
         
-        %[9]  Inboard PST: Voltage                     (V)
-        %[10] Outboard PST: Voltage                    (V)
+        %[9]  PST: Voltage (Inboard)                   (V)
+        %[10] PST: Voltage (Outboard)                  (V)
         
-        %[11] Inboard PST: Real units using CF         (m/s)
-        %[12] Outboard PST:Real units using CF         (m/s)
+        %[11] PST: Real units using CF (Inboard)       (m/s)
+        %[12] PST: Real units using CF (Outboard)      (m/s)
+        
+        %[13] u/U0 (Inboard)                           (-)
+        %[14] u/U0 (Outboard)                          (-)
         
         % General data
-        resultsArrayBlmVandRData(k, 1)  = k;
+        resultsArrayBlm(k, 1)  = k;
         
         % Froude length number
         roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
         modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number
-        resultsArrayBlmVandRData(k, 2)  = modelfrrounded;
+        resultsArrayBlm(k, 2)  = modelfrrounded;
         
         % Speed and depth number
-        resultsArrayBlmVandRData(k, 3)  = setSpeedCond;
-        resultsArrayBlmVandRData(k, 4)  = setDepthCond;
+        resultsArrayBlm(k, 3)  = setSpeedCond;
+        resultsArrayBlm(k, 4)  = setDepthCond;
         
         % Zero values
-        resultsArrayBlmVandRData(k, 5)  = CH_19_Zero;
-        resultsArrayBlmVandRData(k, 6)  = CH_20_Zero;
+        resultsArrayBlm(k, 5)  = CH_19_Zero;
+        resultsArrayBlm(k, 6)  = CH_20_Zero;
         
         % Calibration factors
-        resultsArrayBlmVandRData(k, 7)  = CH_19_CF;
-        resultsArrayBlmVandRData(k, 8)  = CH_20_CF;
+        resultsArrayBlm(k, 7)  = CH_19_CF;
+        resultsArrayBlm(k, 8)  = CH_20_CF;
         
         % Voltage values
-        resultsArrayBlmVandRData(k, 9)  = CH_19_PSTInboard_Mean;
-        resultsArrayBlmVandRData(k, 10) = CH_20_PSTOutboard_Mean;
+        resultsArrayBlm(k, 9)  = CH_19_PSTInboard_Mean;
+        resultsArrayBlm(k, 10) = CH_20_PSTOutboard_Mean;
         
         % Real unit values (m/s) based on PST calibration curve
-        
         x1 = CH_19_PSTInboard_Mean;
         x2 = CH_20_PSTOutboard_Mean;
+        resultsArrayBlm(k, 11) = -0.0328*x1^4+0.2521*x1^3-0.7873*x1^2+1.7721*x1+0.4389;
+        resultsArrayBlm(k, 12) = -0.0328*x2^4+0.2521*x2^3-0.7873*x2^2+1.7721*x2+0.4389;
         
-        resultsArrayBlmVandRData(k, 11) = -0.0328*x1^4+0.2521*x1^3-0.7873*x1^2+1.7721*x1+0.4389;
-        resultsArrayBlmVandRData(k, 12) = -0.0328*x2^4+0.2521*x2^3-0.7873*x2^2+1.7721*x2+0.4389;
+        % u/U0 ratio
+        resultsArrayBlm(k, 13) = resultsArrayBlm(k, 11)/roundedspeed;
+        resultsArrayBlm(k, 14) = resultsArrayBlm(k, 12)/roundedspeed;
         
-    end
-    
-    %# ////////////////////////////////////////////////////////////////////
-    %# ////////////////////////////////////////////////////////////////////
-    %# PST (Boundary Layer Measurements): Time Series Output
-    %# ////////////////////////////////////////////////////////////////////
-    %# ////////////////////////////////////////////////////////////////////
-    
-    if enableTSDataSave == 1
+        %# ////////////////////////////////////////////////////////////////////
+        %# PST (Boundary Layer Measurements): Time Series Output
+        %# ////////////////////////////////////////////////////////////////////
         
-        figurename = sprintf('%s:: Boundary Layer Time Series Plot, Run %s', testName, num2str(runno));
-        f = figure('Name',figurename,'NumberTitle','off');
-        
-        % Inboard PST ---------------------------------------------------------
-        subplot(3,1,1);
-        
-        % Axis data
-        x = timeData;
-        y = Raw_CH_19_PSTInboard;
-        
-        %# Trendline
-        polyf = polyfit(x,y,1);
-        polyv = polyval(polyf,x);
-        
-        h = plot(x,y,'-b',x,polyv,'-k');
-        title('{\bf Inboard PST}');
-        xlabel('{\bf Time (seconds)}');
-        ylabel('{\bf PST output (V)}');
-        grid on;
-        box on;
-        %axis square;
-        
-        %# Set plot figure background to a defined color
-        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-        set(gcf,'Color',[1,1,1]);
-        
-        %# Axis limitations
-        xlim([min(x) max(x)]);
-        %set(gca,'XTick',[min(x):0.2:max(x)]);
-        %set(gca,'YLim',[0 75]);
-        %set(gca,'YTick',[0:5:75]);
-        
-        %# Line width
-        set(h(1),'linewidth',1);
-        set(h(2),'linewidth',2);
-        
-        %# Legend
-        hleg1 = legend('Output (real units)','Trendline');
-        set(hleg1,'Location','NorthEast');
-        set(hleg1,'Interpreter','none');
-        
-        % Outboard PST --------------------------------------------------------
-        subplot(3,1,2);
-        
-        % Axis data
-        x = timeData;
-        y = Raw_CH_20_PSTOutboard;
-        
-        %# Trendline
-        polyf = polyfit(x,y,1);
-        polyv = polyval(polyf,x);
-        
-        h = plot(x,y,'-g',x,polyv,'-k');
-        title('{\bf Outboard PST}');
-        xlabel('{\bf Time (seconds)}');
-        ylabel('{\bf PST output (V)}');
-        grid on;
-        box on;
-        %axis square;
-        
-        %# Axis limitations
-        xlim([min(x) max(x)]);
-        %set(gca,'XTick',[min(x):0.2:max(x)]);
-        %set(gca,'YLim',[0 75]);
-        %set(gca,'YTick',[0:5:75]);
-        
-        %# Line width
-        set(h(1),'linewidth',1);
-        set(h(2),'linewidth',2);
-        
-        %# Legend
-        hleg1 = legend('Output (real units)','Trendline');
-        set(hleg1,'Location','NorthEast');
-        set(hleg1,'Interpreter','none');
-        
-        % Compared Inboard/Outboard PST ---------------------------------------
-        subplot(3,1,3);
-        
-        % Axis data
-        x = timeData;
-        y1 = Raw_CH_19_PSTInboard;
-        y2 = Raw_CH_20_PSTOutboard;
-        
-        %# Trendline
-        polyf1 = polyfit(x,y1,1);
-        polyv1 = polyval(polyf1,x);
-        
-        polyf2 = polyfit(x,y2,1);
-        polyv2 = polyval(polyf2,x);
-        
-        h = plot(x,y1,'-b',x,y2,'-g',x,polyv1,'-k',x,polyv2,'--k');
-        title('{\bf Overlayed Inboard/Outboard PST}');
-        xlabel('{\bf Time (seconds)}');
-        ylabel('{\bf PST output (V)}');
-        grid on;
-        box on;
-        %axis square;
-        
-        %# Axis limitations
-        xlim([min(x) max(x)]);
-        %set(gca,'XTick',[min(x):0.2:max(x)]);
-        %set(gca,'YLim',[0 75]);
-        %set(gca,'YTick',[0:5:75]);
-        
-        %# Line width
-        set(h(1),'linewidth',1);
-        set(h(2),'linewidth',1);
-        set(h(3),'linewidth',2);
-        set(h(4),'linewidth',2);
-        
-        %# Legend
-        hleg1 = legend('Inboard Output','Outboard Output','Inboard Trendline','Outboard Trendline');
-        set(hleg1,'Location','NorthEast');
-        set(hleg1,'Interpreter','none');
-        
-        %# ********************************************************************
-        %# Command Window Output
-        %# ********************************************************************
-        if enableDISP == 1
+        if enableTSDataSave == 1
             
-            % Inboard PST
+            figurename = sprintf('%s:: Boundary Layer Time Series Plot, Run %s', testName, num2str(runno));
+            f = figure('Name',figurename,'NumberTitle','off');
+            
+            % Inboard PST ---------------------------------------------------------
+            subplot(3,1,1);
+            
+            % Axis data
+            x = timeData;
+            y = Raw_CH_19_PSTInboard;
+            
+            %# Trendline
+            polyf = polyfit(x,y,1);
+            polyv = polyval(polyf,x);
+            
+            h = plot(x,y,'-b',x,polyv,'-k');
+            title('{\bf Inboard PST}');
+            xlabel('{\bf Time (seconds)}');
+            ylabel('{\bf PST output (V)}');
+            grid on;
+            box on;
+            %axis square;
+            
+            %# Set plot figure background to a defined color
+            %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+            set(gcf,'Color',[1,1,1]);
+            
+            %# Axis limitations
+            xlim([min(x) max(x)]);
+            %set(gca,'XTick',[min(x):0.2:max(x)]);
+            %set(gca,'YLim',[0 75]);
+            %set(gca,'YTick',[0:5:75]);
+            
+            %# Line width
+            set(h(1),'linewidth',1);
+            set(h(2),'linewidth',2);
+            
+            %# Legend
+            hleg1 = legend('Output (real units)','Trendline');
+            set(hleg1,'Location','NorthEast');
+            set(hleg1,'Interpreter','none');
+            
+            % Outboard PST --------------------------------------------------------
+            subplot(3,1,2);
+            
+            % Axis data
+            x = timeData;
+            y = Raw_CH_20_PSTOutboard;
+            
+            %# Trendline
+            polyf = polyfit(x,y,1);
+            polyv = polyval(polyf,x);
+            
+            h = plot(x,y,'-g',x,polyv,'-k');
+            title('{\bf Outboard PST}');
+            xlabel('{\bf Time (seconds)}');
+            ylabel('{\bf PST output (V)}');
+            grid on;
+            box on;
+            %axis square;
+            
+            %# Axis limitations
+            xlim([min(x) max(x)]);
+            %set(gca,'XTick',[min(x):0.2:max(x)]);
+            %set(gca,'YLim',[0 75]);
+            %set(gca,'YTick',[0:5:75]);
+            
+            %# Line width
+            set(h(1),'linewidth',1);
+            set(h(2),'linewidth',2);
+            
+            %# Legend
+            hleg1 = legend('Output (real units)','Trendline');
+            set(hleg1,'Location','NorthEast');
+            set(hleg1,'Interpreter','none');
+            
+            % Compared Inboard/Outboard PST ---------------------------------------
+            subplot(3,1,3);
+            
+            % Axis data
+            x = timeData;
+            y1 = Raw_CH_19_PSTInboard;
+            y2 = Raw_CH_20_PSTOutboard;
+            
+            %# Trendline
+            polyf1 = polyfit(x,y1,1);
+            polyv1 = polyval(polyf1,x);
+            
+            polyf2 = polyfit(x,y2,1);
+            polyv2 = polyval(polyf2,x);
+            
+            h = plot(x,y1,'-b',x,y2,'-g',x,polyv1,'-k',x,polyv2,'--k');
+            title('{\bf Overlayed Inboard/Outboard PST}');
+            xlabel('{\bf Time (seconds)}');
+            ylabel('{\bf PST output (V)}');
+            grid on;
+            box on;
+            %axis square;
+            
+            %# Axis limitations
+            xlim([min(x) max(x)]);
+            %set(gca,'XTick',[min(x):0.2:max(x)]);
+            %set(gca,'YLim',[0 75]);
+            %set(gca,'YTick',[0:5:75]);
+            
+            %# Line width
+            set(h(1),'linewidth',1);
+            set(h(2),'linewidth',1);
+            set(h(3),'linewidth',2);
+            set(h(4),'linewidth',2);
+            
+            %# Legend
+            hleg1 = legend('Inboard Output','Outboard Output','Inboard Trendline','Outboard Trendline');
+            set(hleg1,'Location','NorthEast');
+            set(hleg1,'Interpreter','none');
+            
+            %# ****************************************************************
+            %# Command Window Output
+            %# ****************************************************************
+            if enableCommandWindowOutput == 1
+                
+                % Inboard PST
+                MeanData = CH_19_PSTInboard_Mean;
+                CHData   = CH_19_PSTInboard;
+                
+                avginbpst = sprintf('%s:: Inboard PST (Averaged): %s (V)', runno, sprintf('%.2f',MeanData));
+                mininbpst = sprintf('%s:: Inboard PST (Minimum): %s (V)', runno, sprintf('%.2f',min(CHData)));
+                maxinbpst = sprintf('%s:: Inboard PST (Maximum): %s (V)', runno, sprintf('%.2f',max(CHData)));
+                ptainbpst = sprintf('%s:: Diff. min to avg: %s (percent)%', runno, sprintf('%.2f',100*abs(1-(min(CHData)/MeanData))));
+                stdinbpst = sprintf('%s:: Standard deviation: %s (V)', runno, sprintf('%.4f',std(CHData)));
+                
+                disp(avginbpst);
+                disp(mininbpst);
+                disp(maxinbpst);
+                disp(ptainbpst);
+                disp(stdinbpst);
+                
+                disp('-------------------------------------------------');
+                
+                % Outboard PST
+                MeanData = CH_20_PSTOutboard_Mean;
+                CHData   = CH_20_PSTOutboard;
+                
+                avgoutbbpst = sprintf('%s:: Outboard PST (Averaged): %s (V)', runno, sprintf('%.2f',MeanData));
+                minoutbbpst = sprintf('%s:: Outboard PST (Minimum): %s (V)', runno, sprintf('%.2f',min(CHData)));
+                maxoutbbpst = sprintf('%s:: Outboard PST (Maximum): %s (V)', runno, sprintf('%.2f',max(CHData)));
+                ptaoutbbpst = sprintf('%s:: Diff. min to avg: %s (percent)%', runno, sprintf('%.2f',100*abs(1-(min(CHData)/MeanData))));
+                stdoutbbpst = sprintf('%s:: Standard deviation: %s (V)', runno, sprintf('%.4f',std(CHData)));
+                
+                disp(avgoutbbpst);
+                disp(minoutbbpst);
+                disp(maxoutbbpst);
+                disp(ptaoutbbpst);
+                disp(stdoutbbpst);
+                
+                disp('/////////////////////////////////////////////////');
+                
+            end
+            
+            %# ****************************************************************
+            %# Save data to aray then save to file
+            %# ****************************************************************
+            
+            %# Add results to dedicated array for simple export
+            %# Results array columns:
+            %[1]  Run No.
+            
+            %[2]  Froude length Number                     (-)
+            %[3]  Speed no. (i.e. 1=0.30, 2=0.35, 3=0.40)  (-)
+            %[4]  Depth no. (i.e. 1 to 8)                  (-)
+            
+            %[5]  Channel
+            %[6]  Inboard PST: Averaged            (V)
+            %[7]  Inboard PST: Minimum             (V)
+            %[8]  Inboard PST: Maximum             (V)
+            %[9]  Inboard PST: Diff. min to avg    (percent)
+            %[10] Inboard PST: Standard deviation  (V)
+            
+            %[11] Inboard PST: Zero value          (V)
+            %[12] Inboard PST: Calibration factor  (-)
+            
+            %[13] Channel
+            %[14] Outboard PST: Averaged           (V)
+            %[15] Outboard PST: Minimum            (V)
+            %[16] Outboard PST: Maximum            (V)
+            %[17] Outboard PST: Diff. min to avg   (percent)
+            %[18] Outboard PST: Standard deviation (V)
+            
+            %[19] Outboard PST: Zero value         (V)
+            %[20] Outboard PST: Calibration factor (-)
+            
+            % General data
+            resultsArrayBlmTS(k, 1)  = k;
+            
+            % Froude length number
+            roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
+            modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number
+            resultsArrayBlmTS(k, 2)  = modelfrrounded;
+            
+            % Speed and depth number
+            resultsArrayBlmTS(k, 3)  = setSpeedCond;
+            resultsArrayBlmTS(k, 4)  = setDepthCond;
+            
+            % Inboard ---------------------------------------------------------
             MeanData = CH_19_PSTInboard_Mean;
             CHData   = CH_19_PSTInboard;
             
-            avginbpst = sprintf('%s:: Inboard PST (Averaged): %s (V)', runno, sprintf('%.2f',MeanData));
-            mininbpst = sprintf('%s:: Inboard PST (Minimum): %s (V)', runno, sprintf('%.2f',min(CHData)));
-            maxinbpst = sprintf('%s:: Inboard PST (Maximum): %s (V)', runno, sprintf('%.2f',max(CHData)));
-            ptainbpst = sprintf('%s:: Diff. min to avg: %s (percent)%', runno, sprintf('%.2f',100*abs(1-(min(CHData)/MeanData))));
-            stdinbpst = sprintf('%s:: Standard deviation: %s (V)', runno, sprintf('%.4f',std(CHData)));
+            resultsArrayBlmTS(k, 5)  = 19;
+            resultsArrayBlmTS(k, 6)  = MeanData;
+            resultsArrayBlmTS(k, 7)  = min(CHData);
+            resultsArrayBlmTS(k, 8)  = max(CHData);
+            resultsArrayBlmTS(k, 9)  = abs(1-(min(CHData)/MeanData));
+            resultsArrayBlmTS(k, 10) = std(CHData);
             
-            disp(avginbpst);
-            disp(mininbpst);
-            disp(maxinbpst);
-            disp(ptainbpst);
-            disp(stdinbpst);
+            % Inboard CF and zero
+            resultsArrayBlmTS(k, 11)  = CH_19_Zero;
+            resultsArrayBlmTS(k, 12)  = CH_19_CF;
             
-            disp('-------------------------------------------------');
-            
-            % Outboard PST
+            % Outboard --------------------------------------------------------
             MeanData = CH_20_PSTOutboard_Mean;
             CHData   = CH_20_PSTOutboard;
             
-            avgoutbbpst = sprintf('%s:: Outboard PST (Averaged): %s (V)', runno, sprintf('%.2f',MeanData));
-            minoutbbpst = sprintf('%s:: Outboard PST (Minimum): %s (V)', runno, sprintf('%.2f',min(CHData)));
-            maxoutbbpst = sprintf('%s:: Outboard PST (Maximum): %s (V)', runno, sprintf('%.2f',max(CHData)));
-            ptaoutbbpst = sprintf('%s:: Diff. min to avg: %s (percent)%', runno, sprintf('%.2f',100*abs(1-(min(CHData)/MeanData))));
-            stdoutbbpst = sprintf('%s:: Standard deviation: %s (V)', runno, sprintf('%.4f',std(CHData)));
+            resultsArrayBlmTS(k, 13) = 20;
+            resultsArrayBlmTS(k, 14) = MeanData;
+            resultsArrayBlmTS(k, 15) = min(CHData);
+            resultsArrayBlmTS(k, 16) = max(CHData);
+            resultsArrayBlmTS(k, 17) = abs(1-(min(CHData)/MeanData));
+            resultsArrayBlmTS(k, 18) = std(CHData);
             
-            disp(avgoutbbpst);
-            disp(minoutbbpst);
-            disp(maxoutbbpst);
-            disp(ptaoutbbpst);
-            disp(stdoutbbpst);
+            % Outboard CF and zero
+            resultsArrayBlmTS(k, 19)  = CH_20_Zero;
+            resultsArrayBlmTS(k, 20) = CH_20_CF;
             
-            disp('/////////////////////////////////////////////////');
+            %# ****************************************************************
+            %# Save plot as PNG
+            %# ****************************************************************
+            
+            %# Figure size on screen (50% scaled, but same aspect ratio)
+            set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+            
+            %# Figure size printed on paper
+            set(gcf, 'PaperUnits','centimeters');
+            set(gcf, 'PaperSize',[XPlot YPlot]);
+            set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+            set(gcf, 'PaperOrientation','portrait');
+            
+            %# Plot title -----------------------------------------------------
+            annotation('textbox', [0 0.9 1 0.1], ...
+                'String', strcat('{\bf ', figurename, '}'), ...
+                'EdgeColor', 'none', ...
+                'HorizontalAlignment', 'center');
+            
+            %# Save plots as PDF and PNG
+            %plotsavenamePDF = sprintff('_plots/%s/Run_%s_CH_19-20_Bounday_Layer.pdf', 'TS', num2str(runno));
+            %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
+            plotsavename = sprintf('_plots/%s/Run_%s_CH_19-20_Bounday_Layer.png', 'TS', num2str(runno));
+            saveas(f, plotsavename);                % Save plot as PNG
+            close;
             
         end
         
-        %# ********************************************************************
-        %# Save data to aray then save to file
-        %# ********************************************************************
-        
-        %# Add results to dedicated array for simple export
-        %# Results array columns:
-        %[1]  Run No.
-        
-        %[2]  Froude length Number                     (-)
-        %[3]  Speed no. (i.e. 1=0.30, 2=0.35, 3=0.40)  (-)
-        %[4]  Depth no. (i.e. 1 to 8)                  (-)
-        
-        %[5]  Channel
-        %[6]  Inboard PST: Averaged            (V)
-        %[7]  Inboard PST: Minimum             (V)
-        %[8]  Inboard PST: Maximum             (V)
-        %[9]  Inboard PST: Diff. min to avg    (percent)
-        %[10] Inboard PST: Standard deviation  (V)
-        
-        %[11] Inboard PST: Zero value          (V)
-        %[12] Inboard PST: Calibration factor  (-)
-        
-        %[13] Channel
-        %[14] Outboard PST: Averaged           (V)
-        %[15] Outboard PST: Minimum            (V)
-        %[16] Outboard PST: Maximum            (V)
-        %[17] Outboard PST: Diff. min to avg   (percent)
-        %[18] Outboard PST: Standard deviation (V)
-        
-        %[19] Outboard PST: Zero value         (V)
-        %[20] Outboard PST: Calibration factor (-)
-        
-        % General data
-        resultsArrayBlmTS(k, 1)  = k;
-        
-        % Froude length number
-        roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
-        modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number
-        resultsArrayBlmTS(k, 2)  = modelfrrounded;
-        
-        % Speed and depth number
-        resultsArrayBlmTS(k, 3)  = setSpeedCond;
-        resultsArrayBlmTS(k, 4)  = setDepthCond;
-        
-        % Inboard ---------------------------------------------------------
-        MeanData = CH_19_PSTInboard_Mean;
-        CHData   = CH_19_PSTInboard;
-        
-        resultsArrayBlmTS(k, 5)  = 19;
-        resultsArrayBlmTS(k, 6)  = MeanData;
-        resultsArrayBlmTS(k, 7)  = min(CHData);
-        resultsArrayBlmTS(k, 8)  = max(CHData);
-        resultsArrayBlmTS(k, 9)  = abs(1-(min(CHData)/MeanData));
-        resultsArrayBlmTS(k, 10) = std(CHData);
-        
-        % Inboard CF and zero
-        resultsArrayBlmTS(k, 11)  = CH_19_Zero;
-        resultsArrayBlmTS(k, 12)  = CH_19_CF;
-        
-        % Outboard --------------------------------------------------------
-        MeanData = CH_20_PSTOutboard_Mean;
-        CHData   = CH_20_PSTOutboard;
-        
-        resultsArrayBlmTS(k, 13) = 20;
-        resultsArrayBlmTS(k, 14) = MeanData;
-        resultsArrayBlmTS(k, 15) = min(CHData);
-        resultsArrayBlmTS(k, 16) = max(CHData);
-        resultsArrayBlmTS(k, 17) = abs(1-(min(CHData)/MeanData));
-        resultsArrayBlmTS(k, 18) = std(CHData);
-        
-        % Outboard CF and zero
-        resultsArrayBlmTS(k, 19)  = CH_20_Zero;
-        resultsArrayBlmTS(k, 20) = CH_20_CF;
-        
-        %# ********************************************************************
-        %# Save plot as PNG
-        %# ********************************************************************
-        
-        %# Figure size on screen (50% scaled, but same aspect ratio)
-        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-        
-        %# Figure size printed on paper
-        set(gcf, 'PaperUnits','centimeters');
-        set(gcf, 'PaperSize',[XPlot YPlot]);
-        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-        set(gcf, 'PaperOrientation','portrait');
-        
-        %# Plot title ---------------------------------------------------------
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
-        
-        %# Save plots as PDF and PNG
-        %plotsavenamePDF = sprintff('_plots/%s/Run_%s_CH_19-20_Bounday_Layer.pdf', 'TS', num2str(runno));
-        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('_plots/%s/Run_%s_CH_19-20_Bounday_Layer.png', 'TS', num2str(runno));
-        saveas(f, plotsavename);                % Save plot as PNG
-        close;
-        
+        %wtot = endRun - startRun;
+        %w = waitbar(k/wtot,w,['iteration: ',num2str(k)]);
     end
     
-    %# ////////////////////////////////////////////////////////////////////
-    %# ////////////////////////////////////////////////////////////////////
-    %# ZERO: Save data to aray then save to file
-    %# ////////////////////////////////////////////////////////////////////
-    %# ////////////////////////////////////////////////////////////////////
+    %# ////////////////////////////////////////////////////////////////////////
+    %# START: Write results to CVS
+    %# ------------------------------------------------------------------------
     
-    %     if enableZeroDataSave == 1
-    %
-    %         %# Add results to dedicated array for simple export
-    %         %# Results array columns:
-    %             %[1]  Run No.
-    %
-    %             %[2]  Froude length Number                     (-)
-    %             %[3]  Speed no. (i.e. 1=0.30, 2=0.35, 3=0.40)  (-)
-    %             %[4]  Depth no. (i.e. 1 to 8)                  (-)
-    %
-    %             %[5]  Channel
-    %             %[6]  Inboard PST: Zero value           (V)
-    %             %[7]  Inboard PST: Calibration factor   (-)
-    %
-    %             %[8]  Channel
-    %             %[9]  Outboard PST: Zero value          (V)
-    %             %[10] Outboard PST: Calibration factor  (-)
-    %
-    %         % General data
-    %         resultsArrayBlmZero(k, 1)  = k;
-    %
-    %         % Froude length number
-    %         roundedspeed   = str2num(sprintf('%.2f',CH_0_Speed_Mean));                          % Round averaged speed to two (2) decimals only
-    %         modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl1500))); % Calculate Froude length number
-    %         resultsArrayBlmZero(k, 2)  = modelfrrounded;
-    %
-    %         % Speed and depth number
-    %         resultsArrayBlmZero(k, 3)  = setSpeedCond;
-    %         resultsArrayBlmZero(k, 4)  = setDepthCond;
-    %
-    %         % Inboard PST
-    %         resultsArrayBlmZero(k, 5)  = 19;
-    %         resultsArrayBlmZero(k, 6)  = CH_19_Zero;
-    %         resultsArrayBlmZero(k, 7)  = CH_19_CF;
-    %
-    %         % Outboard PST
-    %         resultsArrayBlmZero(k, 8)  = 20;
-    %         resultsArrayBlmZero(k, 9)  = CH_20_Zero;
-    %         resultsArrayBlmZero(k, 10) = CH_20_CF;
-    %
-    %     end
+    % Velocities and read unit data
+    M = resultsArrayBlm;
+    M = M(any(M,2),:);                           % Remove zero rows
+    csvwrite('resultsArrayBlm.dat', M)           % Export matrix M to a file delimited by the comma character
+    if exist('resultsArrayBlm_copy.dat', 'file') == 0
+        csvwrite('resultsArrayBlm_copy.dat', M)  % Export matrix M to a file delimited by the comma character
+    end
     
-    %wtot = endRun - startRun;
-    %w = waitbar(k/wtot,w,['iteration: ',num2str(k)]);
+    % Time series data, min, max, diff. to avg., STDev, CF and zero values
+    M = resultsArrayBlmTS;
+    M = M(any(M,2),:);                           % Remove zero rows
+    csvwrite('resultsArrayBlmTS.dat', M)         % Export matrix M to a file delimited by the comma character
+    
+    %# ------------------------------------------------------------------------
+    %# END: Write results to CVS
+    %# ////////////////////////////////////////////////////////////////////////
+    
+    %# Close progress bar
+    %close(w);
+    
 end
 
-%# Close progress bar
-%close(w);
-
-
-%# ------------------------------------------------------------------------
-%# START: PLOT VOLTAGE AND REAL DATA
+%# ////////////////////////////////////////////////////////////////////////
+%# START Plotting boundary layer
 %# ------------------------------------------------------------------------
 
-if enableVolAndRDSave == 1
+% Array manipulations -----------------------------------------------------
+
+%# Array manipulation: Split by speed
+RA = resultsArrayBlm;
+RA = RA(any(RA,2),:);
+A  = arrayfun(@(x) RA(RA(:,3) == x, :), unique(RA(:,3)), 'uniformoutput', false);
+
+%# ************************************************************************
+%# 1. Plot distance from hull vs. speed
+%# ************************************************************************
+
+figurename = sprintf('%s:: Distance from hull vs. speed', testName);
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+set(gcf, 'PaperSize', [19 19]);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperPosition', [0 0 19 19]);
+
+set(gcf, 'PaperUnits', 'centimeters');
+set(gcf, 'PaperSize', [19 19]);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperPosition', [0 0 19 19]);
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',10,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'<';'^';'x';'>'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Set plot figure background to a defined color --------------------------
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+
+set(gcf,'Color',[1,1,1]);
+
+% Array manipulations -----------------------------------------------------
+
+if enableAveragedRunsPlot == 1
+    %# Array manipulation: Split by Distance from model hull (for repeated runs)
     
-    figurename = sprintf('%s:: Voltage and Real Data Plot Plot, Run 29 to 69', testName);
-    f = figure('Name',figurename,'NumberTitle','off');
+    %# Results array columns:
+    %[1]  Distance from model hull                      (mm)
+    %[2]  Averaged zero value (Inboard)            (V)
+    %[3]  Averaged zero value (Outboard)           (V)
+    %[4]  PST: Voltage (Inboard)                   (V)
+    %[5]  PST: Voltage (Outboard)                  (V)
+    %[6]  PST: Real units using CF (Inboard)       (m/s)
+    %[7]  PST: Real units using CF (Outboard)      (m/s)
     
-    RA = resultsArrayBlmVandRData;
-    RA = RA(any(RA,2),:);
-    A  = arrayfun(@(x) RA(RA(:,3) == x, :), unique(RA(:,3)), 'uniformoutput', false);
+    SpeedFr30Avg = [];
+    SpeedFr35Avg = [];
+    SpeedFr40Avg = [];
     
-    % Voltage
-    subplot(1,2,1);
+    %# Fr=0.30 ----------------------------------------------------------------
+    RA1 = A{1};
+    A1  = arrayfun(@(x) RA1(RA1(:,4) == x, :), unique(RA1(:,4)), 'uniformoutput', false);
+    [m1,n1] = size(A1);
     
-    % Axis data. Subscript i = inboard and o = outboard
-    x1i = A{1}(:,9);
-    x1o = A{1}(:,10);
+    % Average repeated runs
+    for k=1:m1
+        SpeedFr30Avg(k, 1) = A1{k}(1,4);
+        SpeedFr30Avg(k, 2) = mean(A1{k}(:,5));
+        SpeedFr30Avg(k, 3) = mean(A1{k}(:,6));
+        SpeedFr30Avg(k, 4) = mean(A1{k}(:,9));
+        SpeedFr30Avg(k, 5) = mean(A1{k}(:,10));
+        SpeedFr30Avg(k, 6) = mean(A1{k}(:,11));
+        SpeedFr30Avg(k, 7) = mean(A1{k}(:,12));
+    end
     
-    x2i = A{2}(:,9);
-    x2o = A{2}(:,10);
+    %# Fr=0.35 ----------------------------------------------------------------
+    RA2 = A{2};
+    A2 = arrayfun(@(x) RA2(RA2(:,4) == x, :), unique(RA2(:,4)), 'uniformoutput', false);
+    [m2,n2] = size(A2);
     
-    x3i = A{3}(:,9);
-    x3o = A{3}(:,10);
+    % Average repeated runs
+    for k=1:m2
+        SpeedFr35Avg(k, 1) = A2{k}(1,4);
+        SpeedFr35Avg(k, 2) = mean(A2{k}(:,5));
+        SpeedFr35Avg(k, 3) = mean(A2{k}(:,6));
+        SpeedFr35Avg(k, 4) = mean(A2{k}(:,9));
+        SpeedFr35Avg(k, 5) = mean(A2{k}(:,10));
+        SpeedFr35Avg(k, 6) = mean(A2{k}(:,11));
+        SpeedFr35Avg(k, 7) = mean(A2{k}(:,12));
+    end
     
-    y1i = A{1}(:,4);
-    y1o = A{1}(:,4);
+    %# Fr=0.40 ----------------------------------------------------------------
+    RA3 = A{3};
+    A3  = arrayfun(@(x) RA3(RA3(:,4) == x, :), unique(RA3(:,4)), 'uniformoutput', false);
+    [m3,n3] = size(A3);
     
-    y2i = A{2}(:,4);
-    y2o = A{2}(:,4);
+    % Average repeated runs
+    for k=1:m3
+        SpeedFr40Avg(k, 1) = A3{k}(1,4);
+        SpeedFr40Avg(k, 2) = mean(A3{k}(:,5));
+        SpeedFr40Avg(k, 3) = mean(A3{k}(:,6));
+        SpeedFr40Avg(k, 4) = mean(A3{k}(:,9));
+        SpeedFr40Avg(k, 5) = mean(A3{k}(:,10));
+        SpeedFr40Avg(k, 6) = mean(A3{k}(:,11));
+        SpeedFr40Avg(k, 7) = mean(A3{k}(:,12));
+    end
+end
+
+% X and Y values ----------------------------------------------------------
+
+% Axis data. Subscript i = inboard and o = outboard
+
+%# REPEATED RUNS
+
+%# Fr=0.30
+x1i = A{1}(:,11);
+y1i = A{1}(:,4);
+
+x1o = A{1}(:,12);
+y1o = A{1}(:,4);
+
+%# Fr=0.35
+x2i = A{2}(:,11);
+y2i = A{2}(:,4);
+
+x2o = A{2}(:,12);
+y2o = A{2}(:,4);
+
+%# Fr=0.40
+x3i = A{3}(:,11);
+y3i = A{3}(:,4);
+
+x3o = A{3}(:,12);
+y3o = A{3}(:,4);
+
+%# AVERAGED RUNS
+if enableAveragedRunsPlot == 1
+    %# Fr=0.30
+    x1iavg = SpeedFr30Avg(:,6);
+    y1iavg = SpeedFr30Avg(:,1);
     
-    y3i = A{3}(:,4);
-    y3o = A{3}(:,4);
+    x1oavg = SpeedFr30Avg(:,7);
+    y1oavg = SpeedFr30Avg(:,1);
     
-    h = plot(x1i,y1i,'sr',x1o,y1o,'^r',x2i,y2i,'sg',x2o,y2o,'^g',x3i,y3i,'sb',x3o,y3o,'^b');
-    title('{\bf Voltage Output}');
-    xlabel('{\bf Output (V)}');
-    ylabel('{\bf Depth (m)}');
-    grid on;
-    box on;
-    axis square;
+    %# Fr=0.35
+    x2iavg = SpeedFr35Avg(:,6);
+    y2iavg = SpeedFr35Avg(:,1);
     
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
+    x2oavg = SpeedFr35Avg(:,7);
+    y2oavg = SpeedFr35Avg(:,1);
     
-    %# Axis limitations
-    %xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
+    %# Fr=0.40
+    x3iavg = SpeedFr40Avg(:,6);
+    y3iavg = SpeedFr40Avg(:,1);
     
-    %# Line width
-    %set(h(1),'linewidth',1);
-    %set(h(2),'linewidth',1);
-    %set(h(3),'linewidth',2);
-    %set(h(4),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard');
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    
-    % Real units
-    subplot(1,2,2);
-    
-    % Axis data. Subscript i = inboard and o = outboard
-    x1i = A{1}(:,11);
-    x1o = A{1}(:,12);
-    
-    x2i = A{2}(:,11);
-    x2o = A{2}(:,12);
-    
-    x3i = A{3}(:,11);
-    x3o = A{3}(:,12);
-    
-    y1i = A{1}(:,4);
-    y1o = A{1}(:,4);
-    
-    y2i = A{2}(:,4);
-    y2o = A{2}(:,4);
-    
-    y3i = A{3}(:,4);
-    y3o = A{3}(:,4);
-    
-    h = plot(x1i,y1i,'sr',x1o,y1o,'^r',x2i,y2i,'sg',x2o,y2o,'^g',x3i,y3i,'sb',x3o,y3o,'^b');
-    title('{\bf Real Units Output}');
-    xlabel('{\bf Speed (m/s)}');
-    ylabel('{\bf Depth (mm)}');
-    grid on;
-    box on;
-    axis square;
-    
-    %# Axis limitations
-    %xlim([min(x) max(x)]);
-    %set(gca,'XTick',[min(x):0.2:max(x)]);
-    %set(gca,'YLim',[0 75]);
-    %set(gca,'YTick',[0:5:75]);
-    
-    %# Line width
-    %set(h(1),'linewidth',1);
-    %set(h(2),'linewidth',1);
-    %set(h(3),'linewidth',2);
-    %set(h(4),'linewidth',2);
-    
-    %# Legend
-    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard');
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    
-    %# ********************************************************************
-    %# Save plot as PNG
-    %# ********************************************************************
-    
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-    
-    %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-    
-    %# Plot title ---------------------------------------------------------
+    x3oavg = SpeedFr40Avg(:,7);
+    y3oavg = SpeedFr40Avg(:,1);
+end
+
+% Plotting ----------------------------------------------------------------
+h1 = plot(x1i,y1i,'*',x1o,y1o,'*',x2i,y2i,'*',x2o,y2o,'*',x3i,y3i,'*',x3o,y3o,'*');
+if enableAveragedRunsPlot == 1
+    hold on;
+    h2 = plot(x1iavg,y1iavg,'-',x1oavg,y1oavg,'-',x2iavg,y2iavg,'-',x2oavg,y2oavg,'-',x3iavg,y3iavg,'-',x3oavg,y3oavg,'-');
+end
+if enablePlotTitle == 1
+    title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
+end
+xlabel('{\bf Measured speed [m/s]}','FontSize',setGeneralFontSize);
+ylabel('{\bf Distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+setMarkerSize      = 9;
+setLineWidthMarker = 1;
+setLineWidth       = 1;
+setLineStyle       = '-.';
+setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
+setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+
+% Averaged runs data
+if enableAveragedRunsPlot == 1
+    setSpeed=1;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setSpeed=2;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setSpeed=3;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setSpeed=4;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setSpeed=5;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setSpeed=6;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+end
+
+% Set limitations
+% set(gca,'XLim',[minX maxX]);
+% set(gca,'XTick',minX:setXIncr:maxX);
+% set(gca,'YLim',[minY maxY]);
+% set(gca,'YTick',minY:setYIncr:maxY);
+
+%# Legend
+hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Plot title -------------------------------------------------------------
+if enablePlotMainTitle == 1
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
         'EdgeColor', 'none', ...
         'HorizontalAlignment', 'center');
-    
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('_plots/%s/Boundary_Layer_Profiles_Fr_030_to_0.40.pdf', 'BLM');
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Boundary_Layer_Profiles_Fr_030_to_0.40.png', 'BLM');
-    saveas(f, plotsavename);                % Save plot as PNG
-    close;
-    
 end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Boundary_Layer_Fr_030_to_0.40_Y_vs_Speed.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 2. Plot speed vs. u/U0
+%# ************************************************************************
+
+figurename = sprintf('%s:: Speed vs. u/U0', testName);
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+set(gcf, 'PaperSize', [19 19]);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperPosition', [0 0 19 19]);
+
+set(gcf, 'PaperUnits', 'centimeters');
+set(gcf, 'PaperSize', [19 19]);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperPosition', [0 0 19 19]);
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',10,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'<';'^';'x';'>'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Set plot figure background to a defined color --------------------------
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+
+set(gcf,'Color',[1,1,1]);
+
+% X and Y values ----------------------------------------------------------
+
+% Axis data. Subscript i = inboard and o = outboard
+
+%# REPEATED RUNS
+
+%# Fr=0.30
+x1i = A{1}(:,4);
+y1i = A{1}(:,13);
+
+x1o = A{1}(:,4);
+y1o = A{1}(:,14);
+
+%# Fr=0.35
+x2i = A{2}(:,4);
+y2i = A{2}(:,13);
+
+x2o = A{2}(:,4);
+y2o = A{2}(:,14);
+
+%# Fr=0.40
+x3i = A{3}(:,4);
+y3i = A{3}(:,13);
+
+x3o = A{3}(:,4);
+y3o = A{3}(:,14);
+
+% Plotting ----------------------------------------------------------------
+h1 = plot(x1i,y1i,'*',x1o,y1o,'*',x2i,y2i,'*',x2o,y2o,'*',x3i,y3i,'*',x3o,y3o,'*');
+if enablePlotTitle == 1
+    title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
+end
+xlabel('{\bf Distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
+ylabel('{\bf u/U_{0} [-]}','FontSize',setGeneralFontSize);
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+setMarkerSize      = 9;
+setLineWidthMarker = 1;
+setLineWidth       = 1;
+setLineStyle       = '-.';
+setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
+setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+
+% Set limitations
+% set(gca,'XLim',[minX maxX]);
+% set(gca,'XTick',minX:setXIncr:maxX);
+set(gca,'YLim',[0.6 1.1]);
+set(gca,'YTick',0.6:0.1:1.1);
+
+%# Legend
+hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard');
+set(hleg1,'Location','SouthEast');
+set(hleg1,'Interpreter','none');
+legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Plot title -------------------------------------------------------------
+if enablePlotMainTitle == 1
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');
+end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Boundary_Layer_Fr_030_to_0.40_Speed_vs_u_Uo_Ratio.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
 
 %# ------------------------------------------------------------------------
-%# END: PLOT VOLTAGE AND REAL DATA
-%# ------------------------------------------------------------------------
-
-
-% /////////////////////////////////////////////////////////////////////
-% START: Write results to CVS
-% ---------------------------------------------------------------------
-
-% Boundary layer measurement data
-M = resultsArrayBlm;
-M = M(any(M,2),:);                           % Remove zero rows
-csvwrite('resultsArrayBlm.dat', M)           % Export matrix M to a file delimited by the comma character
-
-% Velocities and read unit data -------------------------------------------
-if enableVolAndRDSave == 1
-    % Boundary layer measurement zero data
-    M = resultsArrayBlmVandRData;
-    M = M(any(M,2),:);                           % Remove zero rows
-    csvwrite('resultsArrayBlmVandRData.dat', M)  % Export matrix M to a file delimited by the comma character
-end
-
-% Time series data, min, max, diff. to avg., STDev, CF and zero values ----
-if enableTSDataSave == 1
-    % Boundary layer measurement TS data
-    M = resultsArrayBlmTS;
-    M = M(any(M,2),:);                           % Remove zero rows
-    csvwrite('resultsArrayBlmTS.dat', M)         % Export matrix M to a file delimited by the comma character
-end
-
-% if enableZeroDataSave == 1
-%     % Boundary layer measurement zero data
-%     M = resultsArrayBlmZero;
-%     M = M(any(M,2),:);                           % Remove zero rows
-%     csvwrite('resultsArrayBlmZero.dat', M)       % Export matrix M to a file delimited by the comma character
-% end
-
-%dlmwrite('resultsArrayBlm.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
-
-% ---------------------------------------------------------------------
-% END: Write results to CVS
-% /////////////////////////////////////////////////////////////////////
+%# END Plotting boundary layer
+%# ////////////////////////////////////////////////////////////////////////
 
 
 % -------------------------------------------------------------------------

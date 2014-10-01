@@ -2,8 +2,8 @@
 %# Flow Rate Analysis: Simple statistics
 %# ------------------------------------------------------------------------
 %#
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  September 8, 2014
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  October 1, 2014
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -54,26 +54,26 @@ enableEqnOfFitPlot      = 1;    % Show equations of fit
 %# ------------------------------------------------------------------------
 if exist('resultsArray_copy.dat', 'file') == 2
     %# Results array columns:
-    %[1]  Run No.
-    %[2]  FS                                                        (Hz)
-    %[3]  No. of samples                                            (-)
-    %[4]  Record time                                               (s)
-    %[5]  Flow rate                                                 (Kg/s)
-    %[6]  Kiel probe STBD                                           (V)
-    %[7]  Kiel probe PORT                                           (V)
-    %[8]  Thrust STBD                                               (N)
-    %[9]  Thrust PORT                                               (N)
-    %[10] Torque STBD                                               (Nm)
-    %[11] Torque PORT                                               (Nm)
-    %[12] Shaft Speed STBD                                          (RPM)
-    %[13] Shaft Speed PORT                                          (RPM)
-    %[14] Power STBD                                                (W)
-    %[15] Power PORT                                                (W)
+        %[1]  Run No.
+        %[2]  FS                                                        (Hz)
+        %[3]  No. of samples                                            (-)
+        %[4]  Record time                                               (s)
+        %[5]  Flow rate                                                 (Kg/s)
+        %[6]  Kiel probe STBD                                           (V)
+        %[7]  Kiel probe PORT                                           (V)
+        %[8]  Thrust STBD                                               (N)
+        %[9]  Thrust PORT                                               (N)
+        %[10] Torque STBD                                               (Nm)
+        %[11] Torque PORT                                               (Nm)
+        %[12] Shaft Speed STBD                                          (RPM)
+        %[13] Shaft Speed PORT                                          (RPM)
+        %[14] Power STBD                                                (W)
+        %[15] Power PORT                                                (W)
     %# Added columns: 18/8/2014
-    %[16] Mass flow rate (1s only)                                  (Kg/s)
-    %[17] Mass flow rate (mean, 1s intervals)                       (Kg/s)
-    %[18] Mass flow rate (overall, Q/t)                             (Kg/s)
-    %[19] Diff. mass flow rate (mean, 1s intervals)/(overall, Q/t)  (%)
+        %[16] Mass flow rate (1s only)                                  (Kg/s)
+        %[17] Mass flow rate (mean, 1s intervals)                       (Kg/s)
+        %[18] Mass flow rate (overall, Q/t)                             (Kg/s)
+        %[19] Diff. mass flow rate (mean, 1s intervals)/(overall, Q/t)  (%)
     
     results = csvread('resultsArray_copy.dat');
     
@@ -327,6 +327,23 @@ if enableAvgPortStbdPlot == 1
     yPortStbdAvg14 = stbdportAvgArray(:,3);
 end
 
+% Equation if fit
+EqnOfFitArray = [];
+EqnOfFitKP    = [1:0.2:4.4];
+[meof,neof]   = size(EqnOfFitKP);
+
+%# Columns:
+    %[1]  Kiel probe output             (V)
+    %[2]  Stbd mass flow rate           (Kg/s}
+    %[3]  Port mass flow rate           (Kg/s}
+
+for kj=1:neof
+    KPValue = EqnOfFitKP(kj);
+    EqnOfFitArray(kj, 1) = KPValue;
+    EqnOfFitArray(kj, 2) = -0.0946*KPValue^4+1.1259*KPValue^3-5.0067*KPValue^2+11.0896*KPValue-6.8705;
+    EqnOfFitArray(kj, 3) = -0.0421*KPValue^4+0.5718*KPValue^3-2.9517*KPValue^2+7.8517*KPValue-5.1976;
+end
+
 % Polynomial fit ----------------------------------------------------------
 
 setPolyOrder = 4;
@@ -412,8 +429,8 @@ end
 % Display in command window -----------------------------------------------
 
 % Set number of decimals in command window output
-setPostDecimals = '+%0.3f';
-setNeutDecimals = '%0.3f';
+setPostDecimals = '+%0.4f';
+setNeutDecimals = '%0.4f';
 
 % Port (June 2013)
 fitEqn = pfPort13;
@@ -605,6 +622,17 @@ else
             xStbd14,pvStbd14,'-.');
     end
 end
+
+% START Check equation of fit ---------------------------------------------
+% x = EqnOfFitArray(:,1);
+% % Stbd
+% y1 = EqnOfFitArray(:,2);
+% % Port
+% y2 = EqnOfFitArray(:,3);
+% hold on;
+% h3 = plot(x,y1,'-r',x,y2,'-b','LineWidth',2);
+% END Check equation of fit -----------------------------------------------
+
 if enablePlotTitle == 1
     title('{\bf Kiel Probe Output vs. Mass Flow Rate}','FontSize',setGeneralFontSize);
 end
@@ -669,14 +697,14 @@ end
 %# Text on plot -----------------------------------------------------------
 if enableTextOnPlot == 1
     text(1.5, 1.0, EQoFit1, 'Color', 'k');
-    text(1.5, 0.8, EQoFit2, 'Color', 'k');    
+    text(1.5, 0.8, EQoFit2, 'Color', 'k');
     text(1.5, 0.6, EQoFit3, 'Color', 'k');
     text(1.5, 0.4, EQoFit4, 'Color', 'k');
     if enableAvgPortStbdPlot == 1
         text(1.5, 0.2, EQoFit5, 'Color', 'k');
     end
 end
-    
+
 %# Axis limitations -------------------------------------------------------
 xlim([1 4.5]);
 %ylim([y(1) y(end)]);
@@ -688,7 +716,7 @@ ylim([0 5.5]);
 if enableAvgPortStbdPlot == 1
     hleg1 = legend(h1, 'Port (June 2013)','Starboard (June 2013)','Port (Sept. 2014)','Starboard (Sept. 2014)','Averaged Port/Starboard (Sept. 2014)');
 else
-    hleg1 = legend(h1, 'Port (June 2013)','Starboard (June 2013)','Port (Sept. 2014)','Starboard (Sept. 2014)');    
+    hleg1 = legend(h1, 'Port (June 2013)','Starboard (June 2013)','Port (Sept. 2014)','Starboard (Sept. 2014)');
 end
 set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
@@ -723,9 +751,9 @@ end
 %# Clear variables
 %# ------------------------------------------------------------------------
 
-clearvars x y f h h1 h2 k
+clearvars x y f h h1 h2 k kj
 clearvars setPostDecimals setNeutDecimals
-clearvars m n mpaa npaa msaa nsaa maaa naaa
+clearvars m n mpaa npaa msaa nsaa maaa naaa meof neof
 clearvars minRun maxRun fPath figurename hleg1 plotsavename
 clearvars setGeneralFontSize setBorderLineWidth setMarkerSize setSpeed
 clearvars setMarker setColor setFileFormat setGeneralFontName setSaveFormat setLineStyle setLineWidth setLineWidthMarker setPolyOrder
@@ -737,3 +765,4 @@ clearvars EQoFit1 EQoFit2 EQoFit3 EQoFit4 EQoFit5 var1 var2 var3 var4 var5
 clearvars dev SST resid SSE rSquared fitEqn Rsq1 Rsq2 Rsq3 Rsq4 Rsq5
 clearvars June13Comb June13Port June13Stbd
 clearvars xPort13 yPort13 xStbd13 yStbd13 xPort14 yPort14 xStbd14 yStbd14 xPortStbdAvg14 yPortStbdAvg14 ypred
+clearvars EqnOfFitKP KPValue
