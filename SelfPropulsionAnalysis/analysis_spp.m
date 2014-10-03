@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  September 24, 2014
+%# Date       :  October 3, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -266,7 +266,7 @@ RunsForSpeed9 = [90 91 92 93 94];           % Fr = 0.40
 enableSept2014FRMValues = 1;    % Use enable uses flow rate values established September 2014
 
 % Plot titles, colours, etc.
-enablePlotMainTitle     = 1;    % Show plot title in saved file
+enablePlotMainTitle     = 0;    % Show plot title in saved file
 enablePlotTitle         = 1;    % Show plot title above plot
 enableBlackAndWhitePlot = 1;    % Show plot in black and white only
 enableTowingForceFDPlot = 1;    % Show towing force (FD)
@@ -573,12 +573,10 @@ if exist('resultsArraySPP.dat', 'file') == 0
         resultsArraySPP(k, 27)  = FormFactor;                                           % Form factor (-)
         
         % Towing force and twoing force coefficient
-        setCFm        = resultsArraySPP(k, 24);
-        setCFs        = resultsArraySPP(k, 25);
-        setCorrCoeff  = resultsArraySPP(k, 26);
-        setFormFactor = resultsArraySPP(k, 27);
-        resultsArraySPP(k, 28)  = 0.5*freshwaterdensity*(MSspeed^2)*MSwsa*(setFormFactor*(setCFm-setCFs)-setCorrCoeff);  % Towing force, FD (N)
-        resultsArraySPP(k, 29)  = setFormFactor*(setCFm-setCFs)-setCorrCoeff;           % Towing force coefficient, CFD (-)
+        setCFm = resultsArraySPP(k, 24);
+        setCFs = resultsArraySPP(k, 25);
+        resultsArraySPP(k, 28)  = 0.5*freshwaterdensity*(MSspeed^2)*MSwsa*(FormFactor*(setCFm-setCFs)-CorrCoeff);  % Towing force, FD (N)
+        resultsArraySPP(k, 29)  = FormFactor*(setCFm-setCFs)-CorrCoeff;                                            % Towing force coefficient, CFD (-)
         
         % Kiel probes
         PortKP = resultsArraySPP(k, 17);                                                % PORT: Kiel probe (V)
@@ -775,63 +773,64 @@ for k=1:ma
     
     %# TG at FD -----------------------------------------------------------
     
-    y1 = A{k}(:,45);   % Gross thrust = TG = p Q vj        (N)
-    y2 = A{k}(:,42);   % Gross thrust = TG = p Q (vj - vi) (N)
-    x  = A{k}(:,10);   % Bare hull resistance                 (N)
-    xq = A{k}(1,28);   % Towing force, FD                     (N)
+    y1       = A{k}(:,45);   % Gross thrust = TG = p Q vj        (N)
+    y2       = A{k}(:,42);   % Gross thrust = TG = p Q (vj - vi) (N)
+    x        = A{k}(:,10);   % Bare hull resistance              (N)
+    towForce = A{k}(1,28);   % Towing force, FD                  (N)
+    xq       = 0;            % Intersection of x for TG at zero drag
     
     %# Gross thrust = TG = p Q vj -----------------------------------------
-    polyf = polyfit(x,y1,1);
-    polyv = polyval(polyf,x);
-    TGA_at_FDArray{k}(1, 1) = spline(x,polyv,xq); % Gross thrust, TG (x-axis)
-    TGA_at_FDArray{k}(1, 2) = A{k}(1,28);         % Towing force, FD (y-axis)
-    TGA_at_FDArray{k}(2, 1) = spline(x,polyv,xq);
-    TGA_at_FDArray{k}(2, 2) = 0;
+    polyf                = polyfit(x,y1,1);
+    polyv                = polyval(polyf,x);
+    ThrustAtZeroDrag     = spline(x,polyv,0);
+    ThrustAtSPP          = ThrustAtZeroDrag-towForce;
+    TGA_at_FDArray(k, 1) = ThrustAtZeroDrag;        % Gross thrust, TG   (x-axis)
+    TGA_at_FDArray(k, 2) = 0;                       % Towing force, Drag (y-axis)
+    TGA_at_FDArray(k, 3) = towForce;                % Towing force, FD
+    TGA_at_FDArray(k, 4) = ThrustAtSPP;             % Thrust at self. propulsion point = TG at zero drag - FD
     
-    % Thrust deduction array
-    GrossThrustAtFD     = spline(x,polyv,xq);
-    TowingForceFD       = A{k}(1,28);
-    CalmWaterResistance = -7932.12*FroudeNos(k)^5+13710.12*FroudeNos(k)^4-9049.96*FroudeNos(k)^3+2989.46*FroudeNos(k)^2-386.61*FroudeNos(k)+18.6;
+    % Towing force at zero gross thrust
+    TowingForceAtZeroThrust = spline(polyv,x,0);
+    FA_at_TGZero(k, 1) = 0;                         % Gross thrust, TG (x-axis)
+    FA_at_TGZero(k, 2) = TowingForceAtZeroThrust;   % Towing force     (y-axis)
     
     % Froude number
     thrustDedFracArrayA(k, 1) = FroudeNos(k);
     % t=(TM+FD-RC)/TM
-    thrustDedFracArrayA(k, 2) = (GrossThrustAtFD+TowingForceFD-CalmWaterResistance)/GrossThrustAtFD;
+    thrustDedFracArrayA(k, 2) = (ThrustAtSPP+towForce-TowingForceAtZeroThrust)/ThrustAtSPP;
     % RCW=TG(1-t)+FD ==>> t=1-((RCW-FD)/T)
-    thrustDedFracArrayA(k, 3) = 1-((CalmWaterResistance-TowingForceFD)/GrossThrustAtFD);
-    
-    % Towing for at zero gross thrust
-    FA_at_TGZero(k, 1)      = 0;                  % Gross thrust, TG (x-axis)
-    FA_at_TGZero(k, 2)      = spline(polyv,x,0);  % Towing force     (y-axis)
+    thrustDedFracArrayA(k, 3) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);
+    % t = ((FD-FatT=0)/TG@SPP)+1
+    thrustDedFracArrayA(k, 4) = ((towForce-TowingForceAtZeroThrust)/ThrustAtSPP)+1;
+    % t = 1-((FatT=0-FD)/TG@SPP)
+    thrustDedFracArrayA(k, 5) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);
     
     %# Gross thrust = TG = p Q (vj - vi) ----------------------------------
-    polyf = polyfit(x,y2,1);
-    polyv = polyval(polyf,x);
-    TGB_at_FDArray{k}(1, 1) = spline(x,polyv,xq); % Gross thrust, TG (x-axis)
-    TGB_at_FDArray{k}(1, 2) = A{k}(1,28);         % Towing force, FD (y-axis)
-    TGB_at_FDArray{k}(2, 1) = spline(x,polyv,xq);
-    TGB_at_FDArray{k}(2, 2) = 0;
-    
-    % Thrust deduction array
-    GrossThrustAtFD     = spline(x,polyv,xq);
-    TowingForceFD       = A{k}(1,28);
-    CalmWaterResistance = -7932.12*FroudeNos(k)^5+13710.12*FroudeNos(k)^4-9049.96*FroudeNos(k)^3+2989.46*FroudeNos(k)^2-386.61*FroudeNos(k)+18.6;
+    polyf                = polyfit(x,y2,1);
+    polyv                = polyval(polyf,x);
+    ThrustAtZeroDrag     = spline(x,polyv,0);
+    ThrustAtSPP          = ThrustAtZeroDrag-towForce;
+    TGB_at_FDArray(k, 1) = ThrustAtZeroDrag;        % Gross thrust, TG   (x-axis)
+    TGB_at_FDArray(k, 2) = 0;                       % Towing force, Drag (y-axis)
+    TGB_at_FDArray(k, 3) = towForce;                % Towing force, FD
+    TGB_at_FDArray(k, 4) = ThrustAtSPP;             % Thrust at self. propulsion point = TG at zero drag - FD
+
+    % Towing force at zero gross thrust
+    TowingForceAtZeroThrust = spline(polyv,x,0);
+    FB_at_TGZero(k, 1) = 0;                         % Gross thrust, TG (x-axis)
+    FB_at_TGZero(k, 2) = TowingForceAtZeroThrust;   % Towing force     (y-axis)
     
     % Froude number
     thrustDedFracArrayB(k, 1) = FroudeNos(k);
     % t=(TM+FD-RC)/TM
-    thrustDedFracArrayB(k, 2) = (GrossThrustAtFD+TowingForceFD-CalmWaterResistance)/GrossThrustAtFD;
+    thrustDedFracArrayB(k, 2) = (ThrustAtSPP+towForce-TowingForceAtZeroThrust)/ThrustAtSPP;
     % RCW=TG(1-t)+FD ==>> t=1-((RCW-FD)/T)
-    thrustDedFracArrayB(k, 3) = 1-((CalmWaterResistance-TowingForceFD)/GrossThrustAtFD);
-    
-    % Towing for at zero gross thrust
-    FB_at_TGZero(k, 1)      = 0;                  % Gross thrust, TG (x-axis)
-    FB_at_TGZero(k, 2)      = spline(polyv,x,0);  % Towing force     (y-axis)
+    thrustDedFracArrayB(k, 3) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);    
+    % t = ((FD-FatT=0)/TG@SPP)+1
+    thrustDedFracArrayB(k, 4) = ((towForce-TowingForceAtZeroThrust)/ThrustAtSPP)+1;
+    % t = 1-((FatT=0-FD)/TG@SPP)
+    thrustDedFracArrayB(k, 5) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);    
 end
-
-% Transpose rows array to column array
-% TGA_at_FDArray = TGA_at_FDArray';
-% TGB_at_FDArray = TGB_at_FDArray';
 
 %# Only plot if all (9) datasets are available
 if ma == 9
@@ -877,12 +876,13 @@ if ma == 9
             'LooseInset',get(gca,'TightInset'));
         
         %# Markes and colors ------------------------------------------------------
-        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+        %setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+        setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
         % Colored curves
-        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
         if enableBlackAndWhitePlot == 1
             % Black and white curves
-            setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+            setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
         end
         
         %# Gross thrust = TG = p Q vj -----------------------------------------
@@ -936,24 +936,25 @@ if ma == 9
             % Towing force at zero thrust
             FatTGZ = FA_at_TGZero;
             
+            %# Set marker and line sizes
+            setMarkerSize      = 8;
+            setLineWidthMarker = 1;
+            setLineWidth       = 1;
+            setLineStyle       = '-';
+            
             %# Plotting
             h1 = plot(x1,y1,setMarker{1},x2,y2,setMarker{2},x3,y3,setMarker{3},x4,y4,setMarker{4},x5,y5,setMarker{5},x6,y6,setMarker{6},x7,y7,setMarker{7},x8,y8,setMarker{8},x9,y9,setMarker{9});
-            %# Linear fit
-            %hold on;
-            %h2 = plot(x1,polyv1,x2,polyv2,x3,polyv3,x4,polyv4,x5,polyv5,x6,polyv6,x7,polyv7,x8,polyv8,x9,polyv9);
             %# Gross thrus TG at towing force FD
             if enableTowingForceFDPlot == 1
-                for k=1:ma
-                    hold on;
-                    h3 = plot(TGatFD{k}(:,1),TGatFD{k}(:,2));
-                    set(h3(1),'Color','k','Marker','o','MarkerSize',8,'LineStyle','-.','linewidth',1);
-                end
+                hold on;
+                h3 = plot(TGatFD(:,1),TGatFD(:,2),'o');
+                hold on;
+                %# Towing force at zero thrust
+                h5 = plot(FatTGZ(:,1),FatTGZ(:,2),'s');
             end
             hold on;
             %# Extended linear fit
             h4 = plot(xLF1,yLF1,xLF2,yLF2,xLF3,yLF3,xLF4,yLF4,xLF5,yLF5,xLF6,yLF6,xLF7,yLF7,xLF8,yLF8,xLF9,yLF9);
-            %# Towing force at zero thrust
-            h5 = plot(FatTGZ(:,1),FatTGZ(:,2),'Color','k','Marker','s','MarkerSize',8);
             if enablePlotTitle == 1
                 title('{\bf Gross thrust defined as T_{G} = p Q v_{j}}','FontSize',setGeneralFontSize);
             end
@@ -967,8 +968,6 @@ if ma == 9
             set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
             
             %# Line, colors and markers
-            setMarkerSize      = 8;
-            setLineWidthMarker = 1;
             setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
             setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
             setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
@@ -980,8 +979,13 @@ if ma == 9
             setSpeed=9;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
             
             %# Extended linear curve fit
-            setLineWidth = 1;
-            setLineStyle = '-';
+            if enableTowingForceFDPlot == 1
+                setMarkerSize      = 12;
+                setLineWidthMarker = 2;
+                set(h3(1),'Color',setColor{10},'Marker',setMarker{10},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'MarkerFaceColor',setColor{10}
+                set(h5(1),'Color',setColor{10},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            end
+            
             setSpeed=1;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
             setSpeed=2;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
             setSpeed=3;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
@@ -997,8 +1001,8 @@ if ma == 9
             set(gcf,'Color',[1,1,1]);
             
             %# Axis limitations
-            set(gca,'XLim',[0 60]);
-            set(gca,'XTick',[0:5:60]);
+            set(gca,'XLim',[0 55]);
+            set(gca,'XTick',[0:5:55]);
             set(gca,'YLim',[-5 35]);
             set(gca,'YTick',[-5:5:35]);
             
@@ -1009,10 +1013,10 @@ if ma == 9
             set(hleg1,'Interpreter','none');
             if enableTowingForceFDPlot == 1
                 [LEGH,OBJH,OUTH,OUTM] = legend;
-                legend([OUTH;h3],OUTM{:},'SPP: TG at FD');
+                legend([OUTH;h3],OUTM{:},'TG at zero drag');
+                [LEGH,OBJH,OUTH,OUTM] = legend;
+                legend([OUTH;h5],OUTM{:},'Force at TG=0');
             end
-            [LEGH,OBJH,OUTH,OUTM] = legend;
-            legend([OUTH;h5],OUTM{:},'Force at TG=0');
             %legend boxoff;
             
         end
@@ -1065,24 +1069,25 @@ if ma == 9
             % Towing force at zero thrust
             FatTGZ = FB_at_TGZero;
             
+            %# Set marker and line sizes
+            setMarkerSize      = 8;
+            setLineWidthMarker = 1;
+            setLineWidth       = 1;
+            setLineStyle       = '-';
+            
             %# Plotting
             h1 = plot(x1,y1,setMarker{1},x2,y2,setMarker{2},x3,y3,setMarker{3},x4,y4,setMarker{4},x5,y5,setMarker{5},x6,y6,setMarker{6},x7,y7,setMarker{7},x8,y8,setMarker{8},x9,y9,setMarker{9});
-            %# Linear fit
-            %hold on;
-            %h2 = plot(x1,polyv1,x2,polyv2,x3,polyv3,x4,polyv4,x5,polyv5,x6,polyv6,x7,polyv7,x8,polyv8,x9,polyv9);
             %# Gross thrus TG at towing force FD
             if enableTowingForceFDPlot == 1
-                for k=1:ma
-                    hold on;
-                    h3 = plot(TGatFD{k}(:,1),TGatFD{k}(:,2));
-                    set(h3(1),'Color','k','Marker','o','MarkerSize',8,'LineStyle','-.','linewidth',1);
-                end
+                hold on;
+                h3 = plot(TGatFD(:,1),TGatFD(:,2),'o');
+                hold on;
+                %# Towing force at zero thrust
+                h5 = plot(FatTGZ(:,1),FatTGZ(:,2),'s');
             end
             hold on;
             %# Extended linear fit
             h4 = plot(xLF1,yLF1,xLF2,yLF2,xLF3,yLF3,xLF4,yLF4,xLF5,yLF5,xLF6,yLF6,xLF7,yLF7,xLF8,yLF8,xLF9,yLF9);
-            %# Towing force at zero thrust
-            h5 = plot(FatTGZ(:,1),FatTGZ(:,2),'Color','k','Marker','s','MarkerSize',8);
             if enablePlotTitle == 1
                 title('{\bf Gross thrust defined as T_{G} = p Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
             end
@@ -1100,8 +1105,6 @@ if ma == 9
             set(gcf,'Color',[1,1,1]);
             
             %# Line, colors and markers
-            setMarkerSize      = 8;
-            setLineWidthMarker = 1;
             setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
             setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
             setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
@@ -1113,8 +1116,13 @@ if ma == 9
             setSpeed=9;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
             
             %# Extended linear curve fit
-            setLineWidth = 1;
-            setLineStyle = '-';
+            if enableTowingForceFDPlot == 1
+                setMarkerSize      = 12;
+                setLineWidthMarker = 2;
+                set(h3(1),'Color',setColor{10},'Marker',setMarker{10},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'MarkerFaceColor',setColor{10}
+                set(h5(1),'Color',setColor{10},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            end
+            
             setSpeed=1;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
             setSpeed=2;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
             setSpeed=3;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
@@ -1130,10 +1138,10 @@ if ma == 9
             %set(gca,'XTick',[0:5:40]);
             %set(gca,'YLim',[-5 25]);
             %set(gca,'YTick',[-5:5:25]);
-            set(gca,'XLim',[0 60]);
-            set(gca,'XTick',[0:5:60]);
-            set(gca,'YLim',[-5 35]);
-            set(gca,'YTick',[-5:5:35]);
+            set(gca,'XLim',[0 35]);
+            set(gca,'XTick',[0:5:35]);
+            set(gca,'YLim',[-5 30]);
+            set(gca,'YTick',[-5:5:30]);
             
             %# Legend
             %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
@@ -1142,10 +1150,10 @@ if ma == 9
             set(hleg1,'Interpreter','none');
             if enableTowingForceFDPlot == 1
                 [LEGH,OBJH,OUTH,OUTM] = legend;
-                legend([OUTH;h3],OUTM{:},'SPP: TG at FD');
+                legend([OUTH;h3],OUTM{:},'TG at zero drag');
+                [LEGH,OBJH,OUTH,OUTM] = legend;
+                legend([OUTH;h5],OUTM{:},'Force at TG=0');
             end
-            [LEGH,OBJH,OUTH,OUTM] = legend;
-            legend([OUTH;h5],OUTM{:},'Force at TG=0');
             %legend boxoff;
             
         end
@@ -1192,7 +1200,7 @@ if ma == 9
     
     %# Gross thrust = TG = p Q vj -----------------------------------------
     
-    TGA_at_FDArray = TGA_at_FDArray';
+    %TGA_at_FDArray = TGA_at_FDArray';
     [mc,nc] = size(TGA_at_FDArray);
     
     ATG_and_F_at_T0 = [];
@@ -1202,20 +1210,33 @@ if ma == 9
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     for k=1:mc
         disp1 = A{k}(1,5);
-        disp2 = TGA_at_FDArray{k}(1, 1);
+        disp2 = TGA_at_FDArray(k, 1);
         disp3 = FA_at_TGZero(k, 2);
+        disp4 = TGA_at_FDArray(k, 4);
+        TF    = TGA_at_FDArray(k, 3);
         
+        % Froude length number
         ATG_and_F_at_T0(k,1) = disp1;
+        
+        % TG at zero drag
         ATG_and_F_at_T0(k,2) = disp2;
+        
+        % Towing force at zero thrust
         ATG_and_F_at_T0(k,3) = disp3;
         
-        dispString = sprintf('Fr = %s; TG = %sN; F at zero T = %s',sprintf('%.2f',disp1),sprintf('%.1f',disp2),sprintf('%.1f',disp3));
+        % Thrust at self-propulsion point TG=TG@F=0-FD
+        ATG_and_F_at_T0(k,4) = disp4;
+        
+        % Towing force, FD
+        ATG_and_F_at_T0(k,5) = TF;
+        
+        dispString = sprintf('Fr = %s; TG at zero drag = %sN; Towing force (FD) = %sN; TG at SPP: %sN; F at zero T = %sN',sprintf('%.2f',disp1),sprintf('%.2f',disp2),sprintf('%.2f',TF),sprintf('%.2f',disp4),sprintf('%.2f',disp3));
         disp(dispString);
     end
     
     %# Gross thrust = TG = p Q (vj - vi) ----------------------------------
     
-    TGB_at_FDArray = TGB_at_FDArray';
+    %TGB_at_FDArray = TGB_at_FDArray';
     [mc,nc] = size(TGB_at_FDArray);
     
     BTG_and_F_at_T0 = [];
@@ -1225,14 +1246,27 @@ if ma == 9
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     for k=1:mc
         disp1 = A{k}(1,5);
-        disp2 = TGB_at_FDArray{k}(1, 1);
+        disp2 = TGB_at_FDArray(k, 1);
         disp3 = FB_at_TGZero(k, 2);
+        disp4 = TGB_at_FDArray(k, 4);
+        TF    = TGB_at_FDArray(k, 3);
         
+        % Froude length number
         BTG_and_F_at_T0(k,1) = disp1;
+        
+        % TG at zero drag
         BTG_and_F_at_T0(k,2) = disp2;
+        
+        % Towing force at zero thrust
         BTG_and_F_at_T0(k,3) = disp3;
         
-        dispString = sprintf('Fr = %s; TG = %sN; F at zero T = %s',sprintf('%.2f',disp1),sprintf('%.1f',disp2),sprintf('%.1f',disp3));
+        % Thrust at self-propulsion point TG=TG@F=0-FD
+        BTG_and_F_at_T0(k,4) = disp4;
+        
+        % Towing force, FD
+        BTG_and_F_at_T0(k,5) = TF;
+        
+        dispString = sprintf('Fr = %s; TG at zero drag = %sN; Towing force (FD) = %sN; TG at SPP: %sN; F at zero T = %sN',sprintf('%.2f',disp1),sprintf('%.2f',disp2),sprintf('%.2f',TF),sprintf('%.2f',disp4),sprintf('%.2f',disp3));
         disp(dispString);
     end
     
@@ -1309,7 +1343,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         'LooseInset',get(gca,'TightInset'));
     
     %# Markes and colors ------------------------------------------------------
-    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+    setMarker = {'x';'+';'*';'o';'s';'d';'*';'^';'<';'>'};
     % Colored curves
     setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
     if enableBlackAndWhitePlot == 1
@@ -1324,24 +1358,35 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
             subplot(1,2,1);
         end
         
-        %# Plotting
-        
+        %# X and Y axis data
         mx1 = Marin112mJHSVData(1:28,4);
         my1 = Marin112mJHSVData(1:28,5);
         
         mx2 = Marin112mJHSVData(29:54,4);
         my2 = Marin112mJHSVData(29:54,5);
         
+        % t based on slope
         tx1 = slopesArrayA(:,1);
         ty1 = slopesArrayA(:,3);
         
+        % t=(TM+FD-RC)/TM
         tx2 = thrustDedFracArrayA(:,1);
         ty2 = thrustDedFracArrayA(:,2);
         
+        % RCW=TG(1-t)+FD ==>> t=1-((RCW-FD)/T)
         tx3 = thrustDedFracArrayA(:,1);
         ty3 = thrustDedFracArrayA(:,3);
+           
+        % t = ((FD-FatT=0)/TG@SPP)+1
+        tx4 = thrustDedFracArrayA(:,1);
+        ty4 = thrustDedFracArrayA(:,4);
         
-        h1 = plot(tx1,ty1,'o',tx2,ty2,'s',tx3,ty3,'d',mx1,my1,mx2,my2);
+        % t = 1-((FatT=0-FD)/TG@SPP)
+        tx5 = thrustDedFracArrayA(:,1);
+        ty5 = thrustDedFracArrayA(:,5);
+        
+        %# Plotting
+        h1 = plot(tx1,ty1,'*',tx2,ty2,'*',tx3,ty3,'*',tx4,ty4,'*',tx5,ty5,'*',mx1,my1,mx2,my2);
         if enablePlotTitle == 1
             title('{\bf Gross thrust defined as T_{G} = p Q v_{j}}','FontSize',setGeneralFontSize);
         end
@@ -1359,16 +1404,19 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(gcf,'Color',[1,1,1]);
         
         %# Line, colors and markers
-        setMarkerSize1 = 10;
-        setMarkerSize2 = 8;
-        setLineWidth  = 1;
-        setLineStyle1 = '--';
-        setLineStyle2 = '-.';
-        set(h1(1),'Color',setColor{1},'Marker','x','MarkerSize',setMarkerSize1);
-        set(h1(2),'Color',setColor{2},'Marker','s','MarkerSize',setMarkerSize1);
-        set(h1(3),'Color',setColor{3},'Marker','*','MarkerSize',setMarkerSize2);
-        set(h1(4),'Color',setColor{4},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-        set(h1(5),'Color',setColor{5},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        setLineWidthMarker = 2;
+        setMarkerSize1     = 10;
+        setMarkerSize2     = 8;
+        setLineWidth       = 1;
+        setLineStyle1      = '--';
+        setLineStyle2      = '-.';
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize2);
+        set(h1(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize2);
+        set(h1(4),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize2);
+        set(h1(5),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize2);        
+        set(h1(6),'Color',setColor{4},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        set(h1(7),'Color',setColor{5},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
         
         %# Axis limitations
         setXLL = 0.14;
@@ -1380,9 +1428,12 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(gca,'YLim',[setYLL setYUL]);
         set(gca,'YTick',[setYLL:0.1:setYUL]);
         
+        % t = ((FD-FatT=0)/TG@SPP)+1
+        % t = 1-((FatT=0-FD)/TG@SPP)        
+        
         %# Legend
-        hleg1 = legend('98m by slope','98m t=(TM+FD-RC)/TM','98m using RCW=TG(1-t)+FD','112m MARIN JHSV Cond. T5','112m MARIN JHSV Cond. T4');
-        set(hleg1,'Location','NorthEast');
+        hleg1 = legend('98m t by slope','98m t=(TM+FD-RC)/TM','98m using RCW=TG(1-t)+FD','98m F=TM(t-1)+FatT=0 (Øyan 2012)','98m FM=FatT=0-TM(1-t) (Bose 2008)','112m MARIN JHSV Cond. T5','112m MARIN JHSV Cond. T4');
+        set(hleg1,'Location','SouthEast');
         set(hleg1,'Interpreter','none');
         %legend boxoff;
         
@@ -1395,24 +1446,35 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
             subplot(1,2,2);
         end
         
-        %# Plotting
-        
+        %# X and Y axis data
         mx1 = Marin112mJHSVData(1:28,4);
         my1 = Marin112mJHSVData(1:28,5);
         
         mx2 = Marin112mJHSVData(29:54,4);
         my2 = Marin112mJHSVData(29:54,5);
         
+        % t based on slope
         tx1 = slopesArrayB(:,1);
         ty1 = slopesArrayB(:,3);
         
+        % t=(TM+FD-RC)/TM
         tx2 = thrustDedFracArrayB(:,1);
         ty2 = thrustDedFracArrayB(:,2);
         
+        % RCW=TG(1-t)+FD ==>> t=1-((RCW-FD)/T)
         tx3 = thrustDedFracArrayB(:,1);
         ty3 = thrustDedFracArrayB(:,3);
+           
+        % t = ((FD-FatT=0)/TG@SPP)+1
+        tx4 = thrustDedFracArrayB(:,1);
+        ty4 = thrustDedFracArrayB(:,4);
         
-        h1 = plot(tx1,ty1,'o',tx2,ty2,'s',tx3,ty3,'d',mx1,my1,mx2,my2);
+        % t = 1-((FatT=0-FD)/TG@SPP)
+        tx5 = thrustDedFracArrayB(:,1);
+        ty5 = thrustDedFracArrayB(:,5);
+        
+        %# Plotting
+        h1 = plot(tx1,ty1,'*',tx2,ty2,'*',tx3,ty3,'*',tx4,ty4,'*',tx5,ty5,'*',mx1,my1,mx2,my2);
         if enablePlotTitle == 1
             title('{\bf Gross thrust defined as T_{G} = p Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
         end
@@ -1435,11 +1497,13 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         setLineWidth  = 1;
         setLineStyle1 = '--';
         setLineStyle2 = '-.';
-        set(h1(1),'Color',setColor{1},'Marker','x','MarkerSize',setMarkerSize1);
-        set(h1(2),'Color',setColor{2},'Marker','s','MarkerSize',setMarkerSize1);
-        set(h1(3),'Color',setColor{3},'Marker','*','MarkerSize',setMarkerSize2);
-        set(h1(4),'Color',setColor{4},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-        set(h1(5),'Color',setColor{5},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize1);
+        set(h1(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize2);
+        set(h1(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize2);
+        set(h1(4),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize2);
+        set(h1(5),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize2);        
+        set(h1(6),'Color',setColor{4},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        set(h1(7),'Color',setColor{5},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
         
         %# Axis limitations
         setXLL = 0.14;
@@ -1452,7 +1516,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(gca,'YTick',[setYLL:0.1:setYUL]);
         
         %# Legend
-        hleg1 = legend('98m by slope','98m t=(TM+FD-RC)/TM','98m using RCW=TG(1-t)+FD','112m MARIN JHSV Cond. T5','112m MARIN JHSV Cond. T4');
+        hleg1 = legend('98m t by slope','98m t=(TM+FD-RC)/TM','98m using RCW=TG(1-t)+FD','98m F=TM(t-1)+FatT=0 (Øyan 2012)','98m FM=FatT=0-TM(1-t) (Bose 2008)','112m MARIN JHSV Cond. T5','112m MARIN JHSV Cond. T4');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
         %legend boxoff;
@@ -1556,17 +1620,27 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
             subplot(1,2,1);
         end
         
-        %# Plotting
+        %# X and Y axis data
         TA = ATG_and_F_at_T0;
         
+        % Resistance
         x = resistance(:,1);
         y = resistance(:,2);
+        
+        % TG at zero drag
         x1 = TA(:,1);
         y1 = TA(:,2);
+        
+        % Towing force at zero thrust
         x2 = TA(:,1);
         y2 = TA(:,3);
         
-        h1 = plot(x,y,x1,y1,'s',x2,y2,'d');
+        % Thrust at self-propulsion point TG=TG@F=0-FD
+        x3 = TA(:,1);
+        y3 = TA(:,4);
+        
+        %# Plotting
+        h1 = plot(x,y,x1,y1,'s',x2,y2,'^',x3,y3,'o');
         if enablePlotTitle == 1
             title('{\bf Gross thrust defined as T_{G} = p Q v_{j}}','FontSize',setGeneralFontSize);
         end
@@ -1591,17 +1665,18 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         setLineStyle       = '-';
         set(h1(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
         set(h1(2),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
-        set(h1(3),'Color',setColor{1},'Marker',setMarker{8},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+        set(h1(3),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+        set(h1(4),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
         
         %# Axis limitations
         set(gca,'XLim',[0.22 0.42]);
         set(gca,'XTick',[0.22:0.02:0.42]);
-        set(gca,'YLim',[0 40]);
-        set(gca,'YTick',[0:5:40]);
+        set(gca,'YLim',[0 50]);
+        set(gca,'YTick',[0:5:50]);
         
         %# Legend
         %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-        hleg1 = legend('Resistance (RBH)','Gross thrust (TG) at towing force (FD)','Towing force at zero thrust');
+        hleg1 = legend('Resistance (RBH)','Gross thrust (TG) at zero drag','Towing force at zero thrust','Thrust at SPP');
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
         %legend boxoff;
@@ -1614,17 +1689,27 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
             subplot(1,2,2);
         end
         
-        %# Plotting
+        %# X and Y axis data
         TA = BTG_and_F_at_T0;
         
+        % Resistance
         x = resistance(:,1);
         y = resistance(:,2);
+        
+        % TG at zero drag
         x1 = TA(:,1);
         y1 = TA(:,2);
+        
+        % Towing force at zero thrust
         x2 = TA(:,1);
         y2 = TA(:,3);
         
-        h1 = plot(x,y,x1,y1,'s',x2,y2,'d');
+        % Thrust at self-propulsion point TG=TG@F=0-FD
+        x3 = TA(:,1);
+        y3 = TA(:,4);
+        
+        %# Plotting
+        h1 = plot(x,y,x1,y1,'s',x2,y2,'^',x3,y3,'o');
         if enablePlotTitle == 1
             title('{\bf Gross thrust defined as T_{G} = p Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
         end
@@ -1649,7 +1734,8 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         setLineStyle       = '-';
         set(h1(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
         set(h1(2),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
-        set(h1(3),'Color',setColor{1},'Marker',setMarker{8},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+        set(h1(3),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+        set(h1(4),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
         
         %# Axis limitations
         set(gca,'XLim',[0.22 0.42]);
@@ -1659,7 +1745,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         
         %# Legend
         %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-        hleg1 = legend('Resistance (RBH)','Gross thrust (TG) at towing force (FD)','Towing force at zero thrust');
+        hleg1 = legend('Resistance (RBH)','Gross thrust (TG) at zero drag','Towing force at zero thrust','Thrust at SPP');
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
         %legend boxoff;
