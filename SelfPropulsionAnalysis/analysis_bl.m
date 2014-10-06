@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  October 3, 2014
+%# Date       :  October 6, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -90,7 +90,14 @@ enableTextOnPlot          = 0;    % Show text on plot
 enableBlackAndWhitePlot   = 1;    % Show plot in black and white
 enableEqnOfFitPlot        = 0;    % Show equations of fit
 enableCommandWindowOutput = 0;    % Show command windown ouput
-enableAveragedRunsPlot    = 0;    % Show averaged runs plot
+
+% Averaged run data and BL depth marker
+enableAveragedRunsPlot1   = 0;    % Show averaged runs in plot 1 (Y vs. speed)
+enableAveragedRunsPlot2   = 1;    % Show averaged runs in plot 2 (u/U0 vs. Y)
+enableBLDepthMarker       = 1;    % Show marker for estimated BL depth
+
+% Comparison data
+enableMARINBLData         = 1;    % Show MARIN 112m BL data (cond. T1)
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
@@ -105,8 +112,8 @@ XPlot = 42.0;                           %# A3 paper size
 YPlot = 29.7;                           %# A3 paper size
 XPlotMargin = 1;                        %# left/right margins from page borders
 YPlotMargin = 1;                        %# bottom/top margins from page borders
-XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
-YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
+XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (width & height)
+YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (width & height)
 %# ------------------------------------------------------------------------
 %# END DEFINE PLOT SIZE
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -252,6 +259,39 @@ end
 % /////////////////////////////////////////////////////////////////////////
 
 
+%# ************************************************************************
+%# START MARIN 112m boundary layer data (variable name is MARIN112mBLData)
+%# ------------------------------------------------------------------------
+if exist('MARIN112mBLData.mat', 'file') == 2
+    
+    %# MARIN T1 conditions and particulars --------------------------------
+    
+    % Model to full scale ratio (?): 17.1
+    
+    % Length WL (FS):   103.33 m
+    % Length WL (MS):     6.04 m
+    % Speed (FS):        35.0  m/s
+    % Speed (MS):         4.35 m/s
+    % BL thickness (?):   73.0 mm
+    
+    %# Columns: -----------------------------------------------------------
+    
+    %[1]  Distance (Y) from model hull      (mm)
+    %[2]  u/Uo ratio                        (-)
+    %[3]  Speed at distance Y from hull     (m/s)
+    
+    load('MARIN112mBLData.mat');
+else
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('WARNING: Required data file for MARIN 112m boundary layer data data (MARIN112mBLData.mat) does not exist!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    break;
+end
+%# ------------------------------------------------------------------------
+%# END MARIN 112m boundary layer data (variable name is LJ120EPCData)
+%# ************************************************************************
+
+
 %# ------------------------------------------------------------------------
 %# Read results DAT file
 %# ------------------------------------------------------------------------
@@ -261,7 +301,7 @@ if exist('resultsArrayBlm_copy.dat', 'file') == 2
     %[1]  Run No.
     %[2]  Froude length Number                     (-)
     %[3]  Speed no. (i.e. 1=0.30, 2=0.35, 3=0.40)  (-)
-    %[4]  Distance from model hull                      (mm)
+    %[4]  Distance from model hull (Y)             (mm)
     %[5]  Averaged zero value (Inboard)            (V)
     %[6]  Averaged zero value (Outboard)           (V)
     %[7]  Outboard: Calibration factor CF          (V to m/s)
@@ -272,12 +312,13 @@ if exist('resultsArrayBlm_copy.dat', 'file') == 2
     %[12] PST: Real units using CF (Outboard)      (m/s)
     %[13] u/U0 (Inboard)                           (-)
     %[14] u/U0 (Outboard)                          (-)
-    
+    %[15] Estimated boundary layer depth           (mm)
+    %[16] Model speed                              (m/s)  
+        
     resultsArrayBlm = csvread('resultsArrayBlm_copy.dat');
     
     %# Remove zero rows
     resultsArrayBlm(all(resultsArrayBlm==0,2),:)=[];
-    
 else
     
     %# ////////////////////////////////////////////////////////////////////////
@@ -285,8 +326,8 @@ else
     %# ////////////////////////////////////////////////////////////////////////
     
     % Arrays; save to file
-    resultsArrayBlmTS        = [];   % BL TS data
-    resultsArrayBlm = [];   % Voltage and real data using CF est. in PST calibration runs
+    resultsArrayBlmTS = [];     % BL TS data
+    resultsArrayBlm   = [];     % Voltage and real data using CF est. in PST calibration runs
     
     %w = waitbar(0,'Processed run files');
     for k=startRun:endRun
@@ -460,6 +501,9 @@ else
         %[13] u/U0 (Inboard)                           (-)
         %[14] u/U0 (Outboard)                          (-)
         
+        %[15] Estimated boundary layer depth           (mm)
+        %[16] Model speed                              (m/s)        
+        
         % General data
         resultsArrayBlm(k, 1)  = k;
         
@@ -493,6 +537,17 @@ else
         % u/U0 ratio
         resultsArrayBlm(k, 13) = resultsArrayBlm(k, 11)/roundedspeed;
         resultsArrayBlm(k, 14) = resultsArrayBlm(k, 12)/roundedspeed;
+        
+        % Est. BL depth and speed
+        if setSpeedCond == 1
+            EstBLDepth = 44.4;
+        elseif setSpeedCond == 2
+            EstBLDepth = 41.7;
+        elseif setSpeedCond == 3
+            EstBLDepth = 36.7;
+        end
+        resultsArrayBlm(k, 15) = EstBLDepth;
+        resultsArrayBlm(k, 16) = roundedspeed;        
         
         %# ////////////////////////////////////////////////////////////////////
         %# PST (Boundary Layer Measurements): Time Series Output
@@ -838,12 +893,12 @@ set(gca,'TickDir','in',...
     'LooseInset',get(gca,'TightInset'));
 
 %# Markes and colors ------------------------------------------------------
-setMarker = {'*';'+';'x';'o';'s';'d';'<';'^';'x';'>'};
+setMarker = {'*';'+';'x';'o';'s';'d';'<';'^';'x';'>';'p';'h'};
 % Colored curves
-setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k';'k'};
 if enableBlackAndWhitePlot == 1
     % Black and white curves
-    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
 end
 
 %# Set plot figure background to a defined color --------------------------
@@ -853,17 +908,19 @@ set(gcf,'Color',[1,1,1]);
 
 % Array manipulations -----------------------------------------------------
 
-if enableAveragedRunsPlot == 1
+if enableAveragedRunsPlot1 == 1 || enableAveragedRunsPlot2 == 1
     %# Array manipulation: Split by Distance from model hull (for repeated runs)
     
     %# Results array columns:
-    %[1]  Distance from model hull                      (mm)
+    %[1]  Distance from model hull                 (mm)
     %[2]  Averaged zero value (Inboard)            (V)
     %[3]  Averaged zero value (Outboard)           (V)
     %[4]  PST: Voltage (Inboard)                   (V)
     %[5]  PST: Voltage (Outboard)                  (V)
     %[6]  PST: Real units using CF (Inboard)       (m/s)
     %[7]  PST: Real units using CF (Outboard)      (m/s)
+    %[8]  u/U0 (Inboard)                           (-)
+    %[9]  u/U0 (Outboard)                          (-)
     
     SpeedFr30Avg = [];
     SpeedFr35Avg = [];
@@ -883,6 +940,8 @@ if enableAveragedRunsPlot == 1
         SpeedFr30Avg(k, 5) = mean(A1{k}(:,10));
         SpeedFr30Avg(k, 6) = mean(A1{k}(:,11));
         SpeedFr30Avg(k, 7) = mean(A1{k}(:,12));
+        SpeedFr30Avg(k, 8) = mean(A1{k}(:,13));
+        SpeedFr30Avg(k, 9) = mean(A1{k}(:,14));
     end
     
     %# Fr=0.35 ----------------------------------------------------------------
@@ -899,6 +958,8 @@ if enableAveragedRunsPlot == 1
         SpeedFr35Avg(k, 5) = mean(A2{k}(:,10));
         SpeedFr35Avg(k, 6) = mean(A2{k}(:,11));
         SpeedFr35Avg(k, 7) = mean(A2{k}(:,12));
+        SpeedFr35Avg(k, 8) = mean(A2{k}(:,13));
+        SpeedFr35Avg(k, 9) = mean(A2{k}(:,14));
     end
     
     %# Fr=0.40 ----------------------------------------------------------------
@@ -915,6 +976,8 @@ if enableAveragedRunsPlot == 1
         SpeedFr40Avg(k, 5) = mean(A3{k}(:,10));
         SpeedFr40Avg(k, 6) = mean(A3{k}(:,11));
         SpeedFr40Avg(k, 7) = mean(A3{k}(:,12));
+        SpeedFr40Avg(k, 8) = mean(A3{k}(:,13));
+        SpeedFr40Avg(k, 9) = mean(A3{k}(:,14));
     end
 end
 
@@ -922,70 +985,88 @@ end
 
 % Axis data. Subscript i = inboard and o = outboard
 
-%# REPEATED RUNS
+%# Results array columns:
+%[1]  Distance from model hull                 (mm)
+%[2]  Averaged zero value (Inboard)            (V)
+%[3]  Averaged zero value (Outboard)           (V)
+%[4]  PST: Voltage (Inboard)                   (V)
+%[5]  PST: Voltage (Outboard)                  (V)
+%[6]  PST: Real speed using CF (Inboard)       (m/s)
+%[7]  PST: Real speed using CF (Outboard)      (m/s)
+%[8]  u/U0 (Inboard)                           (-)
+%[9]  u/U0 (Outboard)                          (-)
 
 %# Fr=0.30
-x1i = A{1}(:,11);
-y1i = A{1}(:,4);
+if enableAveragedRunsPlot1 == 1
+    x1i = SpeedFr30Avg(:,6);
+    y1i = SpeedFr30Avg(:,1);
+    
+    x1o = SpeedFr30Avg(:,7);
+    y1o = SpeedFr30Avg(:,1);    
+else
+    x1i  = A{1}(:,11);
+    y1i  = A{1}(:,4);
+    
+    x1o  = A{1}(:,12);
+    y1o  = A{1}(:,4);
+end
 
-x1o = A{1}(:,12);
-y1o = A{1}(:,4);
+x1BL = A{1}(1,16);
+y1BL = A{1}(1,15);
 
 %# Fr=0.35
-x2i = A{2}(:,11);
-y2i = A{2}(:,4);
+if enableAveragedRunsPlot1 == 1
+    x2i = SpeedFr35Avg(:,6);
+    y2i = SpeedFr35Avg(:,1);
+    
+    x2o = SpeedFr35Avg(:,7);
+    y2o = SpeedFr35Avg(:,1);
+else
+    x2i  = A{2}(:,11);
+    y2i  = A{2}(:,4);
+    
+    x2o  = A{2}(:,12);
+    y2o  = A{2}(:,4);
+end
 
-x2o = A{2}(:,12);
-y2o = A{2}(:,4);
+x2BL = A{2}(1,16);
+y2BL = A{2}(1,15);
 
 %# Fr=0.40
-x3i = A{3}(:,11);
-y3i = A{3}(:,4);
-
-x3o = A{3}(:,12);
-y3o = A{3}(:,4);
-
-%# AVERAGED RUNS
-if enableAveragedRunsPlot == 1
-    %# Fr=0.30
-    x1iavg = SpeedFr30Avg(:,6);
-    y1iavg = SpeedFr30Avg(:,1);
+if enableAveragedRunsPlot1 == 1
+    x3i = SpeedFr40Avg(:,6);
+    y3i = SpeedFr40Avg(:,1);
     
-    x1oavg = SpeedFr30Avg(:,7);
-    y1oavg = SpeedFr30Avg(:,1);
+    x3o = SpeedFr40Avg(:,7);
+    y3o = SpeedFr40Avg(:,1);
+else
+    x3i  = A{3}(:,11);
+    y3i  = A{3}(:,4);
     
-    %# Fr=0.35
-    x2iavg = SpeedFr35Avg(:,6);
-    y2iavg = SpeedFr35Avg(:,1);
-    
-    x2oavg = SpeedFr35Avg(:,7);
-    y2oavg = SpeedFr35Avg(:,1);
-    
-    %# Fr=0.40
-    x3iavg = SpeedFr40Avg(:,6);
-    y3iavg = SpeedFr40Avg(:,1);
-    
-    x3oavg = SpeedFr40Avg(:,7);
-    y3oavg = SpeedFr40Avg(:,1);
+    x3o  = A{3}(:,12);
+    y3o  = A{3}(:,4);
 end
+
+x3BL = A{3}(1,16);
+y3BL = A{3}(1,15);
 
 % Plotting ----------------------------------------------------------------
 h1 = plot(x1i,y1i,'*',x1o,y1o,'*',x2i,y2i,'*',x2o,y2o,'*',x3i,y3i,'*',x3o,y3o,'*');
-if enableAveragedRunsPlot == 1
+if enableBLDepthMarker == 1
     hold on;
-    h2 = plot(x1iavg,y1iavg,'-',x1oavg,y1oavg,'-',x2iavg,y2iavg,'-',x2oavg,y2oavg,'-',x3iavg,y3iavg,'-',x3oavg,y3oavg,'-');
+    h2 = plot(x1BL,y1BL,'*',x2BL,y2BL,'*',x3BL,y3BL,'*');
 end
 if enablePlotTitle == 1
     title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
 end
 xlabel('{\bf Measured speed [m/s]}','FontSize',setGeneralFontSize);
-ylabel('{\bf Distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
+ylabel('{\bf Vertical distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
 
 %# Line, colors and markers
-setMarkerSize      = 9;
+setMarkerSize      = 10;
 setLineWidthMarker = 1;
 setLineWidth       = 1;
 setLineStyle       = '-.';
@@ -996,14 +1077,12 @@ setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpe
 setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 
-% Averaged runs data
-if enableAveragedRunsPlot == 1
-    setSpeed=1;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=2;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=3;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=4;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=5;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setSpeed=6;set(h2(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+% Boundary layer depth marker
+if enableBLDepthMarker == 1
+    set(h2(1),'Color',setColor{10},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+    setMarkerSize = 12;
+    set(h2(2),'Color',setColor{10},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+    set(h2(3),'Color',setColor{10},'Marker',setMarker{12},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
 end
 
 % Set limitations
@@ -1013,10 +1092,14 @@ end
 % set(gca,'YTick',minY:setYIncr:maxY);
 
 %# Legend
-hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard');
+if enableBLDepthMarker == 1
+    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard','Fr=0.30 Est. boundary layer depth','Fr=0.35 Est. boundary layer depth','Fr=0.40 Est. boundary layer depth');
+else
+    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard');
+end
 set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
-legend boxoff;
+%legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
@@ -1101,42 +1184,73 @@ set(gcf,'Color',[1,1,1]);
 
 % Axis data. Subscript i = inboard and o = outboard
 
-%# REPEATED RUNS
-
 %# Fr=0.30
-x1i = A{1}(:,4);
-y1i = A{1}(:,13);
-
-x1o = A{1}(:,4);
-y1o = A{1}(:,14);
+if enableAveragedRunsPlot2 == 1
+    x1i = SpeedFr30Avg(:,1);
+    y1i = SpeedFr30Avg(:,8);
+    
+    x1o = SpeedFr30Avg(:,1);
+    y1o = SpeedFr30Avg(:,9);
+else
+    x1i = A{1}(:,4);
+    y1i = A{1}(:,13);
+    
+    x1o = A{1}(:,4);
+    y1o = A{1}(:,14);
+end
 
 %# Fr=0.35
-x2i = A{2}(:,4);
-y2i = A{2}(:,13);
-
-x2o = A{2}(:,4);
-y2o = A{2}(:,14);
+if enableAveragedRunsPlot2 == 1
+    x2i = SpeedFr35Avg(:,1);
+    y2i = SpeedFr35Avg(:,8);
+    
+    x2o = SpeedFr35Avg(:,1);
+    y2o = SpeedFr35Avg(:,9);
+else
+    x2i = A{2}(:,4);
+    y2i = A{2}(:,13);
+    
+    x2o = A{2}(:,4);
+    y2o = A{2}(:,14);
+end
 
 %# Fr=0.40
-x3i = A{3}(:,4);
-y3i = A{3}(:,13);
+if enableAveragedRunsPlot2 == 1
+    x3i = SpeedFr40Avg(:,1);
+    y3i = SpeedFr40Avg(:,8);
+    
+    x3o = SpeedFr40Avg(:,1);
+    y3o = SpeedFr40Avg(:,9);
+else
+    x3i = A{3}(:,4);
+    y3i = A{3}(:,13);
+    
+    x3o = A{3}(:,4);
+    y3o = A{3}(:,14);
+end
 
-x3o = A{3}(:,4);
-y3o = A{3}(:,14);
+%# MARIN BL data
+xM = MARIN112mBLData(:,1);
+yM = MARIN112mBLData(:,2);
 
 % Plotting ----------------------------------------------------------------
 h1 = plot(x1i,y1i,'*',x1o,y1o,'*',x2i,y2i,'*',x2o,y2o,'*',x3i,y3i,'*',x3o,y3o,'*');
+%# MARIN boundary layer data
+if enableMARINBLData == 1
+    hold on;
+    h2 = plot(xM,yM,'*');
+end
 if enablePlotTitle == 1
     title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
+xlabel('{\bf Vertical distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
 ylabel('{\bf u/U_{0} [-]}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
 
 %# Line, colors and markers
-setMarkerSize      = 9;
+setMarkerSize      = 10;
 setLineWidthMarker = 1;
 setLineWidth       = 1;
 setLineStyle       = '-.';
@@ -1147,6 +1261,11 @@ setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpe
 setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 
+%# MARIN boundary layer data
+if enableMARINBLData == 1
+    set(h2(1),'Color',setColor{10},'Marker',setMarker{9},'MarkerSize',12,'LineWidth',2);
+end
+
 % Set limitations
 % set(gca,'XLim',[minX maxX]);
 % set(gca,'XTick',minX:setXIncr:maxX);
@@ -1154,10 +1273,15 @@ set(gca,'YLim',[0.6 1.1]);
 set(gca,'YTick',0.6:0.1:1.1);
 
 %# Legend
-hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard');
+%# MARIN boundary layer data
+if enableMARINBLData == 1
+    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard','MARIN 112m JHSV Cond. T1');
+else
+    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard');
+end
 set(hleg1,'Location','SouthEast');
 set(hleg1,'Interpreter','none');
-legend boxoff;
+%legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 

@@ -814,7 +814,7 @@ for k=1:ma
     TGB_at_FDArray(k, 2) = 0;                       % Towing force, Drag (y-axis)
     TGB_at_FDArray(k, 3) = towForce;                % Towing force, FD
     TGB_at_FDArray(k, 4) = ThrustAtSPP;             % Thrust at self. propulsion point = TG at zero drag - FD
-
+    
     % Towing force at zero gross thrust
     TowingForceAtZeroThrust = spline(polyv,x,0);
     FB_at_TGZero(k, 1) = 0;                         % Gross thrust, TG (x-axis)
@@ -825,11 +825,11 @@ for k=1:ma
     % t=(TM+FD-RC)/TM
     thrustDedFracArrayB(k, 2) = (ThrustAtSPP+towForce-TowingForceAtZeroThrust)/ThrustAtSPP;
     % RCW=TG(1-t)+FD ==>> t=1-((RCW-FD)/T)
-    thrustDedFracArrayB(k, 3) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);    
+    thrustDedFracArrayB(k, 3) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);
     % t = ((FD-FatT=0)/TG@SPP)+1
     thrustDedFracArrayB(k, 4) = ((towForce-TowingForceAtZeroThrust)/ThrustAtSPP)+1;
     % t = 1-((FatT=0-FD)/TG@SPP)
-    thrustDedFracArrayB(k, 5) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);    
+    thrustDedFracArrayB(k, 5) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);
 end
 
 %# Only plot if all (9) datasets are available
@@ -1376,7 +1376,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         % RCW=TG(1-t)+FD ==>> t=1-((RCW-FD)/T)
         tx3 = thrustDedFracArrayA(:,1);
         ty3 = thrustDedFracArrayA(:,3);
-           
+        
         % t = ((FD-FatT=0)/TG@SPP)+1
         tx4 = thrustDedFracArrayA(:,1);
         ty4 = thrustDedFracArrayA(:,4);
@@ -1414,7 +1414,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(h1(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize2);
         set(h1(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize2);
         set(h1(4),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize2);
-        set(h1(5),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize2);        
+        set(h1(5),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize2);
         set(h1(6),'Color',setColor{4},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
         set(h1(7),'Color',setColor{5},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
         
@@ -1429,7 +1429,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(gca,'YTick',[setYLL:0.1:setYUL]);
         
         % t = ((FD-FatT=0)/TG@SPP)+1
-        % t = 1-((FatT=0-FD)/TG@SPP)        
+        % t = 1-((FatT=0-FD)/TG@SPP)
         
         %# Legend
         hleg1 = legend('98m t by slope','98m t=(TM+FD-RC)/TM','98m using RCW=TG(1-t)+FD','98m F=TM(t-1)+FatT=0 (Øyan 2012)','98m FM=FatT=0-TM(1-t) (Bose 2008)','112m MARIN JHSV Cond. T5','112m MARIN JHSV Cond. T4');
@@ -1464,7 +1464,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         % RCW=TG(1-t)+FD ==>> t=1-((RCW-FD)/T)
         tx3 = thrustDedFracArrayB(:,1);
         ty3 = thrustDedFracArrayB(:,3);
-           
+        
         % t = ((FD-FatT=0)/TG@SPP)+1
         tx4 = thrustDedFracArrayB(:,1);
         ty4 = thrustDedFracArrayB(:,4);
@@ -1501,7 +1501,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(h1(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize2);
         set(h1(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize2);
         set(h1(4),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize2);
-        set(h1(5),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize2);        
+        set(h1(5),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize2);
         set(h1(6),'Color',setColor{4},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
         set(h1(7),'Color',setColor{5},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
         
