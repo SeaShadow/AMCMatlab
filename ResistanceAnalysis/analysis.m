@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  March 20, 2014
+%# Date       :  October 7, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -111,6 +111,7 @@
 %# CHANGES    :  31/07/2013 - Adjusted analysis file for resistance test data
 %#               09/09/2013 - Adjusted analysis file for resistance test data
 %#               14/01/2014 - Added conditions list and updated script
+%#               08/10/2014 - Adjusted plotting style for thesis plots
 %#               dd/mm/yyyy - ...
 %#
 %# ------------------------------------------------------------------------
@@ -164,12 +165,12 @@ ttwatertemp         = 17.5;                   % Towing Tank: Water temperature (
 
 % General constants
 gravconst           = 9.806;                  % Gravitational constant           (m/s^2)
-modelkinviscosity   = (((0.585*10^(-3))*(ttwatertemp-12)-0.03361)*(ttwatertemp-12)+1.235)*10^(-6); % Model scale kinetic viscosity at X (see ttwatertemp) degrees following ITTC (m2/s)
-fullscalekinvi      = 0.000001034;            % Full scale kinetic viscosity     (m^2/s)
-freshwaterdensity   = 1000;                   % Model scale water density        (Kg/m^3)
-saltwaterdensity    = 1025;                   % Salt water scale water density   (Kg/m^3)
-distbetwposts       = 1150;                   % Distance between carriage posts  (mm)
-FStoMSratio         = 21.6;                   % Full scale to model scale ratio  (-)
+MSKinVis            = 0.0000010411;           % Model scale kinetic viscosity at 18.5 deg. C  (m^2/s) -> See table in ITTC 7.5-02-01-03 (2008)
+FSKinVis            = 0.0000010711;           % Full scale kinetic viscosity at 19.2 deg. C   (m^2/s) -> See table in ITTC 7.5-02-01-03 (2008)
+freshwaterdensity   = 998.5048;               % Model scale water density at 18.5 deg. C      (Kg/m^3) -> See table in ITTC 7.5-02-01-03 (2008)
+saltwaterdensity    = 1025.0187;              % Salt water scale water density at 19.2 deg. C (Kg/m^3) -> See table in ITTC 7.5-02-01-03 (2008)
+distbetwposts       = 1150;                   % Distance between carriage posts               (mm)
+FStoMSratio         = 21.6;                   % Full scale to model scale ratio               (-)
 
 %# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 %# CONDITION: 1,500 tonnes, level static trim, trim tab at 5 degrees
@@ -261,7 +262,7 @@ headerlines             = 22;  % Number of headerlines to data
 headerlinesZeroAndCalib = 16;  % Number of headerlines to zero and calibration factors
 
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
 %# START: Omit first X seconds of data due to acceleration
 %# ------------------------------------------------------------------------
 
@@ -275,9 +276,10 @@ cutSamplesFromEnd = 400;    % Cut last 2 seconds
 
 %# ------------------------------------------------------------------------
 %# END: Omit first 10 seconds of data due to acceleration
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+%# ************************************************************************
 %# START FILE LOOP FOR RUNS startRun to endRun
 %# ------------------------------------------------------------------------
 
@@ -299,7 +301,7 @@ endRun   = 249;     % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
 
 
 % *************************************************************************
@@ -315,8 +317,8 @@ enableHvsRtmTvsRtmPlot = 0; % Heave vs. Rtm and trim vs. Rtm
 % *************************************************************************
 
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START DEFINE RUN NUMBERS BY TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
+%# START DEFINE RUN NUMBERS BY TEST
 %# ------------------------------------------------------------------------
 
 RunNosCond1  = 1:15;    % Cond. 1 (Turb-studs): Bare-hull
@@ -366,11 +368,11 @@ RunNosCond13 = 232:249; % Cond. 13 (Prohaska): 1,500t, deep transom
 % end
 
 %# ------------------------------------------------------------------------
-%# END DEFINE RUN NUMBERS BY TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# END DEFINE RUN NUMBERS BY TEST
+%# ************************************************************************
 
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
 %# START DEFINE PLOT SIZE
 %# ------------------------------------------------------------------------
 
@@ -384,12 +386,66 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 
 %# ------------------------------------------------------------------------
 %# END DEFINE PLOT SIZE
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
 
 
-%# ////////////////////////////////////////////////////////////////////////
+%# ************************************************************************
+%# START: CREATE PLOTS AND RUN DIRECTORY
+%# ------------------------------------------------------------------------
+
+%# _PLOTS directory
+fPath = '_plots/';
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+fPath = '_time_series_data/';
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+fPath = '_time_series_plots/';
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+fPath = '_time_series_drag_plots/';
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# Have directory
+fPath = sprintf('_plots/%s', '_heave');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# Averaged directory
+fPath = sprintf('_plots/%s', '_averaged');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# ------------------------------------------------------------------------
+%# END: CREATE PLOTS AND RUN DIRECTORY
+%# ************************************************************************
+
+
+%# ************************************************************************
 %# LOOP THROUGH ALL RUN FILES (depending on startRun and endRun settings)
-%# ////////////////////////////////////////////////////////////////////////
+%# ************************************************************************
 
 resultsArray = [];
 %w = waitbar(0,'Processed run files');
@@ -419,59 +475,6 @@ for k=startRun:endRun
     for i = 1:length(vars)
         assignin('base', vars{i}, AllRawChannelData.(vars{i}));
     end
-    
-    % /////////////////////////////////////////////////////////////////////
-    % START: CREATE PLOTS AND RUN DIRECTORY
-    % ---------------------------------------------------------------------
-    
-    %# _PLOTS directory
-    fPath = '_plots/';
-    if isequal(exist(fPath, 'dir'),7)
-        % Do nothing as directory exists
-    else
-        mkdir(fPath);
-    end
-    
-    fPath = '_time_series_data/';
-    if isequal(exist(fPath, 'dir'),7)
-        % Do nothing as directory exists
-    else
-        mkdir(fPath);
-    end
-    
-    fPath = '_time_series_plots/';
-    if isequal(exist(fPath, 'dir'),7)
-        % Do nothing as directory exists
-    else
-        mkdir(fPath);
-    end
-    
-    fPath = '_time_series_drag_plots/';
-    if isequal(exist(fPath, 'dir'),7)
-        % Do nothing as directory exists
-    else
-        mkdir(fPath);
-    end
-    
-    %# Have directory
-    fPath = sprintf('_plots/%s', '_heave');
-    if isequal(exist(fPath, 'dir'),7)
-        % Do nothing as directory exists
-    else
-        mkdir(fPath);
-    end
-    
-    %# Averaged directory
-    fPath = sprintf('_plots/%s', '_averaged');
-    if isequal(exist(fPath, 'dir'),7)
-        % Do nothing as directory exists
-    else
-        mkdir(fPath);
-    end
-    
-    % ---------------------------------------------------------------------
-    % END: CREATE PLOTS AND RUN DIRECTORY
-    % /////////////////////////////////////////////////////////////////////
     
     
     % /////////////////////////////////////////////////////////////////////
@@ -506,10 +509,10 @@ for k=startRun:endRun
     % ---------------------------------------------------------------------
     
     % Real units (i.e. m/s, mm and grams)
-    [CH_0_Speed CH_0_Speed_Mean]     = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
-    [CH_1_LVDTFwd CH_1_LVDTFwd_Mean] = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
-    [CH_2_LVDTAft CH_2_LVDTAft_Mean] = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
-    [CH_3_Drag CH_3_Drag_Mean]       = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);
+    [CH_0_Speed CH_0_Speed_Mean]               = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
+    [CH_1_LVDTFwd CH_1_LVDTFwd_Mean]           = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
+    [CH_2_LVDTAft CH_2_LVDTAft_Mean]           = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
+    [CH_3_Drag CH_3_Drag_Mean]                 = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);
     
     % Leave it as voltage but subtract zero value
     [CH_0_Speed_Volt CH_0_Speed_Mean_Volt]     = analysis_voltage(Raw_CH_0_Speed,CH_0_Zero);

@@ -215,9 +215,9 @@ if exist('results','var') == 0
     break;
 end
 
-% *************************************************************************
-% START: PLOTTING AVERAGED DATA
-% *************************************************************************
+%# ************************************************************************
+%# START: PLOTTING AVERAGED DATA
+%# ************************************************************************
 
 cond1=[];cond2=[];cond3=[];cond4=[];cond5=[];cond6=[];cond7=[];cond8=[];cond9=[];cond10=[];cond11=[];cond12=[];cond13=[];
 
@@ -277,6 +277,7 @@ end
 %# *********************************************************************
 testName = 'Resistance Test Summary';
 
+
 %# *********************************************************************
 %# Calculate averages for conditions
 %# *********************************************************************
@@ -303,29 +304,28 @@ testName = 'Resistance Test Summary';
 [avgcond13] = stats_avg(232:249,results);
 
 
-% *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED
-%                       0 = DISABLED
-% -------------------------------------------------------------------------
+%# ************************************************************************
+%# START: PLOT SWITCHES: 1 = ENABLED
+%#                       0 = DISABLED
+%# ------------------------------------------------------------------------
 
 enableTurbStimPlot          = 0; % Turbulence stimulator investigation
 enableTrimTabPlot           = 0; % Trim tab investigation
 enableResistancePlot        = 1; % Resistance plots, Ctm, power, heave and trim
 enableProhaskaPlot          = 0; % Prohaska plot, form factor at deep transom
 enableErrorPlot             = 0; % Error plots (% of max-avg to magnitude)
-enableMeanStdPlot           = 0; % Fr vs. mean of standard deviation
-enableStdPlot               = 0; % Fr vs. standard deviation
-%enableHeaveRtmHeaveTrimPlot = 1; % Heave vs. Rtm and Trim vs. Rtm for times series data at ONE speed
-enableRemVSCFmPlot          = 0;
+enableMeanStdPlot           = 0; % Show Fr vs. mean of standard deviation
+enableStdPlot               = 0; % Show Fr vs. standard deviation
+enableRemVSCFmPlot          = 0; % Show Re vs. Cfm plot
 
-% -------------------------------------------------------------------------
-% END: PLOT SWITCHES
-% *************************************************************************
+%# ------------------------------------------------------------------------
+%# END: PLOT SWITCHES
+%# ************************************************************************
 
 
-% *************************************************************************
-% TURBULENCE STIMULATOR CONDITIONS
-% *************************************************************************
+%# ************************************************************************
+%# TURBULENCE STIMULATOR CONDITIONS
+%# ************************************************************************
 if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || length(cond3) ~= 0)
     
     startRun = 1;
