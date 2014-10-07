@@ -140,12 +140,12 @@ ttwatertemp         = 17.5;                   % Towing Tank: Water temperature (
 
 % General constants
 gravconst           = 9.806;                  % Gravitational constant           (m/s^2)
-modelkinviscosity   = (((0.585*10^(-3))*(ttwatertemp-12)-0.03361)*(ttwatertemp-12)+1.235)*10^(-6); % Model scale kinetic viscosity at X (see ttwatertemp) degrees following ITTC (m2/s)
-fullscalekinvi      = 0.000001034;            % Full scale kinetic viscosity     (m^2/s)
-freshwaterdensity   = 1000;                   % Model scale water density        (Kg/m^3)
-saltwaterdensity    = 1025;                   % Salt water scale water density   (Kg/m^3)
-distbetwposts       = 1150;                   % Distance between carriage posts  (mm)
-FStoMSratio         = 21.6;                   % Full scale to model scale ratio  (-)
+MSKinVis            = 0.0000010411;           % Model scale kinetic viscosity at 18.5 deg. C  (m^2/s) -> See table in ITTC 7.5-02-01-03 (2008)
+FSKinVis            = 0.0000010711;           % Full scale kinetic viscosity at 19.2 deg. C   (m^2/s) -> See table in ITTC 7.5-02-01-03 (2008)
+freshwaterdensity   = 998.5048;               % Model scale water density at 18.5 deg. C      (Kg/m^3) -> See table in ITTC 7.5-02-01-03 (2008)
+saltwaterdensity    = 1025.0187;              % Salt water scale water density at 19.2 deg. C (Kg/m^3) -> See table in ITTC 7.5-02-01-03 (2008)
+distbetwposts       = 1150;                   % Distance between carriage posts               (mm)
+FStoMSratio         = 21.6;                   % Full scale to model scale ratio               (-)
 
 % Waterjet constants (FS = full scale and MS = model scale)
 

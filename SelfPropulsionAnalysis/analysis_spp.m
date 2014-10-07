@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 3, 2014
+%# Date       :  October 7, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -73,6 +73,30 @@ clc
 allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
 
+
+% *************************************************************************
+% START: PLOT SWITCHES: 1 = ENABLED
+%                       0 = DISABLED
+% -------------------------------------------------------------------------
+
+% Decide if June 2013 or September 2014 data is used for calculations
+enableSept2014FRMValues = 1;    % Use enable uses flow rate values established September 2014
+
+% Plot titles, colours, etc.
+enablePlotMainTitle     = 0;    % Show plot title in saved file
+enablePlotTitle         = 1;    % Show plot title above plot
+enableBlackAndWhitePlot = 1;    % Show plot in black and white only
+enableTowingForceFDPlot = 1;    % Show towing force (FD)
+
+% Decide which plot to show TG=p QJ vj (Allison) or TG=p QJ (vj-vi) (Bose)
+enableTGAllisonPlot     = 1;    % Show plots where TG = p Q vj
+enableTGBosePlot        = 1;    % Show plots where TG = p Q (vj - vi)
+
+% -------------------------------------------------------------------------
+% END: PLOT SWITCHES
+% *************************************************************************
+
+
 %# ------------------------------------------------------------------------
 %# GENERAL SETTINGS AND CONSTANTS
 %# ------------------------------------------------------------------------
@@ -109,13 +133,12 @@ ttwatertemp         = 18.5;                   % Towing Tank: Water temperature (
 
 % General constants
 gravconst           = 9.806;                  % Gravitational constant           (m/s^2)
-MSKinVis            = (((0.585*10^(-3))*(ttwatertemp-12)-0.03361)*(ttwatertemp-12)+1.235)*10^(-6); % Model scale kinetic viscosity at X (see ttwatertemp) degrees following ITTC (m2/s)
-%MSKinVis            = 0.00000104125125;       % Model scale kinetic viscosity at 18.5C (m^2/s)
-FSKinVis            = 0.0000011581;           % Full scale kinetic viscosity           (m^2/s)
-freshwaterdensity   = 1000;                   % Model scale water density        (Kg/m^3)
-saltwaterdensity    = 1025;                   % Salt water scale water density   (Kg/m^3)
-distbetwposts       = 1150;                   % Distance between carriage posts  (mm)
-FStoMSratio         = 21.6;                   % Full scale to model scale ratio  (-)
+MSKinVis            = 0.0000010411;           % Model scale kinetic viscosity at 18.5 deg. C  (m^2/s) -> See table in ITTC 7.5-02-01-03 (2008)
+FSKinVis            = 0.0000010711;           % Full scale kinetic viscosity at 19.2 deg. C   (m^2/s) -> See table in ITTC 7.5-02-01-03 (2008)
+freshwaterdensity   = 998.5048;               % Model scale water density at 18.5 deg. C      (Kg/m^3) -> See table in ITTC 7.5-02-01-03 (2008)
+saltwaterdensity    = 1025.0187;              % Salt water scale water density at 19.2 deg. C (Kg/m^3) -> See table in ITTC 7.5-02-01-03 (2008)
+distbetwposts       = 1150;                   % Distance between carriage posts               (mm)
+FStoMSratio         = 21.6;                   % Full scale to model scale ratio               (-)
 
 %# ************************************************************************
 %# CONDITION: 1,500 tonnes, level static trim, trim tab at 5 degrees
@@ -172,10 +195,10 @@ FS_PumpMaxArea = 0.67;
 MS_PumpMaxArea = 0.001;
 
 % Boundary layer: Power law factors (-)
-BLPLFactorArray  = [6.675 6.675 6.675 6.675 6.675 6.675 6.675 6.675 6.675];
+BLPLFactorArray  = [6.672 6.672 6.672 6.672 6.672 6.672 6.672 6.672 6.672];
 
 % Boundary layer: Thickness (m)
-BLThicknessArray = [0.0449 0.0451 0.0450 0.0445 0.0436 0.0425 0.0410 0.0392 0.0370];
+BLThicknessArray = [0.04546 0.04548 0.04519 0.04459 0.04369 0.04248 0.04097 0.03915 0.03702];
 
 %# -------------------------------------------------------------------------
 %# Number of headerlines in DAT file
@@ -255,29 +278,6 @@ RunsForSpeed9 = [90 91 92 93 94];           % Fr = 0.40
 %# ------------------------------------------------------------------------
 %# END REPEAT RUN NUMBERS
 %# ////////////////////////////////////////////////////////////////////////
-
-
-% *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED
-%                       0 = DISABLED
-% -------------------------------------------------------------------------
-
-% Decide if June 2013 or September 2014 data is used for calculations
-enableSept2014FRMValues = 1;    % Use enable uses flow rate values established September 2014
-
-% Plot titles, colours, etc.
-enablePlotMainTitle     = 0;    % Show plot title in saved file
-enablePlotTitle         = 1;    % Show plot title above plot
-enableBlackAndWhitePlot = 1;    % Show plot in black and white only
-enableTowingForceFDPlot = 1;    % Show towing force (FD)
-
-% Decide which plot to show TG=p QJ vj (Allison) or TG=p QJ (vj-vi) (Bose)
-enableTGAllisonPlot     = 1;    % Show plots where TG = p Q vj
-enableTGBosePlot        = 1;    % Show plots where TG = p Q (vj - vi)
-
-% -------------------------------------------------------------------------
-% END: PLOT SWITCHES
-% *************************************************************************
 
 
 %# ////////////////////////////////////////////////////////////////////////
@@ -750,9 +750,6 @@ end
 %# 1. Plot gross thrust (TG) vs. towing force (F)
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-% Froude numbers for nince (9) speeds
-FroudeNos = [0.24 0.26 0.28 0.30 0.32 0.34 0.36 0.38 0.40];
-
 % Remove zero rows
 resultsArraySPP = resultsArraySPP(any(resultsArraySPP,2),:);
 
@@ -760,6 +757,26 @@ resultsArraySPP = resultsArraySPP(any(resultsArraySPP,2),:);
 R = resultsArraySPP;
 A = arrayfun(@(x) R(R(:,5) == x, :), unique(R(:,5)), 'uniformoutput', false);
 [ma,na] = size(A);      % Array dimensions
+
+% Froude numbers for nine (9) speeds
+Froude_Numbers = [];
+for k=1:ma
+    Froude_Numbers(k,1) = A{k}(1,5);
+    Froude_Numbers(k,2) = mean(A{k}(:,6));
+end
+
+% Bare hull resistance
+
+%# calBHResistanceBasedOnFr results array columns:
+%[1]  Froude length number             (-)
+%[2]  Resistance (uncorrected)         (N)
+%[resistance] = calBHResistanceBasedOnFr(Froude_Numbers);
+
+%# calBHResistanceBasedOnFrTempCorr results array columns:
+%[1]  Froude length number             (-)
+%[2]  Resistance (uncorrected)         (N)
+%[3]  Resistance (corrected for temp.) (N) -> See ITTC 7.5-02-03-01.4 (2008)
+[resistance] = calBHResistanceBasedOnFrTempCorr(Froude_Numbers,FormFactor,MSwsa,MSlwl);
 
 % Loop through speeds
 TGA_at_FDArray = [];  % Gross thrust = TG = p Q vj
@@ -771,8 +788,10 @@ thrustDedFracArrayB = [];
 for k=1:ma
     [mb,nb] = size(A{k});
     
-    %# TG at FD -----------------------------------------------------------
+    % Corrected resistance (RC) at current Froude length number -----------
+    correctedResistance = resistance(k,3);
     
+    %# TG at FD -----------------------------------------------------------
     y1       = A{k}(:,45);   % Gross thrust = TG = p Q vj        (N)
     y2       = A{k}(:,42);   % Gross thrust = TG = p Q (vj - vi) (N)
     x        = A{k}(:,10);   % Bare hull resistance              (N)
@@ -795,11 +814,11 @@ for k=1:ma
     FA_at_TGZero(k, 2) = TowingForceAtZeroThrust;   % Towing force     (y-axis)
     
     % Froude number
-    thrustDedFracArrayA(k, 1) = FroudeNos(k);
+    thrustDedFracArrayA(k, 1) = Froude_Numbers(k,1);
     % t=(TM+FD-RC)/TM
-    thrustDedFracArrayA(k, 2) = (ThrustAtSPP+towForce-TowingForceAtZeroThrust)/ThrustAtSPP;
-    % RCW=TG(1-t)+FD ==>> t=1-((RCW-FD)/T)
-    thrustDedFracArrayA(k, 3) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);
+    thrustDedFracArrayA(k, 2) = (ThrustAtSPP+towForce-correctedResistance)/ThrustAtSPP;
+    % RCW=TG(1-t)+FD ==>> t=1-((RC-FD)/T)
+    thrustDedFracArrayA(k, 3) = 1-((correctedResistance-towForce)/ThrustAtSPP);
     % t = ((FD-FatT=0)/TG@SPP)+1
     thrustDedFracArrayA(k, 4) = ((towForce-TowingForceAtZeroThrust)/ThrustAtSPP)+1;
     % t = 1-((FatT=0-FD)/TG@SPP)
@@ -821,11 +840,11 @@ for k=1:ma
     FB_at_TGZero(k, 2) = TowingForceAtZeroThrust;   % Towing force     (y-axis)
     
     % Froude number
-    thrustDedFracArrayB(k, 1) = FroudeNos(k);
+    thrustDedFracArrayB(k, 1) = Froude_Numbers(k,1);
     % t=(TM+FD-RC)/TM
-    thrustDedFracArrayB(k, 2) = (ThrustAtSPP+towForce-TowingForceAtZeroThrust)/ThrustAtSPP;
-    % RCW=TG(1-t)+FD ==>> t=1-((RCW-FD)/T)
-    thrustDedFracArrayB(k, 3) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);
+    thrustDedFracArrayB(k, 2) = (ThrustAtSPP+towForce-correctedResistance)/ThrustAtSPP;
+    % RCW=TG(1-t)+FD ==>> t=1-((RC-FD)/T)
+    thrustDedFracArrayB(k, 3) = 1-((correctedResistance-towForce)/ThrustAtSPP);
     % t = ((FD-FatT=0)/TG@SPP)+1
     thrustDedFracArrayB(k, 4) = ((towForce-TowingForceAtZeroThrust)/ThrustAtSPP)+1;
     % t = 1-((FatT=0-FD)/TG@SPP)
@@ -908,7 +927,6 @@ if ma == 9
                 V = polyval(P,x);
                 eval(sprintf('polyv%d = V;', k));
                 % Record slopes
-                FroudeNos = [0.24 0.26 0.28 0.30 0.32 0.34 0.36 0.38 0.40];
                 % Columns:
                 %[1]  Froude number                 (-)
                 %[2]  Slope (i.e. -(1-t))           (-)
@@ -918,7 +936,7 @@ if ma == 9
                 else
                     setDecimals = '+%0.3f';
                 end
-                slopesArrayA(k,1) = FroudeNos(k);
+                slopesArrayA(k,1) = Froude_Numbers(k,1);
                 slopesArrayA(k,2) = P(1);
                 slopesArrayA(k,3) = P(1)+1;
                 disp(sprintf('Speed %s (TG = p QJ vj): Equation of fit = %sx%s',num2str(k),sprintf('%0.3f',P(1)),sprintf(setDecimals,P(2))));
@@ -1013,7 +1031,7 @@ if ma == 9
             set(hleg1,'Interpreter','none');
             if enableTowingForceFDPlot == 1
                 [LEGH,OBJH,OUTH,OUTM] = legend;
-                legend([OUTH;h3],OUTM{:},'TG at zero drag');
+                legend([OUTH;h3],OUTM{:},'Thrust at zero drag');
                 [LEGH,OBJH,OUTH,OUTM] = legend;
                 legend([OUTH;h5],OUTM{:},'Force at TG=0');
             end
@@ -1041,7 +1059,6 @@ if ma == 9
                 V = polyval(P,x);
                 eval(sprintf('polyv%d = V;', k));
                 % Record slopes
-                FroudeNos = [0.24 0.26 0.28 0.30 0.32 0.34 0.36 0.38 0.40];
                 % Columns:
                 %[1]  Froude number                 (-)
                 %[2]  Slope (i.e. -(1-t))           (-)
@@ -1051,7 +1068,7 @@ if ma == 9
                 else
                     setDecimals = '+%0.3f';
                 end
-                slopesArrayB(k,1) = FroudeNos(k);
+                slopesArrayB(k,1) = Froude_Numbers(k,1);
                 slopesArrayB(k,2) = P(1);
                 slopesArrayB(k,3) = P(1)+1;
                 disp(sprintf('Speed %s (TG = p QJ (vj - vi)): Equation of fit = %sx%s',num2str(k),sprintf('%0.3f',P(1)),sprintf(setDecimals,P(2))));
@@ -1150,7 +1167,7 @@ if ma == 9
             set(hleg1,'Interpreter','none');
             if enableTowingForceFDPlot == 1
                 [LEGH,OBJH,OUTH,OUTM] = legend;
-                legend([OUTH;h3],OUTM{:},'TG at zero drag');
+                legend([OUTH;h3],OUTM{:},'Thrust at zero drag');
                 [LEGH,OBJH,OUTH,OUTM] = legend;
                 legend([OUTH;h5],OUTM{:},'Force at TG=0');
             end
@@ -1386,7 +1403,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         ty5 = thrustDedFracArrayA(:,5);
         
         %# Plotting
-        h1 = plot(tx1,ty1,'*',tx2,ty2,'*',tx3,ty3,'*',tx4,ty4,'*',tx5,ty5,'*',mx1,my1,mx2,my2);
+        h1 = plot(tx1,ty1,'x',tx2,ty2,'o',tx3,ty3,'+',tx4,ty4,'s',tx5,ty5,'*',mx1,my1,mx2,my2);
         if enablePlotTitle == 1
             title('{\bf Gross thrust defined as T_{G} = p Q v_{j}}','FontSize',setGeneralFontSize);
         end
@@ -1405,25 +1422,24 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         
         %# Line, colors and markers
         setLineWidthMarker = 2;
-        setMarkerSize1     = 10;
-        setMarkerSize2     = 8;
+        setMarkerSize      = 10;
         setLineWidth       = 1;
         setLineStyle1      = '--';
         setLineStyle2      = '-.';
-        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
-        set(h1(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize2);
-        set(h1(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize2);
-        set(h1(4),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize2);
-        set(h1(5),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize2);
-        set(h1(6),'Color',setColor{4},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-        set(h1(7),'Color',setColor{5},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize);
+        set(h1(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize);
+        set(h1(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize);
+        set(h1(5),'Color',setColor{5},'Marker',setMarker{7},'MarkerSize',setMarkerSize);
+        set(h1(6),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        set(h1(7),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
         
         %# Axis limitations
         setXLL = 0.14;
         setXUL = 0.70;
         set(gca,'XLim',[setXLL setXUL]);
         set(gca,'XTick',[setXLL:0.04:setXUL]);
-        setYLL = -0.5;
+        setYLL = -0.6;
         setYUL = 0.7;
         set(gca,'YLim',[setYLL setYUL]);
         set(gca,'YTick',[setYLL:0.1:setYUL]);
@@ -1474,7 +1490,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         ty5 = thrustDedFracArrayB(:,5);
         
         %# Plotting
-        h1 = plot(tx1,ty1,'*',tx2,ty2,'*',tx3,ty3,'*',tx4,ty4,'*',tx5,ty5,'*',mx1,my1,mx2,my2);
+        h1 = plot(tx1,ty1,'x',tx2,ty2,'o',tx3,ty3,'+',tx4,ty4,'s',tx5,ty5,'*',mx1,my1,mx2,my2);
         if enablePlotTitle == 1
             title('{\bf Gross thrust defined as T_{G} = p Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
         end
@@ -1492,25 +1508,25 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(gcf,'Color',[1,1,1]);
         
         %# Line, colors and markers
-        setMarkerSize1 = 10;
-        setMarkerSize2 = 8;
-        setLineWidth  = 1;
-        setLineStyle1 = '--';
-        setLineStyle2 = '-.';
-        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize1);
-        set(h1(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize2);
-        set(h1(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize2);
-        set(h1(4),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize2);
-        set(h1(5),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize2);
-        set(h1(6),'Color',setColor{4},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-        set(h1(7),'Color',setColor{5},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        setLineWidthMarker = 2;
+        setMarkerSize      = 10;
+        setLineWidth       = 1;
+        setLineStyle1      = '--';
+        setLineStyle2      = '-.';
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize);
+        set(h1(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize);
+        set(h1(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize);
+        set(h1(5),'Color',setColor{5},'Marker',setMarker{7},'MarkerSize',setMarkerSize);
+        set(h1(6),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        set(h1(7),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
         
         %# Axis limitations
         setXLL = 0.14;
         setXUL = 0.70;
         set(gca,'XLim',[setXLL setXUL]);
         set(gca,'XTick',[setXLL:0.04:setXUL]);
-        setYLL = -0.5;
+        setYLL = -0.6;
         setYUL = 0.7;
         set(gca,'YLim',[setYLL setYUL]);
         set(gca,'YTick',[setYLL:0.1:setYUL]);
@@ -1562,12 +1578,6 @@ end
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 %# 3. Resistance vs. TG at Towing Force (FD) and F at zero Thrust (FT=0)
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-Froude_Numbers = [];
-for k=1:ma
-    Froude_Numbers(k,1) = A{k}(1,5);
-end
-[resistance] = calBHResistanceBasedOnFr(Froude_Numbers);
 
 if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
     
@@ -1623,9 +1633,13 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         %# X and Y axis data
         TA = ATG_and_F_at_T0;
         
-        % Resistance
-        x = resistance(:,1);
-        y = resistance(:,2);
+        % Resistance uncorrected
+        %xr = resistance(:,1);
+        %yr = resistance(:,2);
+        
+        % Resistance corrected for temp. diff. RES and SPT test
+        xr = resistance(:,1);
+        yr = resistance(:,3);        
         
         % TG at zero drag
         x1 = TA(:,1);
@@ -1639,13 +1653,17 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         x3 = TA(:,1);
         y3 = TA(:,4);
         
+        % Towing force, FD
+        x4 = TA(:,1);
+        y4 = TA(:,5);        
+        
         %# Plotting
-        h1 = plot(x,y,x1,y1,'s',x2,y2,'^',x3,y3,'o');
+        h1 = plot(xr,yr,x1,y1,'s',x2,y2,'*',x3,y3,'o',x4,y4,'^');
         if enablePlotTitle == 1
             title('{\bf Gross thrust defined as T_{G} = p Q v_{j}}','FontSize',setGeneralFontSize);
         end
         xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
-        ylabel('{\bf Resistance and Gross Thrust, T_{G} (N)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Towing force, force at T=0 and gross thrust (N)}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
@@ -1664,9 +1682,10 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         setLineWidthMarker = 1;
         setLineStyle       = '-';
         set(h1(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-        set(h1(2),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
-        set(h1(3),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-        set(h1(4),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+        set(h1(3),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+        set(h1(4),'Color',setColor{3},'Marker',setMarker{4},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+        set(h1(5),'Color',setColor{4},'Marker',setMarker{8},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
         
         %# Axis limitations
         set(gca,'XLim',[0.22 0.42]);
@@ -1676,7 +1695,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         
         %# Legend
         %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-        hleg1 = legend('Resistance (RBH)','Gross thrust (TG) at zero drag','Towing force at zero thrust','Thrust at SPP');
+        hleg1 = legend('Resistance (RC)','Gross thrust (TG) at zero drag','Towing force at zero thrust','Thrust at SPP','Towing force, FD');
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
         %legend boxoff;
@@ -1692,9 +1711,13 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         %# X and Y axis data
         TA = BTG_and_F_at_T0;
         
-        % Resistance
-        x = resistance(:,1);
-        y = resistance(:,2);
+        % Resistance uncorrected
+        %xr = resistance(:,1);
+        %yr = resistance(:,2);
+        
+        % Resistance corrected for temp. diff. RES and SPT test
+        xr = resistance(:,1);
+        yr = resistance(:,3);
         
         % TG at zero drag
         x1 = TA(:,1);
@@ -1708,13 +1731,17 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         x3 = TA(:,1);
         y3 = TA(:,4);
         
+        % Towing force, FD
+        x4 = TA(:,1);
+        y4 = TA(:,5);        
+        
         %# Plotting
-        h1 = plot(x,y,x1,y1,'s',x2,y2,'^',x3,y3,'o');
+        h1 = plot(xr,yr,x1,y1,'s',x2,y2,'*',x3,y3,'o',x4,y4,'^');
         if enablePlotTitle == 1
             title('{\bf Gross thrust defined as T_{G} = p Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
         end
         xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
-        ylabel('{\bf Resistance and Gross Thrust, T_{G} (N)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Towing force, force at T=0 and gross thrust (N)}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
@@ -1733,9 +1760,10 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         setLineWidthMarker = 1;
         setLineStyle       = '-';
         set(h1(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-        set(h1(2),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
-        set(h1(3),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-        set(h1(4),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+        set(h1(3),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+        set(h1(4),'Color',setColor{3},'Marker',setMarker{4},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+        set(h1(5),'Color',setColor{4},'Marker',setMarker{8},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
         
         %# Axis limitations
         set(gca,'XLim',[0.22 0.42]);
@@ -1745,7 +1773,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         
         %# Legend
         %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-        hleg1 = legend('Resistance (RBH)','Gross thrust (TG) at zero drag','Towing force at zero thrust','Thrust at SPP');
+        hleg1 = legend('Resistance (RC)','Gross thrust (TG) at zero drag','Towing force at zero thrust','Thrust at SPP','Towing force, FD');
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
         %legend boxoff;

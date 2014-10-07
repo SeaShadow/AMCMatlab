@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %# 
 %# Author:       K. Zürcher (kzurcher@amc.edu.au)
-%# Date:         July 24, 2014
+%# Date       :  October 7, 2014
 %# 
 %# Function   :  Resistance curve based on Froude Numbers (Fr)
 %# 
@@ -18,28 +18,29 @@
 %# 
 %#    >> rawData     = [ 5 6 7 8 9 10 11 12 13 14 ]; 
 %#    >> [ans1]      = calBHResistanceBasedOnFr(Froude_Numbers)
-%#    ans1 = 
-%#           [ 0.24 1; 0.26 2; 0.28 3; 0.30 4; 0.32 5; 0.34 6; 0.36 7; 0.38 8; 0.40 9; ];
+%#    ans1           = (array)
 %#
 %# ------------------------------------------------------------------------
 
 function [resistance] = calBHResistanceBasedOnFr(Froude_Numbers)
 
+%# Array size -------------------------------------------------------------
+
 [m,n] = size(Froude_Numbers);
 
 %# Results array columns:
+    %[1]  Froude length number (-)
+    %[2]  Resistance           (N)
 
-%[1]  Froude length number (-)
-%[2]  Resistance           (N)
-%[3]  ...
-%[4]  ...
+%# Results array ----------------------------------------------------------
 
 ResultsArray = [];
 for k=1:m
-    FN                = Froude_Numbers(k);
-    ResultsArray(k,1) = Froude_Numbers(k);
+    FN                = Froude_Numbers(k,1);
+    ResultsArray(k,1) = FN;
     ResultsArray(k,2) = -7932.12*FN^5+13710.12*FN^4-9049.96*FN^3+2989.46*FN^2-386.61*FN+18.6;
 end
 
-%# Function output
+%# Function output --------------------------------------------------------
+
 resistance = ResultsArray;
