@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  October 7, 2014
+%# Date       :  October 8, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -138,6 +138,32 @@ delete(allPlots);   % Close all plots
 %# ------------------------------------------------------------------------
 %runfilespath = 'D:\\Flow Rate MTB Backup\\KZ Flow Rate\\';
 runfilespath = '..\\';      % Relative path from Matlab directory
+
+
+%# ************************************************************************
+%# START: PLOT SWITCHES: 1 = ENABLED
+%#                       0 = DISABLED
+%# ------------------------------------------------------------------------
+
+% Time series data
+enableTSDataSave          = 0;    % Enable time series data saving
+
+% Main and plot titles
+enablePlotMainTitle       = 1;    % Show plot title in saved file
+enablePlotTitle           = 1;    % Show plot title above plot
+enableTextOnPlot          = 0;    % Show text on plot
+enableBlackAndWhitePlot   = 0;    % Show plot in black and white
+enableEqnOfFitPlot        = 0;    % Show equations of fit
+enableCommandWindowOutput = 0;    % Show command windown ouput
+
+% Special plots
+enableRawDataPlot         = 1;    % Raw data plots of speed, fwd and aft LVDT and drag
+enableHvsRtmTvsRtmPlot    = 0;    % Heave vs. Rtm and trim vs. Rtm
+
+%# ------------------------------------------------------------------------
+%# END: PLOT SWITCHES
+%# ************************************************************************
+
 
 %# ------------------------------------------------------------------------
 %# GENERAL SETTINGS AND CONSTANTS
@@ -297,24 +323,11 @@ endRun   = 249;     % Stop at run y
 
 % Single runs
 %startRun = 163;    % Start at run x
-%endRun   = 165;    % Stop at run y
+%endRun   = 163;    % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
 %# ************************************************************************
-
-
-% *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED
-%                       0 = DISABLED
-% -------------------------------------------------------------------------
-
-enableRawDataPlot      = 0; % Raw data plots of speed, fwd and aft LVDT and drag
-enableHvsRtmTvsRtmPlot = 0; % Heave vs. Rtm and trim vs. Rtm
-
-% -------------------------------------------------------------------------
-% END: PLOT SWITCHES
-% *************************************************************************
 
 
 %# ************************************************************************
@@ -393,7 +406,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# START: CREATE PLOTS AND RUN DIRECTORY
 %# ------------------------------------------------------------------------
 
-%# _PLOTS directory
+%# _plots directory -------------------------------------------------------
 fPath = '_plots/';
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
@@ -401,6 +414,7 @@ else
     mkdir(fPath);
 end
 
+%# _time_series_data directory --------------------------------------------
 fPath = '_time_series_data/';
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
@@ -408,13 +422,41 @@ else
     mkdir(fPath);
 end
 
-fPath = '_time_series_plots/';
+%# _time_series_plots directory -------------------------------------------
+setDirName = '_time_series_plots';
+
+fPath = setDirName;
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
     mkdir(fPath);
 end
 
+%# PDF directory
+fPath = sprintf('%s/%s', setDirName, 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('%s/%s', setDirName, 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('%s/%s', setDirName, 'EPS');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# _time_series_drag_plots directory --------------------------------------
 fPath = '_time_series_drag_plots/';
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
@@ -422,15 +464,41 @@ else
     mkdir(fPath);
 end
 
-%# Have directory
-fPath = sprintf('_plots/%s', '_heave');
+%# _heave directory -------------------------------------------------------
+setDirName = '_heave';
+
+fPath = sprintf('_plots/%s', setDirName);
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
     mkdir(fPath);
 end
 
-%# Averaged directory
+%# PDF directory
+fPath = sprintf('_plots/%s/%s', setDirName, 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('_plots/%s/%s', setDirName, 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('_plots/%s/%s', setDirName, 'EPS');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# _averaged directory ----------------------------------------------------
 fPath = sprintf('_plots/%s', '_averaged');
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
@@ -584,8 +652,51 @@ for k=startRun:endRun
             runnumber = name(3:4);
         end
         
-        figurename = sprintf('%s:: Raw Data Plots, Run %s', testName, runnumber);
+        figurename = sprintf('Run %s: %s: Time Series Plots', num2str(k), testName);
         f = figure('Name',figurename,'NumberTitle','off');
+        
+        %# Paper size settings --------------------------------------------
+        
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        % Fonts and colours -----------------------------------------------
+        setGeneralFontName = 'Helvetica';
+        setGeneralFontSize = 14;
+        setBorderLineWidth = 2;
+        
+        %# Change default text fonts for plot title
+        set(0,'DefaultTextFontname',setGeneralFontName);
+        set(0,'DefaultTextFontSize',14);
+        
+        %# Box thickness, axes font size, etc. ----------------------------
+        set(gca,'TickDir','in',...
+            'FontSize',10,...
+            'LineWidth',2,...
+            'FontName',setGeneralFontName,...
+            'Clipping','off',...
+            'Color',[1 1 1],...
+            'LooseInset',get(gca,'TightInset'));
+        
+        %# Markes and colors ----------------------------------------------
+        setMarker = {'*';'+';'x';'o';'s';'d';'<';'^';'x';'>'};
+        % Colored curves
+        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+        if enableBlackAndWhitePlot == 1
+            % Black and white curves
+            setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+        end
+        
+        %# Set plot figure background to a defined color ------------------
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        
+        set(gcf,'Color',[1,1,1]);
         
         %# Time vs. speed -----------------------------------------------------
         subplot(2,2,1);
@@ -597,19 +708,40 @@ for k=startRun:endRun
         polyf = polyfit(x,y,1);
         polyv = polyval(polyf,x);
         
-        h = plot(x,y,'-b',x,polyv,'-k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Speed [m/s]}');%axis square;
+        %# Plotting
+        h = plot(x,y,'x',x,polyv,'-');
+        if enablePlotTitle == 1
+            title('{\bf Speed}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Speed [m/s]}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        %axis square;
         
         %# Line width
-        set(h(1),'linewidth',1);
-        set(h(2),'linewidth',2);
+        setMarkerSize      = 4;
+        setLineWidthMarker = 0.5;
+        setLineWidth       = 2;
+        setLineStyle       = '-';
+        set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
         
         %# Legend
         hleg1 = legend('Output (real units)','Trendline');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
+        legend boxoff;
         
         %# Axis limitations
         xlim([round(x(1)) round(x(end))]);
+        % Limit decimals in X and Y axis numbers
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'))
+        
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
         
         %# Time vs. fdw LVDT --------------------------------------------------
         subplot(2,2,2);
@@ -621,19 +753,40 @@ for k=startRun:endRun
         polyf = polyfit(x,y,1);
         polyv = polyval(polyf,x);
         
-        h = plot(x,y,'-b',x,polyv,'-k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Fdw LVDT [mm]}');%axis square;
+        %# Plotting
+        h = plot(x,y,'x',x,polyv,'-');
+        if enablePlotTitle == 1
+            title('{\bf Fwd LVDT}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Fdw LVDT [mm]}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        %axis square;
         
         %# Line width
-        set(h(1),'linewidth',1);
-        set(h(2),'linewidth',2);
+        setMarkerSize      = 4;
+        setLineWidthMarker = 0.5;
+        setLineWidth       = 2;
+        setLineStyle       = '-';
+        set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
         
         %# Legend
         hleg1 = legend('Output (real units)','Trendline');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
+        legend boxoff;
         
         %# Axis limitations
         xlim([round(x(1)) round(x(end))]);
+        % Limit decimals in X and Y axis numbers
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
+        
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
         
         %# Time vs. aft LVDT --------------------------------------------------
         subplot(2,2,3);
@@ -645,19 +798,40 @@ for k=startRun:endRun
         polyf = polyfit(x,y,1);
         polyv = polyval(polyf,x);
         
-        h = plot(x,y,'-b',x,polyv,'-k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Afr LVDT [mm]}');%axis square;
+        %# Plotting
+        h = plot(x,y,'x',x,polyv,'-');
+        if enablePlotTitle == 1
+            title('{\bf Aft LVDT}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Afr LVDT [mm]}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        %axis square;
         
         %# Line width
-        set(h(1),'linewidth',1);
-        set(h(2),'linewidth',2);
+        setMarkerSize      = 4;
+        setLineWidthMarker = 0.5;
+        setLineWidth       = 2;
+        setLineStyle       = '-';
+        set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
         
         %# Legend
         hleg1 = legend('Output (real units)','Trendline');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
+        legend boxoff;
         
         %# Axis limitations
         xlim([round(x(1)) round(x(end))]);
+        % Limit decimals in X and Y axis numbers
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
+        
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
         
         %# Time vs. drag ------------------------------------------------------
         subplot(2,2,4);
@@ -669,27 +843,44 @@ for k=startRun:endRun
         polyf = polyfit(x,y,1);
         polyv = polyval(polyf,x);
         
-        h = plot(x,y,'-b',x,polyv,'-k');grid on;box on;xlabel('{\bf Time [s]}');ylabel('{\bf Drag [g]}');%axis square;
+        %# Plotting
+        h = plot(x,y,'x',x,polyv,'-');
+        if enablePlotTitle == 1
+            title('{\bf Drag}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Drag [g]}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        %axis square;
         
         %# Line width
-        set(h(1),'linewidth',1);
-        set(h(2),'linewidth',2);
+        setMarkerSize      = 4;
+        setLineWidthMarker = 0.5;
+        setLineWidth       = 2;
+        setLineStyle       = '-';
+        set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
         
         %# Legend
         hleg1 = legend('Output (real units)','Trendline');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
+        legend boxoff;
         
         %# Axis limitations
         xlim([round(x(1)) round(x(end))]);
+        % Limit decimals in X and Y axis numbers
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
         
-        %# Plot title ---------------------------------------------------------
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
+        %# Font sizes and border --------------------------------------------------
         
-        %# Save plot as PNG ---------------------------------------------------
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# ************************************************************************
+        %# Save plot as PNG
+        %# ************************************************************************
         
         %# Figure size on screen (50% scaled, but same aspect ratio)
         set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -700,16 +891,31 @@ for k=startRun:endRun
         set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
         set(gcf, 'PaperOrientation','portrait');
         
+        %# Plot title ---------------------------------------------------------
+        if enablePlotMainTitle == 1
+            annotation('textbox', [0 0.9 1 0.1], ...
+                'String', strcat('{\bf ', figurename, '}'), ...
+                'EdgeColor', 'none', ...
+                'HorizontalAlignment', 'center');
+        end
+        
+        %# Save plots as PDF, PNG and EPS -----------------------------------------
+        
         %# Save plots as PDF and PNG
         if k > 99
             runnumber = name(2:5);
         else
             runnumber = name(2:4);
         end
-        %plotsavenamePDF = sprintf('_plots/%s_Raw_Data_Real_Units.pdf', runnumber);
-        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('_plots/%s_Raw_Data_Real_Units.png', runnumber);
-        saveas(f, plotsavename);                % Save plot as PNG
+        
+        % Enable renderer for vector graphics output
+        set(gcf, 'renderer', 'painters');
+        setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+        setFileFormat = {'PDF' 'PNG' 'EPS'};
+        for kl=1:3
+            plotsavename = sprintf('%s/%s/Run_%s_Time_Series_Real_Units_Plot.%s', '_time_series_plots', setFileFormat{kl}, num2str(k), setFileFormat{kl});
+            print(gcf, setSaveFormat{kl}, plotsavename);
+        end
         close;
         
     end
@@ -731,6 +937,7 @@ for k=startRun:endRun
             runnumber = name(3:4);
         end
         
+        % Associate length waterlines based on condition
         if any(RunNosCond1==k)
             MSlwl    = MSlwl1500;
         elseif any(RunNosCond2==k)
@@ -759,12 +966,14 @@ for k=startRun:endRun
             MSlwl    = MSlwl1500prohaska;
         end
         
+        % Data variables
         tData     = timeData(startSamplePos:end-cutSamplesFromEnd);
         speedData = CH_0_Speed(startSamplePos:end-cutSamplesFromEnd);
         fLVDTData = CH_1_LVDTFwd(startSamplePos:end-cutSamplesFromEnd);
         aLVDTData = CH_2_LVDTAft(startSamplePos:end-cutSamplesFromEnd);
         dragData  = CH_3_Drag(startSamplePos:end-cutSamplesFromEnd);
         
+        % Model Froude length number
         modelFroudeNo = sprintf('%.2f',mean(speedData) / sqrt(gravconst*MSlwl));
         
         % Array size
@@ -784,20 +993,65 @@ for k=startRun:endRun
             tsArray(j,4) = (dragData(j) / 1000) * gravconst;
         end
         
-        % PLOTTING
-        figurename = sprintf('%s:: Heave vs. Rtm and trim vs. Rtm Plots, Run %s, Fr=%s', testName, runnumber, modelFroudeNo);
+        % Plotting
+        figurename = sprintf('Run %s (Fr=%s): %s: Heave vs. Rtm and trim vs. Rtm Plots', num2str(k), modelFroudeNo, testName);
         f = figure('Name',figurename,'NumberTitle','off');
         
-        %# Time vs. Heave -----------------------------------------------------
+        %# Paper size settings --------------------------------------------
+        
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        % Fonts and colours -----------------------------------------------
+        setGeneralFontName = 'Helvetica';
+        setGeneralFontSize = 14;
+        setBorderLineWidth = 2;
+        
+        %# Change default text fonts for plot title
+        set(0,'DefaultTextFontname',setGeneralFontName);
+        set(0,'DefaultTextFontSize',14);
+        
+        %# Box thickness, axes font size, etc. ----------------------------
+        set(gca,'TickDir','in',...
+            'FontSize',10,...
+            'LineWidth',2,...
+            'FontName',setGeneralFontName,...
+            'Clipping','off',...
+            'Color',[1 1 1],...
+            'LooseInset',get(gca,'TightInset'));
+        
+        %# Markes and colors ----------------------------------------------
+        setMarker = {'*';'+';'x';'o';'s';'d';'<';'^';'x';'>'};
+        % Colored curves
+        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+        if enableBlackAndWhitePlot == 1
+            % Black and white curves
+            setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+        end
+        
+        %# Set plot figure background to a defined color ------------------
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        
+        set(gcf,'Color',[1,1,1]);
+        
+        %# Time vs. Heave -------------------------------------------------
         subplot(2,3,1);
         
         x = tsArray(:,1);
         y = tsArray(:,2);
         
-        h = plot(x,y,'*','MarkerSize',7);
-        xlabel('{\bf Time [s]}');
-        ylabel('{\bf Heave [mm]}');
-        title('{\bf Time vs. Heave}');
+        h = plot(x,y,'*');
+        if enablePlotTitle == 1
+            title('{\bf Time vs. Heave}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
@@ -810,18 +1064,33 @@ for k=startRun:endRun
         xlim([round(x(1)) round(x(end))]);
         
         % Colors and markers
-        set(h(1),'Color',[0 0 0],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);
+        setMarkerSize      = 4;
+        setLineWidthMarker = 0.5;
+        setLineWidth       = 2;
+        setLineStyle       = '-';
+        set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
+        %set(h(1),'Color',[0 0 1],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);
         
-        %# Time vs. Trim -----------------------------------------------------
+        % Limit decimals in X and Y axis numbers
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
+        
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# Time vs. Trim --------------------------------------------------
         subplot(2,3,2);
         
         x = tsArray(:,1);
         y = tsArray(:,3);
         
-        h = plot(x,y,'*','MarkerSize',7);
-        xlabel('{\bf Time [s]}');
-        ylabel('{\bf Trim [deg]}');
-        title('{\bf Time vs. Trim}');
+        h = plot(x,y,'*');
+        if enablePlotTitle == 1
+            title('{\bf Time vs. Trim}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Trim [deg]}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
@@ -830,38 +1099,33 @@ for k=startRun:endRun
         xlim([round(x(1)) round(x(end))]);
         
         % Colors and markers
-        set(h(1),'Color',[0 0 0],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);
+        setMarkerSize      = 4;
+        setLineWidthMarker = 0.5;
+        setLineWidth       = 2;
+        setLineStyle       = '-';
+        set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
+        %set(h(1),'Color',[0 0 1],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);
         
-        %# Time vs. Trim -----------------------------------------------------
-        subplot(2,3,2);
+        % Limit decimals in X and Y axis numbers
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
         
-        x = tsArray(:,1);
-        y = tsArray(:,3);
+        %# Font sizes and border --------------------------------------------------
         
-        h = plot(x,y,'*','MarkerSize',7);
-        xlabel('{\bf Time [s]}');
-        ylabel('{\bf Trim [deg]}');
-        title('{\bf Time vs. Trim}');
-        grid on;
-        box on;
-        axis square;
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
         
-        %# Axis limitations
-        xlim([round(x(1)) round(x(end))]);
-        
-        % Colors and markers
-        set(h(1),'Color',[0 0 0],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);
-        
-        %# Time vs. Rtm -----------------------------------------------------
+        %# Time vs. Rtm ---------------------------------------------------
         subplot(2,3,3);
         
         x = tsArray(:,1);
         y = tsArray(:,4);
         
-        h = plot(x,y,'*','MarkerSize',7);
-        xlabel('{\bf Time [s]}');
-        ylabel('{\bf R_{tm} [N]}');
-        title('{\bf Time vs. R_{tm}}');
+        h = plot(x,y,'*');
+        if enablePlotTitle == 1
+            title('{\bf Time vs. R_{tm}}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf R_{tm} [N]}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
@@ -870,43 +1134,88 @@ for k=startRun:endRun
         xlim([round(x(1)) round(x(end))]);
         
         % Colors and markers
-        set(h(1),'Color',[0 0 0],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);
+        setMarkerSize      = 4;
+        setLineWidthMarker = 0.5;
+        setLineWidth       = 2;
+        setLineStyle       = '-';
+        set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
+        %set(h(1),'Color',[0 0 1],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);
         
-        %# Heave vs. Rtm -----------------------------------------------------
+        % Limit decimals in X and Y axis numbers
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
+        
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# Heave vs. Rtm --------------------------------------------------
         subplot(2,3,4);
         
         x = tsArray(:,2);
         y = tsArray(:,4);
         
-        h = plot(x,y,'*','MarkerSize',7);
-        xlabel('{\bf Heave [mm]}');
-        ylabel('{\bf Total resistance R_{tm} [N]}');
-        title('{\bf Heave vs. R_{tm}}');
+        h = plot(x,y,'*');
+        if enablePlotTitle == 1
+            title('{\bf Heave vs. R_{tm}}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Total resistance R_{tm} [N]}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
         
         % Colors and markers
-        set(h(1),'Color',[0 0 1],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);
+        setMarkerSize      = 4;
+        setLineWidthMarker = 0.5;
+        setLineWidth       = 2;
+        setLineStyle       = '-';
+        set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
+        %set(h(1),'Color',[0 0 1],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);
         
-        %# Trim vs. Rtm -----------------------------------------------------
+        % Limit decimals in X and Y axis numbers
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
+        
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# Trim vs. Rtm ---------------------------------------------------
         subplot(2,3,5);
         
         x = tsArray(:,3);
         y = tsArray(:,4);
         
-        h = plot(x,y,'*','MarkerSize',7);
-        xlabel('{\bf Trim [deg]}');
-        ylabel('{\bf Total resistance R_{tm} [N]}');
-        title('{\bf Trim vs. R_{tm}}');
+        h = plot(x,y,'*');
+        if enablePlotTitle == 1
+            title('{\bf Trim vs. R_{tm}}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Trim [deg]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Total resistance R_{tm} [N]}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
         
         % Colors and markers
-        set(h(1),'Color',[0 0 1],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);
+        setMarkerSize      = 4;
+        setLineWidthMarker = 0.5;
+        setLineWidth       = 2;
+        setLineStyle       = '-';
+        set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
+        %set(h(1),'Color',[0 0 1],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);
         
-        %# Save plot as PNG -------------------------------------------------------
+        % Limit decimals in X and Y axis numbers
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
+        
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# ************************************************************************
+        %# Save plot as PNG
+        %# ************************************************************************
         
         %# Figure size on screen (50% scaled, but same aspect ratio)
         set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -917,17 +1226,24 @@ for k=startRun:endRun
         set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
         set(gcf, 'PaperOrientation','portrait');
         
-        %# Plot title -------------------------------------------------------------
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
+        %# Plot title ---------------------------------------------------------
+        if enablePlotMainTitle == 1
+            annotation('textbox', [0 0.9 1 0.1], ...
+                'String', strcat('{\bf ', figurename, '}'), ...
+                'EdgeColor', 'none', ...
+                'HorizontalAlignment', 'center');
+        end
         
-        %# Save plots as PDF and PNG
-        %plotsavenamePDF = sprintf('_plots/%s/R%s_Heave_vs_Rtm_and_Trim_vs_Rtm.pdf', '_heave', runnumber);
-        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('_plots/%s/R%s_Heave_vs_Rtm_and_Trim_vs_Rtm.png', '_heave', runnumber);
-        saveas(f, plotsavename);                % Save plot as PNG
+        %# Save plots as PDF, PNG and EPS -----------------------------------------
+        
+        % Enable renderer for vector graphics output
+        set(gcf, 'renderer', 'painters');
+        setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+        setFileFormat = {'PDF' 'PNG' 'EPS'};
+        for kl=1:3
+            plotsavename = sprintf('_plots/%s/%s/Run_%s_Heave_vs_Rtm_and_Trim_vs_Rtm.%s', '_heave', setFileFormat{kl}, num2str(k), setFileFormat{kl});
+            print(gcf, setSaveFormat{kl}, plotsavename);
+        end
         close;
         
     end
@@ -937,348 +1253,352 @@ for k=startRun:endRun
     % *********************************************************************
     
     
-    % /////////////////////////////////////////////////////////////////////
-    % COLLECT AND DISPLAY RESULTS
-    % /////////////////////////////////////////////////////////////////////
+    %# ********************************************************************
+    %# Collect and display results
+    %# ********************************************************************
     
-    %# CONDITIONS ----------------------------------------------------------
-    disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-    if any(RunNosCond1==k)
-        disp('Cond. 1 (Turb-studs): Bare-hull');
-        testcond = 1;
-        MSlwl    = MSlwl1500;
-        MSwsa    = MSwsa1500;
-        MSdraft  = MSdraft1500;
-        FSlwl    = FSlwl1500;
-        FSwsa    = FSwsa1500;
-        FSdraft  = FSdraft1500;
-    elseif any(RunNosCond2==k)
-        disp('Cond. 2 (Turb-studs): 1st row');
-        testcond = 2;
-        MSlwl    = MSlwl1500;
-        MSwsa    = MSwsa1500;
-        MSdraft  = MSdraft1500;
-        FSlwl    = FSlwl1500;
-        FSwsa    = FSwsa1500;
-        FSdraft  = FSdraft1500;
-    elseif any(RunNosCond3==k)
-        disp('Cond. 3 (Turb-studs): 1st and 2nd row');
-        testcond = 3;
-        MSlwl    = MSlwl1500;
-        MSwsa    = MSwsa1500;
-        MSdraft  = MSdraft1500;
-        FSlwl    = FSlwl1500;
-        FSwsa    = FSwsa1500;
-        FSdraft  = FSdraft1500;
-    elseif any(RunNosCond4==k)
-        disp('Cond. 4 (Trim-tab): 5 deg., level stat. trim');
-        testcond = 4;
-        MSlwl    = MSlwl1500;
-        MSwsa    = MSwsa1500;
-        MSdraft  = MSdraft1500;
-        FSlwl    = FSlwl1500;
-        FSwsa    = FSwsa1500;
-        FSdraft  = FSdraft1500;
-    elseif any(RunNosCond5==k)
-        disp('Cond. 5 (Trim-tab): 0 deg., level stat. trim');
-        testcond = 5;
-        MSlwl    = MSlwl1500;
-        MSwsa    = MSwsa1500;
-        MSdraft  = MSdraft1500;
-        FSlwl    = FSlwl1500;
-        FSwsa    = FSwsa1500;
-        FSdraft  = FSdraft1500;
-    elseif any(RunNosCond6==k)
-        disp('Cond. 6 (Trim-tab): 10 deg., level stat. trim');
-        testcond = 6;
-        MSlwl    = MSlwl1500;
-        MSwsa    = MSwsa1500;
-        MSdraft  = MSdraft1500;
-        FSlwl    = FSlwl1500;
-        FSwsa    = FSwsa1500;
-        FSdraft  = FSdraft1500;
-    elseif any(RunNosCond7==k)
-        disp('Cond. 7 (Resistance): 1,500t, level');
-        testcond = 7;
-        MSlwl    = MSlwl1500;
-        MSwsa    = MSwsa1500;
-        MSdraft  = MSdraft1500;
-        FSlwl    = FSlwl1500;
-        FSwsa    = FSwsa1500;
-        FSdraft  = FSdraft1500;
-    elseif any(RunNosCond8==k)
-        disp('Cond. 8 (Resistance): 1,500t, -0.5 deg. bow');
-        testcond = 8;
-        MSlwl    = MSlwl1500bybow;
-        MSwsa    = MSwsa1500bybow;
-        MSdraft  = MSdraft1500bybow;
-        FSlwl    = FSlwl1500bybow;
-        FSwsa    = FSwsa1500bybow;
-        FSdraft  = FSdraft1500bybow;
-    elseif any(RunNosCond9==k)
-        disp('Cond. 9 (Resistance): 1,500t, 0.5 deg. stern');
-        testcond = 9;
-        MSlwl    = MSlwl1500bystern;
-        MSwsa    = MSwsa1500bystern;
-        MSdraft  = MSdraft1500bystern;
-        FSlwl    = FSlwl1500bystern;
-        FSwsa    = FSwsa1500bystern;
-        FSdraft  = FSdraft1500bystern;
-    elseif any(RunNosCond10==k)
-        disp('Cond. 10 (Resistance): 1,804t, level');
-        testcond = 10;
-        MSlwl    = MSlwl1804;
-        MSwsa    = MSwsa1804;
-        MSdraft  = MSdraft1804;
-        FSlwl    = FSlwl1804;
-        FSwsa    = FSwsa1804;
-        FSdraft  = FSdraft1804;
-    elseif any(RunNosCond11==k)
-        disp('Cond. 11 (Resistance): 1,804t, -0.5 deg. bow');
-        testcond = 11;
-        MSlwl    = MSlwl1804bybow;
-        MSwsa    = MSwsa1804bybow;
-        MSdraft  = MSdraft1804bybow;
-        FSlwl    = FSlwl1804bybow;
-        FSwsa    = FSwsa1804bybow;
-        FSdraft  = FSdraft1804bybow;
-    elseif any(RunNosCond12==k)
-        disp('Cond. 12 (Resistance): 1,804t, 0.5 deg. stern');
-        testcond = 12;
-        MSlwl    = MSlwl1804bystern;
-        MSwsa    = MSwsa1804bystern;
-        MSdraft  = MSdraft1804bystern;
-        FSlwl    = FSlwl1804bystern;
-        FSwsa    = FSwsa1804bystern;
-        FSdraft  = FSdraft1804bystern;
-    elseif any(RunNosCond13==k)
-        disp('Cond. 13 (Prohaska): 1,500t, deep transom');
-        testcond = 13;
-        MSlwl    = MSlwl1500prohaska;
-        MSwsa    = MSwsa1500prohaska;
-        MSdraft  = MSdraft1500prohaska;
-        FSlwl    = FSlwl1500prohaska;
-        FSwsa    = FSwsa1500prohaska;
-        FSdraft  = FSdraft1500prohaska;
-    else
-        disp('Unspecified condition');
-    end
-    disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-    
-    %# Results array columns:
-    %[1]  Run No.                                                                  (-)
-    %[2]  FS                                                                       (Hz)
-    %[3]  No. of samples                                                           (-)
-    %[4]  Record time                                                              (s)
-    %[5]  Model Averaged speed                                                     (m/s)
-    %[6]  Model Averaged fwd LVDT                                                  (m)
-    %[7]  Model Averaged aft LVDT                                                  (m)
-    %[8]  Model Averaged drag                                                      (g)
-    %[9]  Model (Rtm) Total resistance                                             (N)
-    %[10] Model (Ctm) Total resistance Coefficient                                 (-)
-    %[11] Model Froude length number                                               (-)
-    %[12] Model Heave                                                              (mm)
-    %[13] Model Trim                                                               (Degrees)
-    %[14] Equivalent full scale speed                                              (m/s)
-    %[15] Equivalent full scale speed                                              (knots)
-    
-    % ---------------------------------------------------------------------
-    % Additional values added: 10/09/2013
-    % ---------------------------------------------------------------------
-    %[16] Model (Rem) Reynolds Number                                              (-)
-    %[17] Model (Cfm) Frictional Resistance Coefficient (ITTC'57)                  (-)
-    %[18] Model (Cfm) Frictional Resistance Coefficient (Grigson)                  (-)
-    %[19] Model (Crm) Residual Resistance Coefficient                              (-)
-    %[20] Model (PEm) Model Effective Power                                        (W)
-    %[21] Model (PBm) Model Brake Power (using 50% prop. efficiency estimate)      (W)
-    %[22] Full Scale (Res) Reynolds Number                                         (-)
-    %[23] Full Scale (Cfs) Frictional Resistance Coefficient (ITTC'57)             (-)
-    %[24] Full Scale (Cts) Total resistance Coefficient                            (-)
-    %[25] Full Scale (Rts) Total resistance (Rt)                                   (N)
-    %[26] Full Scale (PEs) Model Effective Power                                   (W)
-    %[27] Full Scale (PBs) Model Brake Power (using 50% prop. efficiency estimate) (W)
-    %[28] Run condition                                                            (-)
-    
-    % ---------------------------------------------------------------------
-    % Additional values added: 12/09/2013
-    % ---------------------------------------------------------------------
-    %[29] SPEED: Minimum value                                                      (m/s)
-    %[30] SPEED: Maximum value                                                      (m/s)
-    %[31] SPEED: Average value                                                      (m/s)
-    %[32] SPEED: Percentage (max.-avg.) to max. value (exp. 3%)                     (m/s)
-    %[33] LVDT (FWD): Minimum value                                                 (mm)
-    %[34] LVDT (FWD): Maximum value                                                 (mm)
-    %[35] LVDT (FWD): Average value                                                 (mm)
-    %[36] LVDT (FWD): Percentage (max.-avg.) to max. value (exp. 3%)                (mm)
-    %[37] LVDT (AFT): Minimum value                                                 (mm)
-    %[38] LVDT (AFT): Maximum value                                                 (mm)
-    %[39] LVDT (AFT): Average value                                                 (mm)
-    %[40] LVDT (AFT): Percentage (max.-avg.) to max. value (exp. 3%)                (mm)
-    %[41] DRAG: Minimum value                                                       (g)
-    %[42] DRAG: Maximum value                                                       (g)
-    %[43] DRAG: Average value                                                       (g)
-    %[44] DRAG: Percentage (max.-avg.) to max. value (exp. 3%)                      (g)
-    
-    % ---------------------------------------------------------------------
-    % Additional values added: 18/09/2013
-    % ---------------------------------------------------------------------
-    %[45] SPEED: Standard deviation                                                 (m/s)
-    %[46] LVDT (FWD): Standard deviation                                            (mm)
-    %[47] LVDT (AFT): Standard deviation                                            (mm)
-    %[48] DRAG: Standard deviation                                                  (g)
-    
-    % ---------------------------------------------------------------------
-    % Additional values added: 04/08/2014
-    % ---------------------------------------------------------------------
-    %[49] Full Scale (Cfs) Frictional Resistance Coefficient (Grigson)              (-)
-    
-    % Write data to array -------------------------------------------------
-    resultsArray(k, 1)  = k;                                                        % Run No.
-    resultsArray(k, 2)  = round(length(timeData) / timeData(end));                  % FS (Hz)
-    resultsArray(k, 3)  = length(timeData);                                         % Number of samples
-    recordTime = length(timeData) / (round(length(timeData) / timeData(end)));
-    resultsArray(k, 4)  = round(recordTime);                                        % Record time in seconds
-    resultsArray(k, 5)  = CH_0_Speed_Mean;                                          % Model Averaged speed (m/s)
-    resultsArray(k, 6)  = CH_1_LVDTFwd_Mean;                                        % Model Averaged forward LVDT (mm)
-    resultsArray(k, 7)  = CH_2_LVDTAft_Mean;                                        % Model Averaged aft LVDT (mm)
-    resultsArray(k, 8)  = CH_3_Drag_Mean;                                           % Model Averaged drag (g)
-    resultsArray(k, 9)  = (resultsArray(k, 8) / 1000) * gravconst;                  % Model Averaged drag (Rtm) (N)
-    resultsArray(k, 10) = resultsArray(k, 9) / (0.5*freshwaterdensity*MSwsa*resultsArray(k, 5)^2); % Model Averaged drag (Ctm) (-)
-    
-    roundedspeed   = str2num(sprintf('%.2f',resultsArray(k, 5)));                   % Round averaged speed to two (2) decimals only
-    modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl))); % Calculate Froude length number
-    resultsArray(k, 11) = modelfrrounded;                                           % Froude length number (adjusted for Lwl change at different conditions) (-)
-    
-    resultsArray(k, 12) = (resultsArray(k, 6)+resultsArray(k, 7))/2;                % Model Heave (mm)
-    resultsArray(k, 13) = atand((resultsArray(k, 6)-resultsArray(k, 7))/distbetwposts); % Model Trim (Degrees)
-    resultsArray(k, 14) = resultsArray(k, 5) * sqrt(FStoMSratio);                   % Full scale speed (m/s)
-    resultsArray(k, 15) = resultsArray(k, 14) / 0.5144;                             % Full scale speed (knots)
-    % ---------------------------------------------------------------------
-    % Additional values added: 10/09/2013
-    % ---------------------------------------------------------------------
-    resultsArray(k, 16) = (resultsArray(k, 5)*MSlwl)/modelkinviscosity;             % Model Reynolds Number (-)
-    resultsArray(k, 17) = 0.075/(log10(resultsArray(k, 16))-2)^2;                   % Model Frictional Resistance Coefficient (ITTC'57) (-)
-    if resultsArray(k, 16) < 10000000
-        resultsArray(k, 18) = 10^(2.98651-10.8843*(log10(log10(resultsArray(k, 16))))+5.15283*(log10(log10(resultsArray(k, 16))))^2); % Model Frictional Resistance Coefficient (Grigson) (-)
-    else
-        resultsArray(k, 18) = 10^(-9.57459+26.6084*(log10(log10(resultsArray(k, 16))))-30.8285*(log10(log10(resultsArray(k, 16))))^2+10.8914*(log10(log10(resultsArray(k, 16))))^3); % Model Frictional Resistance Coefficient (Grigson) (-)
-    end
-    resultsArray(k, 19) = resultsArray(k, 10)-resultsArray(k, 17);           % Model (Crm) Residual Resistance Coefficient (-)
-    resultsArray(k, 20) = resultsArray(k, 5)*resultsArray(k, 9);             % Model (PEm) Model Effective Power                                   (W)
-    resultsArray(k, 21) = resultsArray(k, 20)/0.5;                           % Model (PBm) Model Brake Power (using 50% prop. efficiency estimate) (W)
-    resultsArray(k, 22) = (resultsArray(k, 14)*FSlwl)/fullscalekinvi;        % Full Scale (Res) Reynolds Number (-)
-    resultsArray(k, 23) = 0.075/(log10(resultsArray(k, 22))-2)^2;            % Full Scale (Cfs) Frictional Resistance Coefficient (ITTC'57) (-)
-    resultsArray(k, 24) = resultsArray(k, 19)+resultsArray(k, 23);           % Full Scale (Cts) Total resistance Coefficient (-)
-    resultsArray(k, 25) = 0.5*saltwaterdensity*(resultsArray(k, 14)^2)*FSwsa*resultsArray(k, 24); % Full Scale (Rts) Total resistance (Rt) (N)
-    resultsArray(k, 26) = resultsArray(k, 14)*resultsArray(k, 25);           % Full Scale (PEs) Model Effective Power (W)
-    resultsArray(k, 27) = resultsArray(k, 26)/0.5;                           % Full Scale (PBs) Model Brake Power (using 50% prop. efficiency estimate) (W)
-    resultsArray(k, 28) = testcond;                                          % Run condition (-)
-    % ---------------------------------------------------------------------
-    % Additional values added: 12/09/2013
-    % ---------------------------------------------------------------------
-    sdata               = CH_0_Speed(startSamplePos:end-cutSamplesFromEnd);
-    tfwddata            = CH_1_LVDTFwd(startSamplePos:end-cutSamplesFromEnd);
-    taftdata            = CH_2_LVDTAft(startSamplePos:end-cutSamplesFromEnd);
-    ddata               = CH_3_Drag(startSamplePos:end-cutSamplesFromEnd);
-    resultsArray(k, 29) = min(sdata);                                           % SPEED: Minimum value (m/s)
-    resultsArray(k, 30) = max(sdata);                                           % SPEED: Maximum value (m/s)
-    resultsArray(k, 31) = mean(sdata);                                          % SPEED: Average value (m/s)
-    resultsArray(k, 32) = (max(sdata) - mean(sdata)) / max(sdata);              % SPEED: Percentage (max.-avg.) to max. value (exp. 3% (m/s)
-    resultsArray(k, 33) = min(tfwddata);                                        % LVDT (FWD): Minimum value (mm)
-    resultsArray(k, 34) = max(tfwddata);                                        % LVDT (FWD): Maximum value (mm)
-    resultsArray(k, 35) = mean(tfwddata);                                       % LVDT (FWD): Average value (mm)
-    resultsArray(k, 36) = abs(max(tfwddata) - mean(tfwddata)) / abs(max(tfwddata)-min(tfwddata));     % LVDT (FWD): Percentage (max.-avg.) to max. value (exp. 3%) (mm)
-    resultsArray(k, 37) = min(taftdata);                                        % LVDT (AFT): Minimum vaue (mm)
-    resultsArray(k, 38) = max(taftdata);                                        % LVDT (AFT): Maximum value (mm)
-    resultsArray(k, 39) = mean(taftdata);                                       % LVDT (AFT): Average value (mm)
-    resultsArray(k, 40) = abs(max(taftdata) - mean(taftdata)) / abs(max(taftdata)-min(taftdata));     % LVDT (AFT): Percentage (max.-avg.) to max. value (exp. 3%) (mm)
-    resultsArray(k, 41) = min(ddata);                                           % DRAG: Minimum value (g)
-    resultsArray(k, 42) = max(ddata);                                           % DRAG: Maximum value (g)
-    resultsArray(k, 43) = mean(ddata);                                          % DRAG: Average value (g)
-    resultsArray(k, 44) = (max(ddata) - mean(ddata)) / max(ddata);              % DRAG: Percentage (max.-avg.) to max. value (exp. 3%) (g)
-    % ---------------------------------------------------------------------
-    % Additional values added: 18/09/2013
-    % ---------------------------------------------------------------------
-    resultsArray(k, 45) = std(sdata);                                           % SPEED: Standard deviation (-)
-    resultsArray(k, 46) = std(tfwddata);                                        % LVDT (FWD): Standard deviation (-)
-    resultsArray(k, 47) = std(taftdata);                                        % LVDT (AFT): Standard deviation (-)
-    resultsArray(k, 48) = std(ddata);                                           % DRAG: Standard deviation (-)
-    % ---------------------------------------------------------------------
-    % Additional values added: 04/08/2014
-    % ---------------------------------------------------------------------
-    % Model Frictional Resistance Coefficient (Grigson) (-)
-    FSReynoldsNumber = resultsArray(k, 22);
-    if FSReynoldsNumber < 10000000
-        resultsArray(k, 49) = 10^(2.98651-10.8843*(log10(log10(FSReynoldsNumber)))+5.15283*(log10(log10(FSReynoldsNumber)))^2); % Model Frictional Resistance Coefficient (Grigson) (-)
-    else
-        resultsArray(k, 49) = 10^(-9.57459+26.6084*(log10(log10(FSReynoldsNumber)))-30.8285*(log10(log10(FSReynoldsNumber)))^2+10.8914*(log10(log10(FSReynoldsNumber)))^3); % Model Frictional Resistance Coefficient (Grigson) (-)
-    end
-    
-    %# Prepare strings for display ----------------------------------------
-    if k > 99
-        name = name(2:5);
-    else
-        name = name(2:4);
-    end
-    avgspeed          = sprintf('%s:: Model Averaged speed: %s [m/s]', name, sprintf('%.2f',resultsArray(k, 5)));
-    avglvdtfdw        = sprintf('%s:: Model Averaged fwd LVDT: %s [mm]', name, sprintf('%.2f',resultsArray(k, 6)));
-    avglvdtaft        = sprintf('%s:: Model Averaged aft LVDT: %s [mm]', name, sprintf('%.2f',resultsArray(k, 7)));
-    avgdrag           = sprintf('%s:: Model Averaged drag: %s [g]', name, sprintf('%.2f',resultsArray(k, 8)));
-    avgdragrt         = sprintf('%s:: Model Total resistance (Rtm): %s [N]', name, sprintf('%.2f',resultsArray(k, 9)));
-    avgdragct         = sprintf('%s:: Model Total resistance coefficient (Ctm): %s [-]', name, sprintf('%.5f',resultsArray(k, 10)));
-    froudlengthnumber = sprintf('%s:: Froude length number (Fr): %s [-]', name, sprintf('%.2f',resultsArray(k, 11)));
-    heave             = sprintf('%s:: Model Heave: %s [mm]', name, sprintf('%.2f',resultsArray(k, 12)));
-    trim              = sprintf('%s:: Model Trim: %s [Degrees]', name, sprintf('%.2f',resultsArray(k, 13)));
-    % ---------------------------------------------------------------------
-    % Additional values added: 10/09/2013
-    % ---------------------------------------------------------------------
-    modelreynoldsno   = sprintf('%s:: Model Reynolds Number (Rem): %s [-]', name, sprintf('%.0f',resultsArray(k, 16)));
-    modelcfmittc57    = sprintf('%s:: Model Frictional Resistance Coeff. (Cfm using ITTC 1957): %s [-]', name, sprintf('%.5f',resultsArray(k, 17)));
-    modelcfmgrigson   = sprintf('%s:: Model Frictional Resistance Coeff. (Cfm using Grigson): %s [-]', name, sprintf('%.5f',resultsArray(k, 18)));
-    modelcrm          = sprintf('%s:: Model Residual Resistance Coeff. (Crm): %s [-]', name, sprintf('%.5f',resultsArray(k, 19)));
-    modeleffpower     = sprintf('%s:: Model Effective Power (PEm): %s [W]', name, sprintf('%.2f',resultsArray(k, 20)));
-    modelbrakepower   = sprintf('%s:: Model Brake Power (PBm at an estimated 50 percent prop. efficiency): %s [W]', name, sprintf('%.2f',resultsArray(k, 21)));
-    FSspeedms         = sprintf('%s:: Full Scale speed: %s [m/s]', name, sprintf('%.2f',resultsArray(k, 14)));
-    FSspeedkts        = sprintf('%s:: Full Scale speed: %s [knots]', name, sprintf('%.2f',resultsArray(k, 15)));
-    FSreynoldsno      = sprintf('%s:: Full Scale Reynolds Number (Res): %s [-]', name, sprintf('%.0f',resultsArray(k, 22)));
-    FSCfsittc57       = sprintf('%s:: Full Scale Frictional Resistance Coeff. (Cfs using ITTC 1957): %s [-]', name, sprintf('%.5f',resultsArray(k, 23)));
-    FSCfsgrigson      = sprintf('%s:: Full Scale Frictional Resistance Coeff. (Cfs using Grigson): %s [-]', name, sprintf('%.5f',resultsArray(k, 49)));
-    FSCts             = sprintf('%s:: Full Scale Total resistance coefficient (Cts): %s [-]', name, sprintf('%.5f',resultsArray(k, 24)));
-    FSRts             = sprintf('%s:: Full Scale Total resistance (Rts): %s [N] / %s [kN]', name, sprintf('%.0f',resultsArray(k, 25)), sprintf('%.0f',resultsArray(k, 25)/1000));
-    FSPEs             = sprintf('%s:: Full Scale Effective Power (PEs): %s [W] / %s [kW] / %s [mW]', name, sprintf('%.0f',resultsArray(k, 26)), sprintf('%.0f',resultsArray(k, 26)/1000), sprintf('%.2f',resultsArray(k, 26)/1000000));
-    FSPBs             = sprintf('%s:: Full Scale Brake Power (PBs at an estimated 50 percent prop. efficiency): %s [W] / %s [kW] / %s [mW]', name, sprintf('%.0f',resultsArray(k, 27)), sprintf('%.0f',resultsArray(k, 27)/1000), sprintf('%.2f',resultsArray(k, 27)/1000000));
-    
-    %# Display strings ----------------------------------------------------
-    disp('>>> MODEL SCALE');
-    disp(avgspeed);
-    disp(avglvdtfdw);
-    disp(avglvdtaft);
-    disp(avgdrag);
-    disp(avgdragrt);
-    disp(avgdragct);
-    disp(froudlengthnumber);
-    disp(heave);
-    disp(trim);
-    % ---------------------------------------------------------------------
-    % Additional values added: 10/09/2013
-    % ---------------------------------------------------------------------
-    disp(modelreynoldsno);
-    disp(modelcfmittc57);
-    disp(modelcfmgrigson);
-    disp(modelcrm);
-    disp(modeleffpower);
-    disp(modelbrakepower);
-    disp('>>> FULL SCALE');
-    disp(FSspeedms);
-    disp(FSspeedkts);
-    disp(FSreynoldsno);
-    disp(FSCfsittc57);
-    disp(FSCfsgrigson);
-    disp(FSCts);
-    disp(FSRts);
-    disp(FSPEs);
-    disp(FSPBs);
-    disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+    if enableCommandWindowOutput == 1
+        
+        %# CONDITIONS ---------------------------------------------------------
+        disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        if any(RunNosCond1==k)
+            disp('Cond. 1 (Turb-studs): Bare-hull');
+            testcond = 1;
+            MSlwl    = MSlwl1500;
+            MSwsa    = MSwsa1500;
+            MSdraft  = MSdraft1500;
+            FSlwl    = FSlwl1500;
+            FSwsa    = FSwsa1500;
+            FSdraft  = FSdraft1500;
+        elseif any(RunNosCond2==k)
+            disp('Cond. 2 (Turb-studs): 1st row');
+            testcond = 2;
+            MSlwl    = MSlwl1500;
+            MSwsa    = MSwsa1500;
+            MSdraft  = MSdraft1500;
+            FSlwl    = FSlwl1500;
+            FSwsa    = FSwsa1500;
+            FSdraft  = FSdraft1500;
+        elseif any(RunNosCond3==k)
+            disp('Cond. 3 (Turb-studs): 1st and 2nd row');
+            testcond = 3;
+            MSlwl    = MSlwl1500;
+            MSwsa    = MSwsa1500;
+            MSdraft  = MSdraft1500;
+            FSlwl    = FSlwl1500;
+            FSwsa    = FSwsa1500;
+            FSdraft  = FSdraft1500;
+        elseif any(RunNosCond4==k)
+            disp('Cond. 4 (Trim-tab): 5 deg., level stat. trim');
+            testcond = 4;
+            MSlwl    = MSlwl1500;
+            MSwsa    = MSwsa1500;
+            MSdraft  = MSdraft1500;
+            FSlwl    = FSlwl1500;
+            FSwsa    = FSwsa1500;
+            FSdraft  = FSdraft1500;
+        elseif any(RunNosCond5==k)
+            disp('Cond. 5 (Trim-tab): 0 deg., level stat. trim');
+            testcond = 5;
+            MSlwl    = MSlwl1500;
+            MSwsa    = MSwsa1500;
+            MSdraft  = MSdraft1500;
+            FSlwl    = FSlwl1500;
+            FSwsa    = FSwsa1500;
+            FSdraft  = FSdraft1500;
+        elseif any(RunNosCond6==k)
+            disp('Cond. 6 (Trim-tab): 10 deg., level stat. trim');
+            testcond = 6;
+            MSlwl    = MSlwl1500;
+            MSwsa    = MSwsa1500;
+            MSdraft  = MSdraft1500;
+            FSlwl    = FSlwl1500;
+            FSwsa    = FSwsa1500;
+            FSdraft  = FSdraft1500;
+        elseif any(RunNosCond7==k)
+            disp('Cond. 7 (Resistance): 1,500t, level');
+            testcond = 7;
+            MSlwl    = MSlwl1500;
+            MSwsa    = MSwsa1500;
+            MSdraft  = MSdraft1500;
+            FSlwl    = FSlwl1500;
+            FSwsa    = FSwsa1500;
+            FSdraft  = FSdraft1500;
+        elseif any(RunNosCond8==k)
+            disp('Cond. 8 (Resistance): 1,500t, -0.5 deg. bow');
+            testcond = 8;
+            MSlwl    = MSlwl1500bybow;
+            MSwsa    = MSwsa1500bybow;
+            MSdraft  = MSdraft1500bybow;
+            FSlwl    = FSlwl1500bybow;
+            FSwsa    = FSwsa1500bybow;
+            FSdraft  = FSdraft1500bybow;
+        elseif any(RunNosCond9==k)
+            disp('Cond. 9 (Resistance): 1,500t, 0.5 deg. stern');
+            testcond = 9;
+            MSlwl    = MSlwl1500bystern;
+            MSwsa    = MSwsa1500bystern;
+            MSdraft  = MSdraft1500bystern;
+            FSlwl    = FSlwl1500bystern;
+            FSwsa    = FSwsa1500bystern;
+            FSdraft  = FSdraft1500bystern;
+        elseif any(RunNosCond10==k)
+            disp('Cond. 10 (Resistance): 1,804t, level');
+            testcond = 10;
+            MSlwl    = MSlwl1804;
+            MSwsa    = MSwsa1804;
+            MSdraft  = MSdraft1804;
+            FSlwl    = FSlwl1804;
+            FSwsa    = FSwsa1804;
+            FSdraft  = FSdraft1804;
+        elseif any(RunNosCond11==k)
+            disp('Cond. 11 (Resistance): 1,804t, -0.5 deg. bow');
+            testcond = 11;
+            MSlwl    = MSlwl1804bybow;
+            MSwsa    = MSwsa1804bybow;
+            MSdraft  = MSdraft1804bybow;
+            FSlwl    = FSlwl1804bybow;
+            FSwsa    = FSwsa1804bybow;
+            FSdraft  = FSdraft1804bybow;
+        elseif any(RunNosCond12==k)
+            disp('Cond. 12 (Resistance): 1,804t, 0.5 deg. stern');
+            testcond = 12;
+            MSlwl    = MSlwl1804bystern;
+            MSwsa    = MSwsa1804bystern;
+            MSdraft  = MSdraft1804bystern;
+            FSlwl    = FSlwl1804bystern;
+            FSwsa    = FSwsa1804bystern;
+            FSdraft  = FSdraft1804bystern;
+        elseif any(RunNosCond13==k)
+            disp('Cond. 13 (Prohaska): 1,500t, deep transom');
+            testcond = 13;
+            MSlwl    = MSlwl1500prohaska;
+            MSwsa    = MSwsa1500prohaska;
+            MSdraft  = MSdraft1500prohaska;
+            FSlwl    = FSlwl1500prohaska;
+            FSwsa    = FSwsa1500prohaska;
+            FSdraft  = FSdraft1500prohaska;
+        else
+            disp('Unspecified condition');
+        end
+        disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        
+        %# Results array columns:
+        %[1]  Run No.                                                                  (-)
+        %[2]  FS                                                                       (Hz)
+        %[3]  No. of samples                                                           (-)
+        %[4]  Record time                                                              (s)
+        %[5]  Model Averaged speed                                                     (m/s)
+        %[6]  Model Averaged fwd LVDT                                                  (m)
+        %[7]  Model Averaged aft LVDT                                                  (m)
+        %[8]  Model Averaged drag                                                      (g)
+        %[9]  Model (Rtm) Total resistance                                             (N)
+        %[10] Model (Ctm) Total resistance Coefficient                                 (-)
+        %[11] Model Froude length number                                               (-)
+        %[12] Model Heave                                                              (mm)
+        %[13] Model Trim                                                               (Degrees)
+        %[14] Equivalent full scale speed                                              (m/s)
+        %[15] Equivalent full scale speed                                              (knots)
+        
+        % ---------------------------------------------------------------------
+        % Additional values added: 10/09/2013
+        % ---------------------------------------------------------------------
+        %[16] Model (Rem) Reynolds Number                                              (-)
+        %[17] Model (Cfm) Frictional Resistance Coefficient (ITTC'57)                  (-)
+        %[18] Model (Cfm) Frictional Resistance Coefficient (Grigson)                  (-)
+        %[19] Model (Crm) Residual Resistance Coefficient                              (-)
+        %[20] Model (PEm) Model Effective Power                                        (W)
+        %[21] Model (PBm) Model Brake Power (using 50% prop. efficiency estimate)      (W)
+        %[22] Full Scale (Res) Reynolds Number                                         (-)
+        %[23] Full Scale (Cfs) Frictional Resistance Coefficient (ITTC'57)             (-)
+        %[24] Full Scale (Cts) Total resistance Coefficient                            (-)
+        %[25] Full Scale (Rts) Total resistance (Rt)                                   (N)
+        %[26] Full Scale (PEs) Model Effective Power                                   (W)
+        %[27] Full Scale (PBs) Model Brake Power (using 50% prop. efficiency estimate) (W)
+        %[28] Run condition                                                            (-)
+        
+        % ---------------------------------------------------------------------
+        % Additional values added: 12/09/2013
+        % ---------------------------------------------------------------------
+        %[29] SPEED: Minimum value                                                      (m/s)
+        %[30] SPEED: Maximum value                                                      (m/s)
+        %[31] SPEED: Average value                                                      (m/s)
+        %[32] SPEED: Percentage (max.-avg.) to max. value (exp. 3%)                     (m/s)
+        %[33] LVDT (FWD): Minimum value                                                 (mm)
+        %[34] LVDT (FWD): Maximum value                                                 (mm)
+        %[35] LVDT (FWD): Average value                                                 (mm)
+        %[36] LVDT (FWD): Percentage (max.-avg.) to max. value (exp. 3%)                (mm)
+        %[37] LVDT (AFT): Minimum value                                                 (mm)
+        %[38] LVDT (AFT): Maximum value                                                 (mm)
+        %[39] LVDT (AFT): Average value                                                 (mm)
+        %[40] LVDT (AFT): Percentage (max.-avg.) to max. value (exp. 3%)                (mm)
+        %[41] DRAG: Minimum value                                                       (g)
+        %[42] DRAG: Maximum value                                                       (g)
+        %[43] DRAG: Average value                                                       (g)
+        %[44] DRAG: Percentage (max.-avg.) to max. value (exp. 3%)                      (g)
+        
+        % ---------------------------------------------------------------------
+        % Additional values added: 18/09/2013
+        % ---------------------------------------------------------------------
+        %[45] SPEED: Standard deviation                                                 (m/s)
+        %[46] LVDT (FWD): Standard deviation                                            (mm)
+        %[47] LVDT (AFT): Standard deviation                                            (mm)
+        %[48] DRAG: Standard deviation                                                  (g)
+        
+        % ---------------------------------------------------------------------
+        % Additional values added: 04/08/2014
+        % ---------------------------------------------------------------------
+        %[49] Full Scale (Cfs) Frictional Resistance Coefficient (Grigson)              (-)
+        
+        % Write data to array -------------------------------------------------
+        resultsArray(k, 1)  = k;                                                        % Run No.
+        resultsArray(k, 2)  = round(length(timeData) / timeData(end));                  % FS (Hz)
+        resultsArray(k, 3)  = length(timeData);                                         % Number of samples
+        recordTime = length(timeData) / (round(length(timeData) / timeData(end)));
+        resultsArray(k, 4)  = round(recordTime);                                        % Record time in seconds
+        resultsArray(k, 5)  = CH_0_Speed_Mean;                                          % Model Averaged speed (m/s)
+        resultsArray(k, 6)  = CH_1_LVDTFwd_Mean;                                        % Model Averaged forward LVDT (mm)
+        resultsArray(k, 7)  = CH_2_LVDTAft_Mean;                                        % Model Averaged aft LVDT (mm)
+        resultsArray(k, 8)  = CH_3_Drag_Mean;                                           % Model Averaged drag (g)
+        resultsArray(k, 9)  = (resultsArray(k, 8) / 1000) * gravconst;                  % Model Averaged drag (Rtm) (N)
+        resultsArray(k, 10) = resultsArray(k, 9) / (0.5*freshwaterdensity*MSwsa*resultsArray(k, 5)^2); % Model Averaged drag (Ctm) (-)
+        
+        roundedspeed   = str2num(sprintf('%.2f',resultsArray(k, 5)));                   % Round averaged speed to two (2) decimals only
+        modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl))); % Calculate Froude length number
+        resultsArray(k, 11) = modelfrrounded;                                           % Froude length number (adjusted for Lwl change at different conditions) (-)
+        
+        resultsArray(k, 12) = (resultsArray(k, 6)+resultsArray(k, 7))/2;                % Model Heave (mm)
+        resultsArray(k, 13) = atand((resultsArray(k, 6)-resultsArray(k, 7))/distbetwposts); % Model Trim (Degrees)
+        resultsArray(k, 14) = resultsArray(k, 5) * sqrt(FStoMSratio);                   % Full scale speed (m/s)
+        resultsArray(k, 15) = resultsArray(k, 14) / 0.5144;                             % Full scale speed (knots)
+        % ---------------------------------------------------------------------
+        % Additional values added: 10/09/2013
+        % ---------------------------------------------------------------------
+        resultsArray(k, 16) = (resultsArray(k, 5)*MSlwl)/MSKinVis;              % Model Reynolds Number (-)
+        resultsArray(k, 17) = 0.075/(log10(resultsArray(k, 16))-2)^2;           % Model Frictional Resistance Coefficient (ITTC'57) (-)
+        if resultsArray(k, 16) < 10000000
+            resultsArray(k, 18) = 10^(2.98651-10.8843*(log10(log10(resultsArray(k, 16))))+5.15283*(log10(log10(resultsArray(k, 16))))^2); % Model Frictional Resistance Coefficient (Grigson) (-)
+        else
+            resultsArray(k, 18) = 10^(-9.57459+26.6084*(log10(log10(resultsArray(k, 16))))-30.8285*(log10(log10(resultsArray(k, 16))))^2+10.8914*(log10(log10(resultsArray(k, 16))))^3); % Model Frictional Resistance Coefficient (Grigson) (-)
+        end
+        resultsArray(k, 19) = resultsArray(k, 10)-resultsArray(k, 17);           % Model (Crm) Residual Resistance Coefficient (-)
+        resultsArray(k, 20) = resultsArray(k, 5)*resultsArray(k, 9);             % Model (PEm) Model Effective Power                                   (W)
+        resultsArray(k, 21) = resultsArray(k, 20)/0.5;                           % Model (PBm) Model Brake Power (using 50% prop. efficiency estimate) (W)
+        resultsArray(k, 22) = (resultsArray(k, 14)*FSlwl)/FSKinVis;        % Full Scale (Res) Reynolds Number (-)
+        resultsArray(k, 23) = 0.075/(log10(resultsArray(k, 22))-2)^2;            % Full Scale (Cfs) Frictional Resistance Coefficient (ITTC'57) (-)
+        resultsArray(k, 24) = resultsArray(k, 19)+resultsArray(k, 23);           % Full Scale (Cts) Total resistance Coefficient (-)
+        resultsArray(k, 25) = 0.5*saltwaterdensity*(resultsArray(k, 14)^2)*FSwsa*resultsArray(k, 24); % Full Scale (Rts) Total resistance (Rt) (N)
+        resultsArray(k, 26) = resultsArray(k, 14)*resultsArray(k, 25);           % Full Scale (PEs) Model Effective Power (W)
+        resultsArray(k, 27) = resultsArray(k, 26)/0.5;                           % Full Scale (PBs) Model Brake Power (using 50% prop. efficiency estimate) (W)
+        resultsArray(k, 28) = testcond;                                          % Run condition (-)
+        % ---------------------------------------------------------------------
+        % Additional values added: 12/09/2013
+        % ---------------------------------------------------------------------
+        sdata               = CH_0_Speed(startSamplePos:end-cutSamplesFromEnd);
+        tfwddata            = CH_1_LVDTFwd(startSamplePos:end-cutSamplesFromEnd);
+        taftdata            = CH_2_LVDTAft(startSamplePos:end-cutSamplesFromEnd);
+        ddata               = CH_3_Drag(startSamplePos:end-cutSamplesFromEnd);
+        resultsArray(k, 29) = min(sdata);                                           % SPEED: Minimum value (m/s)
+        resultsArray(k, 30) = max(sdata);                                           % SPEED: Maximum value (m/s)
+        resultsArray(k, 31) = mean(sdata);                                          % SPEED: Average value (m/s)
+        resultsArray(k, 32) = (max(sdata) - mean(sdata)) / max(sdata);              % SPEED: Percentage (max.-avg.) to max. value (exp. 3% (m/s)
+        resultsArray(k, 33) = min(tfwddata);                                        % LVDT (FWD): Minimum value (mm)
+        resultsArray(k, 34) = max(tfwddata);                                        % LVDT (FWD): Maximum value (mm)
+        resultsArray(k, 35) = mean(tfwddata);                                       % LVDT (FWD): Average value (mm)
+        resultsArray(k, 36) = abs(max(tfwddata) - mean(tfwddata)) / abs(max(tfwddata)-min(tfwddata));     % LVDT (FWD): Percentage (max.-avg.) to max. value (exp. 3%) (mm)
+        resultsArray(k, 37) = min(taftdata);                                        % LVDT (AFT): Minimum vaue (mm)
+        resultsArray(k, 38) = max(taftdata);                                        % LVDT (AFT): Maximum value (mm)
+        resultsArray(k, 39) = mean(taftdata);                                       % LVDT (AFT): Average value (mm)
+        resultsArray(k, 40) = abs(max(taftdata) - mean(taftdata)) / abs(max(taftdata)-min(taftdata));     % LVDT (AFT): Percentage (max.-avg.) to max. value (exp. 3%) (mm)
+        resultsArray(k, 41) = min(ddata);                                           % DRAG: Minimum value (g)
+        resultsArray(k, 42) = max(ddata);                                           % DRAG: Maximum value (g)
+        resultsArray(k, 43) = mean(ddata);                                          % DRAG: Average value (g)
+        resultsArray(k, 44) = (max(ddata) - mean(ddata)) / max(ddata);              % DRAG: Percentage (max.-avg.) to max. value (exp. 3%) (g)
+        % ---------------------------------------------------------------------
+        % Additional values added: 18/09/2013
+        % ---------------------------------------------------------------------
+        resultsArray(k, 45) = std(sdata);                                           % SPEED: Standard deviation (-)
+        resultsArray(k, 46) = std(tfwddata);                                        % LVDT (FWD): Standard deviation (-)
+        resultsArray(k, 47) = std(taftdata);                                        % LVDT (AFT): Standard deviation (-)
+        resultsArray(k, 48) = std(ddata);                                           % DRAG: Standard deviation (-)
+        % ---------------------------------------------------------------------
+        % Additional values added: 04/08/2014
+        % ---------------------------------------------------------------------
+        % Model Frictional Resistance Coefficient (Grigson) (-)
+        FSReynoldsNumber = resultsArray(k, 22);
+        if FSReynoldsNumber < 10000000
+            resultsArray(k, 49) = 10^(2.98651-10.8843*(log10(log10(FSReynoldsNumber)))+5.15283*(log10(log10(FSReynoldsNumber)))^2); % Model Frictional Resistance Coefficient (Grigson) (-)
+        else
+            resultsArray(k, 49) = 10^(-9.57459+26.6084*(log10(log10(FSReynoldsNumber)))-30.8285*(log10(log10(FSReynoldsNumber)))^2+10.8914*(log10(log10(FSReynoldsNumber)))^3); % Model Frictional Resistance Coefficient (Grigson) (-)
+        end
+        
+        %# Prepare strings for display ----------------------------------------
+        if k > 99
+            name = name(2:5);
+        else
+            name = name(2:4);
+        end
+        avgspeed          = sprintf('%s:: Model Averaged speed: %s [m/s]', name, sprintf('%.2f',resultsArray(k, 5)));
+        avglvdtfdw        = sprintf('%s:: Model Averaged fwd LVDT: %s [mm]', name, sprintf('%.2f',resultsArray(k, 6)));
+        avglvdtaft        = sprintf('%s:: Model Averaged aft LVDT: %s [mm]', name, sprintf('%.2f',resultsArray(k, 7)));
+        avgdrag           = sprintf('%s:: Model Averaged drag: %s [g]', name, sprintf('%.2f',resultsArray(k, 8)));
+        avgdragrt         = sprintf('%s:: Model Total resistance (Rtm): %s [N]', name, sprintf('%.2f',resultsArray(k, 9)));
+        avgdragct         = sprintf('%s:: Model Total resistance coefficient (Ctm): %s [-]', name, sprintf('%.5f',resultsArray(k, 10)));
+        froudlengthnumber = sprintf('%s:: Froude length number (Fr): %s [-]', name, sprintf('%.2f',resultsArray(k, 11)));
+        heave             = sprintf('%s:: Model Heave: %s [mm]', name, sprintf('%.2f',resultsArray(k, 12)));
+        trim              = sprintf('%s:: Model Trim: %s [Degrees]', name, sprintf('%.2f',resultsArray(k, 13)));
+        % ---------------------------------------------------------------------
+        % Additional values added: 10/09/2013
+        % ---------------------------------------------------------------------
+        modelreynoldsno   = sprintf('%s:: Model Reynolds Number (Rem): %s [-]', name, sprintf('%.0f',resultsArray(k, 16)));
+        modelcfmittc57    = sprintf('%s:: Model Frictional Resistance Coeff. (Cfm using ITTC 1957): %s [-]', name, sprintf('%.5f',resultsArray(k, 17)));
+        modelcfmgrigson   = sprintf('%s:: Model Frictional Resistance Coeff. (Cfm using Grigson): %s [-]', name, sprintf('%.5f',resultsArray(k, 18)));
+        modelcrm          = sprintf('%s:: Model Residual Resistance Coeff. (Crm): %s [-]', name, sprintf('%.5f',resultsArray(k, 19)));
+        modeleffpower     = sprintf('%s:: Model Effective Power (PEm): %s [W]', name, sprintf('%.2f',resultsArray(k, 20)));
+        modelbrakepower   = sprintf('%s:: Model Brake Power (PBm at an estimated 50 percent prop. efficiency): %s [W]', name, sprintf('%.2f',resultsArray(k, 21)));
+        FSspeedms         = sprintf('%s:: Full Scale speed: %s [m/s]', name, sprintf('%.2f',resultsArray(k, 14)));
+        FSspeedkts        = sprintf('%s:: Full Scale speed: %s [knots]', name, sprintf('%.2f',resultsArray(k, 15)));
+        FSreynoldsno      = sprintf('%s:: Full Scale Reynolds Number (Res): %s [-]', name, sprintf('%.0f',resultsArray(k, 22)));
+        FSCfsittc57       = sprintf('%s:: Full Scale Frictional Resistance Coeff. (Cfs using ITTC 1957): %s [-]', name, sprintf('%.5f',resultsArray(k, 23)));
+        FSCfsgrigson      = sprintf('%s:: Full Scale Frictional Resistance Coeff. (Cfs using Grigson): %s [-]', name, sprintf('%.5f',resultsArray(k, 49)));
+        FSCts             = sprintf('%s:: Full Scale Total resistance coefficient (Cts): %s [-]', name, sprintf('%.5f',resultsArray(k, 24)));
+        FSRts             = sprintf('%s:: Full Scale Total resistance (Rts): %s [N] / %s [kN]', name, sprintf('%.0f',resultsArray(k, 25)), sprintf('%.0f',resultsArray(k, 25)/1000));
+        FSPEs             = sprintf('%s:: Full Scale Effective Power (PEs): %s [W] / %s [kW] / %s [mW]', name, sprintf('%.0f',resultsArray(k, 26)), sprintf('%.0f',resultsArray(k, 26)/1000), sprintf('%.2f',resultsArray(k, 26)/1000000));
+        FSPBs             = sprintf('%s:: Full Scale Brake Power (PBs at an estimated 50 percent prop. efficiency): %s [W] / %s [kW] / %s [mW]', name, sprintf('%.0f',resultsArray(k, 27)), sprintf('%.0f',resultsArray(k, 27)/1000), sprintf('%.2f',resultsArray(k, 27)/1000000));
+        
+        %# Display strings ----------------------------------------------------
+        disp('>>> MODEL SCALE');
+        disp(avgspeed);
+        disp(avglvdtfdw);
+        disp(avglvdtaft);
+        disp(avgdrag);
+        disp(avgdragrt);
+        disp(avgdragct);
+        disp(froudlengthnumber);
+        disp(heave);
+        disp(trim);
+        % ---------------------------------------------------------------------
+        % Additional values added: 10/09/2013
+        % ---------------------------------------------------------------------
+        disp(modelreynoldsno);
+        disp(modelcfmittc57);
+        disp(modelcfmgrigson);
+        disp(modelcrm);
+        disp(modeleffpower);
+        disp(modelbrakepower);
+        disp('>>> FULL SCALE');
+        disp(FSspeedms);
+        disp(FSspeedkts);
+        disp(FSreynoldsno);
+        disp(FSCfsittc57);
+        disp(FSCfsgrigson);
+        disp(FSCts);
+        disp(FSRts);
+        disp(FSPEs);
+        disp(FSPBs);
+        disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        
+    end % enableCommandWindowOutput
     
     %wtot = endRun - startRun;
     %w = waitbar(k/wtot,w,['iteration: ',num2str(k)]);

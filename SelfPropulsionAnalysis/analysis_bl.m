@@ -222,7 +222,39 @@ else
     mkdir(fPath);
 end
 
-%# RUN directory
+%# TS directory
+fPath = sprintf('_plots/%s', 'TS');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PDF directory
+fPath = sprintf('_plots/%s/%s', 'TS', 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('_plots/%s/%s', 'TS', 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('_plots/%s/%s', 'TS', 'EPS');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# Bounday_Layer directory
 fPath = sprintf('_plots/%s', 'Bounday_Layer');
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
@@ -558,7 +590,50 @@ else
             figurename = sprintf('%s:: Boundary Layer Time Series Plot, Run %s', testName, num2str(runno));
             f = figure('Name',figurename,'NumberTitle','off');
             
-            % Inboard PST ---------------------------------------------------------
+            %# Paper size settings ----------------------------------------
+            
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+            
+            set(gcf, 'PaperUnits', 'centimeters');
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+            
+            % Fonts and colours -------------------------------------------
+            setGeneralFontName = 'Helvetica';
+            setGeneralFontSize = 14;
+            setBorderLineWidth = 2;
+            
+            %# Change default text fonts for plot title
+            set(0,'DefaultTextFontname',setGeneralFontName);
+            set(0,'DefaultTextFontSize',14);
+            
+            %# Box thickness, axes font size, etc. ------------------------
+            set(gca,'TickDir','in',...
+                'FontSize',10,...
+                'LineWidth',2,...
+                'FontName',setGeneralFontName,...
+                'Clipping','off',...
+                'Color',[1 1 1],...
+                'LooseInset',get(gca,'TightInset'));
+            
+            %# Markes and colors ------------------------------------------
+            setMarker = {'*';'+';'x';'o';'s';'d';'<';'^';'x';'>'};
+            % Colored curves
+            setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+            if enableBlackAndWhitePlot == 1
+                % Black and white curves
+                setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+            end
+            
+            %# Set plot figure background to a defined color --------------
+            %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+            
+            set(gcf,'Color',[1,1,1]);
+            
+            % Inboard PST -------------------------------------------------
             subplot(3,1,1);
             
             % Axis data
@@ -586,6 +661,9 @@ else
             %set(gca,'XTick',[min(x):0.2:max(x)]);
             %set(gca,'YLim',[0 75]);
             %set(gca,'YTick',[0:5:75]);
+            % Limit decimals in X and Y axis numbers
+            set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+            set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'))
             
             %# Line width
             set(h(1),'linewidth',1);
@@ -596,7 +674,7 @@ else
             set(hleg1,'Location','NorthEast');
             set(hleg1,'Interpreter','none');
             
-            % Outboard PST --------------------------------------------------------
+            % Outboard PST ------------------------------------------------
             subplot(3,1,2);
             
             % Axis data
@@ -620,6 +698,9 @@ else
             %set(gca,'XTick',[min(x):0.2:max(x)]);
             %set(gca,'YLim',[0 75]);
             %set(gca,'YTick',[0:5:75]);
+            % Limit decimals in X and Y axis numbers
+            set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+            set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'))
             
             %# Line width
             set(h(1),'linewidth',1);
@@ -630,7 +711,7 @@ else
             set(hleg1,'Location','NorthEast');
             set(hleg1,'Interpreter','none');
             
-            % Compared Inboard/Outboard PST ---------------------------------------
+            % Compared Inboard/Outboard PST -------------------------------
             subplot(3,1,3);
             
             % Axis data
@@ -658,7 +739,10 @@ else
             %set(gca,'XTick',[min(x):0.2:max(x)]);
             %set(gca,'YLim',[0 75]);
             %set(gca,'YTick',[0:5:75]);
-            
+            % Limit decimals in X and Y axis numbers
+            set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+            set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'))
+
             %# Line width
             set(h(1),'linewidth',1);
             set(h(2),'linewidth',1);
@@ -670,9 +754,9 @@ else
             set(hleg1,'Location','NorthEast');
             set(hleg1,'Interpreter','none');
             
-            %# ****************************************************************
+            %# ************************************************************
             %# Command Window Output
-            %# ****************************************************************
+            %# ************************************************************
             if enableCommandWindowOutput == 1
                 
                 % Inboard PST
@@ -713,9 +797,9 @@ else
                 
             end
             
-            %# ****************************************************************
+            %# ************************************************************
             %# Save data to aray then save to file
-            %# ****************************************************************
+            %# ************************************************************
             
             %# Add results to dedicated array for simple export
             %# Results array columns:
@@ -757,7 +841,7 @@ else
             resultsArrayBlmTS(k, 3)  = setSpeedCond;
             resultsArrayBlmTS(k, 4)  = setDepthCond;
             
-            % Inboard ---------------------------------------------------------
+            % Inboard -----------------------------------------------------
             MeanData = CH_19_PSTInboard_Mean;
             CHData   = CH_19_PSTInboard;
             
@@ -772,7 +856,7 @@ else
             resultsArrayBlmTS(k, 11)  = CH_19_Zero;
             resultsArrayBlmTS(k, 12)  = CH_19_CF;
             
-            % Outboard --------------------------------------------------------
+            % Outboard ----------------------------------------------------
             MeanData = CH_20_PSTOutboard_Mean;
             CHData   = CH_20_PSTOutboard;
             
@@ -787,9 +871,9 @@ else
             resultsArrayBlmTS(k, 19) = CH_20_Zero;
             resultsArrayBlmTS(k, 20) = CH_20_CF;
             
-            %# ****************************************************************
+            %# ************************************************************
             %# Save plot as PNG
-            %# ****************************************************************
+            %# ************************************************************
             
             %# Figure size on screen (50% scaled, but same aspect ratio)
             set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -800,17 +884,24 @@ else
             set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
             set(gcf, 'PaperOrientation','portrait');
             
-            %# Plot title -----------------------------------------------------
-            annotation('textbox', [0 0.9 1 0.1], ...
-                'String', strcat('{\bf ', figurename, '}'), ...
-                'EdgeColor', 'none', ...
-                'HorizontalAlignment', 'center');
+            %# Plot title -------------------------------------------------
+            if enablePlotMainTitle == 1
+                annotation('textbox', [0 0.9 1 0.1], ...
+                    'String', strcat('{\bf ', figurename, '}'), ...
+                    'EdgeColor', 'none', ...
+                    'HorizontalAlignment', 'center');
+            end
             
-            %# Save plots as PDF and PNG
-            %plotsavenamePDF = sprintff('_plots/%s/Run_%s_CH_19-20_Bounday_Layer.pdf', 'TS', num2str(runno));
-            %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-            plotsavename = sprintf('_plots/%s/Run_%s_CH_19-20_Bounday_Layer.png', 'TS', num2str(runno));
-            saveas(f, plotsavename);                % Save plot as PNG
+            %# Save plots as PDF, PNG and EPS -----------------------------
+            
+            % Enable renderer for vector graphics output
+            set(gcf, 'renderer', 'painters');
+            setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+            setFileFormat = {'PDF' 'PNG' 'EPS'};
+            for k=1:3
+                plotsavename = sprintf('_plots/%s/%s/Run_%s_CH_19-20_Bounday_Layer.%s', 'TS', setFileFormat{k}, num2str(runno), setFileFormat{k});
+                print(gcf, setSaveFormat{k}, plotsavename);
+            end
             close;
             
         end
@@ -1090,6 +1181,9 @@ end
 % set(gca,'XTick',minX:setXIncr:maxX);
 % set(gca,'YLim',[minY maxY]);
 % set(gca,'YTick',minY:setYIncr:maxY);
+% Limit decimals in X and Y axis numbers
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
 
 %# Legend
 if enableBLDepthMarker == 1
@@ -1109,7 +1203,16 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 %# Save plot as PNG
 %# ************************************************************************
 
-%# Plot title -------------------------------------------------------------
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# Plot title ---------------------------------------------------------
 if enablePlotMainTitle == 1
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
@@ -1271,6 +1374,9 @@ end
 % set(gca,'XTick',minX:setXIncr:maxX);
 set(gca,'YLim',[0.6 1.1]);
 set(gca,'YTick',0.6:0.1:1.1);
+% Limit decimals in X and Y axis numbers
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
 
 %# Legend
 %# MARIN boundary layer data
@@ -1291,7 +1397,16 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 %# Save plot as PNG
 %# ************************************************************************
 
-%# Plot title -------------------------------------------------------------
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# Plot title ---------------------------------------------------------
 if enablePlotMainTitle == 1
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
