@@ -216,7 +216,7 @@ startSamplePos    = 1;
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from end)
 cutSamplesFromEnd = 0;
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
 %# START FILE LOOP FOR RUNS startRun to endRun
 %# ------------------------------------------------------------------------
 
@@ -228,10 +228,10 @@ endRun   = 109;      % Stop run
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
 
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
 %# START DEFINE PLOT SIZE
 %# ------------------------------------------------------------------------
 %# Centimeters units
@@ -243,10 +243,10 @@ XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
 YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# ------------------------------------------------------------------------
 %# END DEFINE PLOT SIZE
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
 
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
 %# START Load shaft speed list (variable name is shaftSpeedList by default)
 %# ------------------------------------------------------------------------
 if exist('shaftSpeedListRuns90to109.mat', 'file') == 2
@@ -260,7 +260,7 @@ else
 end
 %# ------------------------------------------------------------------------
 %# END Load shaft speed list (variable name is shaftSpeedList by default)
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
 
 
 %# ////////////////////////////////////////////////////////////////////////
@@ -1297,9 +1297,9 @@ end
 %# 2. Thrust deduction fractions
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
 %# START Load shaft speed list (variable name is shaftSpeedList by default)
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ------------------------------------------------------------------------
 if exist('Marin112mJHSVData.mat', 'file') == 2
     % Load file into shaftSpeedList variable
     load('Marin112mJHSVData.mat');
@@ -1320,9 +1320,11 @@ else
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     break;
 end
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ------------------------------------------------------------------------
 %# END Load shaft speed list (variable name is shaftSpeedList by default)
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
+
+%# ************************************************************************
 
 if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
     
@@ -1814,6 +1816,164 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
     %close;
     
 end
+
+%# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+%# 4. Extrapolation to full scale. 
+%$ NOTE: Calculations for TG = p Q (vj - vi) method only!
+%# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+% Columns:
+% [1] Froude length number                              (-)
+% [2] TG at zero drag                                   (N)
+% [3] Towing force at zero thrust                       (N)
+% [4] Thrust at self-propulsion point TG=TG@F=0-FD      (N)
+% [5] Towing force, FD                                  (N)
+
+ForcesArray = BTG_and_F_at_T0;
+
+[m,n] = size(ForcesArray);
+
+% fullScaleDataArray columns:
+
+% 1. Speed and reynolds number
+% [1]  Froude length number                              (-)
+% [2]  Full scale speed                                  (m/s)
+% [3]  Full scale speed                                  (knots)
+% [4]  Full scale reynolds number                        (-)
+
+% 2. Resistance
+% [5]  Frictional resistance coefficient, CFs            (-)
+% [6]  Residual resistannce coefficient, CRs             (-)
+% [7]  Total resistannce coefficient, CTs                (-)
+% [8]  Total resistance, RT                              (-)
+
+% 3. Power
+% [9]  Effective power, PE                               (W)
+% [10] Effective power, PE                               (kW)
+% [11] Effective power, PE                               (mW)
+
+% 4. Thrust, mass and volumetric flow rate
+% [12] Gross thrust, TGs                                 (-)
+% [13] Volumetric flow rate, QJ                          (-)
+% [14] Mass flow rate, pQJ                               (-)
+
+% 5. Wake fraction and thrust deduction
+% [15] Wake fraction, ws                                 (-)
+% [16] Wake fraction, 1-ws                               (-)
+% [17] Thrust deduction, t                               (-)
+% [18] Thrust deduction, 1-t                             (-)
+
+% 6. Speeds
+% [19] Jet velocity, vj                                  (m/s)
+% [20] Inlet velocity, vi                                (m/s)
+
+% 7. Efficiencies
+% [21] Hull efficiency, nh                               (-)
+% [22] Optimum efficiency, ni                            (-)
+
+% 8. Pump related data
+% [23] Flow coefficient                                  (-)
+% [24] Head coefficient                                  (-)
+% [25] Pump head, H                                      (-)
+% [26] Pump efficieny, npump                             (-)
+
+% 9. Overall propulsive efficieny, delivered and brake power (ns=0.98)
+% [27] Overall propulsive efficieny, nD                  (-)
+% [28] Delivered power, PD                               (-)
+% [29] Brake power, PB                                   (-)
+
+fullScaleDataArray = [];
+for k=1:m
+    
+    % Model scale variables    
+    MSSpeed      = mean(A{k}(:,6));           % Model scale speed (m/s)
+    MSReynoldsNo = (MSSpeed*MSlwl)/MSKinVis;  % Full scale reynolds number (-)
+    MSRT         = resistance(k,3);
+    MSCT         = MSRT(0.5*freshwaterdensity*MSwsa*MSSpeed^2);
+    if MSReynoldsNo < 10000000
+        MSCF = 10^(2.98651-10.8843*(log10(log10(MSReynoldsNo)))+5.15283*(log10(log10(MSReynoldsNo)))^2);
+    else
+        MSCF = 10^(-9.57459+26.6084*(log10(log10(MSReynoldsNo)))-30.8285*(log10(log10(MSReynoldsNo)))^2+10.8914*(log10(log10(MSReynoldsNo)))^3);
+    end
+    MSCR         = MSCT-MSCF;
+    
+    % Full scale variables    
+    FSSpeed      = MSSpeed*sqrt(FStoMSratio); % Full scale speed (m/s)
+    FSReynoldsNo = (FSSpeed*FSlwl)/FSKinVis;  % Full scale reynolds number (-)
+    FSCR         = MSCR;
+    
+    % 1. Speed
+    fullScaleDataArray(k,1)  = ForcesArray(k,1);
+    fullScaleDataArray(k,2)  = FSSpeed;
+    fullScaleDataArray(k,3)  = FSSpeed/0.51444;
+    fullScaleDataArray(k,4)  = FSReynoldsNo;
+    
+    % 2. Resistance
+    if FSReynoldsNo < 10000000
+        FSCF = 10^(2.98651-10.8843*(log10(log10(FSReynoldsNo)))+5.15283*(log10(log10(FSReynoldsNo)))^2);
+    else
+        FSCF = 10^(-9.57459+26.6084*(log10(log10(FSReynoldsNo)))-30.8285*(log10(log10(FSReynoldsNo)))^2+10.8914*(log10(log10(FSReynoldsNo)))^3);
+    end
+    FSCT = FSCF+FSCR;    
+    FSRT = 0.5*saltwaterdensity*FSSpeed^2*FSwsa*FSCT;
+    fullScaleDataArray(k,5)  = FSCF;
+    fullScaleDataArray(k,6)  = FSCR;
+    fullScaleDataArray(k,7)  = FSCT;
+    fullScaleDataArray(k,8)  = FSRT;
+    
+    % 3. Power
+    PEW  = FSRT*FSSpeed;
+    PEkW = PEW/1000;
+    PEmW = PEkW/1000;
+    fullScaleDataArray(k,9)  = PEW;
+    fullScaleDataArray(k,10) = PEkW;
+    fullScaleDataArray(k,11) = PEmW;
+    
+    % 4. Thrust, mass and volumetric flow rate
+    fullScaleDataArray(k,12) = 0;
+    fullScaleDataArray(k,13) = 0;
+    fullScaleDataArray(k,14) = 0;
+    
+    % 5. Wake fraction and thrust deduction
+    fullScaleDataArray(k,15) = 0;
+    fullScaleDataArray(k,16) = 0;
+    fullScaleDataArray(k,17) = 0;
+    fullScaleDataArray(k,18) = 0;
+    
+    % 6. Speeds
+    fullScaleDataArray(k,19) = 0;
+    fullScaleDataArray(k,20) = 0;
+    
+    % 7. Efficiencies
+    fullScaleDataArray(k,21) = 0;
+    fullScaleDataArray(k,22) = 0;
+    
+    % 8. Pump related data
+    fullScaleDataArray(k,23) = 0;    
+    fullScaleDataArray(k,24) = 0;    
+    fullScaleDataArray(k,25) = 0;    
+    fullScaleDataArray(k,26) = 0;    
+    
+    % 9. Overall propulsive efficieny, delivered and brake power (ns=0.98)
+    fullScaleDataArray(k,27) = 0;    
+    fullScaleDataArray(k,28) = 0;    
+    fullScaleDataArray(k,29) = 0;    
+end
+
+%# ************************************************************************
+%# START: Write results to DAT and TXT
+%# ------------------------------------------------------------------------
+
+fullScaleDataArray = fullScaleDataArray(any(fullScaleDataArray,2),:);       % Remove zero rows
+M = fullScaleDataArray;
+%M = M(any(M,2),:);                                                         % remove zero rows only in resultsArraySPP text file
+csvwrite('fullScaleDataArray.dat', M)                                       % Export matrix M to a file delimited by the comma character
+%dlmwrite('fullScaleDataArray.txt', M, 'delimiter', '\t', 'precision', 4)   % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
+
+%# ------------------------------------------------------------------------
+%# END: Write results to DAT and TXT
+%# ************************************************************************
+
 
 % -------------------------------------------------------------------------
 % View profile
