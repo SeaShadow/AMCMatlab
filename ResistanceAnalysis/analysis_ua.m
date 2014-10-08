@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  January 21, 2014
+%# Date       :  October 7, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -111,6 +111,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# CHANGES    :  21/01/2014 - Created new script
+%#               08/10/2014 - Updated kinematic viscosity + density values
 %#               dd/mm/yyyy - ...
 %#
 %# ------------------------------------------------------------------------
@@ -470,14 +471,11 @@ for condNo=7:12
         %# 4.0 Input variables
         %# ////////////////////////////////////////////////////////////////
         
-        % Model kinematic viscosity (m/s^2)
-        setModKinVisc = modelkinviscosity;
-        
         % Total Resistance Coefficient (average @ 15 deg C)
-        setCF15degC   = 0.075/(log10((A{j}(1,5)*setModLwl)/setModKinVisc)-2)^2;
+        setCF15degC   = 0.075/(log10((A{j}(1,5)*setModLwl)/MSKinVis)-2)^2;
         
         % Frictional resistance coeff. at measured temp, tw
-        setCFtw       = 0.075/(log10((A{j}(1,5)*setModLwl)/setModKinVisc)-2)^2;
+        setCFtw       = 0.075/(log10((A{j}(1,5)*setModLwl)/MSKinVis)-2)^2;
         
         %# ////////////////////////////////////////////////////////////////
         %# 3.0 Multiple test uncertainty
