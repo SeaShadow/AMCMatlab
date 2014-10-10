@@ -1829,8 +1829,10 @@ end
 % [4] Thrust at self-propulsion point TG=TG@F=0-FD      (N)
 % [5] Towing force, FD                                  (N)
 
-ForcesArray = BTG_and_F_at_T0;
+ThrustDedFracArray = thrustDedFracArrayB;
+[mt,nt] = size(ThrustDedFracArray);
 
+ForcesArray = BTG_and_F_at_T0;
 [m,n] = size(ForcesArray);
 
 % fullScaleDataArray columns:
@@ -1852,20 +1854,20 @@ ForcesArray = BTG_and_F_at_T0;
 % [10] Effective power, PE                               (kW)
 % [11] Effective power, PE                               (mW)
 
-% 4. Thrust, mass and volumetric flow rate
-% [12] Gross thrust, TGs                                 (-)
-% [13] Volumetric flow rate, QJ                          (-)
-% [14] Mass flow rate, pQJ                               (-)
+% 4. Wake fraction and thrust deduction
+% [12] Wake fraction, ws                                 (-)
+% [13] Wake fraction, 1-ws                               (-)
+% [14] Thrust deduction, t                               (-)
+% [15] Thrust deduction, 1-t                             (-)
 
-% 5. Wake fraction and thrust deduction
-% [15] Wake fraction, ws                                 (-)
-% [16] Wake fraction, 1-ws                               (-)
-% [17] Thrust deduction, t                               (-)
-% [18] Thrust deduction, 1-t                             (-)
+% 5. Speeds
+% [16] Jet velocity, vj                                  (m/s)
+% [17] Inlet velocity, vi                                (m/s)
 
-% 6. Speeds
-% [19] Jet velocity, vj                                  (m/s)
-% [20] Inlet velocity, vi                                (m/s)
+% 6. Thrust, mass and volumetric flow rate
+% [18] Gross thrust, TGs                                 (-)
+% [19] Volumetric flow rate, QJ                          (-)
+% [20] Mass flow rate, pQJ                               (-)
 
 % 7. Efficiencies
 % [21] Hull efficiency, nh                               (-)
@@ -1889,13 +1891,14 @@ for k=1:m
     MSSpeed      = mean(A{k}(:,6));           % Model scale speed (m/s)
     MSReynoldsNo = (MSSpeed*MSlwl)/MSKinVis;  % Full scale reynolds number (-)
     MSRT         = resistance(k,3);
-    MSCT         = MSRT(0.5*freshwaterdensity*MSwsa*MSSpeed^2);
+    MSCT         = MSRT/(0.5*freshwaterdensity*MSwsa*MSSpeed^2);
     if MSReynoldsNo < 10000000
         MSCF = 10^(2.98651-10.8843*(log10(log10(MSReynoldsNo)))+5.15283*(log10(log10(MSReynoldsNo)))^2);
     else
         MSCF = 10^(-9.57459+26.6084*(log10(log10(MSReynoldsNo)))-30.8285*(log10(log10(MSReynoldsNo)))^2+10.8914*(log10(log10(MSReynoldsNo)))^3);
     end
     MSCR         = MSCT-MSCF;
+    MSThrustDed  = ThrustDedFracArray(k,4);
     
     % Full scale variables    
     FSSpeed      = MSSpeed*sqrt(FStoMSratio); % Full scale speed (m/s)
@@ -1928,19 +1931,19 @@ for k=1:m
     fullScaleDataArray(k,9)  = PEW;
     fullScaleDataArray(k,10) = PEkW;
     fullScaleDataArray(k,11) = PEmW;
-    
-    % 4. Thrust, mass and volumetric flow rate
+
+    % 4. Wake fraction and thrust deduction
     fullScaleDataArray(k,12) = 0;
     fullScaleDataArray(k,13) = 0;
-    fullScaleDataArray(k,14) = 0;
+    fullScaleDataArray(k,14) = MSThrustDed;
+    fullScaleDataArray(k,15) = 1-MSThrustDed;
     
-    % 5. Wake fraction and thrust deduction
-    fullScaleDataArray(k,15) = 0;
+    % 5. Speeds
     fullScaleDataArray(k,16) = 0;
-    fullScaleDataArray(k,17) = 0;
-    fullScaleDataArray(k,18) = 0;
+    fullScaleDataArray(k,17) = 0;    
     
-    % 6. Speeds
+    % 6. Thrust, mass and volumetric flow rate
+    fullScaleDataArray(k,18) = ForcesArray(k,4)*FStoMSratio^3*(saltwaterdensity/freshwaterdensity);
     fullScaleDataArray(k,19) = 0;
     fullScaleDataArray(k,20) = 0;
     

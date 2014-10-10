@@ -98,6 +98,7 @@ enableBLDepthMarker       = 1;    % Show marker for estimated BL depth
 
 % Comparison data
 enableMARINBLData         = 1;    % Show MARIN 112m BL data (cond. T1)
+enableAMCLJ120EBLData     = 0;    % Show AMC LJ120E BL data (Brandner 2007)
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
@@ -314,13 +315,45 @@ if exist('MARIN112mBLData.mat', 'file') == 2
     
     load('MARIN112mBLData.mat');
 else
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    disp('WARNING: Required data file for MARIN 112m boundary layer data data (MARIN112mBLData.mat) does not exist!');
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('WARNING: Required data file for MARIN 112m boundary layer data (MARIN112mBLData.mat) does not exist!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     break;
 end
 %# ------------------------------------------------------------------------
 %# END MARIN 112m boundary layer data (variable name is LJ120EPCData)
+%# ************************************************************************
+
+
+%# ************************************************************************
+%# START AMC LJ120E Brandner data (variable name is AMCLJ120EBLData)
+%# ------------------------------------------------------------------------
+if exist('AMCLJ120EBLData.mat', 'file') == 2
+
+    %# Columns: -----------------------------------------------------------
+    
+    %[1]  Distance (Y) from model hull      (mm)
+    %[2]  u/Uo ratio: Upstream BL           (-)
+    %[3]  Distance (Y) from model hull      (mm)
+    %[4]  u/Uo ratio: IVR 1.0               (-)
+    %[5]  Distance (Y) from model hull      (mm)
+    %[6]  u/Uo ratio: IVR 1.25              (-)
+    %[7]  Distance (Y) from model hull      (mm)
+    %[8]  u/Uo ratio: IVR 1.5               (-)
+    %[9]  Distance (Y) from model hull      (mm)
+    %[10] u/Uo ratio: IVR 1.75              (-)
+    %[11] Distance (Y) from model hull      (mm)
+    %[12] u/Uo ratio: IVR 2.0               (-)
+    
+    load('AMCLJ120EBLData.mat');
+else
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('WARNING: Required data file for AMC LJ120E waterjet BJ data (AMCLJ120EBLData.mat) does not exist!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    break;
+end
+%# ------------------------------------------------------------------------
+%# END AMC LJ120E Brandner data (variable name is AMCLJ120EBLData)
 %# ************************************************************************
 
 
@@ -1277,6 +1310,7 @@ if enableBlackAndWhitePlot == 1
     % Black and white curves
     setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
 end
+setLineStyle  = {'-';'--';'-.';':';'-';'--';'-.';':';'-';'--'};
 
 %# Set plot figure background to a defined color --------------------------
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -1332,16 +1366,44 @@ else
     y3o = A{3}(:,14);
 end
 
-%# MARIN BL data
-xM = MARIN112mBLData(:,1);
-yM = MARIN112mBLData(:,2);
+%# MARIN 112m BL data
+if enableMARINBLData == 1
+    xM = MARIN112mBLData(:,1);
+    yM = MARIN112mBLData(:,2);
+end
+
+%# AMC LJ120E BL data (Brandner 2007)
+if enableAMCLJ120EBLData == 1
+    xAMCUS  = AMCLJ120EBLData(:,1);
+    yAMCUS  = AMCLJ120EBLData(:,2);
+
+    xAMC1   = AMCLJ120EBLData(:,3);
+    yAMC1   = AMCLJ120EBLData(:,4);
+    
+    xAMC125 = AMCLJ120EBLData(:,5);
+    yAMC125 = AMCLJ120EBLData(:,6);
+    
+    xAMC15  = AMCLJ120EBLData(:,7);
+    yAMC15  = AMCLJ120EBLData(:,8);
+    
+    xAMC175 = AMCLJ120EBLData(:,9);
+    yAMC175 = AMCLJ120EBLData(:,10);
+    
+    xAMC2   = AMCLJ120EBLData(:,11);
+    yAMC2   = AMCLJ120EBLData(:,12);
+end
 
 % Plotting ----------------------------------------------------------------
 h1 = plot(x1i,y1i,'*',x1o,y1o,'*',x2i,y2i,'*',x2o,y2o,'*',x3i,y3i,'*',x3o,y3o,'*');
-%# MARIN boundary layer data
+%# MARIN 112m BL data
 if enableMARINBLData == 1
     hold on;
     h2 = plot(xM,yM,'*');
+end
+%# AMC LJ120E BL data (Brandner 2007)
+if enableAMCLJ120EBLData == 1
+    hold on;
+    h3 = plot(xAMCUS,yAMCUS,'*-',xAMC1,yAMC1,'*-',xAMC125,yAMC125,'*-',xAMC15,yAMC15,'*-',xAMC175,yAMC175,'*-',xAMC2,yAMC2,'*-');
 end
 if enablePlotTitle == 1
     title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
@@ -1356,7 +1418,7 @@ axis square;
 setMarkerSize      = 10;
 setLineWidthMarker = 1;
 setLineWidth       = 1;
-setLineStyle       = '-.';
+%setLineStyle       = '-.';
 setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
 setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
@@ -1364,9 +1426,23 @@ setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpe
 setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 
-%# MARIN boundary layer data
+%# MARIN 112m BL data
 if enableMARINBLData == 1
-    set(h2(1),'Color',setColor{10},'Marker',setMarker{9},'MarkerSize',12,'LineWidth',2);
+    setMarkerSize      = 8;
+    setLineWidthMarker = 2;
+    set(h2(1),'Color',setColor{10},'Marker','<','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{10}
+end
+
+%# AMC LJ120E BL data (Brandner 2007)
+if enableAMCLJ120EBLData == 1
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setSpeed=1;set(h3(setSpeed),'Color',setColor{10},'Marker','o','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','--'); % ,'MarkerFaceColor',setColor{10}
+    setSpeed=2;set(h3(setSpeed),'Color',setColor{10},'Marker','s','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.');
+    setSpeed=3;set(h3(setSpeed),'Color',setColor{10},'Marker','d','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','--');
+    setSpeed=4;set(h3(setSpeed),'Color',setColor{10},'Marker','>','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.');
+    setSpeed=5;set(h3(setSpeed),'Color',setColor{10},'Marker','p','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','--');
+    setSpeed=6;set(h3(setSpeed),'Color',setColor{10},'Marker','h','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.');
 end
 
 % Set limitations
@@ -1380,8 +1456,12 @@ set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
 
 %# Legend
 %# MARIN boundary layer data
-if enableMARINBLData == 1
+if enableMARINBLData == 1 && enableAMCLJ120EBLData == 0
     hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard','MARIN 112m JHSV Cond. T1');
+elseif enableMARINBLData == 0 && enableAMCLJ120EBLData == 1
+    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
+elseif enableMARINBLData == 1 && enableAMCLJ120EBLData == 1
+    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard','MARIN 112m JHSV Cond. T1','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
 else
     hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard');
 end

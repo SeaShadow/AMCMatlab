@@ -220,9 +220,9 @@ end
 % MSStbdShaftRPM = [1000 2000];
 % MSAvgShaftRPM  = [1000 2000];
 
-MSPortShaftRPM = [1722.006 1821.051 1934.379 2026.044 2158.635 2257.460 2322.222 2483.236 2657.963];
-MSStbdShaftRPM = [1722.956 1822.635 1935.367 2081.211 2159.000 2260.444 2327.675 2481.854 2659.118];
-MSAvgShaftRPM  = [1722.481 1821.843 1934.873 2053.627 2158.817 2258.952 2324.948 2482.545 2658.541];
+MSPortShaftRPM = [1720.346 1819.177 1932.290 2023.496 2156.079 2254.888 2319.386 2480.594 2655.304];
+MSStbdShaftRPM = [1721.284 1820.759 1933.280 2079.042 2156.444 2257.910 2324.894 2479.207 2656.478];
+MSAvgShaftRPM  = [1720.815 1819.968 1932.785 2051.269 2156.261 2256.399 2322.140 2479.900 2655.891];
 
 % Active shaft RPM list
 activeShaftRPMList = MSAvgShaftRPM;
@@ -237,7 +237,7 @@ activeShaftRPMList = MSAvgShaftRPM;
 %# Loop through shaft speeds
 resultsArrayLJ120EPc = [];
 PcArray = [];
-for k=1:np
+for k=1:na
 
     [mra,nra] = size(resultsArrayLJ120EPc);
     
@@ -270,11 +270,12 @@ for k=1:np
     %[8]  Flow coefficient                          (-)
     %[9]  Head coefficient                          (-)
     %[10] Pump efficiency                           (-)
-    %[11] Mass flow rate                            (Kg/s)
-    %[12] Jet velocity (vj)                         (m/s)
+    %[11] NPSH 1%/H                                 (-)
+    %[12] Mass flow rate                            (Kg/s)
+    %[13] Jet velocity (vj)                         (m/s)
     % Power:
-    %[13] Pump effective power (PPE)                (W)
-    %[14] Delivered power (PD)                      (W)
+    %[14] Pump effective power (PPE)                (W)
+    %[15] Delivered power (PD)                      (W)
     
     % Add the different pumpcurve values
     for kl=1:m
@@ -288,10 +289,11 @@ for k=1:np
         PcArray(kl, 8)  = PcArray(kl, 6)/(FSShaftRPS*FS_PumpDia^3);
         PcArray(kl, 9)  = (gravconst*PcArray(kl,7))/(FSShaftRPS*FS_PumpDia)^2;
         PcArray(kl, 10) = LJ120EPCData(kl, 3);
-        PcArray(kl, 11) = PcArray(kl, 6)*saltwaterdensity;
-        PcArray(kl, 12) = PcArray(kl, 6)/FS_NozzArea;
-        PcArray(kl, 13) = saltwaterdensity*gravconst*PcArray(kl, 6)*PcArray(kl, 7);
-        PcArray(kl, 14) = PcArray(kl, 13)/LJ120EPCData(kl,3);
+        PcArray(kl, 11) = LJ120EPCData(kl, 6);
+        PcArray(kl, 12) = PcArray(kl, 6)*saltwaterdensity;
+        PcArray(kl, 13) = PcArray(kl, 6)/FS_NozzArea;
+        PcArray(kl, 14) = saltwaterdensity*gravconst*PcArray(kl, 6)*PcArray(kl, 7);
+        PcArray(kl, 15) = PcArray(kl, 14)/LJ120EPCData(kl,3);
     end
     
     % Combine arrays
