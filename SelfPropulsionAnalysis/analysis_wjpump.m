@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 7, 2014
+%# Date       :  October 15, 2014
 %#
 %# Description:  Pumpcurve analysis for different RPM in full scale.
 %#
@@ -234,7 +234,7 @@ activeShaftRPMList = MSAvgShaftRPM;
 [ms,ns] = size(MSStbdShaftRPM);
 [ma,na] = size(MSAvgShaftRPM);
 
-%# Loop through shaft speeds
+%# Loop through shaft speeds ----------------------------------------------
 resultsArrayLJ120EPc = [];
 PcArray = [];
 for k=1:na
@@ -255,7 +255,7 @@ for k=1:na
     FSShaftRPS   = FSShaftSpeed/60;
     
     %# ////////////////////////////////////////////////////////////////////
-    %# CREATE RESULTS ARRAY
+    %# Create results array
     %# ////////////////////////////////////////////////////////////////////
     
     %# Add results to dedicated array for simple export
@@ -908,7 +908,7 @@ for k=1:3
     plotsavename = sprintf('_plots/%s/%s/%s_RPM_to_%s_RPM_LJ120E_Waterjet_Pump_Efficiency_Plot.%s', 'LJ120E_Pumpcurve', setFileFormat{k}, num2str(round(minRun)), num2str(round(maxRun)), setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
-%close;
+close;
 
 
 %# ************************************************************************

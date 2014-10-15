@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 7, 2014
+%# Date       :  October 15, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -84,12 +84,12 @@ enableSept2014FRMValues = 1;    % Use enable uses flow rate values established S
 
 % Plot titles, colours, etc.
 enablePlotMainTitle     = 0;    % Show plot title in saved file
-enablePlotTitle         = 1;    % Show plot title above plot
+enablePlotTitle         = 0;    % Show plot title above plot
 enableBlackAndWhitePlot = 1;    % Show plot in black and white only
 enableTowingForceFDPlot = 1;    % Show towing force (FD)
 
 % Decide which plot to show TG=p QJ vj (Allison) or TG=p QJ (vj-vi) (Bose)
-enableTGAllisonPlot     = 1;    % Show plots where TG = p Q vj
+enableTGAllisonPlot     = 0;    % Show plots where TG = p Q vj
 enableTGBosePlot        = 1;    % Show plots where TG = p Q (vj - vi)
 
 % -------------------------------------------------------------------------
@@ -779,12 +779,13 @@ end
 [resistance] = calBHResistanceBasedOnFrTempCorr(Froude_Numbers,FormFactor,MSwsa,MSlwl);
 
 % Loop through speeds
-TGA_at_FDArray = [];  % Gross thrust = TG = p Q vj
-TGB_at_FDArray = [];  % Gross thrust = TG = p Q (vj - vi)
-FA_at_TGZero   = [];  % Gross thrust = TG = p Q vj
-FB_at_TGZero   = [];  % Gross thrust = TG = p Q (vj - vi)
-thrustDedFracArrayA = [];
-thrustDedFracArrayB = [];
+TGA_at_FDArray = [];        % Gross thrust = TG = p Q vj
+TGB_at_FDArray = [];        % Gross thrust = TG = p Q (vj - vi)
+FA_at_TGZero   = [];        % Gross thrust = TG = p Q vj
+FB_at_TGZero   = [];        % Gross thrust = TG = p Q (vj - vi)
+thrustDedFracArrayA = [];   % Thrust deduction array where TG = p Q vj
+thrustDedFracArrayB = [];   % Thrust deduction array where TG = p Q (vj - vi)
+shaftSpeedConvArray = [];   % Shaft speed array where TG = p Q (vj - vi)
 for k=1:ma
     [mb,nb] = size(A{k});
     
@@ -794,11 +795,17 @@ for k=1:ma
     %# TG at FD -----------------------------------------------------------
     y1       = A{k}(:,45);   % Gross thrust = TG = p Q vj        (N)
     y2       = A{k}(:,42);   % Gross thrust = TG = p Q (vj - vi) (N)
+    
+    yPortSS  = A{k}(:,11);   % PORT: Shaft speed                 (PRM)
+    yStbdSS  = A{k}(:,12);   % STBD: Shaft speed                 (PRM)
+    
     x        = A{k}(:,10);   % Bare hull resistance              (N)
     towForce = A{k}(1,28);   % Towing force, FD                  (N)
     xq       = 0;            % Intersection of x for TG at zero drag
     
-    %# Gross thrust = TG = p Q vj -----------------------------------------
+    %# --------------------------------------------------------------------
+    %# Gross thrust = TG = p Q vj
+    %# --------------------------------------------------------------------
     polyf                = polyfit(x,y1,1);
     polyv                = polyval(polyf,x);
     ThrustAtZeroDrag     = spline(x,polyv,0);
@@ -808,12 +815,12 @@ for k=1:ma
     TGA_at_FDArray(k, 3) = towForce;                % Towing force, FD
     TGA_at_FDArray(k, 4) = ThrustAtSPP;             % Thrust at self. propulsion point = TG at zero drag - FD
     
-    % Towing force at zero gross thrust
+    % Towing force at zero gross thrust -----------------------------------
     TowingForceAtZeroThrust = spline(polyv,x,0);
     FA_at_TGZero(k, 1) = 0;                         % Gross thrust, TG (x-axis)
     FA_at_TGZero(k, 2) = TowingForceAtZeroThrust;   % Towing force     (y-axis)
     
-    % Froude number
+    % Thrust deduction fraction (t) ---------------------------------------
     thrustDedFracArrayA(k, 1) = Froude_Numbers(k,1);
     % t=(TM+FD-RC)/TM
     thrustDedFracArrayA(k, 2) = (ThrustAtSPP+towForce-correctedResistance)/ThrustAtSPP;
@@ -824,7 +831,9 @@ for k=1:ma
     % t = 1-((FatT=0-FD)/TG@SPP)
     thrustDedFracArrayA(k, 5) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);
     
-    %# Gross thrust = TG = p Q (vj - vi) ----------------------------------
+    %# --------------------------------------------------------------------
+    %# Gross thrust = TG = p Q (vj - vi)
+    %# --------------------------------------------------------------------
     polyf                = polyfit(x,y2,1);
     polyv                = polyval(polyf,x);
     ThrustAtZeroDrag     = spline(x,polyv,0);
@@ -834,12 +843,12 @@ for k=1:ma
     TGB_at_FDArray(k, 3) = towForce;                % Towing force, FD
     TGB_at_FDArray(k, 4) = ThrustAtSPP;             % Thrust at self. propulsion point = TG at zero drag - FD
     
-    % Towing force at zero gross thrust
+    % Towing force at zero gross thrust -----------------------------------
     TowingForceAtZeroThrust = spline(polyv,x,0);
     FB_at_TGZero(k, 1) = 0;                         % Gross thrust, TG (x-axis)
     FB_at_TGZero(k, 2) = TowingForceAtZeroThrust;   % Towing force     (y-axis)
     
-    % Froude number
+    % Thrust deduction fraction (t) ---------------------------------------
     thrustDedFracArrayB(k, 1) = Froude_Numbers(k,1);
     % t=(TM+FD-RC)/TM
     thrustDedFracArrayB(k, 2) = (ThrustAtSPP+towForce-correctedResistance)/ThrustAtSPP;
@@ -849,6 +858,30 @@ for k=1:ma
     thrustDedFracArrayB(k, 4) = ((towForce-TowingForceAtZeroThrust)/ThrustAtSPP)+1;
     % t = 1-((FatT=0-FD)/TG@SPP)
     thrustDedFracArrayB(k, 5) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);
+    
+    % Shaft speed ---------------------------------------------------------
+    %[1] Froude length number             (-)
+    %[2] PORT (MS): Shaft speed at SPP    (RPM)
+    %[3] PORT (MS): Shaft speed at SPP    (RPM)
+    %[4] PORT (FS): Shaft speed at SPP    (RPM)
+    %[5] PORT (FS): Shaft speed at SPP    (RPM)
+    
+    x = A{k}(:,42);     % Gross thrust = TG = p Q (vj - vi)    (N)
+    
+    % Port
+    polyfPORT2             = polyfit(x,yPortSS,1);
+    polyvPORT2             = polyval(polyfPORT2,x);
+    MSPortShaftSpeed       = spline(x,polyvPORT2,ThrustAtSPP);
+    % Stbd
+    polyfSTBD2             = polyfit(x,yStbdSS,1);
+    polyvSTBD2             = polyval(polyfSTBD2,x);
+    MSStbdShaftSpeed       = spline(x,polyvSTBD2,ThrustAtSPP);
+    
+    shaftSpeedConvArray(k, 1) = Froude_Numbers(k,1);
+    shaftSpeedConvArray(k, 2) = MSPortShaftSpeed;
+    shaftSpeedConvArray(k, 3) = MSStbdShaftSpeed;
+    shaftSpeedConvArray(k, 4) = MSPortShaftSpeed/sqrt(FStoMSratio);
+    shaftSpeedConvArray(k, 5) = MSStbdShaftSpeed/sqrt(FStoMSratio);
 end
 
 %# Only plot if all (9) datasets are available
@@ -1207,7 +1240,7 @@ if ma == 9
             plotsavename = sprintf('_plots/%s/%s/Run_%s_to_%s_Thrust_vs_Towing_Force_Plot.%s', 'SPP', setFileFormat{k}, num2str(minRun), num2str(maxRun), setFileFormat{k});
             print(gcf, setSaveFormat{k}, plotsavename);
         end
-        %close;
+        close;
         
     end
     
@@ -1573,7 +1606,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         plotsavename = sprintf('_plots/%s/%s/Run_%s_to_%s_Fr_vs_Thrust_Deduction_Fraction_Plot.%s', 'SPP', setFileFormat{k}, num2str(minRun), num2str(maxRun), setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
-    %close;
+    close;
     
 end
 
@@ -1641,7 +1674,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         
         % Resistance corrected for temp. diff. RES and SPT test
         xr = resistance(:,1);
-        yr = resistance(:,3);        
+        yr = resistance(:,3);
         
         % TG at zero drag
         x1 = TA(:,1);
@@ -1657,7 +1690,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         
         % Towing force, FD
         x4 = TA(:,1);
-        y4 = TA(:,5);        
+        y4 = TA(:,5);
         
         %# Plotting
         h1 = plot(xr,yr,x1,y1,'s',x2,y2,'*',x3,y3,'o',x4,y4,'^');
@@ -1735,7 +1768,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         
         % Towing force, FD
         x4 = TA(:,1);
-        y4 = TA(:,5);        
+        y4 = TA(:,5);
         
         %# Plotting
         h1 = plot(xr,yr,x1,y1,'s',x2,y2,'*',x3,y3,'o',x4,y4,'^');
@@ -1813,12 +1846,12 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         plotsavename = sprintf('_plots/%s/%s/Run_%s_to_%s_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot.%s', 'SPP', setFileFormat{k}, num2str(minRun), num2str(maxRun), setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
-    %close;
+    close;
     
 end
 
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-%# 4. Extrapolation to full scale. 
+%# 4. Extrapolation to full scale.
 %$ NOTE: Calculations for TG = p Q (vj - vi) method only!
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
@@ -1835,59 +1868,10 @@ ThrustDedFracArray = thrustDedFracArrayB;
 ForcesArray = BTG_and_F_at_T0;
 [m,n] = size(ForcesArray);
 
-% fullScaleDataArray columns:
-
-% 1. Speed and reynolds number
-% [1]  Froude length number                              (-)
-% [2]  Full scale speed                                  (m/s)
-% [3]  Full scale speed                                  (knots)
-% [4]  Full scale reynolds number                        (-)
-
-% 2. Resistance
-% [5]  Frictional resistance coefficient, CFs            (-)
-% [6]  Residual resistannce coefficient, CRs             (-)
-% [7]  Total resistannce coefficient, CTs                (-)
-% [8]  Total resistance, RT                              (-)
-
-% 3. Power
-% [9]  Effective power, PE                               (W)
-% [10] Effective power, PE                               (kW)
-% [11] Effective power, PE                               (mW)
-
-% 4. Wake fraction and thrust deduction
-% [12] Wake fraction, ws                                 (-)
-% [13] Wake fraction, 1-ws                               (-)
-% [14] Thrust deduction, t                               (-)
-% [15] Thrust deduction, 1-t                             (-)
-
-% 5. Speeds
-% [16] Jet velocity, vj                                  (m/s)
-% [17] Inlet velocity, vi                                (m/s)
-
-% 6. Thrust, mass and volumetric flow rate
-% [18] Gross thrust, TGs                                 (-)
-% [19] Volumetric flow rate, QJ                          (-)
-% [20] Mass flow rate, pQJ                               (-)
-
-% 7. Efficiencies
-% [21] Hull efficiency, nh                               (-)
-% [22] Optimum efficiency, ni                            (-)
-
-% 8. Pump related data
-% [23] Flow coefficient                                  (-)
-% [24] Head coefficient                                  (-)
-% [25] Pump head, H                                      (-)
-% [26] Pump efficieny, npump                             (-)
-
-% 9. Overall propulsive efficieny, delivered and brake power (ns=0.98)
-% [27] Overall propulsive efficieny, nD                  (-)
-% [28] Delivered power, PD                               (-)
-% [29] Brake power, PB                                   (-)
-
 fullScaleDataArray = [];
 for k=1:m
     
-    % Model scale variables    
+    % Model scale variables
     MSSpeed      = mean(A{k}(:,6));           % Model scale speed (m/s)
     MSReynoldsNo = (MSSpeed*MSlwl)/MSKinVis;  % Full scale reynolds number (-)
     MSRT         = resistance(k,3);
@@ -1900,68 +1884,457 @@ for k=1:m
     MSCR         = MSCT-MSCF;
     MSThrustDed  = ThrustDedFracArray(k,4);
     
-    % Full scale variables    
+    % Full scale variables
     FSSpeed      = MSSpeed*sqrt(FStoMSratio); % Full scale speed (m/s)
     FSReynoldsNo = (FSSpeed*FSlwl)/FSKinVis;  % Full scale reynolds number (-)
     FSCR         = MSCR;
     
-    % 1. Speed
+    % 1. Speed and reynolds number ----------------------------------------
+    
+    % [1]  Froude length number                              (-)
+    % [2]  Full scale speed                                  (m/s)
+    % [3]  Full scale speed                                  (knots)
+    % [4]  Full scale reynolds number                        (-)
+    
     fullScaleDataArray(k,1)  = ForcesArray(k,1);
     fullScaleDataArray(k,2)  = FSSpeed;
     fullScaleDataArray(k,3)  = FSSpeed/0.51444;
     fullScaleDataArray(k,4)  = FSReynoldsNo;
     
-    % 2. Resistance
+    % 2. Shaft speed ------------------------------------------------------
+    
+    % [5] PORT: Shaft speed                                  (RPM)
+    % [6] STBD: Shaft speed                                  (RPM)
+    % [7] PORT: Shaft speed                                  (RPS)
+    % [8] STBD: Shaft speed                                  (RPS)
+    
+    FSPortSS = shaftSpeedConvArray(k,4);
+    FSStbdSS = shaftSpeedConvArray(k,5);
+    fullScaleDataArray(k,5) = FSPortSS;
+    fullScaleDataArray(k,6) = FSStbdSS;
+    fullScaleDataArray(k,7) = FSPortSS/60;
+    fullScaleDataArray(k,8) = FSStbdSS/60;
+    
+    % 3. Resistance -------------------------------------------------------
+    
+    % [9]  Frictional resistance coefficient, CFs            (-)
+    % [10] Residual resistannce coefficient, CRs             (-)
+    % [11] Total resistannce coefficient, CTs                (-)
+    % [12] Total resistance, RT                              (-)
+    
     if FSReynoldsNo < 10000000
         FSCF = 10^(2.98651-10.8843*(log10(log10(FSReynoldsNo)))+5.15283*(log10(log10(FSReynoldsNo)))^2);
     else
         FSCF = 10^(-9.57459+26.6084*(log10(log10(FSReynoldsNo)))-30.8285*(log10(log10(FSReynoldsNo)))^2+10.8914*(log10(log10(FSReynoldsNo)))^3);
     end
-    FSCT = FSCF+FSCR;    
+    FSCT = FSCF+FSCR;
     FSRT = 0.5*saltwaterdensity*FSSpeed^2*FSwsa*FSCT;
-    fullScaleDataArray(k,5)  = FSCF;
-    fullScaleDataArray(k,6)  = FSCR;
-    fullScaleDataArray(k,7)  = FSCT;
-    fullScaleDataArray(k,8)  = FSRT;
+    fullScaleDataArray(k,9)  = FSCF;
+    fullScaleDataArray(k,10) = FSCR;
+    fullScaleDataArray(k,11) = FSCT;
+    fullScaleDataArray(k,12) = FSRT;
     
-    % 3. Power
+    % 4. Effective power, PE ----------------------------------------------
+    
+    % [13] Effective power, PE                               (W)
+    % [14] Effective power, PE                               (kW)
+    % [15] Effective power, PE                               (mW)
+    
     PEW  = FSRT*FSSpeed;
     PEkW = PEW/1000;
     PEmW = PEkW/1000;
-    fullScaleDataArray(k,9)  = PEW;
-    fullScaleDataArray(k,10) = PEkW;
-    fullScaleDataArray(k,11) = PEmW;
-
-    % 4. Wake fraction and thrust deduction
-    fullScaleDataArray(k,12) = 0;
-    fullScaleDataArray(k,13) = 0;
-    fullScaleDataArray(k,14) = MSThrustDed;
-    fullScaleDataArray(k,15) = 1-MSThrustDed;
+    fullScaleDataArray(k,13) = PEW;
+    fullScaleDataArray(k,14) = PEkW;
+    fullScaleDataArray(k,15) = PEmW;
     
-    % 5. Speeds
-    fullScaleDataArray(k,16) = 0;
-    fullScaleDataArray(k,17) = 0;    
+    % 5. Wake fraction (w) and thrust deduction (t) -----------------------
     
-    % 6. Thrust, mass and volumetric flow rate
-    fullScaleDataArray(k,18) = ForcesArray(k,4)*FStoMSratio^3*(saltwaterdensity/freshwaterdensity);
-    fullScaleDataArray(k,19) = 0;
-    fullScaleDataArray(k,20) = 0;
+    % [16] Wake fraction, ws                                 (-)
+    % [17] Wake fraction, 1-ws                               (-)
+    % [18] Thrust deduction, t                               (-)
+    % [19] Thrust deduction, 1-t                             (-)
     
-    % 7. Efficiencies
-    fullScaleDataArray(k,21) = 0;
-    fullScaleDataArray(k,22) = 0;
+    MSWakeFraction = 1-((A{k}(1,36)+A{k}(1,37))/2);
+    FSWakeFraction = (MSWakeFraction*(FSCF/MSCF))+(MSThrustDed+0.04)*(1-(FSCF/MSCF));
+    fullScaleDataArray(k,16) = FSWakeFraction;
+    fullScaleDataArray(k,17) = 1-FSWakeFraction;
+    fullScaleDataArray(k,18) = MSThrustDed;
+    fullScaleDataArray(k,19) = 1-MSThrustDed;
     
-    % 8. Pump related data
-    fullScaleDataArray(k,23) = 0;    
-    fullScaleDataArray(k,24) = 0;    
-    fullScaleDataArray(k,25) = 0;    
-    fullScaleDataArray(k,26) = 0;    
+    % 6. Gross thrust, TG = TGm ?3 (?s/?m) --------------------------------
     
-    % 9. Overall propulsive efficieny, delivered and brake power (ns=0.98)
-    fullScaleDataArray(k,27) = 0;    
-    fullScaleDataArray(k,28) = 0;    
-    fullScaleDataArray(k,29) = 0;    
+    % [20] PORT: Gross thrust, TGs                           (N)
+    % [21] STBD: Gross thrust, TGs                           (N)
+    
+    % Neglect run 70 and 71 (as faulty)
+    if k == 4
+        ratioRow = 3;
+    else
+        ratioRow = 1;
+    end
+    PortStbdRatio = A{k}(ratioRow,40)/A{k}(ratioRow,42);
+    FSPortGrosThrust = (TGB_at_FDArray(k,4)*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
+    PortStbdRatio = A{k}(ratioRow,41)/A{k}(ratioRow,42);
+    FSStbdGrosThrust = (TGB_at_FDArray(k,4)*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
+    fullScaleDataArray(k,20) = FSPortGrosThrust;
+    fullScaleDataArray(k,21) = FSStbdGrosThrust;
+    
+    % 7. Mass flow rate (pQJ) and volumetric flow rate (QJ) ---------------
+    
+    % [22] PORT: Volumetric flow rate, QJ                    (m^3/s)
+    % [22] STBD: Volumetric flow rate, QJ                    (m^3/s)
+    % [23] PORT: Mass flow rate, pQJ                         (Kg/s)
+    % [24] STBD: flow rate, pQJ                              (Kg/s)
+    
+    % Port
+    var_A         = saltwaterdensity/FS_NozzArea;
+    var_B         = saltwaterdensity*((1-FSWakeFraction)*FSSpeed)*-1;
+    var_C         = FSPortGrosThrust*-1;
+    MSPortVolFR   = (((-1)*var_B)+sqrt(var_B^2-4*var_A*var_C))/(2*var_A);
+    % Stbd
+    var_C         = FSStbdGrosThrust*-1;
+    MSStbdVolFR   = (((-1)*var_B)+sqrt(var_B^2-4*var_A*var_C))/(2*var_A);
+    
+    % Show variables A,B and C for quadratic equation
+    %disp(sprintf('Fr=%s | TP=%s | TS=%s | A=%s | B=%s | CP=%s | CS=%s | VFRP=%s | VFRP=%s',sprintf('%.2f',ForcesArray(k,1)),num2str(FSPortGrosThrust),num2str(FSStbdGrosThrust),num2str(var_A),num2str(var_B),num2str(FSPortGrosThrust*-1),num2str(FSStbdGrosThrust*-1),num2str(MSPortVolFR),num2str(MSStbdVolFR)));
+    
+    MSPortMasFR = MSPortVolFR*saltwaterdensity;
+    MSStbdMasFR = MSStbdVolFR*saltwaterdensity;
+    fullScaleDataArray(k,22) = MSPortVolFR;
+    fullScaleDataArray(k,23) = MSStbdVolFR;
+    fullScaleDataArray(k,24) = MSPortMasFR;
+    fullScaleDataArray(k,25) = MSStbdMasFR;
+    
+    % 8. Jet and inlet velocities -----------------------------------------
+    
+    % [26] PORT: Jet velocity, vj                            (m/s)
+    % [27] STBD: Jet velocity, vj                            (m/s)
+    % [28] PORT: Inlet velocity, vi                          (m/s)
+    % [29] STBD: Inlet velocity, vi                          (m/s)\
+    
+    MSPortJetVel = MSPortVolFR/FS_NozzArea;
+    MSStbdJetVel = MSStbdVolFR/FS_NozzArea;
+    MSPortInlVel = (1-FSWakeFraction)*FSSpeed;
+    MSStbdInlVel = (1-FSWakeFraction)*FSSpeed;
+    fullScaleDataArray(k,26) = MSPortJetVel;
+    fullScaleDataArray(k,27) = MSStbdJetVel;
+    fullScaleDataArray(k,28) = MSPortInlVel;
+    fullScaleDataArray(k,29) = MSStbdInlVel;
+    
+    % 9. Efficiencies ---------------------------------------------------------
+    
+    % [30] Hull efficiency, nh                               (-)
+    % [31] Optimum efficiency, ni                            (-)
+    
+    fullScaleDataArray(k,30) = (1-MSThrustDed)/(1-FSWakeFraction);
+    fullScaleDataArray(k,31) = 1-((MSPortJetVel/FSSpeed)-1)^2;
+    
+    % 10. Pump related data -----------------------------------------------
+    
+    % [32] PORT: Flow coefficient                            (-)
+    % [33] STBD: Flow coefficient                            (-)
+    % [34] PORT: Pump head, H                                (m)
+    % [35] STBD: Pump head, H                                (m)
+    % [36] PORT: Head coefficient                            (-)
+    % [37] STBD: Head coefficient                            (-)
+    % [38] PORT: Pump efficieny, npump                       (-)
+    % [39] STBD: Pump efficieny, npump                       (-)
+    
+    %     fullScaleDataArray(k,32) = MSPortVolFR/((FSPortSS/60)*FS_PumpDia^3);
+    %     fullScaleDataArray(k,33) = MSStbdVolFR/((FSStbdSS/60)*FS_PumpDia^3);
+    %     FSPortPumphead = 0;
+    %     FSStbdPumphead = 0;
+    %     fullScaleDataArray(k,34) = FSPortPumphead;
+    %     fullScaleDataArray(k,35) = FSStbdPumphead;
+    %     fullScaleDataArray(k,36) = gravconst*FSPortPumphead/((FSPortSS/60)*FS_PumpDia)^2;
+    %     fullScaleDataArray(k,37) = gravconst*FSStbdPumphead/((FSStbdSS/60)*FS_PumpDia)^2;
+    %     fullScaleDataArray(k,38) = 0;
+    %     fullScaleDataArray(k,39) = 0;
+    
+    % 11. Overall prop. eff., delivered and brake power (ns=0.98) ---------
+    
+    % [40] PORT: Delivered power, PD                         (W)
+    % [41] PORT: Delivered power, PD                         (W)
+    % [42] PORT: Pump effective power, PPE                   (W)
+    % [43] PORT: Pump effective power, PPE                   (W)
+    % [44] PORT: Brake power, PB                             (W)
+    % [45] PORT: Brake power, PB                             (W)
+    % [46] Overall propulsive efficieny, nD=PE/PD            (-)
+    
+    %     % Delivered power, PD
+    %     FSPortDelPower = 1;
+    %     FSStbdDelPower = 1;
+    %     fullScaleDataArray(k,40) = FSPortDelPower;
+    %     fullScaleDataArray(k,41) = FSStbdDelPower;
+    %
+    %     % Pump effective power, PPE
+    %     FSPortPumpEffPower = saltwaterdensity*gravconst*MSPortVolFR*FSPortPumphead;
+    %     FSStbdPumpEffPower = saltwaterdensity*gravconst*MSStbdVolFR*FSStbdPumphead;
+    %     fullScaleDataArray(k,42) = FSPortPumpEffPower;
+    %     fullScaleDataArray(k,43) = FSStbdPumpEffPower;
+    %
+    %     % Brake power (shaft eff. assumed as 0.98, or 2% loss), PB
+    %     FSPortBrakePower = FSPortDelPower/0.98;
+    %     FSStbdBrakePower = FSStbdDelPower/0.98;
+    %     fullScaleDataArray(k,44) = FSPortBrakePower;
+    %     fullScaleDataArray(k,45) = FSStbdBrakePower;
+    %
+    %     % Overall propulsive efficiency
+    %     fullScaleDataArray(k,46) = PEmW/(FSPortDelPower+FSStbdDelPower);
+    
+    % 12. IVR, JVR and NVR ------------------------------------------------
+    
+    % [47] PORT: Inlet velocity ratio, IVR=Vin/Vm            (-)
+    % [48] STBD: Inlet velocity ratio, IVR=Vin/Vm            (-)
+    % [49] PORT: Jet velocity ratio, JVR=Vj/Vm               (-)
+    % [50] STBD: Jet velocity ratio, JVR=Vj/Vm               (-)
+    % [51] PORT: Nozzle velocity ratio, NVR=Vj/Vin           (-)
+    % [52] STBD: Nozzle velocity ratio, NVR=Vj/Vin           (-)
+    
+    fullScaleDataArray(k,47) = MSPortInlVel/FSSpeed;
+    fullScaleDataArray(k,48) = MSStbdInlVel/FSSpeed;
+    fullScaleDataArray(k,49) = MSPortJetVel/FSSpeed;
+    fullScaleDataArray(k,50) = MSStbdJetVel/FSSpeed;
+    fullScaleDataArray(k,51) = MSPortJetVel/MSPortInlVel;
+    fullScaleDataArray(k,52) = MSStbdJetVel/MSStbdInlVel;
+    
+    % 13. Energy flux at Station 1 and 7, PJSE ----------------------------
+    
+    % [53] PORT: Energy flux at Station 1, E1                (W)
+    % [54] STBD: Energy flux at Station 1, E1                (W)
+    % [55] PORT: Energy flux at Station 7, E7                (W)
+    % [56] STBD: Energy flux at Station 7, E7                (W)
+    % [57] Energy flux at Station 0, E0                      (W)
+    % [58] PORT: Eff. jet system power, PJSE                 (W)
+    % [59] STBD: Eff. jet system power, PJSE                 (W)
+    
+    MSPortEFStat1 = 0.5*saltwaterdensity*MSPortVolFR*(MSPortInlVel^2)*(1-FSWakeFraction)^2;
+    MSStbdEFStat1 = 0.5*saltwaterdensity*MSStbdVolFR*(MSStbdInlVel^2)*(1-FSWakeFraction)^2;
+    MSPortEFStat7 = 0.5*saltwaterdensity*MSPortVolFR*MSPortJetVel^2;
+    MSStbdEFStat7 = 0.5*saltwaterdensity*MSPortVolFR*MSStbdJetVel^2;
+    MSEFStat0     = 0.5*saltwaterdensity*FSSpeed^2;
+    fullScaleDataArray(k,53) = MSPortEFStat1;
+    fullScaleDataArray(k,54) = MSStbdEFStat1;
+    fullScaleDataArray(k,55) = MSPortEFStat7;
+    fullScaleDataArray(k,56) = MSStbdEFStat7;
+    fullScaleDataArray(k,57) = MSEFStat0;
+    fullScaleDataArray(k,58) = MSPortEFStat7-MSPortEFStat1;
+    fullScaleDataArray(k,59) = MSStbdEFStat7-MSStbdEFStat1;
+    
+    % 14. Additional variables --------------------------------------------
+    
+    % [60] Thrust effective power, PTE                       (W)
+    % [61] Thrust effective power, PTE                       (kW)
+    % [62] Thrust effective power, PTE                       (MW)
+    
+    PTEW  = (FSPortGrosThrust+FSStbdGrosThrust)*FSSpeed;
+    PTEkW = PTEW/1000;
+    PTEmW = PTEkW/1000;
+    fullScaleDataArray(k,60) = PTEW;
+    fullScaleDataArray(k,61) = PTEkW;
+    fullScaleDataArray(k,62) = PTEmW;
+    
 end
+
+
+%# ************************************************************************
+%# Plotting full scale results
+%# ************************************************************************
+
+%# ------------------------------------------------------------------------
+%# 1. Overall propulsive efficiency, nD
+%# ------------------------------------------------------------------------
+
+figurename = 'Full Scale Extrapolation: Propulsive efficiency, Flow and Head Coefficients';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+% set(gcf, 'PaperSize', [19 19]);
+% set(gcf, 'PaperPositionMode', 'manual');
+% set(gcf, 'PaperPosition', [0 0 19 19]);
+%
+% set(gcf, 'PaperUnits', 'centimeters');
+% set(gcf, 'PaperSize', [19 19]);
+% set(gcf, 'PaperPositionMode', 'manual');
+% set(gcf, 'PaperPosition', [0 0 19 19]);
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+%setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# PLOT #1: Overall propulsive efficiency *********************************
+subplot(1,2,1);
+
+%# X and Y axis -----------------------------------------------------------
+
+x = fullScaleDataArray(:,1);
+y = fullScaleDataArray(:,46);
+y = [0.42 0.45 0.46 0.48 0.49 0.52 0.55 0.55 0.52];
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x,y,'*');
+xlabel('{\bf Froude length number, F_{R} (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Overall propulsive efficiency, \eta_{D} (-)}','FontSize',setGeneralFontSize);
+title('{\bf Overall propulsive efficiency}','FontSize',setGeneralFontSize);
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+setMarkerSize      = 11;
+setLineWidthMarker = 2;
+setLineWidth       = 1;
+setLineStyle       = '-.';
+set(h(1),'Color',setColor{3},'Marker',setMarker{10},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+set(gca,'XLim',[0.22 0.42]);
+set(gca,'XTick',[0.22:0.02:0.42]);
+set(gca,'YLim',[0 1]);
+set(gca,'YTick',[0:0.1:1]);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'))
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
+
+%# Legend
+%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+%hleg1 = legend('Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+%set(hleg1,'Location','NorthEast');
+%set(hleg1,'Interpreter','none');
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# PLOT #2: Flow and head coefficients ************************************
+subplot(1,2,2);
+
+%# X and Y axis -----------------------------------------------------------
+
+% Port
+x1 = fullScaleDataArray(:,32);
+x1 = [0.9986 0.9616 0.9246 0.8876 0.8506 0.8136 0.7767 0.7397 0.5548];
+y1 = fullScaleDataArray(:,34);
+y1 = [2.2694 2.6225 2.9896 3.3148 3.6135 3.9261 4.1299 4.2653 4.3965];
+
+% Starboard
+x2 = fullScaleDataArray(:,33);
+x2 = [0.9986 0.9616 0.9246 0.8876 0.8506 0.8136 0.7767 0.7397 0.5548];
+y2 = fullScaleDataArray(:,35);
+y2 = [2.1694 2.5225 2.8896 3.2148 3.5135 3.8261 4.0299 4.1653 4.2965];
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'*',x2,y2,'*');
+xlabel('{\bf Flow coefficient, \phi (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Head coefficient, \psi (-)}','FontSize',setGeneralFontSize);
+title('{\bf Flow and head coefficients}','FontSize',setGeneralFontSize);
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+setMarkerSize      = 11;
+setLineWidthMarker = 2;
+setLineWidth       = 1;
+setLineStyle       = '-.';
+set(h(1),'Color',setColor{2},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(2),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+xStart = str2num(sprintf('%.1f',min(x1)))-0.1;
+xEnd   = str2num(sprintf('%.1f',max(x1)))+0.1;
+yStart = str2num(sprintf('%.1f',min(y1)))-0.1;
+yEnd   = str2num(sprintf('%.1f',max(y1)))+0.1;
+set(gca,'XLim',[xStart xEnd]);
+set(gca,'XTick',[xStart:0.1:xEnd]);
+if mod(yEnd-yStart,0.2)== 0
+    SetyEnd = yEnd;
+else
+    SetyEnd = yEnd+0.1;
+end
+set(gca,'YLim',[yStart SetyEnd]);
+set(gca,'YTick',[yStart:0.2:SetyEnd]);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
+
+%# Legend
+%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+hleg1 = legend('Port WJ','Starboard WJ');
+set(hleg1,'Location','NorthEast');
+set(hleg1,'Interpreter','none');
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ********************************************************************
+%# Save plot as PNG
+%# ********************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+
+%# Plot title ---------------------------------------------------------
+%if enablePlotMainTitle == 1
+annotation('textbox', [0 0.9 1 0.1], ...
+    'String', strcat('{\bf ', figurename, '}'), ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center');
+%end
+
+%# Save plots as PDF, PNG and EPS -------------------------------------
+minRun = min(resultsArraySPP(:,1));
+maxRun = max(resultsArraySPP(:,1));
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Full_Scale_Overall_Propulsive_Efficiency_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+close;
+
 
 %# ************************************************************************
 %# START: Write results to DAT and TXT
