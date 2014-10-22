@@ -1971,7 +1971,7 @@ for k=1:m
     
     MSWakeFraction = 1-((A{k}(1,36)+A{k}(1,37))/2);
     %FSWakeFraction = (MSWakeFraction*(FSCF/MSCF))+(MSThrustDed+0.04)*(1-(FSCF/MSCF));
-    FSWakeFraction = (MSWakeFraction*(FSCF/MSCF))
+    FSWakeFraction = (MSWakeFraction*(FSCF/MSCF));
     fullScaleDataArray(k,16) = FSWakeFraction;
     fullScaleDataArray(k,17) = 1-FSWakeFraction;
     fullScaleDataArray(k,18) = MSThrustDed;
