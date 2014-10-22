@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 15, 2014
+%# Date       :  October 22, 2014
 %#
 %# Description:  Pumpcurve analysis for different RPM in full scale.
 %#
@@ -49,9 +49,27 @@ enableEqnOfFitPlot        = 1;    % Show equations of fit
 % Command window output
 enableCommandWindowOutput = 1;    % Show command windown ouput
 
+% Scaled to A4 paper
+enableA4PaperSizePlot     = 0;    % Show plots scale to A4 size
+
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
 % *************************************************************************
+
+
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# START DEFINE PLOT SIZE
+%# ------------------------------------------------------------------------
+%# Centimeters units
+XPlot = 42.0;                           %# A3 paper size
+YPlot = 29.7;                           %# A3 paper size
+XPlotMargin = 1;                        %# left/right margins from page borders
+YPlotMargin = 1;                        %# bottom/top margins from page borders
+XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
+YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
+%# ------------------------------------------------------------------------
+%# END DEFINE PLOT SIZE
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 %# ************************************************************************
@@ -323,14 +341,16 @@ ah = gca;
 
 %# Paper size settings ----------------------------------------------------
 
-% set(gcf, 'PaperSize', [19 19]);
-% set(gcf, 'PaperPositionMode', 'manual');
-% set(gcf, 'PaperPosition', [0 0 19 19]);
-%
-% set(gcf, 'PaperUnits', 'centimeters');
-% set(gcf, 'PaperSize', [19 19]);
-% set(gcf, 'PaperPositionMode', 'manual');
-% set(gcf, 'PaperPosition', [0 0 19 19]);
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
 
 % Fonts and colours -------------------------------------------------------
 setGeneralFontName = 'Helvetica';
@@ -588,11 +608,22 @@ legend boxoff;
 
 set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
-%# ************************************************************************
+%# ********************************************************************
 %# Save plot as PNG
-%# ************************************************************************
+%# ********************************************************************
 
-%# Plot title -------------------------------------------------------------
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title ---------------------------------------------------------
 if enablePlotMainTitle == 1
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
@@ -625,14 +656,16 @@ ah = gca;
 
 %# Paper size settings ----------------------------------------------------
 
-% set(gcf, 'PaperSize', [19 19]);
-% set(gcf, 'PaperPositionMode', 'manual');
-% set(gcf, 'PaperPosition', [0 0 19 19]);
-%
-% set(gcf, 'PaperUnits', 'centimeters');
-% set(gcf, 'PaperSize', [19 19]);
-% set(gcf, 'PaperPositionMode', 'manual');
-% set(gcf, 'PaperPosition', [0 0 19 19]);
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
 
 % Fonts and colours -------------------------------------------------------
 setGeneralFontName = 'Helvetica';
@@ -885,11 +918,22 @@ legend boxoff;
 
 set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
-%# ************************************************************************
+%# ********************************************************************
 %# Save plot as PNG
-%# ************************************************************************
+%# ********************************************************************
 
-%# Plot title -------------------------------------------------------------
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title ---------------------------------------------------------
 if enablePlotMainTitle == 1
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...

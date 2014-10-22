@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 15, 2014
+%# Date       :  October 22, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -91,6 +91,9 @@ enableTowingForceFDPlot = 1;    % Show towing force (FD)
 % Decide which plot to show TG=p QJ vj (Allison) or TG=p QJ (vj-vi) (Bose)
 enableTGAllisonPlot     = 0;    % Show plots where TG = p Q vj
 enableTGBosePlot        = 1;    % Show plots where TG = p Q (vj - vi)
+
+% Scaled to A4 paper
+enableA4PaperSizePlot   = 0;    % Show plots scale to A4 size
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
@@ -900,14 +903,16 @@ if ma == 9
         
         %# Paper size settings ------------------------------------------------
         
-        % set(gcf, 'PaperSize', [19 19]);
-        % set(gcf, 'PaperPositionMode', 'manual');
-        % set(gcf, 'PaperPosition', [0 0 19 19]);
-        %
-        % set(gcf, 'PaperUnits', 'centimeters');
-        % set(gcf, 'PaperSize', [19 19]);
-        % set(gcf, 'PaperPositionMode', 'manual');
-        % set(gcf, 'PaperPosition', [0 0 19 19]);
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+
+            set(gcf, 'PaperUnits', 'centimeters');
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+        end
         
         % Fonts and colours ---------------------------------------------------
         setGeneralFontName = 'Helvetica';
@@ -988,7 +993,7 @@ if ma == 9
             FatTGZ = FA_at_TGZero;
             
             %# Set marker and line sizes
-            setMarkerSize      = 8;
+            setMarkerSize      = 12;
             setLineWidthMarker = 1;
             setLineWidth       = 1;
             setLineStyle       = '-';
@@ -1120,7 +1125,7 @@ if ma == 9
             FatTGZ = FB_at_TGZero;
             
             %# Set marker and line sizes
-            setMarkerSize      = 8;
+            setMarkerSize      = 12;
             setLineWidthMarker = 1;
             setLineWidth       = 1;
             setLineStyle       = '-';
@@ -1216,10 +1221,12 @@ if ma == 9
         set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
         
         %# Figure size printed on paper
-        set(gcf, 'PaperUnits','centimeters');
-        set(gcf, 'PaperSize',[XPlot YPlot]);
-        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-        set(gcf, 'PaperOrientation','portrait');
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperUnits','centimeters');
+            set(gcf, 'PaperSize',[XPlot YPlot]);
+            set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+            set(gcf, 'PaperOrientation','portrait');
+        end
         
         %# Plot title ---------------------------------------------------------
         if enablePlotMainTitle == 1
@@ -1240,7 +1247,7 @@ if ma == 9
             plotsavename = sprintf('_plots/%s/%s/Run_%s_to_%s_Thrust_vs_Towing_Force_Plot.%s', 'SPP', setFileFormat{k}, num2str(minRun), num2str(maxRun), setFileFormat{k});
             print(gcf, setSaveFormat{k}, plotsavename);
         end
-        close;
+        %close;
         
     end
     
@@ -1367,14 +1374,16 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
     
     %# Paper size settings ----------------------------------------------------
     
-    % set(gcf, 'PaperSize', [19 19]);
-    % set(gcf, 'PaperPositionMode', 'manual');
-    % set(gcf, 'PaperPosition', [0 0 19 19]);
-    %
-    % set(gcf, 'PaperUnits', 'centimeters');
-    % set(gcf, 'PaperSize', [19 19]);
-    % set(gcf, 'PaperPositionMode', 'manual');
-    % set(gcf, 'PaperPosition', [0 0 19 19]);
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
     
     % Fonts and colours -------------------------------------------------------
     setGeneralFontName = 'Helvetica';
@@ -1582,10 +1591,12 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
     %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
     
     %# Plot title -------------------------------------------------------------
     if enablePlotMainTitle == 1
@@ -1606,7 +1617,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         plotsavename = sprintf('_plots/%s/%s/Run_%s_to_%s_Fr_vs_Thrust_Deduction_Fraction_Plot.%s', 'SPP', setFileFormat{k}, num2str(minRun), num2str(maxRun), setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
-    close;
+    %close;
     
 end
 
@@ -1622,14 +1633,16 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
     
     %# Paper size settings ----------------------------------------------------
     
-    % set(gcf, 'PaperSize', [19 19]);
-    % set(gcf, 'PaperPositionMode', 'manual');
-    % set(gcf, 'PaperPosition', [0 0 19 19]);
-    %
-    % set(gcf, 'PaperUnits', 'centimeters');
-    % set(gcf, 'PaperSize', [19 19]);
-    % set(gcf, 'PaperPositionMode', 'manual');
-    % set(gcf, 'PaperPosition', [0 0 19 19]);
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
     
     % Fonts and colours -------------------------------------------------------
     setGeneralFontName = 'Helvetica';
@@ -1711,8 +1724,8 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(gcf,'Color',[1,1,1]);
         
         %# Line, colors and markers
-        setMarkerSize1     = 10;
-        setMarkerSize2     = 9;
+        setMarkerSize1     = 12;
+        setMarkerSize2     = 11;
         setLineWidth       = 2;
         setLineWidthMarker = 1;
         setLineStyle       = '-';
@@ -1789,8 +1802,8 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(gcf,'Color',[1,1,1]);
         
         %# Line, colors and markers
-        setMarkerSize1     = 10;
-        setMarkerSize2     = 9;
+        setMarkerSize1     = 12;
+        setMarkerSize2     = 11;
         setLineWidth       = 2;
         setLineWidthMarker = 1;
         setLineStyle       = '-';
@@ -1822,10 +1835,12 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
     %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
     
     %# Plot title -------------------------------------------------------------
     if enablePlotMainTitle == 1
@@ -1846,7 +1861,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         plotsavename = sprintf('_plots/%s/%s/Run_%s_to_%s_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot.%s', 'SPP', setFileFormat{k}, num2str(minRun), num2str(maxRun), setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
-    close;
+    %close;
     
 end
 
@@ -1955,7 +1970,8 @@ for k=1:m
     % [19] Thrust deduction, 1-t                             (-)
     
     MSWakeFraction = 1-((A{k}(1,36)+A{k}(1,37))/2);
-    FSWakeFraction = (MSWakeFraction*(FSCF/MSCF))+(MSThrustDed+0.04)*(1-(FSCF/MSCF));
+    %FSWakeFraction = (MSWakeFraction*(FSCF/MSCF))+(MSThrustDed+0.04)*(1-(FSCF/MSCF));
+    FSWakeFraction = (MSWakeFraction*(FSCF/MSCF))
     fullScaleDataArray(k,16) = FSWakeFraction;
     fullScaleDataArray(k,17) = 1-FSWakeFraction;
     fullScaleDataArray(k,18) = MSThrustDed;
@@ -2040,47 +2056,81 @@ for k=1:m
     % [38] PORT: Pump efficieny, npump                       (-)
     % [39] STBD: Pump efficieny, npump                       (-)
     
-    %     fullScaleDataArray(k,32) = MSPortVolFR/((FSPortSS/60)*FS_PumpDia^3);
-    %     fullScaleDataArray(k,33) = MSStbdVolFR/((FSStbdSS/60)*FS_PumpDia^3);
-    %     FSPortPumphead = 0;
-    %     FSStbdPumphead = 0;
-    %     fullScaleDataArray(k,34) = FSPortPumphead;
-    %     fullScaleDataArray(k,35) = FSStbdPumphead;
-    %     fullScaleDataArray(k,36) = gravconst*FSPortPumphead/((FSPortSS/60)*FS_PumpDia)^2;
-    %     fullScaleDataArray(k,37) = gravconst*FSStbdPumphead/((FSStbdSS/60)*FS_PumpDia)^2;
-    %     fullScaleDataArray(k,38) = 0;
-    %     fullScaleDataArray(k,39) = 0;
+    fullScaleDataArray(k,32) = MSPortVolFR/((FSPortSS/60)*FS_PumpDia^3);
+    fullScaleDataArray(k,33) = MSStbdVolFR/((FSStbdSS/60)*FS_PumpDia^3);
+    
+    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    %# TOTO: Replace arrays with function that looks up pump head (m)
+    %#       from WJ benchmark data.
+    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    PortPH = [24.69 27.57 31.01 34.98 38.61 42.33 44.76 51.15 58.71];
+    StbdPH = [24.62 27.50 31.00 34.93 38.59 42.26 44.76 51.04 58.55];
+    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    FSPortPumphead = PortPH(k);
+    FSStbdPumphead = StbdPH(k);
+    fullScaleDataArray(k,34) = FSPortPumphead;
+    fullScaleDataArray(k,35) = FSStbdPumphead;
+    
+    fullScaleDataArray(k,36) = gravconst*FSPortPumphead/((FSPortSS/60)*FS_PumpDia)^2;
+    fullScaleDataArray(k,37) = gravconst*FSStbdPumphead/((FSStbdSS/60)*FS_PumpDia)^2;
+    
+    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    %# TOTO: Replace arrays with function that looks up pump efficiency (-)
+    %#       from WJ benchmark data.
+    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    PortPE = [0.66 0.66 0.65 0.65 0.65 0.65 0.65 0.66 0.66];
+    StbdPE = [0.65 0.65 0.65 0.65 0.65 0.65 0.65 0.65 0.65];
+    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    FSPortPumpEff  = StbdPE(k);
+    FSStbdPumpEff  = StbdPE(k);
+    fullScaleDataArray(k,38) = FSPortPumpEff;
+    fullScaleDataArray(k,39) = FSStbdPumpEff;
     
     % 11. Overall prop. eff., delivered and brake power (ns=0.98) ---------
     
-    % [40] PORT: Delivered power, PD                         (W)
-    % [41] PORT: Delivered power, PD                         (W)
-    % [42] PORT: Pump effective power, PPE                   (W)
-    % [43] PORT: Pump effective power, PPE                   (W)
+    % [40] PORT: Pump effective power, PPE                   (W)
+    % [41] PORT: Pump effective power, PPE                   (W)
+    % [42] PORT: Delivered power, PD                         (W)
+    % [43] PORT: Delivered power, PD                         (W)
     % [44] PORT: Brake power, PB                             (W)
     % [45] PORT: Brake power, PB                             (W)
     % [46] Overall propulsive efficieny, nD=PE/PD            (-)
     
-    %     % Delivered power, PD
-    %     FSPortDelPower = 1;
-    %     FSStbdDelPower = 1;
-    %     fullScaleDataArray(k,40) = FSPortDelPower;
-    %     fullScaleDataArray(k,41) = FSStbdDelPower;
-    %
-    %     % Pump effective power, PPE
-    %     FSPortPumpEffPower = saltwaterdensity*gravconst*MSPortVolFR*FSPortPumphead;
-    %     FSStbdPumpEffPower = saltwaterdensity*gravconst*MSStbdVolFR*FSStbdPumphead;
-    %     fullScaleDataArray(k,42) = FSPortPumpEffPower;
-    %     fullScaleDataArray(k,43) = FSStbdPumpEffPower;
-    %
-    %     % Brake power (shaft eff. assumed as 0.98, or 2% loss), PB
-    %     FSPortBrakePower = FSPortDelPower/0.98;
-    %     FSStbdBrakePower = FSStbdDelPower/0.98;
-    %     fullScaleDataArray(k,44) = FSPortBrakePower;
-    %     fullScaleDataArray(k,45) = FSStbdBrakePower;
-    %
-    %     % Overall propulsive efficiency
-    %     fullScaleDataArray(k,46) = PEmW/(FSPortDelPower+FSStbdDelPower);
+    % Energy fluxes at stations 0, 1 and 7
+    FSPortEFStat1 = 0.5*saltwaterdensity*MSPortVolFR*(MSPortInlVel^2)*(1-FSWakeFraction)^2;
+    FSStbdEFStat1 = 0.5*saltwaterdensity*MSStbdVolFR*(MSStbdInlVel^2)*(1-FSWakeFraction)^2;
+    FSPortEFStat7 = 0.5*saltwaterdensity*MSPortVolFR*MSPortJetVel^2;
+    FSStbdEFStat7 = 0.5*saltwaterdensity*MSPortVolFR*MSStbdJetVel^2;
+    FSEFStat0     = 0.5*saltwaterdensity*FSSpeed^2;    
+    
+    % Nozzle and ideal efficiency
+    FSPortNozzleEff = 0.98;
+    FSStbdNozzleEff = 0.98;
+    FSPortIdealEff  = 2/(1+(MSPortJetVel/MSPortInlVel));
+    FSStbdIdealEff  = 2/(1+(MSStbdJetVel/MSStbdInlVel));    
+    
+    % Pump effective power, PPE
+    FSPortPumpEffPower = (FSPortEFStat7/FSPortNozzleEff)-FSPortIdealEff*FSPortEFStat1;
+    FSStbdPumpEffPower = (FSStbdEFStat7/FSStbdNozzleEff)-FSStbdIdealEff*FSStbdEFStat1;
+    fullScaleDataArray(k,40) = FSPortPumpEffPower;
+    fullScaleDataArray(k,41) = FSStbdPumpEffPower;
+    
+    % Delivered power, PD
+    FSPortDelPower = FSPortPumpEffPower/FSPortPumpEff;
+    FSStbdDelPower = FSStbdPumpEffPower/FSStbdPumpEff;
+    fullScaleDataArray(k,42) = FSPortDelPower;
+    fullScaleDataArray(k,43) = FSStbdDelPower;
+    
+    % Brake power (assumed shaft loss 2% and gear box 2%), PB
+    FSPortBrakePower = FSPortDelPower/0.98;
+    FSStbdBrakePower = FSStbdDelPower/0.98;
+    FSPortBrakePower = FSPortBrakePower/0.98;
+    FSStbdBrakePower = FSStbdBrakePower/0.98;
+    fullScaleDataArray(k,44) = FSPortBrakePower;
+    fullScaleDataArray(k,45) = FSStbdBrakePower;
+    
+    % Overall propulsive efficiency based on nD = PE/PD where PD = PPE/hpump
+    fullScaleDataArray(k,46) = PEW/(FSPortDelPower+FSStbdDelPower);
     
     % 12. IVR, JVR and NVR ------------------------------------------------
     
@@ -2091,12 +2141,18 @@ for k=1:m
     % [51] PORT: Nozzle velocity ratio, NVR=Vj/Vin           (-)
     % [52] STBD: Nozzle velocity ratio, NVR=Vj/Vin           (-)
     
-    fullScaleDataArray(k,47) = MSPortInlVel/FSSpeed;
-    fullScaleDataArray(k,48) = MSStbdInlVel/FSSpeed;
-    fullScaleDataArray(k,49) = MSPortJetVel/FSSpeed;
-    fullScaleDataArray(k,50) = MSStbdJetVel/FSSpeed;
-    fullScaleDataArray(k,51) = MSPortJetVel/MSPortInlVel;
-    fullScaleDataArray(k,52) = MSStbdJetVel/MSStbdInlVel;
+    FSPortIVR = MSPortInlVel/FSSpeed;
+    FSStbdIVR = MSStbdInlVel/FSSpeed;
+    FSPortJVR = MSPortJetVel/FSSpeed;
+    FSStbdJVR = MSStbdJetVel/FSSpeed;
+    FSPortNVR = MSPortJetVel/MSPortInlVel;
+    FSStbdNVR = MSStbdJetVel/MSStbdInlVel;
+    fullScaleDataArray(k,47) = FSPortIVR;
+    fullScaleDataArray(k,48) = FSStbdIVR;
+    fullScaleDataArray(k,49) = FSPortJVR;
+    fullScaleDataArray(k,50) = FSStbdJVR;
+    fullScaleDataArray(k,51) = FSPortNVR;
+    fullScaleDataArray(k,52) = FSStbdNVR;
     
     % 13. Energy flux at Station 1 and 7, PJSE ----------------------------
     
@@ -2108,31 +2164,48 @@ for k=1:m
     % [58] PORT: Eff. jet system power, PJSE                 (W)
     % [59] STBD: Eff. jet system power, PJSE                 (W)
     
-    MSPortEFStat1 = 0.5*saltwaterdensity*MSPortVolFR*(MSPortInlVel^2)*(1-FSWakeFraction)^2;
-    MSStbdEFStat1 = 0.5*saltwaterdensity*MSStbdVolFR*(MSStbdInlVel^2)*(1-FSWakeFraction)^2;
-    MSPortEFStat7 = 0.5*saltwaterdensity*MSPortVolFR*MSPortJetVel^2;
-    MSStbdEFStat7 = 0.5*saltwaterdensity*MSPortVolFR*MSStbdJetVel^2;
-    MSEFStat0     = 0.5*saltwaterdensity*FSSpeed^2;
-    fullScaleDataArray(k,53) = MSPortEFStat1;
-    fullScaleDataArray(k,54) = MSStbdEFStat1;
-    fullScaleDataArray(k,55) = MSPortEFStat7;
-    fullScaleDataArray(k,56) = MSStbdEFStat7;
-    fullScaleDataArray(k,57) = MSEFStat0;
-    fullScaleDataArray(k,58) = MSPortEFStat7-MSPortEFStat1;
-    fullScaleDataArray(k,59) = MSStbdEFStat7-MSStbdEFStat1;
+    FSPortPJSE    = FSPortEFStat7-FSPortEFStat1;
+    FSStbdPJSE    = FSStbdEFStat7-FSStbdEFStat1;
+    fullScaleDataArray(k,53) = FSPortEFStat1;
+    fullScaleDataArray(k,54) = FSStbdEFStat1;
+    fullScaleDataArray(k,55) = FSPortEFStat7;
+    fullScaleDataArray(k,56) = FSStbdEFStat7;
+    fullScaleDataArray(k,57) = FSEFStat0;
+    fullScaleDataArray(k,58) = FSPortPJSE;
+    fullScaleDataArray(k,59) = FSStbdPJSE;
     
-    % 14. Additional variables --------------------------------------------
+    % 14. Thrust effective power, PTE -------------------------------------
     
-    % [60] Thrust effective power, PTE                       (W)
-    % [61] Thrust effective power, PTE                       (kW)
-    % [62] Thrust effective power, PTE                       (MW)
+    % [60] PORT: Thrust effective power, PTE                 (W)
+    % [61] STBD: Thrust effective power, PTE                 (W)
     
-    PTEW  = (FSPortGrosThrust+FSStbdGrosThrust)*FSSpeed;
-    PTEkW = PTEW/1000;
-    PTEmW = PTEkW/1000;
-    fullScaleDataArray(k,60) = PTEW;
-    fullScaleDataArray(k,61) = PTEkW;
-    fullScaleDataArray(k,62) = PTEmW;
+    FSPortPTE = FSPortGrosThrust*FSSpeed;
+    FSStbdPTE = FSStbdGrosThrust*FSSpeed;
+    fullScaleDataArray(k,60) = FSPortPTE;
+    fullScaleDataArray(k,61) = FSStbdPTE;
+    
+    % 15. Additional efficiencies -----------------------------------------
+    
+    % [62] PORT: Nozzle efficiency, nn                       (-)
+    % [63] STBD: Nozzle efficiency, nn                       (-)
+    % [64] PORT: Ideal efficiency, nI                        (-)
+    % [65] STBD: Ideal efficiency, nI                        (-)
+    % [66] PORT: Jet system efficiency, nJS                  (-)
+    % [67] STBD: Jet system efficiency, nJS                  (-)
+    
+    FSPortJetSysEff = FSPortPTE/FSPortPJSE;
+    FSStbdJetSysEff = FSStbdPTE/FSStbdPJSE;
+    fullScaleDataArray(k,62) = FSPortNozzleEff;
+    fullScaleDataArray(k,63) = FSStbdNozzleEff;
+    fullScaleDataArray(k,64) = FSPortIdealEff;
+    fullScaleDataArray(k,65) = FSStbdIdealEff;
+    fullScaleDataArray(k,66) = FSPortJetSysEff;
+    fullScaleDataArray(k,67) = FSStbdJetSysEff;
+    
+    % Overall propulsive efficiency based on nD = PE/PD where PD = PJSE/hJS
+    FSPortPDETemp = FSPortPJSE/FSPortJetSysEff;
+    FSStbdPDETemp = FSStbdPJSE/FSStbdJetSysEff;
+    fullScaleDataArray(k,68) = PEW/(FSPortPDETemp+FSStbdPDETemp);
     
 end
 
@@ -2145,19 +2218,21 @@ end
 %# 1. Overall propulsive efficiency, nD
 %# ------------------------------------------------------------------------
 
-figurename = 'Full Scale Extrapolation: Propulsive efficiency, Flow and Head Coefficients';
+figurename = 'Full Scale Extrapolation: Propulsive efficiency';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
 
-% set(gcf, 'PaperSize', [19 19]);
-% set(gcf, 'PaperPositionMode', 'manual');
-% set(gcf, 'PaperPosition', [0 0 19 19]);
-%
-% set(gcf, 'PaperUnits', 'centimeters');
-% set(gcf, 'PaperSize', [19 19]);
-% set(gcf, 'PaperPositionMode', 'manual');
-% set(gcf, 'PaperPosition', [0 0 19 19]);
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
 
 % Fonts and colours -------------------------------------------------------
 setGeneralFontName = 'Helvetica';
@@ -2187,20 +2262,29 @@ if enableBlackAndWhitePlot == 1
     setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
 end
 
-%# PLOT #1: Overall propulsive efficiency *********************************
-subplot(1,2,1);
+%# ************************************************************************
+%# SUBPLOT #1: Overall propulsive efficiency
+%# ************************************************************************
+%subplot(1,2,1);
 
 %# X and Y axis -----------------------------------------------------------
 
-x = fullScaleDataArray(:,1);
-y = fullScaleDataArray(:,46);
-y = [0.42 0.45 0.46 0.48 0.49 0.52 0.55 0.55 0.52];
+%# Overall propulsive efficiency where nD = PE/PD where PD = PPE/hpump
+x1 = fullScaleDataArray(:,3);
+y1 = fullScaleDataArray(:,46);
+
+%# Overall propulsive efficiency where nD = PE/PD where PD = PJSE/hJS
+x2 = fullScaleDataArray(:,3);
+y2 = fullScaleDataArray(:,68);
 
 %# Plotting ---------------------------------------------------------------
-h = plot(x,y,'*');
-xlabel('{\bf Froude length number, F_{R} (-)}','FontSize',setGeneralFontSize);
+h = plot(x1,y1,'*',x2,y2,'*');
+%xlabel('{\bf Froude length number, F_{R} (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Overall propulsive efficiency, \eta_{D} (-)}','FontSize',setGeneralFontSize);
-title('{\bf Overall propulsive efficiency}','FontSize',setGeneralFontSize);
+if enablePlotTitle == 1
+    title('{\bf Overall propulsive efficiency}','FontSize',setGeneralFontSize);
+end
 grid on;
 box on;
 axis square;
@@ -2211,52 +2295,241 @@ setLineWidthMarker = 2;
 setLineWidth       = 1;
 setLineStyle       = '-.';
 set(h(1),'Color',setColor{3},'Marker',setMarker{10},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(2),'Color',setColor{1},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
 set(gcf,'Color',[1,1,1]);
 
 %# Axis limitations
-set(gca,'XLim',[0.22 0.42]);
-set(gca,'XTick',[0.22:0.02:0.42]);
+%set(gca,'XLim',[0.22 0.42]);
+%set(gca,'XTick',[0.22:0.02:0.42]);
+set(gca,'XLim',[13 25]);
+set(gca,'XTick',[13:1:25]);
 set(gca,'YLim',[0 1]);
 set(gca,'YTick',[0:0.1:1]);
-set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'))
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
 
 %# Legend
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-%hleg1 = legend('Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-%set(hleg1,'Location','NorthEast');
+hleg1 = legend('\eta_{D}=P_{E}/P_{D} where P_{D}=P_{PE}/\eta_{pump}','\eta_{D}=P_{E}/P_{D} where P_{D}=P_{JSE}/\eta_{JS}');
+set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
 %legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
 set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
-%# PLOT #2: Flow and head coefficients ************************************
-subplot(1,2,2);
+%# ************************************************************************
+%# SUBPLOT #2: Flow and head coefficients
+%# ************************************************************************
+% subplot(1,2,2);
+% 
+% %# X and Y axis -----------------------------------------------------------
+% 
+% % Port
+% x1 = fullScaleDataArray(:,32);
+% x1 = [0.9986 0.9616 0.9246 0.8876 0.8506 0.8136 0.7767 0.7397 0.5548];
+% y1 = fullScaleDataArray(:,34);
+% y1 = [2.2694 2.6225 2.9896 3.3148 3.6135 3.9261 4.1299 4.2653 4.3965];
+% 
+% % Starboard
+% x2 = fullScaleDataArray(:,33);
+% x2 = [0.9986 0.9616 0.9246 0.8876 0.8506 0.8136 0.7767 0.7397 0.5548];
+% y2 = fullScaleDataArray(:,35);
+% y2 = [2.1694 2.5225 2.8896 3.2148 3.5135 3.8261 4.0299 4.1653 4.2965];
+% 
+% %# Plotting ---------------------------------------------------------------
+% h = plot(x1,y1,'*',x2,y2,'*');
+% xlabel('{\bf Flow coefficient, \phi (-)}','FontSize',setGeneralFontSize);
+% ylabel('{\bf Head coefficient, \psi (-)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+%     title('{\bf Flow and head coefficients}','FontSize',setGeneralFontSize);
+% end
+% grid on;
+% box on;
+% axis square;
+% 
+% %# Line, colors and markers
+% setMarkerSize      = 11;
+% setLineWidthMarker = 2;
+% setLineWidth       = 1;
+% setLineStyle       = '-.';
+% set(h(1),'Color',setColor{2},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+% set(h(2),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+% 
+% %# Set plot figure background to a defined color
+% %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+% set(gcf,'Color',[1,1,1]);
+% 
+% %# Axis limitations
+% xStart = str2num(sprintf('%.1f',min(x1)))-0.1;
+% xEnd   = str2num(sprintf('%.1f',max(x1)))+0.1;
+% yStart = str2num(sprintf('%.1f',min(y1)))-0.1;
+% yEnd   = str2num(sprintf('%.1f',max(y1)))+0.1;
+% set(gca,'XLim',[xStart xEnd]);
+% set(gca,'XTick',[xStart:0.1:xEnd]);
+% if mod(yEnd-yStart,0.2)== 0
+%     SetyEnd = yEnd;
+% else
+%     SetyEnd = yEnd+0.1;
+% end
+% set(gca,'YLim',[yStart SetyEnd]);
+% set(gca,'YTick',[yStart:0.2:SetyEnd]);
+% set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
+% set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
+% 
+% %# Legend
+% %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+% hleg1 = legend('Port WJ','Starboard WJ');
+% set(hleg1,'Location','NorthEast');
+% set(hleg1,'Interpreter','none');
+% %legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ********************************************************************
+%# Save plot as PNG
+%# ********************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title ---------------------------------------------------------
+if enablePlotMainTitle == 1
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');
+end
+
+%# Save plots as PDF, PNG and EPS -------------------------------------
+minRun = min(resultsArraySPP(:,1));
+maxRun = max(resultsArraySPP(:,1));
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Full_Scale_Overall_Propulsive_Efficiency_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ------------------------------------------------------------------------
+%# 2. Power plots (two propulsion systems ==>> a single demihull)
+%# ------------------------------------------------------------------------
+
+figurename = 'Full Scale Extrapolation: Power plots (two propulsion systems for a single demihull)';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
 
 %# X and Y axis -----------------------------------------------------------
 
-% Port
-x1 = fullScaleDataArray(:,32);
-x1 = [0.9986 0.9616 0.9246 0.8876 0.8506 0.8136 0.7767 0.7397 0.5548];
-y1 = fullScaleDataArray(:,34);
-y1 = [2.2694 2.6225 2.9896 3.3148 3.6135 3.9261 4.1299 4.2653 4.3965];
+[m,n] = size(fullScaleDataArray);
 
-% Starboard
-x2 = fullScaleDataArray(:,33);
-x2 = [0.9986 0.9616 0.9246 0.8876 0.8506 0.8136 0.7767 0.7397 0.5548];
-y2 = fullScaleDataArray(:,35);
-y2 = [2.1694 2.5225 2.8896 3.2148 3.5135 3.8261 4.0299 4.1653 4.2965];
+%# Effective power, PE
+x1 = fullScaleDataArray(:,3);
+y1 = fullScaleDataArray(:,15);
+
+%# Delivered power, PD
+TotalPower = [];
+for kx=1:m
+    TotalPower(kx) = (fullScaleDataArray(kx,42)+fullScaleDataArray(kx,43))/1000^2;
+end
+x2 = fullScaleDataArray(:,3);
+y2 = TotalPower;
+
+%# Delivered power, PD (Sea Trials Data)
+%x3 = XXX;
+%y3 = YYY;
+
+%# Pump effective power, PPE
+TotalPower = [];
+for kx=1:m
+    TotalPower(kx) = (fullScaleDataArray(kx,40)+fullScaleDataArray(kx,41))/1000^2;
+end
+x4 = fullScaleDataArray(:,3);
+y4 = TotalPower;
+
+%# Effective jet system power, PJSE
+TotalPower = [];
+for kx=1:m
+    TotalPower(kx) = (fullScaleDataArray(kx,58)+fullScaleDataArray(kx,59))/1000^2;
+end
+x5 = fullScaleDataArray(:,3);
+y5 = TotalPower;
+
+%# Thrust effective power, PTE
+TotalPower = [];
+for kx=1:m
+    TotalPower(kx) = (fullScaleDataArray(kx,60)+fullScaleDataArray(kx,61))/1000^2;
+end
+x6 = fullScaleDataArray(:,3);
+y6 = TotalPower;
 
 %# Plotting ---------------------------------------------------------------
-h = plot(x1,y1,'*',x2,y2,'*');
-xlabel('{\bf Flow coefficient, \phi (-)}','FontSize',setGeneralFontSize);
-ylabel('{\bf Head coefficient, \psi (-)}','FontSize',setGeneralFontSize);
-title('{\bf Flow and head coefficients}','FontSize',setGeneralFontSize);
+%h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*',x5,y5,'*',x6,y6,'*');
+h = plot(x1,y1,'*',x2,y2,'*',x4,y4,'*',x5,y5,'*',x6,y6,'*');
+%xlabel('{\bf Froude length number, F_{R} (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Power (MW)}','FontSize',setGeneralFontSize);
+if enablePlotTitle == 1
+    title('{\bf Power estimates}','FontSize',setGeneralFontSize);
+end
 grid on;
 box on;
 axis square;
@@ -2266,35 +2539,32 @@ setMarkerSize      = 11;
 setLineWidthMarker = 2;
 setLineWidth       = 1;
 setLineStyle       = '-.';
-set(h(1),'Color',setColor{2},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-set(h(2),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
 set(gcf,'Color',[1,1,1]);
 
 %# Axis limitations
-xStart = str2num(sprintf('%.1f',min(x1)))-0.1;
-xEnd   = str2num(sprintf('%.1f',max(x1)))+0.1;
-yStart = str2num(sprintf('%.1f',min(y1)))-0.1;
-yEnd   = str2num(sprintf('%.1f',max(y1)))+0.1;
-set(gca,'XLim',[xStart xEnd]);
-set(gca,'XTick',[xStart:0.1:xEnd]);
-if mod(yEnd-yStart,0.2)== 0
-    SetyEnd = yEnd;
-else
-    SetyEnd = yEnd+0.1;
-end
-set(gca,'YLim',[yStart SetyEnd]);
-set(gca,'YTick',[yStart:0.2:SetyEnd]);
-set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
-set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
+set(gca,'XLim',[13 25]);
+set(gca,'XTick',[13:1:25]);
+set(gca,'YLim',[0 6]);
+set(gca,'YTick',[0:1:6]);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
 
 %# Legend
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-hleg1 = legend('Port WJ','Starboard WJ');
-set(hleg1,'Location','NorthEast');
-set(hleg1,'Interpreter','none');
+%hleg1 = legend('Effective power (P_{E})','Delivered power (P_{D})','Delivered power (P_{D}) from sea trials data)','Pump effective power (P_{PE})','Effective jet system power (P_{JSE})','Thrust effective power (P_{TE})');
+hleg1 = legend('Effective power (P_{E})','Delivered power (P_{D})','Pump effective power (P_{PE})','Effective jet system power (P_{JSE})','Thrust effective power (P_{TE})');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
 %legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
@@ -2309,18 +2579,20 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
 
 %# Figure size printed on paper
-set(gcf, 'PaperUnits','centimeters');
-set(gcf, 'PaperSize',[XPlot YPlot]);
-set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-set(gcf, 'PaperOrientation','portrait');
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
 
 %# Plot title ---------------------------------------------------------
-%if enablePlotMainTitle == 1
-annotation('textbox', [0 0.9 1 0.1], ...
-    'String', strcat('{\bf ', figurename, '}'), ...
-    'EdgeColor', 'none', ...
-    'HorizontalAlignment', 'center');
-%end
+if enablePlotMainTitle == 1
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');
+end
 
 %# Save plots as PDF, PNG and EPS -------------------------------------
 minRun = min(resultsArraySPP(:,1));
@@ -2330,10 +2602,164 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Full_Scale_Overall_Propulsive_Efficiency_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Full_Scale_Power_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
-close;
+%close;
+
+
+%# ------------------------------------------------------------------------
+%# 3. Speed plots
+%# ------------------------------------------------------------------------
+
+figurename = 'Full Scale Extrapolation: Jet velocitiy and inlet velocity';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# X and Y axis -----------------------------------------------------------
+
+[m,n] = size(fullScaleDataArray);
+
+%# Effective power, PE
+x1 = fullScaleDataArray(:,3);
+y1 = fullScaleDataArray(:,2);
+
+%# Delivered power, PD
+x2 = fullScaleDataArray(:,3);
+y2 = fullScaleDataArray(:,26);
+
+%# Delivered power, PD
+x3 = fullScaleDataArray(:,3);
+y3 = fullScaleDataArray(:,27);
+
+%# Delivered power, PD
+x4 = fullScaleDataArray(:,3);
+y4 = fullScaleDataArray(:,28);
+
+%# Delivered power, PD
+x5 = fullScaleDataArray(:,3);
+y5 = fullScaleDataArray(:,29);
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*',x5,y5,'*');
+xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Jet and inlet velocity (m/s)}','FontSize',setGeneralFontSize);
+if enablePlotTitle == 1
+    title('{\bf Jet velocitiy and inlet velocity}','FontSize',setGeneralFontSize);
+end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+setMarkerSize      = 11;
+setLineWidthMarker = 2;
+setLineWidth       = 1;
+setLineStyle       = '-.';
+setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+set(gca,'XLim',[13 25]);
+set(gca,'XTick',[13:1:25]);
+set(gca,'YLim',[0 24]);
+set(gca,'YTick',[0:4:24]);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
+
+%# Legend
+%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+hleg1 = legend('Ship speed (v_{s})','Port: Jet velocity (v_{j})','Stbd: Jet velocity (v_{j})','Port: Inlet velocity (v_{i})','Stbd: Inlet velocity (v_{i})');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ********************************************************************
+%# Save plot as PNG
+%# ********************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title ---------------------------------------------------------
+if enablePlotMainTitle == 1
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');
+end
+
+%# Save plots as PDF, PNG and EPS -------------------------------------
+minRun = min(resultsArraySPP(:,1));
+maxRun = max(resultsArraySPP(:,1));
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Full_Scale_Speed_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
 
 
 %# ************************************************************************

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  October 15, 2014
+%# Date       :  October 22, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -99,6 +99,9 @@ enableBLDepthMarker       = 1;    % Show marker for estimated BL depth
 % Comparison data
 enableMARINBLData         = 1;    % Show MARIN 112m BL data (cond. T1)
 enableAMCLJ120EBLData     = 0;    % Show AMC LJ120E BL data (Brandner 2007)
+
+% Scaled to A4 paper
+enableA4PaperSizePlot     = 0;    % Show plots scale to A4 size
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
@@ -625,14 +628,16 @@ else
             
             %# Paper size settings ----------------------------------------
             
-            set(gcf, 'PaperSize', [19 19]);
-            set(gcf, 'PaperPositionMode', 'manual');
-            set(gcf, 'PaperPosition', [0 0 19 19]);
-            
-            set(gcf, 'PaperUnits', 'centimeters');
-            set(gcf, 'PaperSize', [19 19]);
-            set(gcf, 'PaperPositionMode', 'manual');
-            set(gcf, 'PaperPosition', [0 0 19 19]);
+            if enableA4PaperSizePlot == 1
+                set(gcf, 'PaperSize', [19 19]);
+                set(gcf, 'PaperPositionMode', 'manual');
+                set(gcf, 'PaperPosition', [0 0 19 19]);
+
+                set(gcf, 'PaperUnits', 'centimeters');
+                set(gcf, 'PaperSize', [19 19]);
+                set(gcf, 'PaperPositionMode', 'manual');
+                set(gcf, 'PaperPosition', [0 0 19 19]);
+            end
             
             % Fonts and colours -------------------------------------------
             setGeneralFontName = 'Helvetica';
@@ -912,10 +917,12 @@ else
             set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
             
             %# Figure size printed on paper
-            set(gcf, 'PaperUnits','centimeters');
-            set(gcf, 'PaperSize',[XPlot YPlot]);
-            set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-            set(gcf, 'PaperOrientation','portrait');
+            if enableA4PaperSizePlot == 1
+                set(gcf, 'PaperUnits','centimeters');
+                set(gcf, 'PaperSize',[XPlot YPlot]);
+                set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+                set(gcf, 'PaperOrientation','portrait');
+            end
             
             %# Plot title -------------------------------------------------
             if enablePlotMainTitle == 1
@@ -989,14 +996,16 @@ f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
 
-set(gcf, 'PaperSize', [19 19]);
-set(gcf, 'PaperPositionMode', 'manual');
-set(gcf, 'PaperPosition', [0 0 19 19]);
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
 
-set(gcf, 'PaperUnits', 'centimeters');
-set(gcf, 'PaperSize', [19 19]);
-set(gcf, 'PaperPositionMode', 'manual');
-set(gcf, 'PaperPosition', [0 0 19 19]);
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
 
 % Fonts and colours -------------------------------------------------------
 setGeneralFontName = 'Helvetica';
@@ -1240,10 +1249,12 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
 
 %# Figure size printed on paper
-set(gcf, 'PaperUnits','centimeters');
-set(gcf, 'PaperSize',[XPlot YPlot]);
-set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-set(gcf, 'PaperOrientation','portrait');
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
 
 %# Plot title ---------------------------------------------------------
 if enablePlotMainTitle == 1
@@ -1275,14 +1286,16 @@ f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
 
-set(gcf, 'PaperSize', [19 19]);
-set(gcf, 'PaperPositionMode', 'manual');
-set(gcf, 'PaperPosition', [0 0 19 19]);
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
 
-set(gcf, 'PaperUnits', 'centimeters');
-set(gcf, 'PaperSize', [19 19]);
-set(gcf, 'PaperPositionMode', 'manual');
-set(gcf, 'PaperPosition', [0 0 19 19]);
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
 
 % Fonts and colours -------------------------------------------------------
 setGeneralFontName = 'Helvetica';
@@ -1481,10 +1494,12 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
 
 %# Figure size printed on paper
-set(gcf, 'PaperUnits','centimeters');
-set(gcf, 'PaperSize',[XPlot YPlot]);
-set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-set(gcf, 'PaperOrientation','portrait');
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
 
 %# Plot title ---------------------------------------------------------
 if enablePlotMainTitle == 1
