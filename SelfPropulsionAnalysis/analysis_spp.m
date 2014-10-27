@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 22, 2014
+%# Date       :  October 28, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -2145,8 +2145,8 @@ for k=1:m
     FSStbdIVR = MSStbdInlVel/FSSpeed;
     FSPortJVR = MSPortJetVel/FSSpeed;
     FSStbdJVR = MSStbdJetVel/FSSpeed;
-    FSPortNVR = MSPortJetVel/MSPortInlVel;
-    FSStbdNVR = MSStbdJetVel/MSStbdInlVel;
+    FSPortNVR = MSPortJetVel/FSSpeed; %MSPortInlVel
+    FSStbdNVR = MSStbdJetVel/FSSpeed; %MSStbdInlVel
     fullScaleDataArray(k,47) = FSPortIVR;
     fullScaleDataArray(k,48) = FSStbdIVR;
     fullScaleDataArray(k,49) = FSPortJVR;

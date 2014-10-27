@@ -2,8 +2,8 @@
 %# Resistance Test Analysis
 %# ------------------------------------------------------------------------
 %#
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  October 8, 2014
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  October 28, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -154,11 +154,14 @@ enablePlotTitle           = 1;    % Show plot title above plot
 enableTextOnPlot          = 0;    % Show text on plot
 enableBlackAndWhitePlot   = 0;    % Show plot in black and white
 enableEqnOfFitPlot        = 0;    % Show equations of fit
-enableCommandWindowOutput = 0;    % Show command windown ouput
+enableCommandWindowOutput = 1;    % Show command windown ouput
 
 % Special plots
 enableRawDataPlot         = 1;    % Raw data plots of speed, fwd and aft LVDT and drag
 enableHvsRtmTvsRtmPlot    = 0;    % Heave vs. Rtm and trim vs. Rtm
+
+% Scaled to A4 paper
+enableA4PaperSizePlot     = 1;    % Show plots scale to A4 size
 
 %# ------------------------------------------------------------------------
 %# END: PLOT SWITCHES
@@ -322,8 +325,8 @@ endRun   = 249;     % Stop at run y
 %endRun   = 231;     % Stop at run y
 
 % Single runs
-%startRun = 163;    % Start at run x
-%endRun   = 163;    % Stop at run y
+startRun = 63;    % Start at run x
+endRun   = 63;    % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
@@ -415,7 +418,7 @@ else
 end
 
 %# _time_series_data directory --------------------------------------------
-fPath = '_time_series_data/';
+fPath = '_plots/_time_series_data/';
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
@@ -423,7 +426,7 @@ else
 end
 
 %# _time_series_plots directory -------------------------------------------
-setDirName = '_time_series_plots';
+setDirName = '_plots/_time_series_plots';
 
 fPath = setDirName;
 if isequal(exist(fPath, 'dir'),7)
@@ -457,7 +460,7 @@ else
 end
 
 %# _time_series_drag_plots directory --------------------------------------
-fPath = '_time_series_drag_plots/';
+fPath = '_plots/_time_series_drag_plots/';
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
@@ -499,7 +502,33 @@ else
 end
 
 %# _averaged directory ----------------------------------------------------
-fPath = sprintf('_plots/%s', '_averaged');
+setDirName = '_averaged';
+
+fPath = sprintf('_plots/%s', setDirName);
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PDF directory
+fPath = sprintf('_plots/%s/%s', setDirName, 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('_plots/%s/%s', setDirName, 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('_plots/%s/%s', setDirName, 'EPS');
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
@@ -630,7 +659,7 @@ for k=startRun:endRun
     
     % Save ALL time series data
     tsA = tsArray;
-    filenameDat = sprintf('_time_series_data/R%s.dat',runnumber);
+    filenameDat = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
     csvwrite(filenameDat, tsA)                                     % Export matrix tsA to a file delimited by the comma character
     %filenameTxt = sprintf('_time_series_data/R%s.txt',runnumber);
     %dlmwrite(filenameTxt, tsA, 'delimiter', '\t', 'precision', 4)  % Export matrix tsA to a file delimited by the tab character and using a precision of four significant digits
@@ -657,14 +686,16 @@ for k=startRun:endRun
         
         %# Paper size settings --------------------------------------------
         
-        set(gcf, 'PaperSize', [19 19]);
-        set(gcf, 'PaperPositionMode', 'manual');
-        set(gcf, 'PaperPosition', [0 0 19 19]);
-        
-        set(gcf, 'PaperUnits', 'centimeters');
-        set(gcf, 'PaperSize', [19 19]);
-        set(gcf, 'PaperPositionMode', 'manual');
-        set(gcf, 'PaperPosition', [0 0 19 19]);
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+            
+            set(gcf, 'PaperUnits', 'centimeters');
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+        end
         
         % Fonts and colours -----------------------------------------------
         setGeneralFontName = 'Helvetica';
@@ -720,10 +751,10 @@ for k=startRun:endRun
         %axis square;
         
         %# Line width
-        setMarkerSize      = 4;
+        setMarkerSize      = 6;
         setLineWidthMarker = 0.5;
         setLineWidth       = 2;
-        setLineStyle       = '-';
+        setLineStyle       = '-.';
         set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
         
@@ -765,10 +796,10 @@ for k=startRun:endRun
         %axis square;
         
         %# Line width
-        setMarkerSize      = 4;
+        setMarkerSize      = 6;
         setLineWidthMarker = 0.5;
         setLineWidth       = 2;
-        setLineStyle       = '-';
+        setLineStyle       = '-.';
         set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
         
@@ -810,10 +841,10 @@ for k=startRun:endRun
         %axis square;
         
         %# Line width
-        setMarkerSize      = 4;
+        setMarkerSize      = 6;
         setLineWidthMarker = 0.5;
         setLineWidth       = 2;
-        setLineStyle       = '-';
+        setLineStyle       = '-.';
         set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
         
@@ -855,10 +886,10 @@ for k=startRun:endRun
         %axis square;
         
         %# Line width
-        setMarkerSize      = 4;
+        setMarkerSize      = 6;
         setLineWidthMarker = 0.5;
         setLineWidth       = 2;
-        setLineStyle       = '-';
+        setLineStyle       = '-.';
         set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
         
@@ -886,10 +917,12 @@ for k=startRun:endRun
         set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
         
         %# Figure size printed on paper
-        set(gcf, 'PaperUnits','centimeters');
-        set(gcf, 'PaperSize',[XPlot YPlot]);
-        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-        set(gcf, 'PaperOrientation','portrait');
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperUnits','centimeters');
+            set(gcf, 'PaperSize',[XPlot YPlot]);
+            set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+            set(gcf, 'PaperOrientation','portrait');
+        end
         
         %# Plot title ---------------------------------------------------------
         if enablePlotMainTitle == 1
@@ -913,7 +946,7 @@ for k=startRun:endRun
         setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
         setFileFormat = {'PDF' 'PNG' 'EPS'};
         for kl=1:3
-            plotsavename = sprintf('%s/%s/Run_%s_Time_Series_Real_Units_Plot.%s', '_time_series_plots', setFileFormat{kl}, num2str(k), setFileFormat{kl});
+            plotsavename = sprintf('_plots/%s/%s/Run_%s_Time_Series_Real_Units_Plot.%s', '_time_series_plots', setFileFormat{kl}, num2str(k), setFileFormat{kl});
             print(gcf, setSaveFormat{kl}, plotsavename);
         end
         close;
@@ -994,19 +1027,21 @@ for k=startRun:endRun
         end
         
         % Plotting
-        figurename = sprintf('Run %s (Fr=%s): %s: Heave vs. Rtm and trim vs. Rtm Plots', num2str(k), modelFroudeNo, testName);
+        figurename = sprintf('Run %s (Fr=%s): %s: Heave vs. R_{Tm} and trim vs. R_{Tm} Plots', num2str(k), modelFroudeNo, testName);
         f = figure('Name',figurename,'NumberTitle','off');
         
         %# Paper size settings --------------------------------------------
         
-        set(gcf, 'PaperSize', [19 19]);
-        set(gcf, 'PaperPositionMode', 'manual');
-        set(gcf, 'PaperPosition', [0 0 19 19]);
-        
-        set(gcf, 'PaperUnits', 'centimeters');
-        set(gcf, 'PaperSize', [19 19]);
-        set(gcf, 'PaperPositionMode', 'manual');
-        set(gcf, 'PaperPosition', [0 0 19 19]);
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+            
+            set(gcf, 'PaperUnits', 'centimeters');
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+        end
         
         % Fonts and colours -----------------------------------------------
         setGeneralFontName = 'Helvetica';
@@ -1064,7 +1099,7 @@ for k=startRun:endRun
         xlim([round(x(1)) round(x(end))]);
         
         % Colors and markers
-        setMarkerSize      = 4;
+        setMarkerSize      = 6;
         setLineWidthMarker = 0.5;
         setLineWidth       = 2;
         setLineStyle       = '-';
@@ -1099,7 +1134,7 @@ for k=startRun:endRun
         xlim([round(x(1)) round(x(end))]);
         
         % Colors and markers
-        setMarkerSize      = 4;
+        setMarkerSize      = 6;
         setLineWidthMarker = 0.5;
         setLineWidth       = 2;
         setLineStyle       = '-';
@@ -1125,7 +1160,7 @@ for k=startRun:endRun
             title('{\bf Time vs. R_{tm}}','FontSize',setGeneralFontSize);
         end
         xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
-        ylabel('{\bf R_{tm} [N]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf R_{Tm} [N]}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
@@ -1134,7 +1169,7 @@ for k=startRun:endRun
         xlim([round(x(1)) round(x(end))]);
         
         % Colors and markers
-        setMarkerSize      = 4;
+        setMarkerSize      = 6;
         setLineWidthMarker = 0.5;
         setLineWidth       = 2;
         setLineStyle       = '-';
@@ -1157,10 +1192,10 @@ for k=startRun:endRun
         
         h = plot(x,y,'*');
         if enablePlotTitle == 1
-            title('{\bf Heave vs. R_{tm}}','FontSize',setGeneralFontSize);
+            title('{\bf Heave vs. R_{Tm}}','FontSize',setGeneralFontSize);
         end
         xlabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
-        ylabel('{\bf Total resistance R_{tm} [N]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Total resistance R_{Tm} [N]}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
@@ -1174,8 +1209,8 @@ for k=startRun:endRun
         %set(h(1),'Color',[0 0 1],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);
         
         % Limit decimals in X and Y axis numbers
-        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
-        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
         
         %# Font sizes and border --------------------------------------------------
         
@@ -1189,10 +1224,10 @@ for k=startRun:endRun
         
         h = plot(x,y,'*');
         if enablePlotTitle == 1
-            title('{\bf Trim vs. R_{tm}}','FontSize',setGeneralFontSize);
+            title('{\bf Trim vs. R_{Tm}}','FontSize',setGeneralFontSize);
         end
         xlabel('{\bf Trim [deg]}','FontSize',setGeneralFontSize);
-        ylabel('{\bf Total resistance R_{tm} [N]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Total resistance R_{Tm} [N]}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
@@ -1206,8 +1241,8 @@ for k=startRun:endRun
         %set(h(1),'Color',[0 0 1],'Marker','*','MarkerSize',1,'LineStyle','-','linewidth',1);
         
         % Limit decimals in X and Y axis numbers
-        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
-        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
         
         %# Font sizes and border --------------------------------------------------
         
@@ -1221,10 +1256,12 @@ for k=startRun:endRun
         set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
         
         %# Figure size printed on paper
-        set(gcf, 'PaperUnits','centimeters');
-        set(gcf, 'PaperSize',[XPlot YPlot]);
-        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-        set(gcf, 'PaperOrientation','portrait');
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperUnits','centimeters');
+            set(gcf, 'PaperSize',[XPlot YPlot]);
+            set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+            set(gcf, 'PaperOrientation','portrait');
+        end
         
         %# Plot title ---------------------------------------------------------
         if enablePlotMainTitle == 1

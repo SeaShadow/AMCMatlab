@@ -2,8 +2,8 @@
 %# Self-Propulsion Test - Boundary Layer Measurements
 %# ------------------------------------------------------------------------
 %#
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  October 22, 2014
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  October 28, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
