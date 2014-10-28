@@ -2,8 +2,8 @@
 %# Resistance Test Analysis - Heave Averaging Investigation
 %# ------------------------------------------------------------------------
 %#
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  September 16, 2013
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  October 29, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -126,6 +126,25 @@ clc
 allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
 
+
+%# ************************************************************************
+%# START: PLOT SWITCHES: 1 = ENABLED
+%#                       0 = DISABLED
+%# ------------------------------------------------------------------------
+
+% Plot titles, colours, etc.
+enablePlotMainTitle     = 1;    % Show plot title in saved file
+enablePlotTitle         = 1;    % Show plot title above plot
+enableBlackAndWhitePlot = 1;    % Show plot in black and white only
+
+% Scaled to A4 paper
+enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
+
+%# ------------------------------------------------------------------------
+%# END: PLOT SWITCHES
+%# ************************************************************************
+
+
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -139,6 +158,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# END DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 %# -------------------------------------------------------------------------
 %# Read results DAT file
@@ -212,6 +232,7 @@ if exist('results','var') == 0
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     break;
 end
+
 
 % *************************************************************************
 % START: PLOTTING AVERAGED DATA
@@ -334,8 +355,49 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     % *********************************************************************
     % Averaged values using data from all repeat runs
     % *********************************************************************
-    figurename = sprintf('%s (using all repeat runs):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    figurename = sprintf('%s (Repeated Runs):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 9;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'v';'o';'^';'s';'<';'d';'>';'p';'h'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,1)
@@ -377,27 +439,36 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
         x12 = 0; y12 = 0;
     end
     
-    h = plot(x7,y7,'*',x7avg,y7avg,'-',x8,y8,'+',x8avg,y8avg,'-',x9,y9,'x',x9avg,y9avg,'-',x10,y10,'o',x10avg,y10avg,'-',x11,y11,'s',x11avg,y11avg,'-',x12,y12,'d',x12avg,y12avg,'-','MarkerSize',7);
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Heave [mm]}');
-    title('{\bf Repeated and averaged runs}');
+    % Plotting
+    h = plot(x7,y7,'*',x7avg,y7avg,'*',x8,y8,'*',x8avg,y8avg,'*',x9,y9,'*',x9avg,y9avg,'*',x10,y10,'*',x10avg,y10avg,'*',x11,y11,'*',x11avg,y11avg,'*',x12,y12,'*',x12avg,y12avg,'*');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Repeated runs}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     axis square;
     
-    % Colors and markers
-    set(h(1),'Color',[0 0 1],'Marker','*');
-    set(h(2),'Color',[0 0 1],'LineStyle',':','linewidth',1);
-    set(h(3),'Color',[0 0.5 0],'Marker','+');
-    set(h(4),'Color',[0 0.5 0],'LineStyle',':','linewidth',1);
-    set(h(5),'Color',[1 0 0],'Marker','x');
-    set(h(6),'Color',[1 0 0],'LineStyle',':','linewidth',1);
-    set(h(7),'Color',[0 0.75 0.75],'Marker','o');
-    set(h(8),'Color',[0 0.75 0.75],'LineStyle',':','linewidth',1);
-    set(h(9),'Color',[0.75 0 0.75],'Marker','s');
-    set(h(10),'Color',[0.75 0 0.75],'LineStyle',':','linewidth',1);
-    set(h(11),'Color',[0.75 0.75 0],'Marker','d');
-    set(h(12),'Color',[0.75 0.75 0],'LineStyle',':','linewidth',1);
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = ':';
+    % Markers
+    setCurveNo=1;set(h(1),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(3),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(5),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(7),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(9),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=6;set(h(11),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    % Lines
+    setCurveNo=7;set(h(2),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=8;set(h(4),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=9;set(h(6),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=10;set(h(8),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=11;set(h(10),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=12;set(h(12),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -408,12 +479,19 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     set(gca,'XTick',[0.1:0.05:0.5]);
     set(gca,'YLim',[-14 2]);
     set(gca,'YTick',[-14:2:2]);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
     
     %# Legend
     hleg1 = legend([h(1) h(3) h(5) h(7) h(9) h(11)],'Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     % Model speed vs. model heave (mm) ------------------------------------
     subplot(1,2,2)
@@ -449,67 +527,130 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
         x12 = 0; y12 = 0;
     end
     
-    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'+',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',7);
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Heave [mm]}');
-    title('{\bf Averaged runs only}');
+    % Plotting
+    h = plot(x7,y7,'*',x8,y8,'*',x9,y9,'*',x10,y10,'*',x11,y11,'*',x12,y12,'*');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Averaged runs only}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     axis square;
     
-    % Colors and markers
-    set(h(1),'Color',[0 0 1],'LineStyle','--','linewidth',1);
-    set(h(2),'Color',[0 0.5 0],'LineStyle','-.','linewidth',1);
-    set(h(3),'Color',[1 0 0],'LineStyle','-.','linewidth',1);
-    set(h(4),'Color',[0 0.75 0.75],'LineStyle','--','linewidth',1);
-    set(h(5),'Color',[0.75 0 0.75],'LineStyle','-.','linewidth',1);
-    set(h(6),'Color',[0.75 0.75 0],'LineStyle','-.','linewidth',1);
-    
-    %# Line width
-    %set(h(1),'linewidth',2);
-    %set(h(2),'linewidth',2);
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    % Markers
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     
     %# Axis limitations
     set(gca,'XLim',[0.1 0.5]);
     set(gca,'XTick',[0.1:0.05:0.5]);
     set(gca,'YLim',[-14 2]);
     set(gca,'YTick',[-14:2:2]);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
     
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
-    %# Save plot as PNG -------------------------------------------------------
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# ********************************************************************
+    %# Save plot as PNG
+    %# ********************************************************************
     
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
     %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
     
-    %# Plot title -------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
+    %# Plot title ---------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
     
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots.png', '_averaged', num2str(startRun), num2str(endRun));
-    saveas(f, plotsavename);                % Save plot as PNG
+    %# Save plots as PDF, PNG and EPS -------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Heave_Data_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
     %close;
     
     % *********************************************************************
     % Min, Max and Averaged min/max
     % *********************************************************************
-    figurename = sprintf('%s (min & max values only):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    figurename = sprintf('%s (Min, Max Only):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 9;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(3,2,1)
@@ -528,20 +669,26 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     x10avgall = avgcond10(:,11);
     y10avgall = avgcond10(:,12);
     
-    h = plot(x7,y7avg,'--*',x7avgall,y7avgall,':x',x10,y10avg,'--+',x10avgall,y10avgall,':o','MarkerSize',7);
-    %hold on;
-    %h = plot(x10,y10avg,'-.*',x10avgall,y10avgall,'--x','MarkerSize',7);
-    %hold off;
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Heave [mm]}');
-    title('{\bf Averaged min/max compared to average of all repeats (level)}');
+    % Plotting
+    h = plot(x7,y7avg,'*',x7avgall,y7avgall,'*',x10,y10avg,'*',x10avgall,y10avgall,'*');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Averaged min/max compared to average of all repeats (level)}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     %axis square;
     
-    %# Line width
-    %set(h(1),'linewidth',1);
-    %set(h(2),'linewidth',1);
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);  
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -559,6 +706,10 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     set(hleg1,'Interpreter','none');
     legend boxoff;
     
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(3,2,2)
     
@@ -572,17 +723,23 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     y10max = minmaxcond10(:,4);
     y10avg = minmaxcond10(:,5);
     
-    h = plot(x7,y7min,'--*',x10,y10min,'-.x','MarkerSize',7);
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Heave [mm]}');
-    title('{\bf Lowest values only (level)}');
+    h = plot(x7,y7min,'*',x10,y10min,'*');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Lowest values only (level)}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     %axis square;
     
-    %# Line width
-    %set(h(2),'linewidth',2);
-    %set(h(7),'linewidth',2);
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -598,7 +755,12 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 7: 1,500t (0 deg) Min','Cond. 10: 1,804t (0 deg) Min');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(3,2,3)
@@ -617,20 +779,26 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     x11avgall = avgcond11(:,11);
     y11avgall = avgcond11(:,12);
     
-    h = plot(x8,y8avg,'--*',x8avgall,y8avgall,'-.x',x11,y11avg,'-.+',x11avgall,y11avgall,'--o','MarkerSize',7);
-    %hold on;
-    %h = plot(x10,y10avg,'-.*',x10avgall,y10avgall,'--x','MarkerSize',7);
-    %hold off;
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Heave [mm]}');
-    title('{\bf Averaged min/max compared to average of all repeats (-0.5 deg)}');
+    % Plotting
+    h = plot(x8,y8avg,'*',x8avgall,y8avgall,'*',x11,y11avg,'*',x11avgall,y11avgall,'*');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Averaged min/max compared to average of all repeats (-0.5 deg)}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     %axis square;
     
-    %# Line width
-    %set(h(1),'linewidth',1);
-    %set(h(2),'linewidth',1);
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);    
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -646,7 +814,12 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) min/max','Cond. 8: 1,500t (-0.5 deg) All repeats','Cond. 11: 1,804t (-0.5 deg) min/max','Cond. 11: 1,804t (-0.5 deg) All repeats');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(3,2,4)
@@ -661,17 +834,24 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     y11max    = minmaxcond11(:,4);
     y11avg    = minmaxcond11(:,5);
     
-    h = plot(x8,y8min,'--*',x11,y11min,'-.x','MarkerSize',7);
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Heave [mm]}');
-    title('{\bf Lowest values only (-0.5 deg)}');
+    % Plotting
+    h = plot(x8,y8min,'*',x11,y11min,'*');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Lowest values only (-0.5 deg)}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     %axis square;
     
-    %# Line width
-    %set(h(2),'linewidth',2);
-    %set(h(7),'linewidth',2);
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);    
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -687,7 +867,12 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) Min','Cond. 11: 1,804t (-0.5 deg) Min');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(3,2,5)
@@ -706,20 +891,26 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     x12avgall  = avgcond12(:,11);
     y12avgall  = avgcond12(:,12);
     
-    h = plot(x9,y9avg,'--*',x9avgall,y9avgall,'-.x',x12,y12avg,'-.+',x12avgall,y12avgall,'--o','MarkerSize',7);
-    %hold on;
-    %h = plot(x10,y10avg,'-.*',x10avgall,y10avgall,'--x','MarkerSize',7);
-    %hold off;
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Heave [mm]}');
-    title('{\bf Averaged min/max compared to average of all repeats (0.5 deg)}');
+    % Plotting
+    h = plot(x9,y9avg,'*',x9avgall,y9avgall,'*',x12,y12avg,'*',x12avgall,y12avgall,'*');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Averaged min/max compared to average of all repeats (0.5 deg)}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     %axis square;
     
-    %# Line width
-    %set(h(1),'linewidth',1);
-    %set(h(2),'linewidth',1);
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);    
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -735,7 +926,12 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) min/max','Cond. 9: 1,500t (0.5 deg) All repeats','Cond. 12: 1,804t (0.5 deg) min/max','Cond. 12: 1,804t (0.5 deg) All repeats');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(3,2,6)
@@ -750,17 +946,24 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     y12max     = minmaxcond12(:,4);
     y12avg     = minmaxcond12(:,5);
     
-    h = plot(x9,y9min,'--*',x12,y12min,'-.x','MarkerSize',7);
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Heave [mm]}');
-    title('{\bf Lowest values only (0.5 deg)}');
+    % Plotting
+    h = plot(x9,y9min,'*',x12,y12min,'*');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Lowest values only (0.5 deg)}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     %axis square;
     
-    %# Line width
-    %set(h(2),'linewidth',2);
-    %set(h(7),'linewidth',2);
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);    
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -776,37 +979,94 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) Min','Cond. 12: 1,804t (0.5 deg) Min');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
-    %# Save plot as PNG -------------------------------------------------------
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# ********************************************************************
+    %# Save plot as PNG
+    %# ********************************************************************
     
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
     %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
     
-    %# Plot title -------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
+    %# Plot title ---------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
     
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots_Min_Max.pdf', '_averaged', num2str(startRun), num2str(endRun));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots_Min_Max.png', '_averaged', num2str(startRun), num2str(endRun));
-    saveas(f, plotsavename);                % Save plot as PNG
+    %# Save plots as PDF, PNG and EPS -------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Heave_Data_Plots_Min_Max_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
     %close;
     
     % *********************************************************************
     % Fitting lines (level static trim)
     % *********************************************************************
-    figurename = sprintf('%s (curve fitting, level static trim):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    figurename = sprintf('%s (Curve Fitting, Level Static Trim):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 9;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,1)
@@ -834,13 +1094,28 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     x10avgall = avgcond10(:,11);
     y10avgall = avgcond10(:,12);
     
-    h = plot(x7,y7avg,'*',x7avgall,y7avgall,'o',x7,polyv7,'-sk',x10,y10avg,'+',x10avgall,y10avgall,'v',x10,polyv10,'-dk','MarkerSize',10);
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Heave [mm]}');
-    title('{\bf Averaged min/max, Curve fitting}');
+    % Plotting
+    h = plot(x7,y7avg,'*',x7avgall,y7avgall,'*',x7,polyv7,'-',x10,y10avg,'*',x10avgall,y10avgall,'*',x10,polyv10,'-');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Averaged min/max, curve fitting}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     axis square;
+    
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
     
     % Annotations
     text(0.41,-8.5,sprintf('%.1f',min(polyv7)),'FontSize',11,'color','k','FontWeight','normal');
@@ -855,12 +1130,19 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     set(gca,'XTick',[0.1:0.05:0.5]);
     set(gca,'YLim',[-12 2]);
     set(gca,'YTick',[-12:2:2]);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
     
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg) min/max','Cond. 7: 1,500t (0 deg) All repeats','Cond. 7: 1,500t Curve fitting','Cond. 10: 1,804t (0 deg) min/max','Cond. 10: 1,804t (0 deg) All repeats','Cond. 10: 1,804t Curve fitting');
-    set(hleg1,'Location','SouthWest');
+    set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,2)
@@ -879,13 +1161,26 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     
     polyf10   = polyfit(x10,y10min,poldegr); polyv10 = polyval(polyf10,x10);
     
-    h = plot(x7,y7min,'*',x7,polyv7,'-sk',x10,y10min,'x',x10,polyv10,'-dk','MarkerSize',7);
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Heave [mm]}');
-    title('{\bf Lowest values only}');
+    % Plotting
+    h = plot(x7,y7min,'*',x7,polyv7,'-',x10,y10min,'*',x10,polyv10,'-');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Lowest values only}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     axis square;
+    
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);    
     
     % Annotations
     text(0.41,-9,sprintf('%.1f',min(polyv7)),'FontSize',11,'color','k','FontWeight','normal');
@@ -900,42 +1195,101 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     set(gca,'XTick',[0.1:0.05:0.5]);
     set(gca,'YLim',[-12 2]);
     set(gca,'YTick',[-12:2:2]);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
     
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg) Min','Cond. 7: 1,500t Curve fitting','Cond. 10: 1,804t (0 deg) Min','Cond. 10: 1,804t Curve fitting');
-    set(hleg1,'Location','SouthWest');
+    set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
-    %# Save plot as PNG -------------------------------------------------------
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# ********************************************************************
+    %# Save plot as PNG
+    %# ********************************************************************
     
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
     %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
     
-    %# Plot title -------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
+    %# Plot title ---------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
     
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots_Fitting_Curves_Level.pdf', '_averaged', num2str(startRun), num2str(endRun));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots_Fitting_Curves_Level.png', '_averaged', num2str(startRun), num2str(endRun));
-    saveas(f, plotsavename);                % Save plot as PNG
+    %# Save plots as PDF, PNG and EPS -------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Heave_Data_Plots_Fitting_Curves_Level_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
     %close;
     
     % *********************************************************************
     % Fitting lines (-0.5 degrees by bow)
     % *********************************************************************
-    figurename = sprintf('%s (curve fitting, -0.5 degrees by bow):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    figurename = sprintf('%s (Curve Fitting, -0.5 by Bow):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 9;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,1)
@@ -963,13 +1317,28 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     x11avgall = avgcond11(:,11);
     y11avgall = avgcond11(:,12);
     
-    h = plot(x8,y8avg,'*',x8avgall,y8avgall,'o',x8,polyv8,'-sk',x11,y11avg,'+',x11avgall,y11avgall,'v',x11,polyv11,'-dk','MarkerSize',10);
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Heave [mm]}');
-    title('{\bf Averaged min/max, Curve fitting}');
+    % Plotting
+    h = plot(x8,y8avg,'*',x8avgall,y8avgall,'*',x8,polyv8,'-',x11,y11avg,'*',x11avgall,y11avgall,'*',x11,polyv11,'-');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Averaged min/max, curve fitting}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     axis square;
+    
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);    
     
     % Annotations
     text(0.4,-10,sprintf('%.1f',min(polyv8)),'FontSize',11,'color','k','FontWeight','normal');
@@ -984,12 +1353,19 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     set(gca,'XTick',[0.2:0.05:0.5]);
     set(gca,'YLim',[-14 0]);
     set(gca,'YTick',[-14:2:0]);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
     
     %# Legend
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) min/max','Cond. 8: 1,500t (-0.5 deg) All repeats','Cond. 8: 1,500t Curve fitting','Cond. 11: 1,804t (-0.5 deg) min/max','Cond. 11: 1,804t (-0.5 deg) All repeats','Cond. 11: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,2)
@@ -1008,13 +1384,26 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     
     polyf11   = polyfit(x11,y11min,poldegr); polyv11 = polyval(polyf11,x11);
     
-    h = plot(x8,y8min,'*',x8,polyv8,'-sk',x11,y11min,'x',x11,polyv11,'-dk','MarkerSize',7);
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Heave [mm]}');
-    title('{\bf Lowest values only}');
+    % Plotting
+    h = plot(x8,y8min,'*',x8,polyv8,'-',x11,y11min,'*',x11,polyv11,'-');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Lowest values only}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     axis square;
+    
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);     
     
     % Annotations
     text(0.4,-10.5,sprintf('%.1f',min(polyv8)),'FontSize',11,'color','k','FontWeight','normal');
@@ -1029,42 +1418,101 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     set(gca,'XTick',[0.2:0.05:0.5]);
     set(gca,'YLim',[-14 0]);
     set(gca,'YTick',[-14:2:0]);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
     
     %# Legend
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) Min','Cond. 8: 1,500t Curve fitting','Cond. 11: 1,804t (-0.5 deg) Min','Cond. 11: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
-    %# Save plot as PNG -------------------------------------------------------
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# ********************************************************************
+    %# Save plot as PNG
+    %# ********************************************************************
     
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
     %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
     
-    %# Plot title -------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
+    %# Plot title ---------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
     
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots_Fitting_Curves_05_By_Bow.pdf', '_averaged', num2str(startRun), num2str(endRun));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots_Fitting_Curves_05_By_Bow.png', '_averaged', num2str(startRun), num2str(endRun));
-    saveas(f, plotsavename);                % Save plot as PNG
+    %# Save plots as PDF, PNG and EPS -------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Heave_Data_Plots_Fitting_Curves_05_By_Bow_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
     %close;
     
     % *********************************************************************
     % Fitting lines (0.5 degrees by stern)
     % *********************************************************************
-    figurename = sprintf('%s (curve fitting, 0.5 degrees by stern):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    figurename = sprintf('%s (Curve Fitting, 0.5 by Stern):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 9;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,1)
@@ -1092,21 +1540,32 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     x12avgall = avgcond12(:,11);
     y12avgall = avgcond12(:,12);
     
-    h = plot(x9,y9avg,'*',x9avgall,y9avgall,'o',x9,polyv9,'-sk',x12,y12avg,'+',x12avgall,y12avgall,'v',x12,polyv12,'-dk','MarkerSize',10);
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Heave [mm]}');
-    title('{\bf Averaged min/max, Curve fitting}');
+    % Plotting
+    h = plot(x9,y9avg,'*',x9avgall,y9avgall,'*',x9,polyv9,'-',x12,y12avg,'*',x12avgall,y12avgall,'*',x12,polyv12,'-');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Averaged min/max, Curve fitting}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     axis square;
     
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);     
+    
     % Annotations
     text(0.41,-7,sprintf('%.1f',min(polyv9)),'FontSize',11,'color','k','FontWeight','normal');
     text(0.41,-8.5,sprintf('%.1f',min(polyv12)),'FontSize',11,'color','k','FontWeight','normal');
-    
-    %# Line width
-    %set(h(1),'linewidth',1);
-    %set(h(2),'linewidth',1);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -1117,12 +1576,19 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     set(gca,'XTick',[0.2:0.05:0.5]);
     set(gca,'YLim',[-14 0]);
     set(gca,'YTick',[-14:2:0]);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
     
     %# Legend
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) min/max','Cond. 9: 1,500t (0.5 deg) All repeats','Cond. 9: 1,500t Curve fitting','Cond. 12: 1,804t (0.5 deg) min/max','Cond. 12: 1,804t (0.5 deg) All repeats','Cond. 12: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     % Model speed vs. model heave (mm) ----------------------------------------
     subplot(1,2,2)
@@ -1144,13 +1610,26 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     
     polyf12   = polyfit(x12,y12min,poldegr); polyv12 = polyval(polyf12,x12);
     
-    h = plot(x9,y9min,'*',x9,polyv9,'-sk',x12,y12min,'x',x12,polyv12,'-dk','MarkerSize',7);
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Heave [mm]}');
-    title('{\bf Lowest values only}');
+    % Plotting
+    h = plot(x9,y9min,'*',x9,polyv9,'-',x12,y12min,'*',x12,polyv12,'-');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Lowest values only}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     axis square;
+    
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);    
     
     % Annotations
     text(0.41,-7,sprintf('%.1f',min(polyv9)),'FontSize',11,'color','k','FontWeight','normal');
@@ -1165,42 +1644,101 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     set(gca,'XTick',[0.2:0.05:0.5]);
     set(gca,'YLim',[-14 0]);
     set(gca,'YTick',[-14:2:0]);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
     
     %# Legend
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) Min','Cond. 9: 1,500t Curve fitting','Cond. 12: 1,804t (0.5 deg) Min','Cond. 12: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
-    %# Save plot as PNG -------------------------------------------------------
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# ********************************************************************
+    %# Save plot as PNG
+    %# ********************************************************************
     
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
     %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
     
-    %# Plot title -------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
+    %# Plot title ---------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
     
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots_Fitting_Curves_05_By_Stern.pdf', '_averaged', num2str(startRun), num2str(endRun));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Heave_Data_Plots_Fitting_Curves_05_By_Stern.png', '_averaged', num2str(startRun), num2str(endRun));
-    saveas(f, plotsavename);                % Save plot as PNG
+    %# Save plots as PDF, PNG and EPS -------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Heave_Data_Plots_Fitting_Curves_05_By_Stern_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
     %close;
     
     % *********************************************************************
     % Heave vs. Crm for conditions 7 - 12
     % *********************************************************************
-    figurename = sprintf('%s (using averaged min/max values):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    figurename = sprintf('%s (Averaged Min, Max):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 9;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
     
     % Heave vs. Crm ----------------------------------------
     subplot(2,3,1)
@@ -1223,24 +1761,51 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     x12 = minmaxcond12(5,5);
     y12 = minmaxcond12(5,6);
     
-    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',10);
-    xlabel('{\bf Heave [mm]}');
-    ylabel('{\bf Residual resistance coefficient C_{rm}*1000 [-]}');
-    title('{\bf Heave vs. C_{rm} at Fr=0.42 for conditions 7-12}');
+    % Plotting
+    h = plot(x7,y7,'*',x8,y8,'*',x9,y9,'*',x10,y10,'*',x11,y11,'*',x12,y12,'*');
+    xlabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Residual resistance coeff. C_{Rm}*1000 [-]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Heave vs. C_{Rm} at F_{r}=0.42 for cond. 7-12}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     axis square;
+    
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);    
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
     
+	%# Axis limitations
+    set(gca,'XLim',[-13 -2]);
+    set(gca,'XTick',[-13:1:-2]);
+    set(gca,'YLim',[2 7]);
+    set(gca,'YTick',[2:1:7]);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    set(hleg1,'FontSize',9);
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     % Trim vs. Crm ----------------------------------------
     subplot(2,3,2)
@@ -1263,23 +1828,49 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     x12 = minmaxcond12(5,10)+0.5;
     y12 = minmaxcond12(5,6);
     
-    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',10);
-    xlabel('{\bf Trim [deg]}');
-    ylabel('{\bf Residual resistance coefficient C_{rm}*1000 [-]}');
-    title('{\bf Trim vs. C_{rm} at Fr=0.42 for conditions 7-12}');
+    % Plotting
+    h = plot(x7,y7,'*',x8,y8,'*',x9,y9,'*',x10,y10,'*',x11,y11,'*',x12,y12,'*');
+    xlabel('{\bf Trim [deg]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Residual resistance coeff. C_{Rm}*1000 [-]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Trim vs. C_{Rm} at F_{r}=0.42 for cond. 7-12}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     axis square;
+    
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);    
+    
+	%# Axis limitations
+    %set(gca,'XLim',[0.1 0.5]);
+    %set(gca,'XTick',[0.1:0.1:0.5]);
+    set(gca,'YLim',[2 7]);
+    set(gca,'YTick',[2:1:7]);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));    
     
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    set(hleg1,'FontSize',9);
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
     % Fr vs. Crm ----------------------------------------
-    %subplot(2,2,3:4)
     subplot(2,3,3)
     
     x7  = minmaxcond7(:,7);
@@ -1300,34 +1891,47 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     x12 = minmaxcond12(:,7);
     y12 = minmaxcond12(:,6);
     
-    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',7);
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('{\bf Residual resistance coefficient C_{rm}*1000 [-]}');
-    title('{\bf C_{rm} plot for conditions 7-12}');
+    % Plotting
+    h = plot(x7,y7,'*',x8,y8,'*',x9,y9,'*',x10,y10,'*',x11,y11,'*',x12,y12,'*');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Residual resistance coeff. C_{Rm}*1000 [-]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf C_{Rm} plot for cond. 7-12}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     axis square;
     
-    % Colors and markers
-    set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1);
-    set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','--','linewidth',1);
-    set(h(3),'Color',[1 0 0],'Marker','x','LineStyle','-.','linewidth',1);
-    set(h(4),'Color',[0 0.75 0.75],'Marker','o','LineStyle','-','linewidth',1);
-    set(h(5),'Color',[0.75 0 0.75],'Marker','s','LineStyle','--','linewidth',1);
-    set(h(6),'Color',[0.75 0.75 0],'Marker','d','LineStyle','-.','linewidth',1);
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);    
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.5]);
-    set(gca,'XTick',[0.2:0.05:0.5]);
-    set(gca,'YLim',[1.5 5]);
-    set(gca,'YTick',[1.5:0.5:5]);
+    set(gca,'XLim',[0.1 0.5]);
+    set(gca,'XTick',[0.1:0.05:0.5]);
+    set(gca,'YLim',[1 5]);
+    set(gca,'YTick',[1:1:5]);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthEast');
     set(hleg1,'Interpreter','none');
-    set(hleg1,'FontSize',9);
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     % Heave vs. Crm ----------------------------------------
     subplot(2,3,4)
@@ -1350,20 +1954,47 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     x12 = minmaxcond12(3,5);
     y12 = minmaxcond12(3,6);
     
-    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',10);
-    xlabel('{\bf Heave [mm]}');
-    ylabel('{\bf Residual resistance coefficient C_{rm}*1000 [-]}');
-    title('{\bf Heave vs. C_{rm} at Fr=0.29 for conditions 7-12}');
+    % Plotting
+    h = plot(x7,y7,'*',x8,y8,'*',x9,y9,'*',x10,y10,'*',x11,y11,'*',x12,y12,'*');
+    xlabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Residual resistance coeff. C_{Rm}*1000 [-]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Heave vs. C_{Rm} at F_{r}=0.29 for cond. 7-12}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     axis square;
+    
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);    
+    
+	%# Axis limitations
+    %set(gca,'XLim',[0.1 0.5]);
+    %set(gca,'XTick',[0.1:0.1:0.5]);
+    set(gca,'YLim',[3 6]);
+    set(gca,'YTick',[3:1:6]);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));    
     
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
-    set(hleg1,'FontSize',9);
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     % Trim vs. Crm ----------------------------------------
     subplot(2,3,5)
@@ -1386,43 +2017,80 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     x12 = minmaxcond12(3,10)+0.5;
     y12 = minmaxcond12(3,6);
     
-    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',10);
-    xlabel('{\bf Trim [deg]}');
-    ylabel('{\bf Residual resistance coefficient C_{rm}*1000 [-]}');
-    title('{\bf Trim vs. C_{rm} at Fr=0.29 for conditions 7-12}');
+    % Plotting
+    h = plot(x7,y7,'*',x8,y8,'*',x9,y9,'*',x10,y10,'*',x11,y11,'*',x12,y12,'*');
+    xlabel('{\bf Trim [deg]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Residual resistance coeff. C_{Rm}*1000 [-]}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf Trim vs. C_{Rm} at F_{r}=0.29 for cond. 7-12}','FontSize',setGeneralFontSize);
+    end
     grid on;
     box on;
     axis square;
     
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);    
+    
+    %# Axis limitations
+    %set(gca,'XLim',[0.1 0.5]);
+    %set(gca,'XTick',[0.1:0.1:0.5]);
+    set(gca,'YLim',[3 6]);
+    set(gca,'YTick',[3:1:6]);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
-    set(hleg1,'Location','SouthEast');
+    set(hleg1,'Location','Northwest');
     set(hleg1,'Interpreter','none');
-    set(hleg1,'FontSize',9);
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
-    %# Save plot as PNG -------------------------------------------------------
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# ********************************************************************
+    %# Save plot as PNG
+    %# ********************************************************************
     
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
     %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
     
-    %# Plot title -------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
+    %# Plot title ---------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
     
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Heave_vs_Crm_Data_Plots.pdf', '_averaged', num2str(startRun), num2str(endRun));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Heave_vs_Crm_Data_Plots.png', '_averaged', num2str(startRun), num2str(endRun));
-    saveas(f, plotsavename);                % Save plot as PNG
+    %# Save plots as PDF, PNG and EPS -------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Heave_vs_Crm_Data_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
     %close;
     
 end

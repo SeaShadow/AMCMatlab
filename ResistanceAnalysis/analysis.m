@@ -146,7 +146,7 @@ runfilespath = '..\\';      % Relative path from Matlab directory
 %# ------------------------------------------------------------------------
 
 % Time series data
-enableTSDataSave          = 0;    % Enable time series data saving
+enableTSDataSave          = 1;    % Enable time series data saving
 
 % Main and plot titles
 enablePlotMainTitle       = 1;    % Show plot title in saved file
@@ -154,10 +154,10 @@ enablePlotTitle           = 1;    % Show plot title above plot
 enableTextOnPlot          = 0;    % Show text on plot
 enableBlackAndWhitePlot   = 0;    % Show plot in black and white
 enableEqnOfFitPlot        = 0;    % Show equations of fit
-enableCommandWindowOutput = 1;    % Show command windown ouput
+enableCommandWindowOutput = 0;    % Show command windown ouput
 
 % Special plots
-enableRawDataPlot         = 1;    % Raw data plots of speed, fwd and aft LVDT and drag
+enableRawDataPlot         = 0;    % Raw data plots of speed, fwd and aft LVDT and drag
 enableHvsRtmTvsRtmPlot    = 0;    % Heave vs. Rtm and trim vs. Rtm
 
 % Scaled to A4 paper
@@ -325,8 +325,8 @@ endRun   = 249;     % Stop at run y
 %endRun   = 231;     % Stop at run y
 
 % Single runs
-startRun = 63;    % Start at run x
-endRun   = 63;    % Stop at run y
+%startRun = 63;    % Start at run x
+%endRun   = 63;    % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun

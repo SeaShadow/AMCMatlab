@@ -2,8 +2,8 @@
 %# Resistance Test Analysis - Custome Plots
 %# ------------------------------------------------------------------------
 %#
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  March 20, 2014
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  October 29, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -126,6 +126,25 @@ clc
 allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
 
+
+%# ************************************************************************
+%# START: PLOT SWITCHES: 1 = ENABLED
+%#                       0 = DISABLED
+%# ------------------------------------------------------------------------
+
+% Plot titles, colours, etc.
+enablePlotMainTitle     = 1;    % Show plot title in saved file
+enablePlotTitle         = 1;    % Show plot title above plot
+enableBlackAndWhitePlot = 1;    % Show plot in black and white only
+
+% Scaled to A4 paper
+enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
+
+%# ------------------------------------------------------------------------
+%# END: PLOT SWITCHES
+%# ************************************************************************
+
+
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -139,6 +158,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# END DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 %# -------------------------------------------------------------------------
 %# Read results DAT file
@@ -389,8 +409,50 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     % *********************************************************************
     % Fr vs. Rtm/(VDisp * Density * Gravitational constant)
     % *********************************************************************
-    figurename = sprintf('%s (averaged):: 1,500 and 1,804 tonnes, level, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    figurename = sprintf('%s (Averaged):: 1,500 and 1,804 tonnes, level, Run %s to %s', testName, num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 9;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
     
     % Model speed vs. non dim ----------------------------------------
     subplot(1,2,1)
@@ -406,9 +468,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         
         for j=1:m
             cond7Array(j,3) = (cond7Array(j,2)/(MSVdisp1500*freshwaterdensity*gravconst));
-            %cond7Array(j,3) = (cond7Array(j,2)/(MSVdisp1500*freshwaterdensity*gravconst))*(1/cond7Array(j,1)^2);
         end
-        %Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y/(MSVdisp1500*freshwaterdensity*gravconst), Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);
         
         x7 = cond7Array(:,1); y7 = cond7Array(:,3);
     else
@@ -425,9 +485,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         
         for j=1:m
             cond8Array(j,3) = (cond8Array(j,2)/(MSVdisp1500*freshwaterdensity*gravconst));
-            %cond8Array(j,3) = (cond8Array(j,2)/(MSVdisp1500*freshwaterdensity*gravconst))*(1/cond8Array(j,1)^2);
         end
-        %Raw_Data = num2cell(yavgcond8); Raw_Data = cellfun(@(y) y/(MSVdisp1500*freshwaterdensity*gravconst), Raw_Data, 'UniformOutput', false); yavgcond8 = cell2mat(Raw_Data);
         
         x8 = cond8Array(:,1); y8 = cond8Array(:,3);
     else
@@ -444,9 +502,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         
         for j=1:m
             cond9Array(j,3) = (cond9Array(j,2)/(MSVdisp1500*freshwaterdensity*gravconst));
-            %cond9Array(j,3) = (cond9Array(j,2)/(MSVdisp1500*freshwaterdensity*gravconst))*(1/cond9Array(j,1)^2);
         end
-        %Raw_Data = num2cell(yavgcond9); Raw_Data = cellfun(@(y) y/(MSVdisp1500*freshwaterdensity*gravconst), Raw_Data, 'UniformOutput', false); yavgcond9 = cell2mat(Raw_Data);
         
         x9 = cond9Array(:,1); y9 = cond9Array(:,3);
     else
@@ -463,9 +519,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         
         for j=1:m
             cond10Array(j,3) = (cond10Array(j,2)/(MSVdisp1804*freshwaterdensity*gravconst));
-            %cond10Array(j,3) = (cond10Array(j,2)/(MSVdisp1804*freshwaterdensity*gravconst))*(1/cond10Array(j,1)^2);
         end
-        %Raw_Data = num2cell(yavgcond10); Raw_Data = cellfun(@(y) y/(MSVdisp1804*freshwaterdensity*gravconst), Raw_Data, 'UniformOutput', false); yavgcond10 = cell2mat(Raw_Data);
         
         x10 = cond10Array(:,1); y10 = cond10Array(:,3);
     else
@@ -482,9 +536,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         
         for j=1:m
             cond11Array(j,3) = (cond11Array(j,2)/(MSVdisp1804*freshwaterdensity*gravconst));
-            %cond11Array(j,3) = (cond11Array(j,2)/(MSVdisp1804*freshwaterdensity*gravconst))*(1/cond11Array(j,1)^2);
         end
-        %Raw_Data = num2cell(yavgcond11); Raw_Data = cellfun(@(y) y/(MSVdisp1804*freshwaterdensity*gravconst), Raw_Data, 'UniformOutput', false); yavgcond11 = cell2mat(Raw_Data);
         
         x11 = cond11Array(:,1); y11 = cond11Array(:,3);
     else
@@ -501,44 +553,55 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         
         for j=1:m
             cond12Array(j,3) = (cond12Array(j,2)/(MSVdisp1804*freshwaterdensity*gravconst));
-            %cond12Array(j,3) = (cond12Array(j,2)/(MSVdisp1804*freshwaterdensity*gravconst))*(1/cond12Array(j,1)^2);
         end
-        %Raw_Data = num2cell(yavgcond12); Raw_Data = cellfun(@(y) y/(MSVdisp1804*freshwaterdensity*gravconst), Raw_Data, 'UniformOutput', false); yavgcond12 = cell2mat(Raw_Data);
         
         x12 = cond12Array(:,1); y12 = cond12Array(:,3);
     else
         x12 = 0; y12 = 0;
     end
     
-    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',7);
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('$\frac{R_{tm}}{\nabla*\rho*g}$ [-]','Interpreter','LaTex','FontSize',16);
-    %ylabel('{\bf R_{tm}/(\nabla*\rho*g) [-]}');
+    % Plotting
+    h = plot(x7,y7,'*',x8,y8,'*',x9,y9,'*',x10,y10,'*',x11,y11,'*',x12,y12,'*');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('$\frac{R_{tm}}{\nabla*\rho*g}$ [-]','Interpreter','LaTex','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
+    
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
     
-    % Colors and markers
-    set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1); %,'LineStyle','-','linewidth',1
-    set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','-.','linewidth',1); %,'LineStyle','-','linewidth',1
-    set(h(3),'Color',[1 0 0],'Marker','x','LineStyle',':','linewidth',1); %,'LineStyle','-','linewidth',1
-    set(h(4),'Color',[0 0.75 0.75],'Marker','o','LineStyle','-','linewidth',1); %,'LineStyle','-','linewidth',1
-    set(h(5),'Color',[0.75 0 0.75],'Marker','s','LineStyle','--','linewidth',1); %,'LineStyle','-','linewidth',1
-    set(h(6),'Color',[0.75 0.75 0],'Marker','d','LineStyle','-.','linewidth',1); %,'LineStyle','-','linewidth',1
-    
     %# Axis limitations
     set(gca,'XLim',[0.1 0.5]);
     set(gca,'XTick',[0.1:0.05:0.5]);
+    set(gca,'YLim',[0 0.08]);
+    set(gca,'YTick',[0:0.01:0.08]);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     % Model speed vs. non dim ----------------------------------------
     subplot(1,2,2)
@@ -553,10 +616,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         [m,n] = size(cond7Array); % Array dimensions
         
         for j=1:m
-            %cond7Array(j,3) = (cond7Array(j,2)/(MSVdisp1500*freshwaterdensity*gravconst));
             cond7Array(j,3) = (cond7Array(j,2)/(MSVdisp1500*freshwaterdensity*gravconst))*(1/cond7Array(j,1)^2);
         end
-        %Raw_Data = num2cell(yavgcond7); Raw_Data = cellfun(@(y) y/(MSVdisp1500*freshwaterdensity*gravconst), Raw_Data, 'UniformOutput', false); yavgcond7 = cell2mat(Raw_Data);
         
         x7 = cond7Array(:,1); y7 = cond7Array(:,3);
     else
@@ -572,10 +633,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         [m,n] = size(cond8Array); % Array dimensions
         
         for j=1:m
-            %cond8Array(j,3) = (cond8Array(j,2)/(MSVdisp1500*freshwaterdensity*gravconst));
             cond8Array(j,3) = (cond8Array(j,2)/(MSVdisp1500*freshwaterdensity*gravconst))*(1/cond8Array(j,1)^2);
         end
-        %Raw_Data = num2cell(yavgcond8); Raw_Data = cellfun(@(y) y/(MSVdisp1500*freshwaterdensity*gravconst), Raw_Data, 'UniformOutput', false); yavgcond8 = cell2mat(Raw_Data);
         
         x8 = cond8Array(:,1); y8 = cond8Array(:,3);
     else
@@ -591,10 +650,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         [m,n] = size(cond9Array);        % Array dimensions
         
         for j=1:m
-            %cond9Array(j,3) = (cond9Array(j,2)/(MSVdisp1500*freshwaterdensity*gravconst));
             cond9Array(j,3) = (cond9Array(j,2)/(MSVdisp1500*freshwaterdensity*gravconst))*(1/cond9Array(j,1)^2);
         end
-        %Raw_Data = num2cell(yavgcond9); Raw_Data = cellfun(@(y) y/(MSVdisp1500*freshwaterdensity*gravconst), Raw_Data, 'UniformOutput', false); yavgcond9 = cell2mat(Raw_Data);
         
         x9 = cond9Array(:,1); y9 = cond9Array(:,3);
     else
@@ -610,10 +667,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         [m,n] = size(cond10Array); % Array dimensions
         
         for j=1:m
-            %cond10Array(j,3) = (cond10Array(j,2)/(MSVdisp1804*freshwaterdensity*gravconst));
             cond10Array(j,3) = (cond10Array(j,2)/(MSVdisp1804*freshwaterdensity*gravconst))*(1/cond10Array(j,1)^2);
         end
-        %Raw_Data = num2cell(yavgcond10); Raw_Data = cellfun(@(y) y/(MSVdisp1804*freshwaterdensity*gravconst), Raw_Data, 'UniformOutput', false); yavgcond10 = cell2mat(Raw_Data);
         
         x10 = cond10Array(:,1); y10 = cond10Array(:,3);
     else
@@ -629,10 +684,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         [m,n] = size(cond11Array); % Array dimensions
         
         for j=1:m
-            %cond11Array(j,3) = (cond11Array(j,2)/(MSVdisp1804*freshwaterdensity*gravconst));
             cond11Array(j,3) = (cond11Array(j,2)/(MSVdisp1804*freshwaterdensity*gravconst))*(1/cond11Array(j,1)^2);
         end
-        %Raw_Data = num2cell(yavgcond11); Raw_Data = cellfun(@(y) y/(MSVdisp1804*freshwaterdensity*gravconst), Raw_Data, 'UniformOutput', false); yavgcond11 = cell2mat(Raw_Data);
         
         x11 = cond11Array(:,1); y11 = cond11Array(:,3);
     else
@@ -648,67 +701,89 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         [m,n] = size(cond12Array); % Array dimensions
         
         for j=1:m
-            %cond12Array(j,3) = (cond12Array(j,2)/(MSVdisp1804*freshwaterdensity*gravconst));
             cond12Array(j,3) = (cond12Array(j,2)/(MSVdisp1804*freshwaterdensity*gravconst))*(1/cond12Array(j,1)^2);
         end
-        %Raw_Data = num2cell(yavgcond12); Raw_Data = cellfun(@(y) y/(MSVdisp1804*freshwaterdensity*gravconst), Raw_Data, 'UniformOutput', false); yavgcond12 = cell2mat(Raw_Data);
         
         x12 = cond12Array(:,1); y12 = cond12Array(:,3);
     else
         x12 = 0; y12 = 0;
     end
     
-    h = plot(x7,y7,'*',x8,y8,'+',x9,y9,'x',x10,y10,'o',x11,y11,'s',x12,y12,'d','MarkerSize',7);
-    xlabel('{\bf Froude length number [-]}');
-    ylabel('$\frac{R_{tm}}{\nabla*\rho*g}*\frac{1}{(F_{r})^{2}}$ [-]','Interpreter','LaTex','FontSize',16);
-    %ylabel('{\bf R_{tm}/(\nabla*\rho*g) [-]}');
+    % Plotting
+    h = plot(x7,y7,'*',x8,y8,'*',x9,y9,'*',x10,y10,'*',x11,y11,'*',x12,y12,'*');
+    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    ylabel('$\frac{R_{tm}}{\nabla*\rho*g}*\frac{1}{(F_{r})^{2}}$ [-]','Interpreter','LaTex','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
+    
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
     
-    % Colors and markers
-    set(h(1),'Color',[0 0 1],'Marker','*','LineStyle','-','linewidth',1); %,'LineStyle','-','linewidth',1
-    set(h(2),'Color',[0 0.5 0],'Marker','+','LineStyle','-.','linewidth',1); %,'LineStyle','-','linewidth',1
-    set(h(3),'Color',[1 0 0],'Marker','x','LineStyle',':','linewidth',1); %,'LineStyle','-','linewidth',1
-    set(h(4),'Color',[0 0.75 0.75],'Marker','o','LineStyle','-','linewidth',1); %,'LineStyle','-','linewidth',1
-    set(h(5),'Color',[0.75 0 0.75],'Marker','s','LineStyle','--','linewidth',1); %,'LineStyle','-','linewidth',1
-    set(h(6),'Color',[0.75 0.75 0],'Marker','d','LineStyle','-.','linewidth',1); %,'LineStyle','-','linewidth',1
-    
     %# Axis limitations
     set(gca,'XLim',[0.1 0.5]);
     set(gca,'XTick',[0.1:0.05:0.5]);
+    set(gca,'YLim',[0.2 0.35]);
+    set(gca,'YTick',[0.2:0.03:0.35]);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
-    %# Save plot as PNG -------------------------------------------------------
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# ********************************************************************
+    %# Save plot as PNG
+    %# ********************************************************************
     
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
     %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
     
-    %# Plot title -------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
+    %# Plot title ---------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
     
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('_plots/%s/Run%s_to_Run%s_Fr_vs_NonDim_Data_Plots_Averaged.pdf', '_averaged', num2str(startRun), num2str(endRun));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Fr_vs_NonDim_Data_Plots_Averaged.png', '_averaged', num2str(startRun), num2str(endRun));
-    saveas(f, plotsavename);                % Save plot as PNG
+    %# Save plots as PDF, PNG and EPS -------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Fr_vs_NonDim_Data_Averaged_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;
     
 end

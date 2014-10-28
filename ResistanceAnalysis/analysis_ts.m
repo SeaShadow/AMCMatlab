@@ -120,6 +120,25 @@ clc
 allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
 
+
+%# ************************************************************************
+%# START: PLOT SWITCHES: 1 = ENABLED
+%#                       0 = DISABLED
+%# ------------------------------------------------------------------------
+
+% Plot titles, colours, etc.
+enablePlotMainTitle     = 1;    % Show plot title in saved file
+enablePlotTitle         = 1;    % Show plot title above plot
+enableBlackAndWhitePlot = 0;    % Show plot in black and white only
+
+% Scaled to A4 paper
+enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
+
+%# ------------------------------------------------------------------------
+%# END: PLOT SWITCHES
+%# ************************************************************************
+
+
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -338,8 +357,8 @@ if enableCond07Plot == 1
     for j=1:ml
         [ms,ns] = size(sortedArray{j});
         
-        minRunNo = min(sortedArray{j}(:,1));
-        maxRunNo = max(sortedArray{j}(:,1));
+        minRunNo    = min(sortedArray{j}(:,1));
+        maxRunNo    = max(sortedArray{j}(:,1));
         FroudeNo    = sortedArray{j}(1,11);
         RunCond     = sortedArray{j}(1,28);
         RunRepeats  = ms;
@@ -350,14 +369,58 @@ if enableCond07Plot == 1
         
         figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Data');
         f = figure('Name',figurename,'NumberTitle','off');
+
+        %# Paper size settings ------------------------------------------------
         
-        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
-        setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
-        setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+            
+            set(gcf, 'PaperUnits', 'centimeters');
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+        end
+        
+        % Fonts and colours ---------------------------------------------------
+        setGeneralFontName = 'Helvetica';
+        setGeneralFontSize = 14;
+        setBorderLineWidth = 2;
+        setLegendFontSize  = 9;
+        
+        %# Change default text fonts for plot title
+        set(0,'DefaultTextFontname',setGeneralFontName);
+        set(0,'DefaultTextFontSize',14);
+        
+        %# Box thickness, axes font size, etc. --------------------------------
+        set(gca,'TickDir','in',...
+            'FontSize',12,...
+            'LineWidth',2,...
+            'FontName',setGeneralFontName,...
+            'Clipping','off',...
+            'Color',[1 1 1],...
+            'LooseInset',get(gca,'TightInset'));
+        
+        %# Markes and colors ------------------------------------------------------
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+        % Colored curves
+        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+        if enableBlackAndWhitePlot == 1
+            % Black and white curves
+            setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+        end
+        
+        %# Line, colors and markers
+        setMarkerSize      = 3;
+        setLineWidthMarker = 1;
+        setLineWidth       = 1;
+        setLineStyle       = {'--';':';'-.';'--';':';'-.';'--';':';'-.';'--';':'};
         
         % Time vs. Aft LVDT ---------------------------------------------------
         subplot(2,2,1)
         
+        legendInfo = [];
         minXValues = [];
         maxXValues = [];
         minYValues = [];
@@ -374,7 +437,7 @@ if enableCond07Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             if exist('full_resistance_data.dat', 'file') == 0
                 disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
@@ -399,7 +462,8 @@ if enableCond07Plot == 1
             minYValues(ms) = min(y);
             maxYValues(ms) = max(y);
             
-            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            h = plot(x,y,'*');
+            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
             legendInfo{k} = sprintf('Run %s',num2str(runnumber));
             hold on;
             
@@ -421,19 +485,27 @@ if enableCond07Plot == 1
         maxX = max(maxXValues);
         set(gca,'XLim',[0 maxX]);
         set(gca,'XTick',[0:5:maxX]);
-        
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
         %# Legend
         hleg1 = legend(legendInfo);
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'FontSize',setLegendFontSize);
         legend boxoff;
         
         clearvars legendInfo;
+        
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
         
         % Time vs. Speed ------------------------------------------------------
         subplot(2,2,2)
         
         % Run through repeats
+        legendInfo = [];
         for k=1:ms
             
             % Correct for run numbers below 10
@@ -445,7 +517,7 @@ if enableCond07Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -463,7 +535,8 @@ if enableCond07Plot == 1
             minYValues(ms) = min(y);
             maxYValues(ms) = max(y);
             
-            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            h = plot(x,y,'*');
+            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
             legendInfo{k} = sprintf('Run %s',num2str(runnumber));
             hold on;
             
@@ -481,19 +554,27 @@ if enableCond07Plot == 1
         maxX = max(maxXValues);
         set(gca,'XLim',[0 maxX]);
         set(gca,'XTick',[0:5:maxX]);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
         
         %# Legend
         hleg1 = legend(legendInfo);
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'FontSize',setLegendFontSize);
         legend boxoff;
         
         clearvars legendInfo;
+        
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);        
         
         % Time vs. Fwd LVDT ---------------------------------------------------
         subplot(2,2,3)
         
         % Run through repeats
+        legendInfo = [];
         for k=1:ms
             
             % Correct for run numbers below 10
@@ -505,7 +586,7 @@ if enableCond07Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -523,7 +604,8 @@ if enableCond07Plot == 1
             minYValues(ms) = min(y);
             maxYValues(ms) = max(y);
             
-            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            h = plot(x,y,'*');
+            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
             legendInfo{k} = sprintf('Run %s',num2str(runnumber));
             hold on;
             
@@ -542,19 +624,27 @@ if enableCond07Plot == 1
         maxX = max(maxXValues);
         set(gca,'XLim',[0 maxX]);
         set(gca,'XTick',[0:5:maxX]);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
         
         %# Legend
         hleg1 = legend(legendInfo);
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'FontSize',setLegendFontSize);
         legend boxoff;
         
         clearvars legendInfo;
+        
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
         
         % Time vs. Drag ---------------------------------------------------
         subplot(2,2,4)
         
         % Run through repeats
+        legendInfo = [];
         for k=1:ms
             
             % Correct for run numbers below 10
@@ -566,7 +656,7 @@ if enableCond07Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -584,7 +674,8 @@ if enableCond07Plot == 1
             minYValues(ms) = min(y);
             maxYValues(ms) = max(y);
             
-            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            h = plot(x,y,'*');
+            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
             legendInfo{k} = sprintf('Run %s',num2str(runnumber));
             hold on;
             
@@ -607,37 +698,54 @@ if enableCond07Plot == 1
         setIncr = round((maxY-minY)/5);
         set(gca,'YLim',[minY maxY]);
         set(gca,'YTick',[minY:setIncr:maxY]);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
         
         %# Legend
         hleg1 = legend(legendInfo);
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'FontSize',setLegendFontSize);
         legend boxoff;
         
         clearvars legendInfo;
         
-        %# Save plot as PNG -------------------------------------------------------
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);        
+        
+        %# ********************************************************************
+        %# Save plot as PNG
+        %# ********************************************************************
         
         %# Figure size on screen (50% scaled, but same aspect ratio)
         set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
         
         %# Figure size printed on paper
-        set(gcf, 'PaperUnits','centimeters');
-        set(gcf, 'PaperSize',[XPlot YPlot]);
-        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-        set(gcf, 'PaperOrientation','portrait');
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperUnits','centimeters');
+            set(gcf, 'PaperSize',[XPlot YPlot]);
+            set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+            set(gcf, 'PaperOrientation','portrait');
+        end
         
-        %# Plot title -------------------------------------------------------------
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
+        %# Plot title ---------------------------------------------------------
+        if enablePlotMainTitle == 1
+            annotation('textbox', [0 0.9 1 0.1], ...
+                'String', strcat('{\bf ', figurename, '}'), ...
+                'EdgeColor', 'none', ...
+                'HorizontalAlignment', 'center');
+        end
         
-        %# Save plots as PDF and PNG
-        %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-        saveas(f, plotsavename);                % Save plot as PNG
+        %# Save plots as PDF, PNG and EPS -------------------------------------
+        % Enable renderer for vector graphics output
+        set(gcf, 'renderer', 'painters');
+        setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+        setFileFormat = {'PDF' 'PNG' 'EPS'};
+        for k=1:3
+            plotsavename = sprintf('_plots/%s/%s/Cond_%s_Run_%s_to_Run_%s_Fr_%s_Time_Series_Comparison_Plot.%s', '_averaged', setFileFormat{k}, num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), setFileFormat{k});
+            print(gcf, setSaveFormat{k}, plotsavename);
+        end
         close;
         
     end % For loop
@@ -693,7 +801,7 @@ if enableCond08Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -757,7 +865,7 @@ if enableCond08Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -817,7 +925,7 @@ if enableCond08Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -878,7 +986,7 @@ if enableCond08Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -948,7 +1056,7 @@ if enableCond08Plot == 1
         %# Save plots as PDF and PNG
         %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        plotsavename = sprintf('_plots/%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         saveas(f, plotsavename);                % Save plot as PNG
         close;
         
@@ -1005,7 +1113,7 @@ if enableCond09Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -1069,7 +1177,7 @@ if enableCond09Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -1129,7 +1237,7 @@ if enableCond09Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -1190,7 +1298,7 @@ if enableCond09Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -1260,7 +1368,7 @@ if enableCond09Plot == 1
         %# Save plots as PDF and PNG
         %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        plotsavename = sprintf('_plots/%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         saveas(f, plotsavename);                % Save plot as PNG
         close;
         
@@ -1317,7 +1425,7 @@ if enableCond10Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -1381,7 +1489,7 @@ if enableCond10Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -1441,7 +1549,7 @@ if enableCond10Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -1502,7 +1610,7 @@ if enableCond10Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -1572,7 +1680,7 @@ if enableCond10Plot == 1
         %# Save plots as PDF and PNG
         %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        plotsavename = sprintf('_plots/%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         saveas(f, plotsavename);                % Save plot as PNG
         close;
         
@@ -1629,7 +1737,7 @@ if enableCond11Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -1693,7 +1801,7 @@ if enableCond11Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -1753,7 +1861,7 @@ if enableCond11Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -1814,7 +1922,7 @@ if enableCond11Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -1884,7 +1992,7 @@ if enableCond11Plot == 1
         %# Save plots as PDF and PNG
         %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        plotsavename = sprintf('_plots/%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         saveas(f, plotsavename);                % Save plot as PNG
         close;
         
@@ -1940,7 +2048,7 @@ if enableCond12Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -2004,7 +2112,7 @@ if enableCond12Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -2064,7 +2172,7 @@ if enableCond12Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -2125,7 +2233,7 @@ if enableCond12Plot == 1
             end
             
             % Set general filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -2195,7 +2303,7 @@ if enableCond12Plot == 1
         %# Save plots as PDF and PNG
         %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.pdf', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
+        plotsavename = sprintf('_plots/%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Comparison_Plots.png', '_time_series_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
         saveas(f, plotsavename);                % Save plot as PNG
         close;
         
@@ -2238,7 +2346,7 @@ for k=startRun:endRun
     end
     
     % Set general filename
-    filename = sprintf('_time_series_data/R%s.dat',runnumber);
+    filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
     
     % Read DAT file
     if exist(filename, 'file') == 2
@@ -2465,7 +2573,7 @@ annotation('textbox', [0 0.9 1 0.1], ...
 %# Save plots as PDF and PNG
 %plotsavenamePDF = sprintf('%s/Run%s_to_Run%s_Fr_%s_Time_Series_Run_Comparison_Plots.pdf', '_time_series_data', num2str(sr), num2str(es), froudeNo);
 %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-plotsavename = sprintf('%s/Run%s_to_Run%s_Fr_%s_Time_Series_Run_Comparison_Plots.png', '_time_series_data', num2str(sr), num2str(er), froudeNo);
+plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Fr_%s_Time_Series_Run_Comparison_Plots.png', '_time_series_data', num2str(sr), num2str(er), froudeNo);
 saveas(f, plotsavename);                % Save plot as PNG
 %close;
 
@@ -2675,7 +2783,7 @@ annotation('textbox', [0 0.9 1 0.1], ...
 %# Save plots as PDF and PNG
 %plotsavenamePDF = sprintf('%s/Run%s_to_Run%s_Fr_%s_Time_Series_Run_Comparison_Plots.pdf', '_time_series_data', num2str(sr), num2str(es), froudeNo);
 %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-plotsavename = sprintf('%s/Run%s_to_Run%s_Fr_%s_Time_Series_Run_Comparison_Plots.png', '_time_series_data', num2str(sr), num2str(er), froudeNo);
+plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Fr_%s_Time_Series_Run_Comparison_Plots.png', '_time_series_data', num2str(sr), num2str(er), froudeNo);
 saveas(f, plotsavename);                % Save plot as PNG
 %close;
 
@@ -2885,7 +2993,7 @@ annotation('textbox', [0 0.9 1 0.1], ...
 %# Save plots as PDF and PNG
 %plotsavenamePDF = sprintf('%s/Run%s_to_Run%s_Fr_%s_Time_Series_Run_Comparison_Plots.pdf', '_time_series_data', num2str(sr), num2str(es), froudeNo);
 %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-plotsavename = sprintf('%s/Run%s_to_Run%s_Fr_%s_Time_Series_Run_Comparison_Plots.png', '_time_series_data', num2str(sr), num2str(er), froudeNo);
+plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Fr_%s_Time_Series_Run_Comparison_Plots.png', '_time_series_data', num2str(sr), num2str(er), froudeNo);
 saveas(f, plotsavename);                % Save plot as PNG
 %close;
 
@@ -3095,6 +3203,6 @@ annotation('textbox', [0 0.9 1 0.1], ...
 %# Save plots as PDF and PNG
 %plotsavenamePDF = sprintf('%s/Run%s_to_Run%s_Fr_%s_Time_Series_Run_Comparison_Plots.pdf', '_time_series_data', num2str(sr), num2str(es), froudeNo);
 %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-plotsavename = sprintf('%s/Run%s_to_Run%s_Fr_%s_Time_Series_Run_Comparison_Plots.png', '_time_series_data', num2str(sr), num2str(er), froudeNo);
+plotsavename = sprintf('_plots/%s/Run%s_to_Run%s_Fr_%s_Time_Series_Run_Comparison_Plots.png', '_time_series_data', num2str(sr), num2str(er), froudeNo);
 saveas(f, plotsavename);                % Save plot as PNG
 %close;
