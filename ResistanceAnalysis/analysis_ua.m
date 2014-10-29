@@ -2,8 +2,8 @@
 %# Resistance Test Analysis - Uncertainty Analysis
 %# ------------------------------------------------------------------------
 %#
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  October 7, 2014
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  October 29, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -12,7 +12,7 @@
 %#               |__Disp. & trim:   1,500t, level static trim
 %#               |__Conditions:     1 = No turbulence studs
 %#                                  2 = First row of turbulence studs
-%#                                  3 = First and second row of turbulence studs
+%#                                  3 = First and seCond. row of turbulence studs
 %#
 %# Runs TTI   :  Runs 36-62   Trim Tab Optimisation                        (TTI)
 %#               |__Disp. & trim:   1,500t, level static trim
@@ -74,7 +74,7 @@
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#                    |__> RESULTS:       "resultsAveragedArray.dat" and "*.txt"
 %#
-%#               6 => analysis_ts.m       >> Time series data for cond 7-12
+%#               6 => analysis_ts.m       >> Time series data for Cond. 7-12
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
@@ -87,19 +87,19 @@
 %#                    |__> BASE DATA:     1. Read .cal data files
 %#                                        2. "resultsArraySensorError.dat"
 %#
-%#               9 => analysis_ts_drag.m  >> Time series data for cond 7-12
+%#               9 => analysis_ts_drag.m  >> Time series data for Cond. 7-12
 %#                    |                   >> DRAG ONLY!!!
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
-%#               10 => analysis_ts_drag_fft.m  >> Time series data for cond 7-12
+%#               10 => analysis_ts_drag_fft.m  >> Time series data for Cond. 7-12
 %#                    |                        >> DRAG ONLY!!!
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
 %#               >>> TODO: Copy data from frequencyArrayFFT.dat to fft_frequency_data.dat
 %#
-%#               11 => analysis_ts_dp.m  >> Time series data for cond 7-12
+%#               11 => analysis_ts_dp.m  >> Time series data for Cond. 7-12
 %#                    |
 %#                    |__> BASE DATA:     DAQ run files
 %#
@@ -141,9 +141,12 @@ enableTSDataSave          = 0;    % Enable time series data saving
 enablePlotMainTitle       = 0;    % Show plot title in saved file
 enablePlotTitle           = 0;    % Show plot title above plot
 enableTextOnPlot          = 0;    % Show text on plot
-enableBlackAndWhitePlot   = 0;    % Show plot in black and white
+enableBlackAndWhitePlot   = 1;    % Show plot in black and white
 enableEqnOfFitPlot        = 0;    % Show equations of fit
 enableCommandWindowOutput = 0;    % Show command windown ouput
+
+% Scaled to A4 paper
+enableA4PaperSizePlot     = 1;    % Show plots scale to A4 size
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
@@ -531,7 +534,6 @@ for condNo=7:12
         resultsArrayRT = [];
         counter2 = 1;
         for k=1:mas
-            
             % CT
             resultsArrayRT(counter2, 1) = (2*A{j}(k,9))/(freshwaterdensity*setModWsa*A{j}(k,5)^2);
             
@@ -1028,24 +1030,27 @@ plotArray12 = plotArray12(any(plotArray12,2),:);  % Remove zero rows
 %# PLOT #1: Fr versus resistance coefficient, total uncertainty
 %# ************************************************************************
 
-figurename = sprintf('%s >> Conditions %s to %s', 'Total uncertainty U_{CT 15 deg C}', num2str(7), num2str(12));
+figurename = sprintf('Total uncertainty U_{CT 15 deg C}:: Conditions %s to %s', num2str(7), num2str(12));
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ------------------------------------------------
 
-% set(gcf, 'PaperSize', [19 19]);
-% set(gcf, 'PaperPositionMode', 'manual');
-% set(gcf, 'PaperPosition', [0 0 19 19]);
-%
-% set(gcf, 'PaperUnits', 'centimeters');
-% set(gcf, 'PaperSize', [19 19]);
-% set(gcf, 'PaperPositionMode', 'manual');
-% set(gcf, 'PaperPosition', [0 0 19 19]);
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
 
 % Fonts and colours ---------------------------------------------------
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
+setLegendFontSize  = 12;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1061,15 +1066,15 @@ set(gca,'TickDir','in',...
     'LooseInset',get(gca,'TightInset'));
 
 %# Markes and colors ------------------------------------------------------
-setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
 % Colored curves
 setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
 if enableBlackAndWhitePlot == 1
     % Black and white curves
     setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
 end
-        
-% X and Y values ----------------------------------------------------------        
+
+% X and Y values ----------------------------------------------------------
 
 setX1 = plotArray7(:,3);
 setY1 = plotArray7(:,9);
@@ -1089,7 +1094,7 @@ setY5 = plotArray11(:,9);
 setX6 = plotArray12(:,3);
 setY6 = plotArray12(:,9);
 
-% Plotting ----------------------------------------------------------------
+% Plotting
 h = plot(setX1,setY1,'s',setX2,setY2,'x',setX3,setY3,'*',setX4,setY4,'v',setX5,setY5,'x',setX6,setY6,'*');
 xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
 ylabel('{\bf % of C_{T15 deg C} [-]}','FontSize',setGeneralFontSize);
@@ -1097,12 +1102,8 @@ grid on;
 box on;
 axis square;
 
-%# Set plot figure background to a defined color
-%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-set(gcf,'Color',[1,1,1]);
-
 % Colors and markers
-setMarkerSize = 10;
+setMarkerSize = 12;
 setLineWidth  = 1;
 setLineStyle  = '-.';
 setC=1;set(h(setC),'Color',setColor{setC},'Marker',setMarker{setC},'MarkerSize',setMarkerSize,'LineWidth',setLineWidth); %,'MarkerFaceColor',setColor{setC},'LineStyle',setLineStyle,'linewidth',setLineWidth
@@ -1111,6 +1112,10 @@ setC=3;set(h(setC),'Color',setColor{setC},'Marker',setMarker{setC},'MarkerSize',
 setC=4;set(h(setC),'Color',setColor{setC},'Marker',setMarker{setC},'MarkerSize',setMarkerSize,'LineWidth',setLineWidth);
 setC=5;set(h(setC),'Color',setColor{setC},'Marker',setMarker{setC},'MarkerSize',setMarkerSize,'LineWidth',setLineWidth);
 setC=6;set(h(setC),'Color',setColor{setC},'Marker',setMarker{setC},'MarkerSize',setMarkerSize,'LineWidth',setLineWidth);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
 
 %# Axis limitations
 set(gca,'XLim',[0.2 0.5]);
@@ -1122,9 +1127,11 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'))
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
 
 %# Legend
-hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
+hleg1 = legend('Cond. 7: 1,500t (level)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (level)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
 set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
@@ -1159,7 +1166,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Condition_7_to_12_Resistance_Uncertainty_Analysis_Plots.%s', '_uncertainty_analysis', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Condition_7_to_12_Resistance_Uncertainty_Analysis_Plot.%s', '_uncertainty_analysis', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -1169,24 +1176,30 @@ end
 %# ************************************************************************
 
 % Fr versus resistance coefficient, total uncertainty
-figurename = sprintf('%s >> Conditions %s to %s', 'Resistance coefficient bias and precision limits', num2str(7), num2str(12));
+figurename = sprintf('Resistance Coefficient Bias and Precision Limits:: Conditions %s to %s', num2str(7), num2str(12));
 f = figure('Name',figurename,'NumberTitle','off');
+
+% Show plot title
+enablePlotTitle = 1;
 
 %# Paper size settings ------------------------------------------------
 
-% set(gcf, 'PaperSize', [19 19]);
-% set(gcf, 'PaperPositionMode', 'manual');
-% set(gcf, 'PaperPosition', [0 0 19 19]);
-%
-% set(gcf, 'PaperUnits', 'centimeters');
-% set(gcf, 'PaperSize', [19 19]);
-% set(gcf, 'PaperPositionMode', 'manual');
-% set(gcf, 'PaperPosition', [0 0 19 19]);
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
 
 % Fonts and colours ---------------------------------------------------
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
+setLegendFontSize  = 12;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1202,7 +1215,7 @@ set(gca,'TickDir','in',...
     'LooseInset',get(gca,'TightInset'));
 
 %# Markes and colors ------------------------------------------------------
-setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
 % Colored curves
 setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
 if enableBlackAndWhitePlot == 1
@@ -1217,8 +1230,11 @@ X = plotArray7(:,3);
 A = plotArray7(:,5);
 B = plotArray7(:,7);
 
+% Plotting
 bar(X,[A B])
-title('{\bf Cond 7: 1,500t, static trim level}','FontSize',setGeneralFontSize);
+if enablePlotTitle == 1
+    title('{\bf Cond. 7: 1,500t, static trim level}','FontSize',setGeneralFontSize);
+end
 xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
 ylabel('{\bf % of U_{CT15 deg C}}','FontSize',setGeneralFontSize);
 grid on;
@@ -1230,7 +1246,7 @@ box on;
 % h = plot(X,A,'s',X,B,'o');
 % xlabel('{\bf Froude length number [-]}');
 % ylabel('{\bf % of U_{CT15 deg C}}');
-% title('{\bf Cond 7: 1,500t, static trim level}');
+% title('{\bf Cond. 7: 1,500t, static trim level}');
 % grid on;
 % box on;
 % %axis square;
@@ -1245,15 +1261,23 @@ set(gcf,'Color',[1,1,1]);
 
 %# Axis limitations
 set(gca,'XLim',[0.2 0.5]);
-set(gca,'XTick',[0.2:0.02:0.5]);
+set(gca,'XTick',[0.2:0.05:0.5]);
 set(gca,'YLim',[0 100]);
 set(gca,'YTick',[0:20:100]);
-
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
+    
 %# Legend
 hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
 set(hleg1,'Location','NorthEast'); %SouthOutside
 set(hleg1,'Interpreter','none');
-set(hleg1, 'Box', 'on');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
 % Condition 8 -------------------------------------------------------------
 subplot(3,2,3)
@@ -1262,8 +1286,11 @@ X = plotArray8(:,3);
 A = plotArray8(:,5);
 B = plotArray8(:,7);
 
+% Plotting
 bar(X,[A B])
-title('{\bf Cond 8: 1,500t, static trim 0.5}','FontSize',setGeneralFontSize);
+if enablePlotTitle == 1
+    title('{\bf Cond. 8: 1,500t, static trim 0.5}','FontSize',setGeneralFontSize);
+end
 xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
 ylabel('{\bf % of U_{CT15 deg C}}','FontSize',setGeneralFontSize);
 grid on;
@@ -1275,7 +1302,7 @@ box on;
 % h = plot(X,A,'s',X,B,'o');
 % xlabel('{\bf Froude length number [-]}');
 % ylabel('{\bf % of U_{CT15 deg C}}');
-% title('{\bf Cond 8: 1,500t, static trim 0.5}');
+% title('{\bf Cond. 8: 1,500t, static trim 0.5}');
 % grid on;
 % box on;
 % %axis square;
@@ -1286,15 +1313,23 @@ box on;
 
 %# Axis limitations
 set(gca,'XLim',[0.2 0.5]);
-set(gca,'XTick',[0.2:0.02:0.5]);
+set(gca,'XTick',[0.2:0.05:0.5]);
 set(gca,'YLim',[0 100]);
 set(gca,'YTick',[0:20:100]);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
 
 %# Legend
 hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
 set(hleg1,'Location','NorthEast'); %SouthOutside
 set(hleg1,'Interpreter','none');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
 set(hleg1, 'Box', 'on');
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
 % Condition 9 -------------------------------------------------------------
 subplot(3,2,5)
@@ -1303,8 +1338,11 @@ X = plotArray9(:,3);
 A = plotArray9(:,5);
 B = plotArray9(:,7);
 
+% Plotting
 bar(X,[A B])
-title('{\bf Cond 9: 1,500t, static trim -0.5}','FontSize',setGeneralFontSize);
+if enablePlotTitle == 1
+    title('{\bf Cond. 9: 1,500t, static trim -0.5}','FontSize',setGeneralFontSize);
+end
 xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
 ylabel('{\bf % of U_{CT15 deg C}}','FontSize',setGeneralFontSize);
 grid on;
@@ -1316,7 +1354,7 @@ box on;
 % h = plot(X,A,'s',X,B,'o');
 % xlabel('{\bf Froude length number [-]}');
 % ylabel('{\bf % of U_{CT15 deg C}}');
-% title('{\bf Cond 9: 1,500t, static trim -0.5}');
+% title('{\bf Cond. 9: 1,500t, static trim -0.5}');
 % grid on;
 % box on;
 % %axis square;
@@ -1327,15 +1365,23 @@ box on;
 
 %# Axis limitations
 set(gca,'XLim',[0.2 0.5]);
-set(gca,'XTick',[0.2:0.02:0.5]);
+set(gca,'XTick',[0.2:0.05:0.5]);
 set(gca,'YLim',[0 100]);
 set(gca,'YTick',[0:20:100]);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
 
 %# Legend
 hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
 set(hleg1,'Location','NorthEast'); %SouthOutside
 set(hleg1,'Interpreter','none');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
 set(hleg1, 'Box', 'on');
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
 % Condition 10 ------------------------------------------------------------
 subplot(3,2,2)
@@ -1344,8 +1390,11 @@ X = plotArray10(:,3);
 A = plotArray10(:,5);
 B = plotArray10(:,7);
 
+% Plotting
 bar(X,[A B])
-title('{\bf Cond 10: 1,804t, static trim level}','FontSize',setGeneralFontSize);
+if enablePlotTitle == 1
+    title('{\bf Cond. 10: 1,804t, static trim level}','FontSize',setGeneralFontSize);
+end
 xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
 ylabel('{\bf % of U_{CT15 deg C}}','FontSize',setGeneralFontSize);
 grid on;
@@ -1357,7 +1406,7 @@ box on;
 % h = plot(X,A,'s',X,B,'o');
 % xlabel('{\bf Froude length number [-]}');
 % ylabel('{\bf % of U_{CT15 deg C}}');
-% title('{\bf Cond 10: 1,804t, static trim level}');
+% title('{\bf Cond. 10: 1,804t, static trim level}');
 % grid on;
 % box on;
 % %axis square;
@@ -1368,15 +1417,23 @@ box on;
 
 %# Axis limitations
 set(gca,'XLim',[0.2 0.5]);
-set(gca,'XTick',[0.2:0.02:0.5]);
+set(gca,'XTick',[0.2:0.05:0.5]);
 set(gca,'YLim',[0 100]);
 set(gca,'YTick',[0:20:100]);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
 
 %# Legend
 hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
 set(hleg1,'Location','NorthEast'); %SouthOutside
 set(hleg1,'Interpreter','none');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
 set(hleg1, 'Box', 'on');
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
 % Condition 11 ------------------------------------------------------------
 subplot(3,2,4)
@@ -1385,8 +1442,11 @@ X = plotArray11(:,3);
 A = plotArray11(:,5);
 B = plotArray11(:,7);
 
+% Plotting
 bar(X,[A B])
-title('{\bf Cond 11: 1,804t, static trim 0.5}','FontSize',setGeneralFontSize);
+if enablePlotTitle == 1
+    title('{\bf Cond. 11: 1,804t, static trim 0.5}','FontSize',setGeneralFontSize);
+end
 xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
 ylabel('{\bf % of U_{CT15 deg C}}','FontSize',setGeneralFontSize);
 grid on;
@@ -1398,7 +1458,7 @@ box on;
 % h = plot(X,A,'s',X,B,'o');
 % xlabel('{\bf Froude length number [-]}');
 % ylabel('{\bf % of U_{CT15 deg C}}');
-% title('{\bf Cond 11: 1,804t, static trim 0.5}');
+% title('{\bf Cond. 11: 1,804t, static trim 0.5}');
 % grid on;
 % box on;
 % %axis square;
@@ -1409,15 +1469,23 @@ box on;
 
 %# Axis limitations
 set(gca,'XLim',[0.2 0.5]);
-set(gca,'XTick',[0.2:0.02:0.5]);
+set(gca,'XTick',[0.2:0.05:0.5]);
 set(gca,'YLim',[0 100]);
 set(gca,'YTick',[0:20:100]);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
 
 %# Legend
 hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
 set(hleg1,'Location','NorthEast'); %SouthOutside
 set(hleg1,'Interpreter','none');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
 set(hleg1, 'Box', 'on');
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
 % Condition 12 ------------------------------------------------------------
 subplot(3,2,6)
@@ -1426,8 +1494,11 @@ X = plotArray12(:,3);
 A = plotArray12(:,5);
 B = plotArray12(:,7);
 
+% Plotting
 bar(X,[A B])
-title('{\bf Cond 12: 1,804t, static trim -0.5}','FontSize',setGeneralFontSize);
+if enablePlotTitle == 1
+    title('{\bf Cond. 12: 1,804t, static trim -0.5}','FontSize',setGeneralFontSize);
+end
 xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
 ylabel('{\bf % of U_{CT15 deg C}}','FontSize',setGeneralFontSize);
 grid on;
@@ -1439,7 +1510,7 @@ box on;
 % h = plot(X,A,'s',X,B,'o');
 % xlabel('{\bf Froude length number [-]}');
 % ylabel('{\bf % of U_{CT15 deg C}}');
-% title('{\bf Cond 12: 1,804t, static trim -0.5}');
+% title('{\bf Cond. 12: 1,804t, static trim -0.5}');
 % grid on;
 % box on;
 % %axis square;
@@ -1450,19 +1521,23 @@ box on;
 
 %# Axis limitations
 set(gca,'XLim',[0.2 0.5]);
-set(gca,'XTick',[0.2:0.02:0.5]);
+set(gca,'XTick',[0.2:0.05:0.5]);
 set(gca,'YLim',[0 100]);
 set(gca,'YTick',[0:20:100]);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
 
 %# Legend
 hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
 set(hleg1,'Location','NorthEast'); %SouthOutside
 set(hleg1,'Interpreter','none');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
 set(hleg1, 'Box', 'on');
 
 %# Font sizes and border --------------------------------------------------
 
-%set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
 %# ************************************************************************
 %# Save plot as PNG
@@ -1492,7 +1567,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Condition_7_to_12_Resistance_Coefficient_Bias_and_Precision_Limit_Plots.%s', '_uncertainty_analysis', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Condition_7_to_12_Resistance_Coefficient_Bias_and_Precision_Limit_Plot.%s', '_uncertainty_analysis', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;

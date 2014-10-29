@@ -142,8 +142,6 @@ runfilespath = '..\\';      % Relative path from Matlab directory
 %# ------------------------------------------------------------------------
 
 %# Test name --------------------------------------------------------------
-% testName = 'Turbulence Stud Investigation';
-% testName = 'Trim Tab Optimistation';
 testName = 'Resistance Test';
 
 %# DAQ related settings ----------------------------------------------------

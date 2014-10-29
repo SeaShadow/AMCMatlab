@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 7, 2014
+%# Date       :  October 29, 2014
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -37,16 +37,37 @@ delete(allPlots);   % Close all plots
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
-enablePlotTitle         = 0;    % Show plot title above plot
+% Plot titles, colours, etc.
 enablePlotMainTitle     = 0;    % Show plot title in saved file
+enablePlotTitle         = 0;    % Show plot title above plot
+enableBlackAndWhitePlot = 1;    % Show plot in black and white only
+
+% Scaled to A4 paper
+enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
+
+% Special plot switches
 enableTextOnPlot        = 0;    % Show equation of fit text on plot
 enableAvgPortStbdPlot   = 0;    % Show averaged port and stbd curve
-enableBlackAndWhitePlot = 1;    % Show plot in black and white
 enableEqnOfFitPlot      = 1;    % Show equations of fit
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
 % *************************************************************************
+
+
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# Centimeters units
+XPlot = 42.0;                           %# A3 paper size
+YPlot = 29.7;                           %# A3 paper size
+XPlotMargin = 1;                        %# left/right margins from page borders
+YPlotMargin = 1;                        %# bottom/top margins from page borders
+XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
+YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# END DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 %# ------------------------------------------------------------------------
@@ -272,35 +293,46 @@ figurename = 'Flow Rate Measurement Test: Kiel Probe Voltage vs. Mass Flow Rate'
 %figurename = sprintf('%s:: RPM Logger (Raw Data), Run %s', testName, num2str(runno));
 f = figure('Name',figurename,'NumberTitle','off');
 
-% Paper size settings -----------------------------------------------------
+%# Paper size settings ------------------------------------------------
 
-set(gcf, 'PaperSize', [19 19]);
-set(gcf, 'PaperPositionMode', 'manual');
-set(gcf, 'PaperPosition', [0 0 19 19]);
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
 
-set(gcf, 'PaperUnits', 'centimeters');
-set(gcf, 'PaperSize', [19 19]);
-set(gcf, 'PaperPositionMode', 'manual');
-set(gcf, 'PaperPosition', [0 0 19 19]);
-
-% Fonts and colours -------------------------------------------------------
-
+% Fonts and colours ---------------------------------------------------
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
+setLegendFontSize  = 12;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
 set(0,'DefaultTextFontSize',14);
 
-%# Markes and colors ------------------------------------------------------
+%# Box thickness, axes font size, etc. --------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
 
-setMarker = {'x';'+';'*';'o';'s';'d';'*';'^';'<';'>'};
-% Coloured curves
-setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
-% B&W curves
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+%setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
 if enableBlackAndWhitePlot == 1
-    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
 end
 
 % X and Y values ----------------------------------------------------------
@@ -653,7 +685,6 @@ set(gca,'TickDir','in',...
 
 %# Set plot figure background to a defined color --------------------------
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-
 set(gcf,'Color',[1,1,1]);
 
 %# Line, colors and markers -----------------------------------------------
@@ -709,7 +740,9 @@ end
 xlim([1 4.5]);
 %ylim([y(1) y(end)]);
 ylim([0 5.5]);
-
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
 %# Legend -----------------------------------------------------------------
 
 %hleg1 = legend('Port (June 2013)','Fit','Starboard (June 2013)','Fit','Port (Sept. 2014)','Fit','Starboard (Sept. 2014)','Fit');
@@ -720,13 +753,29 @@ else
 end
 set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
-set(hleg1,'FontSize',setGeneralFontSize);
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
 %# ************************************************************************
 %# Save plot as PNG
 %# ************************************************************************
 
-%# Plot title -------------------------------------------------------------
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title ---------------------------------------------------------
 if enablePlotMainTitle == 1
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...

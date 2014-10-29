@@ -2,8 +2,8 @@
 %# Resistance Test Analysis - ITTC Based Uncertainty Analysis
 %# ------------------------------------------------------------------------
 %# 
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  September 16, 2013
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  October 29, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)

@@ -418,6 +418,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     y12fwd   = avgcond12(:,6);
     y12aft   = avgcond12(:,7);
     
+    % Plotting
     h = plot(x7,y7heave,'--*',x7,y7fwd,'*',x7,y7aft,'*',x10,y10heave,'-.*',x10,y10fwd,'*',x10,y10aft,'*');
     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
     ylabel('{\bf LVDT measurement [m]}','FontSize',setGeneralFontSize);
@@ -453,6 +454,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 7: 1,500t, level (heave)','Cond. 7: 1,500t, level (fwd LVDT)','Cond. 7: 1,500t, level (aft LVDT)','Cond. 10: 1,804t, level (heave)','Cond. 10: 1,804t, level (fwd LVDT)','Cond. 10: 1,804t, level (aft LVDT)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -502,6 +504,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         x12 = 0; y12 = 0;
     end
     
+    % Plotting
     h = plot(x7,y7,'*',x10,y10,'*');
     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
     ylabel('{\bf Running trim [deg]}','FontSize',setGeneralFontSize);
@@ -530,6 +533,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 7: 1,500t, level','Cond. 10: 1,804t, level');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -652,6 +656,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     y12fwd   = avgcond12(:,6);
     y12aft   = avgcond12(:,7);
     
+    % Plotting
     h = plot(x8,y8heave,'--*',x8,y8fwd,'*',x8,y8aft,'*',x11,y11heave,'-.*',x11,y11fwd,'*',x11,y11aft,'*');
     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
     ylabel('{\bf LVDT measurement [m]}','FontSize',setGeneralFontSize);
@@ -687,6 +692,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 8: 1,500t, -0.5 deg (heave)','Cond. 8: 1,500t, -0.5 deg (fwd LVDT)','Cond. 8: 1,500t, -0.5 deg (aft LVDT)','Cond. 11: 1,804t, -0.5 deg (heave)','Cond. 11: 1,804t, -0.5 deg (fwd LVDT)','Cond. 11: 1,804t, -0.5 deg (aft LVDT)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -736,6 +742,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         x12 = 0; y12 = 0;
     end
     
+    % Plotting
     h = plot(x8,y8,'*',x11,y11,'*');
     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
     ylabel('{\bf Running trim [deg]}','FontSize',setGeneralFontSize);
@@ -764,6 +771,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 8: 1,500t, -0.5 deg','Cond. 11: 1,804t, -0.5 deg');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -886,6 +894,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     y12fwd   = avgcond12(:,6);
     y12aft   = avgcond12(:,7);
     
+    % Plotting
     h = plot(x9,y9heave,'--*',x9,y9fwd,'*',x9,y9aft,'*',x12,y12heave,'-.*',x12,y12fwd,'*',x12,y12aft,'*');
     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
     ylabel('{\bf LVDT measurement [m]}','FontSize',setGeneralFontSize);
@@ -921,6 +930,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 9: 1,500t, 0.5 deg (heave)','Cond. 9: 1,500t, 0.5 deg (fwd LVDT)','Cond. 9: 1,500t, 0.5 deg (aft LVDT)','Cond. 12: 1,804t, 0.5 deg (heave)','Cond. 12: 1,804t, 0.5 deg (fwd LVDT)','Cond. 12: 1,804t, 0.5 deg (aft LVDT)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -970,6 +980,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         x12 = 0; y12 = 0;
     end
     
+    % Plotting
     h = plot(x9,y9,'*',x12,y12,'*');
     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
     ylabel('{\bf Running trim [deg]}','FontSize',setGeneralFontSize);
@@ -998,6 +1009,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     hleg1 = legend('Cond. 9: 1,500t, 0.5 deg','Cond. 12: 1,804t, 0.5 deg');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     

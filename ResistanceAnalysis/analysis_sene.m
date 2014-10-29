@@ -2,8 +2,8 @@
 %# Resistance Test Analysis - Sensor Errors / Statistics
 %# ------------------------------------------------------------------------
 %#
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  February 13, 2014
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  October 29, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -115,7 +115,6 @@
 %#
 %# ------------------------------------------------------------------------
 
-
 %# ------------------------------------------------------------------------
 %# Clear workspace
 %# ------------------------------------------------------------------------
@@ -130,11 +129,31 @@ allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
 
 
+% *************************************************************************
+% START: PLOT SWITCHES: 1 = ENABLED
+%                       0 = DISABLED
+% -------------------------------------------------------------------------
+
+% Plot titles, colours, etc.
+enablePlotMainTitle     = 0;    % Show plot title in saved file
+enablePlotTitle         = 0;    % Show plot title above plot
+enableBlackAndWhitePlot = 1;    % Show plot in black and white only
+
+% Scaled to A4 paper
+enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
+
+% Special plots
+enableCompOverlayPlot   = 1;    % Comparison overlay plots
+
+% -------------------------------------------------------------------------
+% END: PLOT SWITCHES
+% *************************************************************************
+
+
 % -------------------------------------------------------------------------
 % Enable profile
 % -------------------------------------------------------------------------
 %profile on
-
 
 %# ------------------------------------------------------------------------
 %# Path where run directories are located
@@ -191,7 +210,34 @@ end
 %# START: CREATE PLOTS AND RUN DIRECTORY
 %# ------------------------------------------------------------------------
 
-fPath = sprintf('_plots/%s', '_sensor_error_statistics');
+%# _sensor_error_statistics directory -------------------------------------
+setDirName = '_sensor_error_statistics';
+
+fPath = sprintf('_plots/%s', setDirName);
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PDF directory
+fPath = sprintf('_plots/%s/%s', setDirName, 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('_plots/%s/%s', setDirName, 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('_plots/%s/%s', setDirName, 'EPS');
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
@@ -201,18 +247,6 @@ end
 %# ------------------------------------------------------------------------
 %# END: CREATE PLOTS AND RUN DIRECTORY
 %# ************************************************************************
-
-
-% *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED
-%                       0 = DISABLED
-% -------------------------------------------------------------------------
-
-enableCompOverlayPlot = 0;      % Comparison overlay plots
-
-% -------------------------------------------------------------------------
-% END: PLOT SWITCHES
-% *************************************************************************
 
 
 %# ////////////////////////////////////////////////////////////////////////
@@ -268,7 +302,6 @@ for k=startRun:endRun
     currentFileName = calFileArray(k);
     
     % Display message
-    %showMessage = sprintf('%s. Processing >>> %s...',num2str(k),currentFileName{1});
     showMessage = sprintf('%s. Filename: %s >>> Processing <<<',num2str(k),currentFileName{1});
     disp(showMessage);
     
@@ -488,7 +521,6 @@ dataLoadCell = A{1};
 dataAftLVDT  = A{2};
 dataFwdLVDT  = A{3};
 
-% TODO: Plotting?
 
 % /////////////////////////////////////////////////////////////////////////
 % START: Write results to CVS
@@ -513,43 +545,106 @@ if enableCompOverlayPlot == 1
     %# ////////////////////////////////////////////////////////////////////
     
     %figurename = sprintf('%s filename: %s', 'Calibration', currentFileName{1});
-    figurename = 'Load Cell: Calibration comparison overlay';
+    figurename = 'Load Cell: Calibration Comparison';
     f = figure('Name',figurename,'NumberTitle','off');
     
-    x1 = colVoltage{1}; y1 = colRealValue{1}; m1 = 'rs'; l1 = 'r--';
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 12;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end    
+    
+    % X and Y axis values
+    x1 = colVoltage{1}; y1 = colRealValue{1};
     polyf1 = polyfit(x1,y1,1); polyv1 = polyval(polyf1,x1);
     
-    % slope1     = polyf1(1,1);    % Slope
-    % intercept1 = polyf1(1,2);    % Intercept
-    
-    x2 = colVoltage{2}; y2 = colRealValue{2}; m2 = 'gv'; l2 = 'g--';
+    x2 = colVoltage{2}; y2 = colRealValue{2};
     polyf2 = polyfit(x2,y2,1); polyv2 = polyval(polyf2,x2);
     
-    x3 = colVoltage{3}; y3 = colRealValue{3}; m3 = 'bo'; l3 = 'b--';
+    x3 = colVoltage{3}; y3 = colRealValue{3};
     polyf3 = polyfit(x3,y3,1); polyv3 = polyval(polyf3,x3);
     
-    x4 = colVoltage{4}; y4 = colRealValue{4}; m4 = 'cd'; l4 = 'c--';
+    x4 = colVoltage{4}; y4 = colRealValue{4};
     polyf4 = polyfit(x4,y4,1); polyv4 = polyval(polyf4,x4);
     
-    x5 = colVoltage{5}; y5 = colRealValue{5}; m5 = 'mp'; l5 = 'm--';
+    x5 = colVoltage{5}; y5 = colRealValue{5};
     polyf5 = polyfit(x5,y5,1); polyv5 = polyval(polyf5,x5);
     
-    x6 = colVoltage{6}; y6 = colRealValue{6}; m6 = 'yh'; l6 = 'y--';
+    x6 = colVoltage{6}; y6 = colRealValue{6};
     polyf6 = polyfit(x6,y6,1); polyv6 = polyval(polyf6,x6);
     
-    x7 = colVoltage{7}; y7 = colRealValue{7}; m7 = 'k>'; l7 = 'k--';
+    x7 = colVoltage{7}; y7 = colRealValue{7};
     polyf7 = polyfit(x7,y7,1); polyv7 = polyval(polyf7,x7);
     
-    % Plot
-    h = plot(x1,y1,m1,x2,y2,m2,x3,y3,m3,x4,y4,m4,x5,y5,m5,x6,y6,m6,x7,y7,m7,'MarkerSize',10);
+    %# Line, colors and markers
+    setMarkerSize      = 12;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+    
+    % Plotting
+    h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*',x5,y5,'*',x6,y6,'*',x7,y7,'*');
+    
+    % Markers
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);  
+    setCurveNo=7;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
     hold on;
-    h = plot(x1,polyv1,l1,x2,polyv2,l2,x3,polyv3,l3,x4,polyv4,l4,x5,polyv5,l5,x6,polyv6,l6,x7,polyv7,l7);
-    xlabel('{\bf Sensor output [V]}');
-    ylabel('{\bf Force [N]}');
-    %setTitle = sprintf('%s',currentFileName{1});
-    % str = strcat('{\bf ',setTitle,'}');
-    % title(str);
-    % title('{\bf Load cell calibration}');
+    h = plot(x1,polyv1,'-',x2,polyv2,'-',x3,polyv3,'-',x4,polyv4,'-',x5,polyv5,'-',x6,polyv6,'-',x7,polyv7,'-');
+
+    % Lines
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=7;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    
+    xlabel('{\bf Sensor output [V]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Force [N]}','FontSize',setGeneralFontSize);
+    title('{\bf Load Cell: Calibration Comparison}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -563,203 +658,369 @@ if enableCompOverlayPlot == 1
     set(gca,'XTick',-10:1:0);
     set(gca,'YLim',[0 55]);
     set(gca,'YTick',0:5:55);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
     hleg1 = legend('Cal. 67:: Gain: 2x10, Filter: 1Hz, Date: 27/08/13','Cal. 68:: Gain: 2x10, Filter: 1Hz, Date: 28/08/13','Cal. 69:: Gain: 2x10, Filter: 1Hz, Date: 29/08/13','Cal. 70:: Gain: 2x10, Filter: 1Hz, Date: 30/08/13','Cal. 72:: Gain: 2x10, Filter: 1Hz, Date: 02/09/13','Cal. 73:: Gain: 2x10, Filter: 1Hz, Date: 03/09/13','Cal. 76:: Gain: 2x10, Filter: 1Hz, Date: 05/09/13','Cal. 67:: Curve fit','Cal. 68:: Curve fit','Cal. 69:: Curve fit','Cal. 70:: Curve fit','Cal. 72:: Curve fit','Cal. 73:: Curve fit','Cal. 76:: Curve fit');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
     %legend boxoff;
     
-    %# --------------------------------------------------------------------
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# ********************************************************************
     %# Save plot as PNG
-    %# --------------------------------------------------------------------
+    %# ********************************************************************
     
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
     %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-    
-    %# --------------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-    
-    %# --------------------------------------------------------------------
-    %# Save plots as PDF and PNG
-    %# --------------------------------------------------------------------
-    %plotsavenamePDF = sprintf('_plots/%s/Load_Cell_Calibration_Comparison_Plots.pdf', '_sensor_error_statistics');
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Load_Cell_Calibration_Comparison_Plots.png', '_sensor_error_statistics');
-    saveas(f, plotsavename);                % Save plot as PNG
-    %close;
-    
-    
-    %# ////////////////////////////////////////////////////////////////////
-    %# Comparison Overlay Plotting: Aft LVDT
-    %# ////////////////////////////////////////////////////////////////////
-    
-    %figurename = sprintf('%s filename: %s', 'Calibration', currentFileName{1});
-    figurename = 'Aft LVDT: Calibration comparison overlay';
-    f = figure('Name',figurename,'NumberTitle','off');
-    
-    x1 = colVoltage{8};  y1 = colRealValue{8};  m1 = 'rs'; l1 = 'r--';
-    polyf1 = polyfit(x1,y1,1); polyv1 = polyval(polyf1,x1);
-    
-    x2 = colVoltage{9};  y2 = colRealValue{9};  m2 = 'gv'; l2 = 'g--';
-    polyf2 = polyfit(x2,y2,1); polyv2 = polyval(polyf2,x2);
-    
-    x3 = colVoltage{10}; y3 = colRealValue{10}; m3 = 'bo'; l3 = 'h--';
-    polyf3 = polyfit(x3,y3,1); polyv3 = polyval(polyf3,x3);
-    
-    x4 = colVoltage{11}; y4 = colRealValue{11}; m4 = 'cd'; l4 = 'c--';
-    polyf4 = polyfit(x4,y4,1); polyv4 = polyval(polyf4,x4);
-    
-    x5 = colVoltage{12}; y5 = colRealValue{12}; m5 = 'mp'; l5 = 'm--';
-    polyf5 = polyfit(x5,y5,1); polyv5 = polyval(polyf5,x5);
-    
-    % Plot
-    h = plot(x1,y1,m1,x2,y2,m2,x3,y3,m3,x4,y4,m4,x5,y5,m5,'MarkerSize',10);
-    hold on;
-    h = plot(x1,polyv1,l1,x2,polyv2,l2,x3,polyv3,l3,x4,polyv4,l4,x5,polyv5,l5);
-    xlabel('{\bf Sensor output [V]}');
-    ylabel('{\bf Distance [mm]}');
-    %setTitle = sprintf('%s',currentFileName{1});
-    % str = strcat('{\bf ',setTitle,'}');
-    % title(str);
-    % title('{\bf Aft LVDT calibration}');
-    grid on;
-    box on;
-    axis square;
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    %# Axis limitations
-    set(gca,'XLim',[-10 10]);
-    set(gca,'XTick',-10:2:10);
-    set(gca,'YLim',[-40 40]);
-    set(gca,'YTick',-40:10:40);
-    
-    %# Legend
-    hleg1 = legend('Cal. 36:: Gain: 2.5, Filter: 1Hz, Date: 28/08/13','Cal. 37:: Gain: 2.5, Filter: 1Hz, Date: 29/08/13','Cal. 38:: Gain: 2.5, Filter: 1Hz, Date: 30/08/13','Cal. 39:: Gain: 2.5, Filter: 1Hz, Date: 02/09/13','Cal. 40:: Gain: 2.5, Filter: 1Hz, Date: 03/09/13','Cal. 36:: Curve fit','Cal. 37:: Curve fit','Cal. 38:: Curve fit','Cal. 39:: Curve fit','Cal. 40:: Curve fit');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    %legend boxoff;
-    
-    %# --------------------------------------------------------------------
-    %# Save plot as PNG
-    %# --------------------------------------------------------------------
-    
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-    
-    %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-    
-    %# --------------------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-    
-    %# --------------------------------------------------------------------
-    %# Save plots as PDF and PNG
-    %# --------------------------------------------------------------------
-    %plotsavenamePDF = sprintf('_plots/%s/Aft_LVDT_Calibration_Comparison_Plots.pdf', '_sensor_error_statistics');
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Aft_LVDT_Calibration_Comparison_Plots.png', '_sensor_error_statistics');
-    saveas(f, plotsavename);                % Save plot as PNG
-    %close;
-    
-    
-    %# ////////////////////////////////////////////////////////////////////
-    %# Comparison Overlay Plotting: Aft LVDT
-    %# ////////////////////////////////////////////////////////////////////
-    
-    %figurename = sprintf('%s filename: %s', 'Calibration', currentFileName{1});
-    figurename = 'Fwd LVDT: Calibration comparison overlay';
-    f = figure('Name',figurename,'NumberTitle','off');
-    
-    x1 = colVoltage{13}; y1 = colRealValue{13}; m1 = 'rs'; l1 = 'r--';
-    polyf1 = polyfit(x1,y1,1); polyv1 = polyval(polyf1,x1);
-    
-    x2 = colVoltage{14}; y2 = colRealValue{14}; m2 = 'gv'; l2 = 'g--';
-    polyf2 = polyfit(x2,y2,1); polyv2 = polyval(polyf2,x2);
-    
-    x3 = colVoltage{15}; y3 = colRealValue{15}; m3 = 'bo'; l3 = 'b--';
-    polyf3 = polyfit(x3,y3,1); polyv3 = polyval(polyf3,x3);
-    
-    x4 = colVoltage{16}; y4 = colRealValue{16}; m4 = 'cd'; l4 = 'c--';
-    polyf4 = polyfit(x4,y4,1); polyv4 = polyval(polyf4,x4);
-    
-    x5 = colVoltage{17}; y5 = colRealValue{17}; m5 = 'mp'; l5 = 'm--';
-    polyf5 = polyfit(x5,y5,1); polyv5 = polyval(polyf5,x5);
-    
-    % Plot
-    h = plot(x1,y1,m1,x2,y2,m2,x3,y3,m3,x4,y4,m4,x5,y5,m5,'MarkerSize',10);
-    hold on;
-    h = plot(x1,polyv1,l1,x2,polyv2,l2,x3,polyv3,l3,x4,polyv4,l4,x5,polyv5,l5);
-    xlabel('{\bf Sensor output [V]}');
-    ylabel('{\bf Distance [mm]}');
-    %setTitle = sprintf('%s',currentFileName{1});
-    % str = strcat('{\bf ',setTitle,'}');
-    % title(str);
-    % title('{\bf Aft LVDT calibration}');
-    grid on;
-    box on;
-    axis square;
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    %# Axis limitations
-    set(gca,'XLim',[-10 10]);
-    set(gca,'XTick',-10:2:10);
-    set(gca,'YLim',[-40 40]);
-    set(gca,'YTick',-40:10:40);
-    
-    %# Legend
-    hleg1 = legend('Cal. 36:: Gain: 2.5, Filter: 1Hz, Date: 28/08/13','Cal. 37:: Gain: 2.5, Filter: 1Hz, Date: 29/08/13','Cal. 38:: Gain: 2.5, Filter: 1Hz, Date: 30/08/13','Cal. 39:: Gain: 2.5, Filter: 1Hz, Date: 02/09/13','Cal. 40:: Gain: 2.5, Filter: 1Hz, Date: 03/09/13','Cal. 36:: Curve fit','Cal. 37:: Curve fit','Cal. 38:: Curve fit','Cal. 39:: Curve fit','Cal. 40:: Curve fit');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    %legend boxoff;
-    
-    %# --------------------------------------------------------------------
-    %# Save plot as PNG
-    %# --------------------------------------------------------------------
-    
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-    
-    %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
     
     %# Plot title ---------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
     
-    %# --------------------------------------------------------------------
-    %# Save plots as PDF and PNG
-    %# --------------------------------------------------------------------
-    %plotsavenamePDF = sprintf('_plots/%s/Fwd_LVDT_Calibration_Comparison_Plots.pdf', '_sensor_error_statistics');
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Fwd_LVDT_Calibration_Comparison_Plots.png', '_sensor_error_statistics');
-    saveas(f, plotsavename);                % Save plot as PNG
+    %# Save plots as PDF, PNG and EPS -------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Load_Cell_Calibration_Comparison_Plot.%s', '_sensor_error_statistics', setFileFormat{k}, setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;
+    
+    
+    %# ////////////////////////////////////////////////////////////////////
+    %# Comparison Overlay Plotting: Aft LVDT
+    %# ////////////////////////////////////////////////////////////////////
+    
+    %figurename = sprintf('%s filename: %s', 'Calibration', currentFileName{1});
+    figurename = 'Aft LVDT: Calibration Comparison';
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 12;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end    
+    
+    % X and Y axis values
+    x1 = colVoltage{8};  y1 = colRealValue{8};
+    polyf1 = polyfit(x1,y1,1); polyv1 = polyval(polyf1,x1);
+    
+    x2 = colVoltage{9};  y2 = colRealValue{9};
+    polyf2 = polyfit(x2,y2,1); polyv2 = polyval(polyf2,x2);
+    
+    x3 = colVoltage{10}; y3 = colRealValue{10};
+    polyf3 = polyfit(x3,y3,1); polyv3 = polyval(polyf3,x3);
+    
+    x4 = colVoltage{11}; y4 = colRealValue{11};
+    polyf4 = polyfit(x4,y4,1); polyv4 = polyval(polyf4,x4);
+    
+    x5 = colVoltage{12}; y5 = colRealValue{12};
+    polyf5 = polyfit(x5,y5,1); polyv5 = polyval(polyf5,x5);
+    
+    %# Line, colors and markers
+    setMarkerSize      = 12;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';    
+    
+    % Plotting
+    h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*',x5,y5,'*');
+    
+    % Markers
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    hold on;
+    h = plot(x1,polyv1,'-',x2,polyv2,'-',x3,polyv3,'-',x4,polyv4,'-',x5,polyv5,'-');
+    
+    % Lines
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    
+    xlabel('{\bf Sensor output [V]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Distance [mm]}','FontSize',setGeneralFontSize);
+    title('{\bf Aft LVDT: Calibration Comparison}','FontSize',setGeneralFontSize);
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    set(gca,'XLim',[-10 10]);
+    set(gca,'XTick',-10:2:10);
+    set(gca,'YLim',[-40 40]);
+    set(gca,'YTick',-40:10:40);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend('Cal. 36:: Gain: 2.5, Filter: 1Hz, Date: 28/08/13','Cal. 37:: Gain: 2.5, Filter: 1Hz, Date: 29/08/13','Cal. 38:: Gain: 2.5, Filter: 1Hz, Date: 30/08/13','Cal. 39:: Gain: 2.5, Filter: 1Hz, Date: 02/09/13','Cal. 40:: Gain: 2.5, Filter: 1Hz, Date: 03/09/13','Cal. 36:: Curve fit','Cal. 37:: Curve fit','Cal. 38:: Curve fit','Cal. 39:: Curve fit','Cal. 40:: Curve fit');
+    set(hleg1,'Location','NorthEast');
+    set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);    
+    
+    %# ********************************************************************
+    %# Save plot as PNG
+    %# ********************************************************************
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
+    
+    %# Plot title ---------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
+    
+    %# Save plots as PDF, PNG and EPS -------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Aft_LVDT_Calibration_Comparison_Plots.%s', '_sensor_error_statistics', setFileFormat{k}, setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;
+    
+    
+    %# ////////////////////////////////////////////////////////////////////
+    %# Comparison Overlay Plotting: Aft LVDT
+    %# ////////////////////////////////////////////////////////////////////
+    
+    %figurename = sprintf('%s filename: %s', 'Calibration', currentFileName{1});
+    figurename = 'Fwd LVDT: Calibration Comparison';
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 12;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end    
+    
+    % X and Y axis values
+    x1 = colVoltage{13}; y1 = colRealValue{13};
+    polyf1 = polyfit(x1,y1,1); polyv1 = polyval(polyf1,x1);
+    
+    x2 = colVoltage{14}; y2 = colRealValue{14};
+    polyf2 = polyfit(x2,y2,1); polyv2 = polyval(polyf2,x2);
+    
+    x3 = colVoltage{15}; y3 = colRealValue{15};
+    polyf3 = polyfit(x3,y3,1); polyv3 = polyval(polyf3,x3);
+    
+    x4 = colVoltage{16}; y4 = colRealValue{16};
+    polyf4 = polyfit(x4,y4,1); polyv4 = polyval(polyf4,x4);
+    
+    x5 = colVoltage{17}; y5 = colRealValue{17};
+    polyf5 = polyfit(x5,y5,1); polyv5 = polyval(polyf5,x5);
+    
+    %# Line, colors and markers
+    setMarkerSize      = 12;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';    
+    
+    % Plotting
+    h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*',x5,y5,'*');
+    
+    % Markers
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);    
+    
+    hold on;
+    h = plot(x1,polyv1,'-',x2,polyv2,'-',x3,polyv3,'-',x4,polyv4,'-',x5,polyv5,'-');
+    
+    % Lines
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);    
+    
+    xlabel('{\bf Sensor output [V]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Distance [mm]}','FontSize',setGeneralFontSize);
+    title('{\bf Fwd LVDT: Calibration Comparison}','FontSize',setGeneralFontSize);
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    set(gca,'XLim',[-10 10]);
+    set(gca,'XTick',-10:2:10);
+    set(gca,'YLim',[-40 40]);
+    set(gca,'YTick',-40:10:40);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend('Cal. 36:: Gain: 2.5, Filter: 1Hz, Date: 28/08/13','Cal. 37:: Gain: 2.5, Filter: 1Hz, Date: 29/08/13','Cal. 38:: Gain: 2.5, Filter: 1Hz, Date: 30/08/13','Cal. 39:: Gain: 2.5, Filter: 1Hz, Date: 02/09/13','Cal. 40:: Gain: 2.5, Filter: 1Hz, Date: 03/09/13','Cal. 36:: Curve fit','Cal. 37:: Curve fit','Cal. 38:: Curve fit','Cal. 39:: Curve fit','Cal. 40:: Curve fit');
+    set(hleg1,'Location','NorthEast');
+    set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);    
+    
+    %# ********************************************************************
+    %# Save plot as PNG
+    %# ********************************************************************
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
+    
+    %# Plot title ---------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
+    
+    %# Save plots as PDF, PNG and EPS -------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Fwd_LVDT_Calibration_Comparison_Plots.%s', '_sensor_error_statistics', setFileFormat{k}, setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
     %close;
     
 end

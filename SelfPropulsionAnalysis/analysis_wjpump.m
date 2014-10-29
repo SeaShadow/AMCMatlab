@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 28, 2014
+%# Date       :  October 29, 2014
 %#
 %# Description:  Pumpcurve analysis for different RPM in full scale.
 %#
@@ -369,6 +369,7 @@ end
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
+setLegendFontSize  = 12;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -719,6 +720,8 @@ set(gca,'XLim',[minX maxX]);
 set(gca,'XTick',minX:setXIncr:maxX);
 set(gca,'YLim',[minY maxY]);
 set(gca,'YTick',minY:setYIncr:maxY);
+%set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
 
 %# Legend -----------------------------------------------------------------
 
@@ -727,7 +730,9 @@ set(gca,'YTick',minY:setYIncr:maxY);
 hleg1 = legend(legendInfo1);
 set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
-legend boxoff;
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
@@ -796,6 +801,7 @@ end
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
+setLegendFontSize  = 12;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1154,6 +1160,8 @@ set(gca,'XLim',[minX maxX]);
 set(gca,'XTick',minX:setXIncr:maxX);
 set(gca,'YLim',[minY maxY]);
 set(gca,'YTick',minY:setYIncr:maxY);
+%set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 
 %# Legend -----------------------------------------------------------------
 
@@ -1162,7 +1170,9 @@ set(gca,'YTick',minY:setYIncr:maxY);
 hleg1 = legend(legendInfo2);
 set(hleg1,'Location','SouthEast');
 set(hleg1,'Interpreter','none');
-legend boxoff;
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 

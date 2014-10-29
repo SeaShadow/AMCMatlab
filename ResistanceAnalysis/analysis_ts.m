@@ -2,8 +2,8 @@
 %# Resistance Test Analysis - Time Series analysis
 %# ------------------------------------------------------------------------
 %#
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  March 20, 2014
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  October 29, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -133,6 +133,22 @@ enableBlackAndWhitePlot = 0;    % Show plot in black and white only
 
 % Scaled to A4 paper
 enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
+
+% Time series plots for conditions 7 to 12
+enableCond07Plot        = 1; % Plot condition 7
+enableCond08Plot        = 0; % Plot condition 8
+enableCond09Plot        = 0; % Plot condition 9
+enableCond10Plot        = 0; % Plot condition 10
+enableCond11Plot        = 0; % Plot condition 12
+enableCond12Plot        = 0; % Plot condition 12
+
+% Check if any plots enabled, if not stop
+if enableCond07Plot == 0 && enableCond08Plot == 0 && enableCond09Plot == 0 && enableCond10Plot == 0 && enableCond11Plot == 0 && enableCond12Plot == 0
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('!!! WARNING: No plots enabled! !!!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    break;
+end
 
 %# ------------------------------------------------------------------------
 %# END: PLOT SWITCHES
@@ -320,31 +336,6 @@ end
 %# ************************************************************************
 
 
-%# ************************************************************************
-%# START: PLOT SWITCHES: 1 = ENABLED
-%#                       0 = DISABLED
-%# ------------------------------------------------------------------------
-
-enableCond07Plot        = 1; % Plot condition 7
-enableCond08Plot        = 0; % Plot condition 8
-enableCond09Plot        = 0; % Plot condition 9
-enableCond10Plot        = 0; % Plot condition 10
-enableCond11Plot        = 0; % Plot condition 12
-enableCond12Plot        = 0; % Plot condition 12
-
-% Check if any plots enabled, if not stop
-if enableCond07Plot == 0 && enableCond08Plot == 0 && enableCond09Plot == 0 && enableCond10Plot == 0 && enableCond11Plot == 0 && enableCond12Plot == 0
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    disp('!!! WARNING: No plots enabled! !!!');
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    break;
-end
-
-%# ------------------------------------------------------------------------
-%# END: PLOT SWITCHES
-%# ************************************************************************
-
-
 %# ------------------------------------------------------------------------
 %# CONDITION 7: Time Series -----------------------------------------------
 %# ------------------------------------------------------------------------
@@ -357,11 +348,11 @@ if enableCond07Plot == 1
     for j=1:ml
         [ms,ns] = size(sortedArray{j});
         
-        minRunNo    = min(sortedArray{j}(:,1));
-        maxRunNo    = max(sortedArray{j}(:,1));
-        FroudeNo    = sortedArray{j}(1,11);
-        RunCond     = sortedArray{j}(1,28);
-        RunRepeats  = ms;
+        minRunNo   = min(sortedArray{j}(:,1));
+        maxRunNo   = max(sortedArray{j}(:,1));
+        FroudeNo   = sortedArray{j}(1,11);
+        RunCond    = sortedArray{j}(1,28);
+        RunRepeats = ms;
         
         %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         %# PLOT: SPEED, LVDTs, AND DRAG
@@ -410,12 +401,13 @@ if enableCond07Plot == 1
             % Black and white curves
             setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
         end
+        %setLineStyle = {'--';':';'-.';'--';':';'-.';'--';':';'-.';'--';':'};
+        setLineStyle = {'-';'-';'-';'-';'-';'-';'-';'-';'-';'-';'-'};
         
         %# Line, colors and markers
         setMarkerSize      = 3;
         setLineWidthMarker = 1;
         setLineWidth       = 1;
-        setLineStyle       = {'--';':';'-.';'--';':';'-.';'--';':';'-.';'--';':'};
         
         % Time vs. Aft LVDT ---------------------------------------------------
         subplot(2,2,1)
@@ -462,17 +454,19 @@ if enableCond07Plot == 1
             minYValues(ms) = min(y);
             maxYValues(ms) = max(y);
             
-            h = plot(x,y,'*');
-            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            % Plotting
+            h = plot(x,y,'-');
+            set(h(1),'Color',setColor{k},'LineStyle',setLineStyle{k},'linewidth',setLineWidth);
             legendInfo{k} = sprintf('Run %s',num2str(runnumber));
             hold on;
             
         end
         hold off;
-        
-        xlabel('{\bf Time [s]}');
-        ylabel('{\bf LVDT output [mm]}');
-        title('{\bf Aft LVDT}');
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf LVDT output [mm]}','FontSize',setGeneralFontSize);
+        if enablePlotTitle == 1
+            title('{\bf Aft LVDT}','FontSize',setGeneralFontSize);
+        end
         grid on;
         box on;
         axis square;
@@ -492,6 +486,7 @@ if enableCond07Plot == 1
         hleg1 = legend(legendInfo);
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
         set(hleg1,'FontSize',setLegendFontSize);
         legend boxoff;
         
@@ -535,17 +530,19 @@ if enableCond07Plot == 1
             minYValues(ms) = min(y);
             maxYValues(ms) = max(y);
             
-            h = plot(x,y,'*');
-            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            % Plotting
+            h = plot(x,y,'-');
+            set(h(1),'Color',setColor{k},'LineStyle',setLineStyle{k},'linewidth',setLineWidth);
             legendInfo{k} = sprintf('Run %s',num2str(runnumber));
             hold on;
             
         end
         hold off;
-        
-        xlabel('{\bf Time [s]}');
-        ylabel('{\bf Speed [m/s]}');
-        title('{\bf Speed}');
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Speed [m/s]}','FontSize',setGeneralFontSize);
+        if enablePlotTitle == 1
+            title('{\bf Speed}','FontSize',setGeneralFontSize);
+        end
         grid on;
         box on;
         axis square;
@@ -561,6 +558,7 @@ if enableCond07Plot == 1
         hleg1 = legend(legendInfo);
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
         set(hleg1,'FontSize',setLegendFontSize);
         legend boxoff;
         
@@ -604,17 +602,19 @@ if enableCond07Plot == 1
             minYValues(ms) = min(y);
             maxYValues(ms) = max(y);
             
-            h = plot(x,y,'*');
-            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            % Plotting
+            h = plot(x,y,'-');
+            set(h(1),'Color',setColor{k},'LineStyle',setLineStyle{k},'linewidth',setLineWidth);
             legendInfo{k} = sprintf('Run %s',num2str(runnumber));
             hold on;
             
         end
         hold off;
-        
-        xlabel('{\bf Time [s]}');
-        ylabel('{\bf LVDT output [mm]}');
-        title('{\bf Fwd LVDT}');
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf LVDT output [mm]}','FontSize',setGeneralFontSize);
+        if enablePlotTitle == 1
+            title('{\bf Fwd LVDT}','FontSize',setGeneralFontSize);
+        end
         grid on;
         box on;
         axis square;
@@ -631,6 +631,7 @@ if enableCond07Plot == 1
         hleg1 = legend(legendInfo);
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
         set(hleg1,'FontSize',setLegendFontSize);
         legend boxoff;
         
@@ -674,17 +675,19 @@ if enableCond07Plot == 1
             minYValues(ms) = min(y);
             maxYValues(ms) = max(y);
             
-            h = plot(x,y,'*');
-            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            % Plotting
+            h = plot(x,y,'-');
+            set(h(1),'Color',setColor{k},'LineStyle',setLineStyle{k},'linewidth',setLineWidth);
             legendInfo{k} = sprintf('Run %s',num2str(runnumber));
             hold on;
             
         end
         hold off;
-        
-        xlabel('{\bf Time [s]}');
-        ylabel('{\bf Drag [g]}');
-        title('{\bf Drag}');
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Drag [g]}','FontSize',setGeneralFontSize);
+        if enablePlotTitle == 1
+            title('{\bf Drag}','FontSize',setGeneralFontSize);
+        end
         grid on;
         box on;
         axis square;
@@ -705,6 +708,7 @@ if enableCond07Plot == 1
         hleg1 = legend(legendInfo);
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
         set(hleg1,'FontSize',setLegendFontSize);
         legend boxoff;
         
@@ -743,7 +747,7 @@ if enableCond07Plot == 1
         setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
         setFileFormat = {'PDF' 'PNG' 'EPS'};
         for k=1:3
-            plotsavename = sprintf('_plots/%s/%s/Cond_%s_Run_%s_to_Run_%s_Fr_%s_Time_Series_Comparison_Plot.%s', '_averaged', setFileFormat{k}, num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), setFileFormat{k});
+            plotsavename = sprintf('_plots/%s/%s/Cond_%s_Run_%s_to_Run_%s_Fr_%s_Time_Series_Comparison_Plot.%s', '_time_series_plots', setFileFormat{k}, num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), setFileFormat{k});
             print(gcf, setSaveFormat{k}, plotsavename);
         end
         close;
@@ -751,6 +755,15 @@ if enableCond07Plot == 1
     end % For loop
     
 end % enableCond07Plot
+
+
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# TODO: Code below needs adjusting like condition 7 (enableCond07Plot)
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+break;
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# TODO: Code below needs adjusting like condition 7 (enableCond07Plot)
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 %# ------------------------------------------------------------------------

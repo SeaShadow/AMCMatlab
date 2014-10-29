@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 7, 2014
+%# Date       :  October 29, 2014
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -61,6 +61,28 @@ clc
 allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
 
+
+%# ************************************************************************
+%# START: PLOT SWITCHES: 1 = ENABLED
+%#                       0 = DISABLED
+%# ------------------------------------------------------------------------
+
+% Plot titles, colours, etc.
+enablePlotMainTitle     = 1;    % Show plot title in saved file
+enablePlotTitle         = 1;    % Show plot title above plot
+enableBlackAndWhitePlot = 0;    % Show plot in black and white only
+
+% Scaled to A4 paper
+enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
+
+% Individual plots
+enbaleTimeSeriesPlot    = 1;    % Show time series plot
+
+%# ------------------------------------------------------------------------
+%# END: PLOT SWITCHES
+%# ************************************************************************
+
+
 % -------------------------------------------------------------------------
 % Enable profile
 % -------------------------------------------------------------------------
@@ -104,12 +126,63 @@ cutSamplesFromEnd = 4000;
 startRun = 1;       % Start at run x
 endRun   = 67;      % Stop at run y
 
-%startRun = 1;      % Start at run x
-%endRun   = 20;     % Stop at run y
+%startRun = 20;      % Start at run x
+%endRun   = 21;      % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+% /////////////////////////////////////////////////////////////////////////
+% START: CREATE PLOTS AND RUN DIRECTORY
+% -------------------------------------------------------------------------
+
+%# _PLOTS directory
+fPath = '_plots/';
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# _time_series directory -------------------------------------------------
+setDirName = '_plots/_time_series';
+
+fPath = setDirName;
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PDF directory
+fPath = sprintf('%s/%s', setDirName, 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('%s/%s', setDirName, 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('%s/%s', setDirName, 'EPS');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+% -------------------------------------------------------------------------
+% END: CREATE PLOTS AND RUN DIRECTORY
+% /////////////////////////////////////////////////////////////////////////
 
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -152,17 +225,6 @@ XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
 YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# ------------------------------------------------------------------------
 %# END DEFINE PLOT SIZE
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# PLOTTING & SAVING SWITCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# ------------------------------------------------------------------------
-
-plotting_on = 1;    %TRUE (1) or FALSE (0)
-
-%# ------------------------------------------------------------------------
-%# PLOTTING & SAVING SWITCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -251,40 +313,7 @@ for k=startRun:endRun
         cutSamplesFromEnd = 1600;
     end
     %# --------------------------------------------------------------------
-    
-    
-    % /////////////////////////////////////////////////////////////////////
-    % START: CREATE PLOTS AND RUN DIRECTORY
-    % ---------------------------------------------------------------------
-    
-    %# _PLOTS directory
-    fPath = '_plots/';
-    if isequal(exist(fPath, 'dir'),7)
-        % Do nothing as directory exists
-    else
-        mkdir(fPath);
-    end
-    
-    %     %# RUN directory
-    %     fPath = sprintf('_plots/%s', name(1:3));
-    %     if isequal(exist(fPath, 'dir'),7)
-    %         % Do nothing as directory exists
-    %     else
-    %         mkdir(fPath);
-    %     end
-    
-    %# Time series directory
-    fPath = sprintf('_plots/%s', '_time_series');
-    if isequal(exist(fPath, 'dir'),7)
-        % Do nothing as directory exists
-    else
-        mkdir(fPath);
-    end
-    
-    % ---------------------------------------------------------------------
-    % END: CREATE PLOTS AND RUN DIRECTORY
-    % /////////////////////////////////////////////////////////////////////
-    
+
     
     % /////////////////////////////////////////////////////////////////////
     % START: WAVE PROBE ANALYSIS
@@ -361,28 +390,109 @@ for k=startRun:endRun
     %# END: MFR BASED ON 1s INTERVALS AND OVERALL *************************
     
     
+    %# ////////////////////////////////////////////////////////////////////
+    %# START: RPM Analysis
+    %# --------------------------------------------------------------------
+    
+    % Enable RPM evaluation
+    enableRPMandPowerCalc = 1;
+    
+    if enableRPMandPowerCalc == 1
+        [RPMStbd RPMPort] = analysis_rpm(k,name,Fs,timeData,Raw_CH_5_RPMStbd,Raw_CH_6_RPMPort);
+    end
+    
+    %# --------------------------------------------------------------------
+    %# END: RPM Analysis
+    %# ////////////////////////////////////////////////////////////////////    
+    
+    
     %# --------------------------------------------------------------------
     %# TIME SRIES PLOTS
     %# --------------------------------------------------------------------
-    if plotting_on == 1
+    if enbaleTimeSeriesPlot == 1
         
-        %# Plotting curves
-        figurename = sprintf('Sensors: Time Series and Wave Probe Data: Run %s', num2str(k));
+        % Determine shaft speed (RPM)
+        if RPMPort == 0
+            measuredShaftRPM = RPMStbd;
+        elseif RPMStbd == 0
+            measuredShaftRPM = RPMPort;
+        else
+            measuredShaftRPM = 0;
+        end
+        
+        %# Plotting
+        figurename = sprintf('Run %s (%s RPM): Wave Probe, Kiel Probe, Thrust and Torque Time Series Data', num2str(k), num2str(sprintf('%.0f',measuredShaftRPM)));
         f = figure('Name',figurename,'NumberTitle','off');
+        
+        %# Paper size settings ------------------------------------------------
+        
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+            
+            set(gcf, 'PaperUnits', 'centimeters');
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+        end
+        
+        % Fonts and colours ---------------------------------------------------
+        setGeneralFontName = 'Helvetica';
+        setGeneralFontSize = 14;
+        setBorderLineWidth = 2;
+        setLegendFontSize  = 12;
+        
+        %# Change default text fonts for plot title
+        set(0,'DefaultTextFontname',setGeneralFontName);
+        set(0,'DefaultTextFontSize',14);
+        
+        %# Box thickness, axes font size, etc. --------------------------------
+        set(gca,'TickDir','in',...
+            'FontSize',12,...
+            'LineWidth',2,...
+            'FontName',setGeneralFontName,...
+            'Clipping','off',...
+            'Color',[1 1 1],...
+            'LooseInset',get(gca,'TightInset'));
+        
+        %# Markes and colors ------------------------------------------------------
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+        %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+        % Colored curves
+        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+        if enableBlackAndWhitePlot == 1
+            % Black and white curves
+            setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+        end
+        
+        %# Line, colors and markers
+        setMarkerSize      = 4;
+        setLineWidthMarker = 1;
+        setLineWidth       = 1;
+        setLineStyle       = '-';
+        setLineStyle1      = '--';
+        setLineStyle2      = '-.';        
         
         %# /////////////////////////////////////////////////////////////////
         %# START: WAVE PROBE ANALYSIS
         %# ----------------------------------------------------------------
         subplot(2,2,1);
         
-        %# Plotting curves
-        h = plot(x,y,'-',x,p2,'-k');
-        title('{\bf Wave probe output}');
-        xlabel('{\bf Time [s]}');
-        ylabel('{\bf Mass flow rate [Kg]}');
+        %# Plotting
+        h = plot(x,y,'-',x,p2,'-');
+        if enablePlotTitle == 1
+            title('{\bf Wave probe output}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Mass flow rate [Kg]}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
+        
+        %# Line, colors and markers
+        setCurveNo=1;set(h(setCurveNo),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+        setCurveNo=2;set(h(setCurveNo),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
         
         %# Set plot figure background to a defined color
         %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -394,7 +504,9 @@ for k=startRun:endRun
         
         %# Axis limitations
         xlim([x(1) x(end)]);
-        
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
+    
         %# Add results to array for comparison and save as TXT and DAT file
         % Slope of Linear fit => Y = (slope1 * X ) + slope2
         slopesArray(k, 1) = k;          % Run number
@@ -417,9 +529,15 @@ for k=startRun:endRun
         %# Legend
         linfittxt = sprintf('Linear fit, %s',linfiteqn);
         hleg1 = legend('Wave probe',linfittxt);
-        set(hleg1,'Location','NorthWest');
+        set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
         %legend boxoff;
+        
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);        
         
         %# ----------------------------------------------------------------
         %# END: WAVE PROBE ANALYSIS
@@ -440,17 +558,27 @@ for k=startRun:endRun
         kppolyfitport = polyfit(x,y2,1);
         kppolyvalport = polyval(kppolyfitport,x);
         
-        %# Plotting curves
-        h = plot(x,y1,'-',x,kppolyvalstbd,'-k',x,y2,'-',x,kppolyvalport,'-k');
-        title('{\bf Kiel probe output}');
-        xlabel('{\bf Time [s]}');
-        ylabel('{\bf Output [V]}');
+        %# Plotting
+        h = plot(x,y1,'-',x,kppolyvalstbd,'-',x,y2,'-',x,kppolyvalport,'-');
+        if enablePlotTitle == 1
+            title('{\bf Kiel probe output}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Output [V]}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
         
+        %# Line, colors and markers
+        setCurveNo=1;set(h(setCurveNo),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+        setCurveNo=2;set(h(setCurveNo),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);        
+        setCurveNo=3;set(h(setCurveNo),'Color',setColor{2},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+        setCurveNo=4;set(h(setCurveNo),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);  
+        
         %# Axis limitations
         xlim([x(1) x(end)]);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
         
         %# Line width
         set(h(1),'linewidth',1);
@@ -462,7 +590,13 @@ for k=startRun:endRun
         hleg1 = legend('Kiel probe (Stbd)','Linear fit (Stbd)','Kiel probe (Port)','Linear fit (Port)');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
         %legend boxoff;
+        
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);        
         
         %# ----------------------------------------------------------------
         %# END: KIEL PROBE
@@ -487,29 +621,39 @@ for k=startRun:endRun
         thrustpolyfitport = polyfit(x,y2,1);
         thrustpolyvalport = polyval(thrustpolyfitport,x);
         
-        %# Plotting curves
-        h = plot(x,y1,'-',x,thrustpolyvalstbd,'-k',x,y2,'-',x,thrustpolyvalport,'-k');
-        title('{\bf Dynamometer: Thrust}');
-        xlabel('{\bf Time [s]}');
-        ylabel('{\bf Thrust [g]}');
+        %# Plotting
+        h = plot(x,y1,'-',x,thrustpolyvalstbd,'-',x,y2,'-',x,thrustpolyvalport,'-');
+        if enablePlotTitle == 1
+            title('{\bf Dynamometer: Thrust}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Thrust [g]}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
+                
+        %# Line, colors and markers
+        setCurveNo=1;set(h(setCurveNo),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+        setCurveNo=2;set(h(setCurveNo),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);        
+        setCurveNo=3;set(h(setCurveNo),'Color',setColor{2},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+        setCurveNo=4;set(h(setCurveNo),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);  
         
         %# Axis limitations
-        xlim([x(1) x(end)]);
-        
-        %# Line width
-        set(h(1),'linewidth',1);
-        set(h(2),'linewidth',2);
-        set(h(3),'linewidth',1);
-        set(h(4),'linewidth',2);
+        xlim([x(1) x(end)]);        
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
         
         %# Legend
         hleg1 = legend('Thrust (Stbd)','Linear fit (Stbd)','Thrust (Port)','Linear fit (Port)');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
         %legend boxoff;
+        
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);        
         
         %# ----------------------------------------------------------------
         %# END: THRUST
@@ -527,92 +671,87 @@ for k=startRun:endRun
         x = timeData(startSamplePos:end-cutSamplesFromEnd);
         y1 = CH_9_TorqueStbd(startSamplePos:end-cutSamplesFromEnd);
         y2 = abs(CH_10_TorquePort(startSamplePos:end-cutSamplesFromEnd)); % Absolute values due to negative output of dyno
-        
+
         %# Linear fit
         torquepolyfitstbd = polyfit(x,y1,1);
         torquepolyvalstbd = polyval(torquepolyfitstbd,x);
         torquepolyfitport = polyfit(x,y2,1);
         torquepolyvalport = polyval(torquepolyfitport,x);
         
-        %# Plotting curves
-        h = plot(x,y1,'-',x,torquepolyvalstbd,'-k',x,y2,'-',x,torquepolyvalport,'-k');
-        title('{\bf Dynamometer: Torque}');
-        xlabel('{\bf Time [s]}');
-        ylabel('{\bf Torque [Nm]}');
+        %# Plotting
+        h = plot(x,y1,'-',x,torquepolyvalstbd,'-',x,y2,'-',x,torquepolyvalport,'-');
+        if enablePlotTitle == 1
+            title('{\bf Dynamometer: Torque}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Torque [Nm]}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
         
+        %# Line, colors and markers
+        setCurveNo=1;set(h(setCurveNo),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+        setCurveNo=2;set(h(setCurveNo),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);        
+        setCurveNo=3;set(h(setCurveNo),'Color',setColor{2},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+        setCurveNo=4;set(h(setCurveNo),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);         
+        
         %# Axis limitations
         xlim([x(1) x(end)]);
-        
-        %# Line width
-        set(h(1),'linewidth',1);
-        set(h(2),'linewidth',2);
-        set(h(3),'linewidth',1);
-        set(h(4),'linewidth',2);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
         
         %# Legend
         hleg1 = legend('Torque (Stbd)','Linear fit (Stbd)','Torque (Port)','Linear fit (Port)');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
         %legend boxoff;
+        
+        %# Font sizes and border --------------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
         
         %# ----------------------------------------------------------------
         %# END: TORQUE
         %# ////////////////////////////////////////////////////////////////
         
-        %# ****************************************************************
+        %# ********************************************************************
         %# Save plot as PNG
-        %# ****************************************************************
+        %# ********************************************************************
         
         %# Figure size on screen (50% scaled, but same aspect ratio)
         set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
         
         %# Figure size printed on paper
-        set(gcf, 'PaperUnits','centimeters');
-        set(gcf, 'PaperSize',[XPlot YPlot]);
-        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-        set(gcf, 'PaperOrientation','portrait');
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperUnits','centimeters');
+            set(gcf, 'PaperSize',[XPlot YPlot]);
+            set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+            set(gcf, 'PaperOrientation','portrait');
+        end
         
-        %# Plot title -----------------------------------------------------
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
+        %# Plot title ---------------------------------------------------------
+        if enablePlotMainTitle == 1
+            annotation('textbox', [0 0.9 1 0.1], ...
+                'String', strcat('{\bf ', figurename, '}'), ...
+                'EdgeColor', 'none', ...
+                'HorizontalAlignment', 'center');
+        end
         
-        %# Save plots as PDF and PNG
-        %plotsavenamePDF = sprintf('_plots/%s/Run_%s_Wave_Probe_and_Time_Series_Plot.pdf', '_time_series', num2str(k));
-        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('_plots/%s/Run_%s_Wave_Probe_and_Time_Series_Plot.png', '_time_series', num2str(k));
-        saveas(f, plotsavename);                % Save plot as PNG
-        close;                                  % Close current plot window
+        %# Save plots as PDF, PNG and EPS -------------------------------------
+        % Enable renderer for vector graphics output
+        set(gcf, 'renderer', 'painters');
+        setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+        setFileFormat = {'PDF' 'PNG' 'EPS'};
+        for kl=1:3
+            plotsavename = sprintf('_plots/%s/%s/Run_%s_Wave_Probe_and_Time_Series_Plot.%s', '_time_series', setFileFormat{kl}, num2str(k), setFileFormat{kl});
+            print(gcf, setSaveFormat{kl}, plotsavename);
+        end
+        close;
         
     end
-    
-    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    %# RPM AND POWER SWITCH SWITCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    %# --------------------------------------------------------------------
-    
-    rpm_power_on = 1;    % TRUE (1) or FALSE (0)
-    
-    %# --------------------------------------------------------------------
-    %# RPM AND POWER SWITCH SWITCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
-    
-    %# ////////////////////////////////////////////////////////////////////
-    %# START: RPM Analysis
-    %# --------------------------------------------------------------------
-    
-    if rpm_power_on == 1
-        [RPMStbd RPMPort] = analysis_rpm(k,name,Fs,timeData,Raw_CH_5_RPMStbd,Raw_CH_6_RPMPort);
-    end
-    
-    %# --------------------------------------------------------------------
-    %# END: RPM Analysis
-    %# ////////////////////////////////////////////////////////////////////
-    
+
     
     %# ////////////////////////////////////////////////////////////////////
     %# CREATE RESULTS ARRAY
@@ -653,7 +792,7 @@ for k=startRun:endRun
     resultsArray(k, 9) = abs(((CH_8_ThrustPort_Mean/1000)*9.806));                   % Thrust PORT (N)
     resultsArray(k, 10) = abs(CH_9_TorqueStbd_Mean);                                 % Torque STBD (Nm)
     resultsArray(k, 11) = abs(CH_10_TorquePort_Mean);                                % Torque PORT (Nm)
-    if rpm_power_on == 1
+    if enableRPMandPowerCalc == 1
         resultsArray(k, 12) = RPMStbd;                                               % Shaft Speed STBD (RPM)
         resultsArray(k, 13) = RPMPort;                                               % Shaft Speed PORT (RPM)
         resultsArray(k, 14) = ((abs(CH_9_TorqueStbd_Mean)*RPMStbd)/9549)*1000;       % Power STBD (W) where 9,549 = (60 ? 1000)/2?
@@ -673,7 +812,7 @@ for k=startRun:endRun
     thrustport       = sprintf('R%s:: Thrust PORT (mean): %s [N]', name, sprintf('%.2f',abs(((CH_8_ThrustPort_Mean/1000)*9.806))));
     torquestbd       = sprintf('R%s:: Torque STBD (mean): %s [Nm]', name, sprintf('%.2f',abs(CH_9_TorqueStbd_Mean)));
     torqueport       = sprintf('R%s:: Torque PORT (mean): %s [Nm]', name, sprintf('%.2f',abs(CH_10_TorquePort_Mean)));
-    if rpm_power_on == 1
+    if enableRPMandPowerCalc == 1
         shaftrpmstbd     = sprintf('R%s:: Shaft speed STBD: %s [RPM]', name, sprintf('%.0f',RPMStbd));
         shaftrpmport     = sprintf('R%s:: Shaft speed PORT: %s [RPM]', name, sprintf('%.0f',RPMPort));
         powerstbd        = sprintf('R%s:: Power STBD: %s [W]', name, sprintf('%.2f',((abs(CH_9_TorqueStbd_Mean)*RPMStbd)/9549)*1000));
@@ -691,7 +830,7 @@ for k=startRun:endRun
     %disp('-------------------------------------------------');
     disp(torquestbd);
     disp(torqueport);
-    if rpm_power_on == 1
+    if enableRPMandPowerCalc == 1
         %disp('-------------------------------------------------');
         disp(shaftrpmstbd);
         disp(shaftrpmport);

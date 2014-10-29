@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 28, 2014
+%# Date       :  October 29, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -907,7 +907,7 @@ if ma == 9
             set(gcf, 'PaperSize', [19 19]);
             set(gcf, 'PaperPositionMode', 'manual');
             set(gcf, 'PaperPosition', [0 0 19 19]);
-
+            
             set(gcf, 'PaperUnits', 'centimeters');
             set(gcf, 'PaperSize', [19 19]);
             set(gcf, 'PaperPositionMode', 'manual');
@@ -918,6 +918,7 @@ if ma == 9
         setGeneralFontName = 'Helvetica';
         setGeneralFontSize = 14;
         setBorderLineWidth = 2;
+        setLegendFontSize  = 12;
         
         %# Change default text fonts for plot title
         set(0,'DefaultTextFontname',setGeneralFontName);
@@ -994,6 +995,7 @@ if ma == 9
             
             %# Set marker and line sizes
             setMarkerSize      = 12;
+            setMarkerSize2     = 9;
             setLineWidthMarker = 1;
             setLineWidth       = 1;
             setLineStyle       = '-';
@@ -1025,12 +1027,12 @@ if ma == 9
             
             %# Line, colors and markers
             setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-            setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-            setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-            setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-            setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-            setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-            setSpeed=7;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+            setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+            setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+            setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+            setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+            setSpeed=7;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
             setSpeed=8;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
             setSpeed=9;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
             
@@ -1061,17 +1063,21 @@ if ma == 9
             set(gca,'XTick',[0:5:55]);
             set(gca,'YLim',[-5 35]);
             set(gca,'YTick',[-5:5:35]);
-            
+            %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+            %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
+
             %# Legend
             %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
             hleg1 = legend('Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
             set(hleg1,'Location','NorthEast');
-            set(hleg1,'Interpreter','none');
+            set(hleg1,'Interpreter','Latex');
+            set(hleg1,'LineWidth',1);
+            set(hleg1,'FontSize',setLegendFontSize);
             if enableTowingForceFDPlot == 1
                 [LEGH,OBJH,OUTH,OUTM] = legend;
-                legend([OUTH;h3],OUTM{:},'Thrust at zero drag');
+                legend([OUTH;h3],OUTM{:},'Thrust at F=0');
                 [LEGH,OBJH,OUTH,OUTM] = legend;
-                legend([OUTH;h5],OUTM{:},'Force at TG=0');
+                legend([OUTH;h5],OUTM{:},'Force at T_{G}=0');
             end
             %legend boxoff;
             
@@ -1126,6 +1132,7 @@ if ma == 9
             
             %# Set marker and line sizes
             setMarkerSize      = 12;
+            setMarkerSize2     = 9;
             setLineWidthMarker = 1;
             setLineWidth       = 1;
             setLineStyle       = '-';
@@ -1161,12 +1168,12 @@ if ma == 9
             
             %# Line, colors and markers
             setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-            setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-            setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-            setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-            setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-            setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-            setSpeed=7;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+            setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+            setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+            setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+            setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+            setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+            setSpeed=7;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
             setSpeed=8;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
             setSpeed=9;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
             
@@ -1189,25 +1196,25 @@ if ma == 9
             setSpeed=9;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
             
             %# Axis limitations
-            %set(gca,'XLim',[0 40]);
-            %set(gca,'XTick',[0:5:40]);
-            %set(gca,'YLim',[-5 25]);
-            %set(gca,'YTick',[-5:5:25]);
             set(gca,'XLim',[0 35]);
             set(gca,'XTick',[0:5:35]);
             set(gca,'YLim',[-5 30]);
             set(gca,'YTick',[-5:5:30]);
+            %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+            %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
             
             %# Legend
             %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
             hleg1 = legend('Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
             set(hleg1,'Location','NorthEast');
-            set(hleg1,'Interpreter','none');
+            set(hleg1,'Interpreter','None');
+            set(hleg1,'LineWidth',1);
+            set(hleg1,'FontSize',setLegendFontSize);
             if enableTowingForceFDPlot == 1
                 [LEGH,OBJH,OUTH,OUTM] = legend;
-                legend([OUTH;h3],OUTM{:},'Thrust at zero drag');
+                legend([OUTH;h3],OUTM{:},'Thrust at F=0');
                 [LEGH,OBJH,OUTH,OUTM] = legend;
-                legend([OUTH;h5],OUTM{:},'Force at TG=0');
+                legend([OUTH;h5],OUTM{:},'Force at T=0');
             end
             %legend boxoff;
             
@@ -1378,7 +1385,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(gcf, 'PaperSize', [19 19]);
         set(gcf, 'PaperPositionMode', 'manual');
         set(gcf, 'PaperPosition', [0 0 19 19]);
-
+        
         set(gcf, 'PaperUnits', 'centimeters');
         set(gcf, 'PaperSize', [19 19]);
         set(gcf, 'PaperPositionMode', 'manual');
@@ -1389,6 +1396,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
     setGeneralFontName = 'Helvetica';
     setGeneralFontSize = 14;
     setBorderLineWidth = 2;
+    setLegendFontSize  = 12;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1487,7 +1495,9 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         setYUL = 0.7;
         set(gca,'YLim',[setYLL setYUL]);
         set(gca,'YTick',[setYLL:0.1:setYUL]);
-        
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+            
         % t = ((FD-FatT=0)/TG@SPP)+1
         % t = 1-((FatT=0-FD)/TG@SPP)
         
@@ -1495,6 +1505,8 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         hleg1 = legend('98m t by slope','98m t=(TM+FD-RC)/TM','98m using RCW=TG(1-t)+FD','98m F=TM(t-1)+FatT=0 (Øyan 2012)','98m FM=FatT=0-TM(1-t) (Bose 2008)','112m MARIN JHSV Cond. T5','112m MARIN JHSV Cond. T4');
         set(hleg1,'Location','SouthEast');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
         %legend boxoff;
         
     end
@@ -1574,11 +1586,15 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         setYUL = 0.7;
         set(gca,'YLim',[setYLL setYUL]);
         set(gca,'YTick',[setYLL:0.1:setYUL]);
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
         
         %# Legend
         hleg1 = legend('98m t by slope','98m t=(TM+FD-RC)/TM','98m using RCW=TG(1-t)+FD','98m F=TM(t-1)+FatT=0 (Øyan 2012)','98m FM=FatT=0-TM(1-t) (Bose 2008)','112m MARIN JHSV Cond. T5','112m MARIN JHSV Cond. T4');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
         %legend boxoff;
         
     end
@@ -1637,7 +1653,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(gcf, 'PaperSize', [19 19]);
         set(gcf, 'PaperPositionMode', 'manual');
         set(gcf, 'PaperPosition', [0 0 19 19]);
-
+        
         set(gcf, 'PaperUnits', 'centimeters');
         set(gcf, 'PaperSize', [19 19]);
         set(gcf, 'PaperPositionMode', 'manual');
@@ -1648,6 +1664,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
     setGeneralFontName = 'Helvetica';
     setGeneralFontSize = 14;
     setBorderLineWidth = 2;
+    setLegendFontSize  = 12;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1740,12 +1757,16 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(gca,'XTick',[0.22:0.02:0.42]);
         set(gca,'YLim',[0 50]);
         set(gca,'YTick',[0:5:50]);
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
         
         %# Legend
         %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
         hleg1 = legend('Resistance (RC)','Gross thrust (TG) at zero drag','Towing force at zero thrust','Thrust at SPP','Towing force, FD');
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
         %legend boxoff;
     end
     
@@ -1818,12 +1839,16 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(gca,'XTick',[0.22:0.02:0.42]);
         set(gca,'YLim',[0 40]);
         set(gca,'YTick',[0:5:40]);
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
         
         %# Legend
         %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
         hleg1 = legend('Resistance (RC)','Gross thrust (TG) at zero drag','Towing force at zero thrust','Thrust at SPP','Towing force, FD');
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
         %legend boxoff;
     end
     
@@ -2101,13 +2126,13 @@ for k=1:m
     FSStbdEFStat1 = 0.5*saltwaterdensity*MSStbdVolFR*(MSStbdInlVel^2)*(1-FSWakeFraction)^2;
     FSPortEFStat7 = 0.5*saltwaterdensity*MSPortVolFR*MSPortJetVel^2;
     FSStbdEFStat7 = 0.5*saltwaterdensity*MSPortVolFR*MSStbdJetVel^2;
-    FSEFStat0     = 0.5*saltwaterdensity*FSSpeed^2;    
+    FSEFStat0     = 0.5*saltwaterdensity*FSSpeed^2;
     
     % Nozzle and ideal efficiency
     FSPortNozzleEff = 0.98;
     FSStbdNozzleEff = 0.98;
     FSPortIdealEff  = 2/(1+(MSPortJetVel/MSPortInlVel));
-    FSStbdIdealEff  = 2/(1+(MSStbdJetVel/MSStbdInlVel));    
+    FSStbdIdealEff  = 2/(1+(MSStbdJetVel/MSStbdInlVel));
     
     % Pump effective power, PPE
     FSPortPumpEffPower = (FSPortEFStat7/FSPortNozzleEff)-FSPortIdealEff*FSPortEFStat1;
@@ -2227,7 +2252,7 @@ if enableA4PaperSizePlot == 1
     set(gcf, 'PaperSize', [19 19]);
     set(gcf, 'PaperPositionMode', 'manual');
     set(gcf, 'PaperPosition', [0 0 19 19]);
-
+    
     set(gcf, 'PaperUnits', 'centimeters');
     set(gcf, 'PaperSize', [19 19]);
     set(gcf, 'PaperPositionMode', 'manual');
@@ -2238,6 +2263,7 @@ end
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
+setLegendFontSize  = 12;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -2308,7 +2334,7 @@ set(gca,'XLim',[13 25]);
 set(gca,'XTick',[13:1:25]);
 set(gca,'YLim',[0 1]);
 set(gca,'YTick',[0:0.1:1]);
-set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+%set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
 
 %# Legend
@@ -2317,6 +2343,8 @@ hleg1 = legend('\eta_{D}=P_{E}/P_{D} where P_{D}=P_{PE}/\eta_{pump}','\eta_{D}=P
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
@@ -2327,21 +2355,21 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 %# SUBPLOT #2: Flow and head coefficients
 %# ************************************************************************
 % subplot(1,2,2);
-% 
+%
 % %# X and Y axis -----------------------------------------------------------
-% 
+%
 % % Port
 % x1 = fullScaleDataArray(:,32);
 % x1 = [0.9986 0.9616 0.9246 0.8876 0.8506 0.8136 0.7767 0.7397 0.5548];
 % y1 = fullScaleDataArray(:,34);
 % y1 = [2.2694 2.6225 2.9896 3.3148 3.6135 3.9261 4.1299 4.2653 4.3965];
-% 
+%
 % % Starboard
 % x2 = fullScaleDataArray(:,33);
 % x2 = [0.9986 0.9616 0.9246 0.8876 0.8506 0.8136 0.7767 0.7397 0.5548];
 % y2 = fullScaleDataArray(:,35);
 % y2 = [2.1694 2.5225 2.8896 3.2148 3.5135 3.8261 4.0299 4.1653 4.2965];
-% 
+%
 % %# Plotting ---------------------------------------------------------------
 % h = plot(x1,y1,'*',x2,y2,'*');
 % xlabel('{\bf Flow coefficient, \phi (-)}','FontSize',setGeneralFontSize);
@@ -2352,7 +2380,7 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 % grid on;
 % box on;
 % axis square;
-% 
+%
 % %# Line, colors and markers
 % setMarkerSize      = 11;
 % setLineWidthMarker = 2;
@@ -2360,11 +2388,11 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 % setLineStyle       = '-.';
 % set(h(1),'Color',setColor{2},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 % set(h(2),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% 
+%
 % %# Set plot figure background to a defined color
 % %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
 % set(gcf,'Color',[1,1,1]);
-% 
+%
 % %# Axis limitations
 % xStart = str2num(sprintf('%.1f',min(x1)))-0.1;
 % xEnd   = str2num(sprintf('%.1f',max(x1)))+0.1;
@@ -2381,12 +2409,14 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 % set(gca,'YTick',[yStart:0.2:SetyEnd]);
 % set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 % set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
-% 
+%
 % %# Legend
 % %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
 % hleg1 = legend('Port WJ','Starboard WJ');
 % set(hleg1,'Location','NorthEast');
 % set(hleg1,'Interpreter','none');
+% set(hleg1,'LineWidth',1);
+% set(hleg1,'FontSize',setLegendFontSize);
 % %legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
@@ -2443,7 +2473,7 @@ if enableA4PaperSizePlot == 1
     set(gcf, 'PaperSize', [19 19]);
     set(gcf, 'PaperPositionMode', 'manual');
     set(gcf, 'PaperPosition', [0 0 19 19]);
-
+    
     set(gcf, 'PaperUnits', 'centimeters');
     set(gcf, 'PaperSize', [19 19]);
     set(gcf, 'PaperPositionMode', 'manual');
@@ -2454,6 +2484,7 @@ end
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
+setLegendFontSize  = 12;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -2555,8 +2586,8 @@ set(gca,'XLim',[13 25]);
 set(gca,'XTick',[13:1:25]);
 set(gca,'YLim',[0 6]);
 set(gca,'YTick',[0:1:6]);
-set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
-set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
+%set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
 
 %# Legend
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
@@ -2565,6 +2596,8 @@ hleg1 = legend('Effective power (P_{E})','Delivered power (P_{D})','Pump effecti
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
@@ -2621,7 +2654,7 @@ if enableA4PaperSizePlot == 1
     set(gcf, 'PaperSize', [19 19]);
     set(gcf, 'PaperPositionMode', 'manual');
     set(gcf, 'PaperPosition', [0 0 19 19]);
-
+    
     set(gcf, 'PaperUnits', 'centimeters');
     set(gcf, 'PaperSize', [19 19]);
     set(gcf, 'PaperPositionMode', 'manual');
@@ -2632,6 +2665,7 @@ end
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
+setLegendFontSize  = 12;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -2710,8 +2744,8 @@ set(gca,'XLim',[13 25]);
 set(gca,'XTick',[13:1:25]);
 set(gca,'YLim',[0 24]);
 set(gca,'YTick',[0:4:24]);
-set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
-set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
+%set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
 
 %# Legend
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
@@ -2719,6 +2753,8 @@ hleg1 = legend('Ship speed (v_{s})','Port: Jet velocity (v_{j})','Stbd: Jet velo
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
 
 %# Font sizes and border --------------------------------------------------

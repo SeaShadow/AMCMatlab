@@ -486,6 +486,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend([h(1) h(3) h(5) h(7) h(9) h(11)],'Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -563,6 +564,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -704,6 +706,8 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 7: 1,500t (0 deg) min/max','Cond. 7: 1,500t (0 deg) All repeats','Cond. 10: 1,804t (0 deg) min/max','Cond. 10: 1,804t (0 deg) All repeats');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);    
     legend boxoff;
     
     %# Font sizes and border --------------------------------------------------
@@ -755,6 +759,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 7: 1,500t (0 deg) Min','Cond. 10: 1,804t (0 deg) Min');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -814,6 +819,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) min/max','Cond. 8: 1,500t (-0.5 deg) All repeats','Cond. 11: 1,804t (-0.5 deg) min/max','Cond. 11: 1,804t (-0.5 deg) All repeats');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -867,6 +873,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) Min','Cond. 11: 1,804t (-0.5 deg) Min');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -926,6 +933,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) min/max','Cond. 9: 1,500t (0.5 deg) All repeats','Cond. 12: 1,804t (0.5 deg) min/max','Cond. 12: 1,804t (0.5 deg) All repeats');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -979,6 +987,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) Min','Cond. 12: 1,804t (0.5 deg) Min');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1137,6 +1146,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 7: 1,500t (0 deg) min/max','Cond. 7: 1,500t (0 deg) All repeats','Cond. 7: 1,500t Curve fitting','Cond. 10: 1,804t (0 deg) min/max','Cond. 10: 1,804t (0 deg) All repeats','Cond. 10: 1,804t Curve fitting');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1202,6 +1212,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 7: 1,500t (0 deg) Min','Cond. 7: 1,500t Curve fitting','Cond. 10: 1,804t (0 deg) Min','Cond. 10: 1,804t Curve fitting');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1360,6 +1371,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) min/max','Cond. 8: 1,500t (-0.5 deg) All repeats','Cond. 8: 1,500t Curve fitting','Cond. 11: 1,804t (-0.5 deg) min/max','Cond. 11: 1,804t (-0.5 deg) All repeats','Cond. 11: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1425,6 +1437,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 8: 1,500t (-0.5 deg) Min','Cond. 8: 1,500t Curve fitting','Cond. 11: 1,804t (-0.5 deg) Min','Cond. 11: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1583,6 +1596,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) min/max','Cond. 9: 1,500t (0.5 deg) All repeats','Cond. 9: 1,500t Curve fitting','Cond. 12: 1,804t (0.5 deg) min/max','Cond. 12: 1,804t (0.5 deg) All repeats','Cond. 12: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1651,6 +1665,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 9: 1,500t (0.5 deg) Min','Cond. 9: 1,500t Curve fitting','Cond. 12: 1,804t (0.5 deg) Min','Cond. 12: 1,804t Curve fitting');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1800,6 +1815,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1863,6 +1879,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1926,6 +1943,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1989,6 +2007,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -2052,6 +2071,7 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','Northwest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     

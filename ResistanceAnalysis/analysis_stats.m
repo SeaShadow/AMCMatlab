@@ -169,6 +169,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# END DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+
 % *************************************************************************
 %# RESULTS ARRAY COLUMNS
 % *************************************************************************
@@ -456,6 +457,7 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     hleg1 = legend('Cond. 1: 1,500t (Barehull)','Cond. 2: 1,500t (1st row)','Cond. 3: 1,500t (1st and 2nd row)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     %legend boxoff;
     
@@ -529,6 +531,7 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     hleg1 = legend('Cond. 1: 1,500t (Barehull)','Cond. 2: 1,500t (1st row)','Cond. 3: 1,500t (1st and 2nd row)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     %legend boxoff;
     
@@ -695,6 +698,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     hleg1 = legend('Cond. 4: 1,500t (5 degrees)','Cond. 5: 1,500t (0 degrees)','Cond. 6: 1,500t (10 degrees)');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -772,6 +776,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     hleg1 = legend('Cond. 4: 1,500t (5 degrees)','Cond. 5: 1,500t (0 degrees)','Cond. 6: 1,500t (10 degrees)');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -837,6 +842,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     hleg1 = legend('Cond. 4: 1,500t (5 degrees)','Cond. 5: 1,500t (0 degrees)','Cond. 6: 1,500t (10 degrees)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -937,6 +943,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     hleg1 = legend('Cond.4/5/6: Fr=0.43','Cond.7: Fr=0.43, level','Cond.8: Fr=0.41, -0.5 deg','Cond.9: Fr=0.42, 0.5 deg');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1137,6 +1144,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1213,6 +1221,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1289,6 +1298,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1389,6 +1399,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1590,6 +1601,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1669,6 +1681,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1748,6 +1761,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -1851,6 +1865,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -2032,6 +2047,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -2124,6 +2140,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -2216,6 +2233,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -2437,6 +2455,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     hleg1 = legend('Cond. 13: ITTC 1957','Cond. 13: Grigson','Cond. 13: ITTC 1957 (Fit)','Cond. 13: Grigson (Fit)');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -2503,6 +2522,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     hleg1 = legend('Cond. 13: Speed','Cond. 13: Fwd LVDT','Cond. 13: Aft LVDT','Cond. 13: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -2661,6 +2681,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     hleg1 = legend('Cond. 7: Speed','Cond. 7: Fwd LVDT','Cond. 7: Aft LVDT','Cond. 7: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -2730,6 +2751,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     hleg1 = legend('Cond. 8: Speed','Cond. 8: Fwd LVDT','Cond. 8: Aft LVDT','Cond. 8: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -2799,6 +2821,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     hleg1 = legend('Cond. 9: Speed','Cond. 9: Fwd LVDT','Cond. 9: Aft LVDT','Cond. 9: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -2868,6 +2891,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     hleg1 = legend('Cond. 10: Speed','Cond. 10: Fwd LVDT','Cond. 10: Aft LVDT','Cond. 10: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -2937,6 +2961,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     hleg1 = legend('Cond. 11: Speed','Cond. 11: Fwd LVDT','Cond. 11: Aft LVDT','Cond. 11: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -3006,6 +3031,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     hleg1 = legend('Cond. 12: Speed','Cond. 12: Fwd LVDT','Cond. 12: Aft LVDT','Cond. 12: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -3164,6 +3190,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     hleg1 = legend('Cond. 7: Speed','Cond. 7: Fwd LVDT','Cond. 7: Aft LVDT','Cond. 7: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -3233,6 +3260,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     hleg1 = legend('Cond. 8: Speed','Cond. 8: Fwd LVDT','Cond. 8: Aft LVDT','Cond. 8: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -3302,6 +3330,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     hleg1 = legend('Cond. 9: Speed','Cond. 9: Fwd LVDT','Cond. 9: Aft LVDT','Cond. 9: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -3371,6 +3400,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     hleg1 = legend('Cond. 10: Speed','Cond. 10: Fwd LVDT','Cond. 10: Aft LVDT','Cond. 10: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -3440,6 +3470,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     hleg1 = legend('Cond. 11: Speed','Cond. 11: Fwd LVDT','Cond. 11: Aft LVDT','Cond. 11: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -3509,6 +3540,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     hleg1 = legend('Cond. 12: Speed','Cond. 12: Fwd LVDT','Cond. 12: Aft LVDT','Cond. 12: Drag');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
 
@@ -3647,6 +3679,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -3696,6 +3729,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -3745,6 +3779,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -3794,6 +3829,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -3843,6 +3879,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -3892,6 +3929,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     hleg1 = legend('Speed','Fwd LVDT',' Aft LVDT','Drag');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -4042,6 +4080,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -4103,6 +4142,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -4164,6 +4204,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -4225,6 +4266,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -4286,6 +4328,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -4347,6 +4390,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     hleg1 = legend('Speed*100 (m/s)','Fwd LVDT (mm)',' Aft LVDT (mm)','Drag/100 (g)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     
@@ -4573,6 +4617,7 @@ if enableRemVSCFmPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || lengt
     hleg1 = legend('Cond. 7 (ITTC''57): 1,500t (0 deg)','Cond. 8 (ITTC''57): 1,500t (-0.5 deg)','Cond. 9 (ITTC''57): 1,500t (0.5 deg)','Cond. 10 (ITTC''57): 1,804t (0 deg)','Cond. 11 (ITTC''57): 1,804t (-0.5 deg)','Cond. 12 (ITTC''57): 1,804t (0.5 deg)','Cond. 7 (Grigson): 1,500t (0 deg)','Cond. 8 (Grigson): 1,500t (-0.5 deg)','Cond. 9 (Grigson): 1,500t (0.5 deg)','Cond. 10 (Grigson): 1,804t (0 deg)','Cond. 11 (Grigson): 1,804t (-0.5 deg)','Cond. 12 (Grigson): 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     legend boxoff;
     

@@ -2,8 +2,8 @@
 %# Resistance Test Analysis - TS analysis, drag only, for wall accuracy
 %# ------------------------------------------------------------------------
 %#
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  March 20, 2014
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  October 29, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -125,6 +125,41 @@ clc
 %# ------------------------------------------------------------------------
 allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
+
+
+%# ************************************************************************
+%# START: PLOT SWITCHES: 1 = ENABLED
+%#                       0 = DISABLED
+%# ------------------------------------------------------------------------
+
+% Plot titles, colours, etc.
+enablePlotMainTitle     = 0;    % Show plot title in saved file
+enablePlotTitle         = 0;    % Show plot title above plot
+enableBlackAndWhitePlot = 0;    % Show plot in black and white only
+
+% Scaled to A4 paper
+enableA4PaperSizePlot   = 0;    % Show plots scale to A4 size
+
+% Special plots
+enableCond07Plot        = 1; % Plot condition 7
+enableCond08Plot        = 0; % Plot condition 8
+enableCond09Plot        = 0; % Plot condition 9
+enableCond10Plot        = 0; % Plot condition 10
+enableCond11Plot        = 0; % Plot condition 12
+enableCond12Plot        = 0; % Plot condition 12
+
+% Check if any plots enabled, if not stop
+if enableCond07Plot == 0 && enableCond08Plot == 0 && enableCond09Plot == 0 && enableCond10Plot == 0 && enableCond11Plot == 0 && enableCond12Plot == 0
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('!!! WARNING: No plots enabled! !!!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    break;
+end
+
+%# ------------------------------------------------------------------------
+%# END: PLOT SWITCHES
+%# ************************************************************************
+
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -307,29 +342,47 @@ end
 % *************************************************************************
 
 
-% *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED
-%                       0 = DISABLED
-% -------------------------------------------------------------------------
+%# ************************************************************************
+%# START: CREATE PLOTS AND RUN DIRECTORY
+%# ------------------------------------------------------------------------
 
-enableCond07Plot        = 1; % Plot condition 7
-enableCond08Plot        = 0; % Plot condition 8
-enableCond09Plot        = 0; % Plot condition 9
-enableCond10Plot        = 0; % Plot condition 10
-enableCond11Plot        = 0; % Plot condition 12
-enableCond12Plot        = 0; % Plot condition 12
+%# _sensor_error_statistics directory -------------------------------------
+setDirName = '_time_series_drag_plots';
 
-% Check if any plots enabled, if not stop
-if enableCond07Plot == 0 && enableCond08Plot == 0 && enableCond09Plot == 0 && enableCond10Plot == 0 && enableCond11Plot == 0 && enableCond12Plot == 0
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    disp('!!! WARNING: No plots enabled! !!!');
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    break;
+fPath = sprintf('_plots/%s', setDirName);
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
 end
 
-% -------------------------------------------------------------------------
-% END: PLOT SWITCHES
-% *************************************************************************
+%# PDF directory
+fPath = sprintf('_plots/%s/%s', setDirName, 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('_plots/%s/%s', setDirName, 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('_plots/%s/%s', setDirName, 'EPS');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# ------------------------------------------------------------------------
+%# END: CREATE PLOTS AND RUN DIRECTORY
+%# ************************************************************************
 
 
 %# ------------------------------------------------------------------------
@@ -358,17 +411,61 @@ if enableCond07Plot == 1
         figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Drag Data');
         f = figure('Name',figurename,'NumberTitle','off');
         
-        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
-        setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
-        %setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
-        setLine   = {'-';'-';'-';'-';'-';'-';'-';'-';'-';'-'};
+        %# Paper size settings ------------------------------------------------
         
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+            
+            set(gcf, 'PaperUnits', 'centimeters');
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+        end
+        
+        % Fonts and colours ---------------------------------------------------
+        setGeneralFontName = 'Helvetica';
+        setGeneralFontSize = 14;
+        setBorderLineWidth = 2;
+        setLegendFontSize  = 12;
+        
+        %# Change default text fonts for plot title
+        set(0,'DefaultTextFontname',setGeneralFontName);
+        set(0,'DefaultTextFontSize',14);
+        
+        %# Box thickness, axes font size, etc. --------------------------------
+        set(gca,'TickDir','in',...
+            'FontSize',12,...
+            'LineWidth',2,...
+            'FontName',setGeneralFontName,...
+            'Clipping','off',...
+            'Color',[1 1 1],...
+            'LooseInset',get(gca,'TightInset'));
+        
+        %# Markes and colors ------------------------------------------------------
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+
+        % Colored curves
+        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+        if enableBlackAndWhitePlot == 1
+            % Black and white curves
+            setColor = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+        end
+        %setLineStyle = {'--';':';'-.';'--';':';'-.';'--';':';'-.';'--';':'};
+        setLineStyle = {'-';'-';'-';'-';'-';'-';'-';'-';'-';'-';'-'};
+        
+        %# Line, colors and markers
+        setMarkerSize      = 3;
+        setLineWidthMarker = 1;
+        setLineWidth       = 2;
+        
+        % Loop through repeats
+        legendInfo = [];
         minXValues = [];
         maxXValues = [];
         minYValues = [];
         maxYValues = [];
-        
-        % Run through repeats
         for k=1:ms
             
             % Correct for run numbers below 10
@@ -382,7 +479,7 @@ if enableCond07Plot == 1
             %# Read run time series data create with analysis script ------
             
             % Define run filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -404,16 +501,16 @@ if enableCond07Plot == 1
             minYValues(ms) = min(y);
             maxYValues(ms) = max(y);
             
-            h = plot(x,y,'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
+            % Plotting
+            h = plot(x,y,'-');
+            set(h(1),'Color',setColor{k},'LineStyle',setLineStyle{k},'linewidth',setLineWidth);
             legendInfo{k} = sprintf('Run %s',num2str(runnumber));
             hold on;
             
         end
         hold off;
-        
-        xlabel('{\bf Time [s]}');
-        ylabel('{\bf Drag [g]}');
-        %title('{\bf Drag}');
+        xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Drag [g]}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
@@ -425,48 +522,68 @@ if enableCond07Plot == 1
         %# Axis limitations
         maxX = max(maxXValues);
         set(gca,'XLim',[0 maxX]);
-        set(gca,'XTick',[0:2:maxX]);
-        minY = round(max(minYValues)*0.8);
-        maxY = round(max(maxYValues)*1.2);
-        setIncr = round((maxY-minY)/5);
-        set(gca,'YLim',[minY maxY]);
-        set(gca,'YTick',[minY:setIncr:maxY]);
+        set(gca,'XTick',[0:5:maxX]);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
         
         %# Legend
         hleg1 = legend(legendInfo);
         set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
-        legend boxoff;
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
+        %legend boxoff;
         
-        clearvars legendInfo;
+        %# Font sizes and border --------------------------------------------------
         
-        %# Save plot as PNG -------------------------------------------------------
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+        %# ********************************************************************
+        %# Save plot as PNG
+        %# ********************************************************************
         
         %# Figure size on screen (50% scaled, but same aspect ratio)
         set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
         
         %# Figure size printed on paper
-        set(gcf, 'PaperUnits','centimeters');
-        set(gcf, 'PaperSize',[XPlot YPlot]);
-        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-        set(gcf, 'PaperOrientation','portrait');
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperUnits','centimeters');
+            set(gcf, 'PaperSize',[XPlot YPlot]);
+            set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+            set(gcf, 'PaperOrientation','portrait');
+        end
         
-        %# Plot title -------------------------------------------------------------
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
+        %# Plot title ---------------------------------------------------------
+        if enablePlotMainTitle == 1
+            annotation('textbox', [0 0.9 1 0.1], ...
+                'String', strcat('{\bf ', figurename, '}'), ...
+                'EdgeColor', 'none', ...
+                'HorizontalAlignment', 'center');
+        end
         
-        %# Save plots as PDF and PNG
-        %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots.pdf', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots.png', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-        saveas(f, plotsavename);                % Save plot as PNG
-        close;
-        
+        %# Save plots as PDF, PNG and EPS -------------------------------------
+        % Enable renderer for vector graphics output
+        set(gcf, 'renderer', 'painters');
+        setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+        setFileFormat = {'PDF' 'PNG' 'EPS'};
+        for k=1:3
+            plotsavename = sprintf('_plots/%s/%s/Cond_%s_Run_%s_to_Run_%s_Fr_%s_Time_Series_Drag_Plot.%s', '_time_series_drag_plots', setFileFormat{k}, num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), setFileFormat{k});
+            print(gcf, setSaveFormat{k}, plotsavename);
+        end
+        %close;
+
     end % For loop
     
 end % enableCond07Plot
+
+
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# TODO: Code below needs adjusting like condition 7 (enableCond07Plot)
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+break;
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# TODO: Code below needs adjusting like condition 7 (enableCond07Plot)
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 %# ------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 28, 2014
+%# Date       :  October 29, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -757,18 +757,20 @@ for k=startRun:endRun
         setLineStyle       = '-.';
         set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+
+        %# Axis limitations
+        xlim([round(x(1)) round(x(end))]);
+        % Limit decimals in X and Y axis numbers
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));        
         
         %# Legend
         hleg1 = legend('Output (real units)','Trendline');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
         legend boxoff;
-        
-        %# Axis limitations
-        xlim([round(x(1)) round(x(end))]);
-        % Limit decimals in X and Y axis numbers
-        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
-        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'))
         
         %# Font sizes and border --------------------------------------------------
         
@@ -803,17 +805,19 @@ for k=startRun:endRun
         set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
         
+        %# Axis limitations
+        xlim([round(x(1)) round(x(end))]);
+        % Limit decimals in X and Y axis numbers
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));        
+        
         %# Legend
         hleg1 = legend('Output (real units)','Trendline');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
         legend boxoff;
-        
-        %# Axis limitations
-        xlim([round(x(1)) round(x(end))]);
-        % Limit decimals in X and Y axis numbers
-        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
-        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
         
         %# Font sizes and border --------------------------------------------------
         
@@ -847,19 +851,21 @@ for k=startRun:endRun
         setLineStyle       = '-.';
         set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+
+        %# Axis limitations
+        xlim([round(x(1)) round(x(end))]);
+        % Limit decimals in X and Y axis numbers
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
         
         %# Legend
         hleg1 = legend('Output (real units)','Trendline');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);        
         legend boxoff;
-        
-        %# Axis limitations
-        xlim([round(x(1)) round(x(end))]);
-        % Limit decimals in X and Y axis numbers
-        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
-        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
-        
+
         %# Font sizes and border --------------------------------------------------
         
         set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
@@ -893,17 +899,19 @@ for k=startRun:endRun
         set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
         
+        %# Axis limitations
+        xlim([round(x(1)) round(x(end))]);
+        % Limit decimals in X and Y axis numbers
+        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));     
+        
         %# Legend
         hleg1 = legend('Output (real units)','Trendline');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);        
         legend boxoff;
-        
-        %# Axis limitations
-        xlim([round(x(1)) round(x(end))]);
-        % Limit decimals in X and Y axis numbers
-        set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
-        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
         
         %# Font sizes and border --------------------------------------------------
         

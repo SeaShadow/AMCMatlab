@@ -2,8 +2,8 @@
 %# Resistance Test Analysis - Time Series analysis
 %# ------------------------------------------------------------------------
 %#
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  April 2, 2014
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  October 29, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -125,6 +125,54 @@ clc
 %# ------------------------------------------------------------------------
 allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
+
+
+%# ************************************************************************
+%# START: PLOT SWITCHES: 1 = ENABLED
+%#                       0 = DISABLED
+%# ------------------------------------------------------------------------
+
+% Plot titles, colours, etc.
+enablePlotMainTitle     = 0;    % Show plot title in saved file
+enablePlotTitle         = 0;    % Show plot title above plot
+enableBlackAndWhitePlot = 0;    % Show plot in black and white only
+
+% Scaled to A4 paper
+enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
+
+% Frequency plots
+% FILE: fft_frequency_data.dat
+enableCond07FreqPlot    = 0;    % Frequency plot condition 7
+enableCond08FreqPlot    = 0;    % Frequency plot condition 8
+enableCond09FreqPlot    = 0;    % Frequency plot condition 9
+enableCond10FreqPlot    = 0;    % Frequency plot condition 10
+enableCond11FreqPlot    = 0;    % Frequency plot condition 11
+enableCond12FreqPlot    = 0;    % Frequency plot condition 12
+
+% FFT and periodogram plots
+% FILE: full_resistance_data.dat
+enableCond07Plot        = 1;    % Plot condition 7
+enableCond08Plot        = 0;    % Plot condition 8
+enableCond09Plot        = 0;    % Plot condition 9
+enableCond10Plot        = 0;    % Plot condition 10
+enableCond11Plot        = 0;    % Plot condition 12
+enableCond12Plot        = 0;    % Plot condition 12
+
+% Enable printer friendly graphs (slow)
+enablePFPlot            = 1;    % Printer friendly plots
+
+% Check if any plots enabled, if not stop
+% if enableCond07Plot == 0 && enableCond08Plot == 0 && enableCond09Plot == 0 && enableCond10Plot == 0 && enableCond11Plot == 0 && enableCond12Plot == 0
+%     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+%     disp('!!! WARNING: No plots enabled! !!!');
+%     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+%     break;
+% end
+
+%# ------------------------------------------------------------------------
+%# END: PLOT SWITCHES
+%# ************************************************************************
+
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -335,45 +383,6 @@ end
 % *************************************************************************
 
 
-% *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED
-%                       0 = DISABLED
-% -------------------------------------------------------------------------
-
-% Frequency plots
-% FILE: fft_frequency_data.dat
-enableCond07FreqPlot    = 0; % Frequency plot condition 7
-enableCond08FreqPlot    = 0; % Frequency plot condition 8
-enableCond09FreqPlot    = 0; % Frequency plot condition 9
-enableCond10FreqPlot    = 0; % Frequency plot condition 10
-enableCond11FreqPlot    = 0; % Frequency plot condition 11
-enableCond12FreqPlot    = 0; % Frequency plot condition 12
-
-% FFT and periodogram plots
-% FILE: full_resistance_data.dat
-enableCond07Plot        = 1; % Plot condition 7
-enableCond08Plot        = 0; % Plot condition 8
-enableCond09Plot        = 0; % Plot condition 9
-enableCond10Plot        = 0; % Plot condition 10
-enableCond11Plot        = 0; % Plot condition 12
-enableCond12Plot        = 0; % Plot condition 12
-
-% Enable printer friendly graphs (slow)
-enablePFPlot            = 1; % Printer friendly plots
-
-% Check if any plots enabled, if not stop
-% if enableCond07Plot == 0 && enableCond08Plot == 0 && enableCond09Plot == 0 && enableCond10Plot == 0 && enableCond11Plot == 0 && enableCond12Plot == 0
-%     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-%     disp('!!! WARNING: No plots enabled! !!!');
-%     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-%     break;
-% end
-
-% -------------------------------------------------------------------------
-% END: PLOT SWITCHES
-% *************************************************************************
-
-
 %# ------------------------------------------------------------------------
 %# CONDITION 7: FFT Frequencies
 %# ------------------------------------------------------------------------
@@ -383,27 +392,65 @@ if enableCond07FreqPlot == 1
     % Set condition number
     setCondition = 7;
     
-    setArray = resultsFreqs;
-    sortedArray = arrayfun(@(x) setArray(setArray(:,3) == x, :), unique(setArray(:,3)), 'uniformoutput', false);
-    [ml,nl] = size(sortedArray);
+    setArray     = resultsFreqs;
+    sortedArray  = arrayfun(@(x) setArray(setArray(:,3) == x, :), unique(setArray(:,3)), 'uniformoutput', false);
+    [ml,nl]      = size(sortedArray);
     
-    for j=1:ml
-        
+    for j=1:ml        
         if sortedArray{j}(1,3) == setCondition
             
             % Variables
-            
             minRunNo = min(sortedArray{j}(:,1));
             maxRunNo = max(sortedArray{j}(:,1));
             RunCond  = sortedArray{j}(1,3);
             
             % Plots
-            
             figurename = sprintf('Condition %s:: Run %s to %s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), 'Maximum frequencies from drag FFT');
             fig = figure('Name',figurename,'NumberTitle','off');
             
-            % Plot frequencies (bar)
+            %# Paper size settings ------------------------------------------------
             
+            if enableA4PaperSizePlot == 1
+                set(gcf, 'PaperSize', [19 19]);
+                set(gcf, 'PaperPositionMode', 'manual');
+                set(gcf, 'PaperPosition', [0 0 19 19]);
+                
+                set(gcf, 'PaperUnits', 'centimeters');
+                set(gcf, 'PaperSize', [19 19]);
+                set(gcf, 'PaperPositionMode', 'manual');
+                set(gcf, 'PaperPosition', [0 0 19 19]);
+            end
+            
+            % Fonts and colours ---------------------------------------------------
+            setGeneralFontName = 'Helvetica';
+            setGeneralFontSize = 14;
+            setBorderLineWidth = 2;
+            setLegendFontSize  = 12;
+            
+            %# Change default text fonts for plot title
+            set(0,'DefaultTextFontname',setGeneralFontName);
+            set(0,'DefaultTextFontSize',14);
+            
+            %# Box thickness, axes font size, etc. --------------------------------
+            set(gca,'TickDir','in',...
+                'FontSize',12,...
+                'LineWidth',2,...
+                'FontName',setGeneralFontName,...
+                'Clipping','off',...
+                'Color',[1 1 1],...
+                'LooseInset',get(gca,'TightInset'));
+            
+            %# Markes and colors ------------------------------------------------------
+            setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+            %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+            % Colored curves
+            setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+            if enableBlackAndWhitePlot == 1
+                % Black and white curves
+                setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+            end
+            
+            % Plot frequencies (bar)
             subplot(2,1,1);
             
             x = sortedArray{j}(:,2);
@@ -427,7 +474,6 @@ if enableCond07FreqPlot == 1
             set(gcf,'Color',[1,1,1]);
             
             % Plot frequencies (scatter)
-            
             subplot(2,1,2);
             
             plot(x,y,'rs',...
@@ -451,32 +497,38 @@ if enableCond07FreqPlot == 1
             % Rotate x label due to space issues
             xticklabel_rotate([],90,[],'Fontsize',10)
             
-            %# Save plot as PNG -------------------------------------------
+            %# ********************************************************************
+            %# Save plot as PNG
+            %# ********************************************************************
             
-            if enablePFPlot == 1
-                
-                %# Figure size on screen (50% scaled, but same aspect ratio)
-                set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-                
-                %# Figure size printed on paper
+            %# Figure size on screen (50% scaled, but same aspect ratio)
+            set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+            
+            %# Figure size printed on paper
+            if enableA4PaperSizePlot == 1
                 set(gcf, 'PaperUnits','centimeters');
                 set(gcf, 'PaperSize',[XPlot YPlot]);
                 set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
                 set(gcf, 'PaperOrientation','portrait');
-                
             end
             
-            %# Plot title -------------------------------------------------
-            annotation('textbox', [0 0.9 1 0.1], ...
-                'String', strcat('{\bf ', figurename, '}'), ...
-                'EdgeColor', 'none', ...
-                'HorizontalAlignment', 'center');
+            %# Plot title ---------------------------------------------------------
+            if enablePlotMainTitle == 1
+                annotation('textbox', [0 0.9 1 0.1], ...
+                    'String', strcat('{\bf ', figurename, '}'), ...
+                    'EdgeColor', 'none', ...
+                    'HorizontalAlignment', 'center');
+            end
             
-            %# Save plots as PDF and PNG
-            %plotsavenamePDF = sprintf('%s/_Cond_%s_Run%s_to_Run%s_FFT_Frequency_Plot_FFT.pdf', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo));
-            %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-            plotsavename = sprintf('%s/_Cond_%s_Run%s_to_Run%s_FFT_Frequency_Plot_FFT.png', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo));
-            saveas(fig, plotsavename);                % Save plot as PNG
+            %# Save plots as PDF, PNG and EPS -------------------------------------
+            % Enable renderer for vector graphics output
+            set(gcf, 'renderer', 'painters');
+            setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+            setFileFormat = {'PDF' 'PNG' 'EPS'};
+            for k=1:3
+                plotsavename = sprintf('_plots/%s/%s/Cond_%s_Run_%s_to_Run_%s_FFT_Frequency_Plot_FFT_Plot.%s', '_time_series_drag_plots', setFileFormat{k}, num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), setFileFormat{k});
+                print(gcf, setSaveFormat{k}, plotsavename);
+            end
             %close;
             
         end % If statement
@@ -504,7 +556,7 @@ if enableCond07Plot == 1
     frequencyArray = [];
     freqArray      = [];
     polyfitArray   = [];
-    FACounter = 1;
+    FACounter      = 1;
     for j=1:ml
         
         [ms,ns] = size(sortedArray{j});
@@ -518,14 +570,51 @@ if enableCond07Plot == 1
         %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         %# PLOT: DRAG ONLY. WALL INACURACCY INVESTIGATION
         %# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-        
         figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Drag Data and FFT');
         fig = figure('Name',figurename,'NumberTitle','off');
         
-        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
-        setColor  = {'r';'g';'b';'c';'m';'y';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1]};
-        %setLine   = {'--';'-.';'--';'-.';'--';'-.';'--';'-.';'--';'-.'};
-        setLine   = {'-';'-';'-';'-';'-';'-';'-';'-';'-';'-'};
+        %# Paper size settings ------------------------------------------------
+        
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+            
+            set(gcf, 'PaperUnits', 'centimeters');
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+        end
+        
+        % Fonts and colours ---------------------------------------------------
+        setGeneralFontName = 'Helvetica';
+        setGeneralFontSize = 14;
+        setBorderLineWidth = 2;
+        setLegendFontSize  = 12;
+        
+        %# Change default text fonts for plot title
+        set(0,'DefaultTextFontname',setGeneralFontName);
+        set(0,'DefaultTextFontSize',14);
+        
+        %# Box thickness, axes font size, etc. --------------------------------
+        set(gca,'TickDir','in',...
+            'FontSize',12,...
+            'LineWidth',2,...
+            'FontName',setGeneralFontName,...
+            'Clipping','off',...
+            'Color',[1 1 1],...
+            'LooseInset',get(gca,'TightInset'));
+        
+        %# Markes and colors ------------------------------------------------------
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+        %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+        % Colored curves
+        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+        if enableBlackAndWhitePlot == 1
+            % Black and white curves
+            setColor = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+        end
+        setLine = {'-';'-';'-';'-';'-';'-';'-';'-';'-';'-'};
         
         minXValues = [];
         maxXValues = [];
@@ -557,7 +646,7 @@ if enableCond07Plot == 1
             %# Read run time series data create with analysis script ------
             
             % Define run filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -609,7 +698,7 @@ if enableCond07Plot == 1
             %# Read run time series data create with analysis script ------
             
             % Define run filename
-            filename = sprintf('_time_series_data/R%s.dat',runnumber);
+            filename = sprintf('_plots/_time_series_data/R%s.dat',runnumber);
             
             % Read DAT file
             if exist(filename, 'file') == 2
@@ -721,10 +810,6 @@ if enableCond07Plot == 1
                 interceptITTC = abs(interceptITTC);
             end
             
-            %disp('-------------------------------------------------------------');
-            %slopeTextITTC = sprintf('Run %s:: y = %s*x %s %s, theta = %s', num2str(runnumber), sprintf('%.3f',slopeITTC), chooseSign, sprintf('%.3f',interceptITTC), sprintf('%.3f',theta));
-            %disp(slopeTextITTC);
-            
             %# Store polyfitArray data ------------------------------------
             
             % Columns:
@@ -784,7 +869,7 @@ if enableCond07Plot == 1
             clearvars legendInfo;
             
             %# Plot FFT ---------------------------------------------------
-            
+
             subplot(ms,3,graphCenter)
             
             % Set x and y as time series objects --------------------------
@@ -836,9 +921,9 @@ if enableCond07Plot == 1
             % See: http://www.mathworks.com.au/help/matlab/ref/sortrows.html
             maxtabstbdnew = sortrows(maxtabstbdnew,-2);
             
+            %# ************************************************************
+            %# START: Limit to two max. frequencies only
             %# ------------------------------------------------------------
-            %# START: Limit to two max. frequencies only ------------------
-            
             % If there are more than 2 identified frequencies limit output
             % to 2 frequencies only
             if mpdn > 2
@@ -848,9 +933,9 @@ if enableCond07Plot == 1
                 end
                 maxtabstbdnew = ts;
             end
-            
-            %# END: Limit to two max. frequencies only --------------------
             %# ------------------------------------------------------------
+            %# END: Limit to two max. frequencies only
+            %# ************************************************************
             
             % Recheck array sizes
             [mpdn,npdn] = size(maxtabstbdnew);
@@ -938,38 +1023,87 @@ if enableCond07Plot == 1
             
         end
         
-        %# Save plot as PNG -----------------------------------------------
+        %# ********************************************************************
+        %# Save plot as PNG
+        %# ********************************************************************
         
-        if enablePFPlot == 1
-            
-            %# Figure size on screen (50% scaled, but same aspect ratio)
-            set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-            
-            %# Figure size printed on paper
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        if enableA4PaperSizePlot == 1
             set(gcf, 'PaperUnits','centimeters');
             set(gcf, 'PaperSize',[XPlot YPlot]);
             set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
             set(gcf, 'PaperOrientation','portrait');
-            
         end
         
-        %# Plot title -----------------------------------------------------
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
+        %# Plot title ---------------------------------------------------------
+        if enablePlotMainTitle == 1
+            annotation('textbox', [0 0.9 1 0.1], ...
+                'String', strcat('{\bf ', figurename, '}'), ...
+                'EdgeColor', 'none', ...
+                'HorizontalAlignment', 'center');
+        end
         
-        %# Save plots as PDF and PNG
-        %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots_FFT.pdf', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots_FFT.png', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-        saveas(fig, plotsavename);                % Save plot as PNG
+        %# Save plots as PDF, PNG and EPS -------------------------------------
+        % Enable renderer for vector graphics output
+        set(gcf, 'renderer', 'painters');
+        setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+        setFileFormat = {'PDF' 'PNG' 'EPS'};
+        for k=1:3
+            plotsavename = sprintf('_plots/%s/%s/Cond_%s_Run_%s_to_Run_%s_Fr_%s_Time_Series_Drag_FFT_Plot.%s', '_time_series_drag_plots', setFileFormat{k}, num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), setFileFormat{k});
+            print(gcf, setSaveFormat{k}, plotsavename);
+        end
         %close;
         
-        % Plot averaged data ----------------------------------------------
-        
+        %# ----------------------------------------------------------------
+        %# Plot averaged data
+        %# ----------------------------------------------------------------
         figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Drag Data and FFT. Averaged samples of runs.');
         fig = figure('Name',figurename,'NumberTitle','off');
+        
+        %# Paper size settings ------------------------------------------------
+        
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+            
+            set(gcf, 'PaperUnits', 'centimeters');
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+        end
+        
+        % Fonts and colours ---------------------------------------------------
+        setGeneralFontName = 'Helvetica';
+        setGeneralFontSize = 14;
+        setBorderLineWidth = 2;
+        setLegendFontSize  = 12;
+        
+        %# Change default text fonts for plot title
+        set(0,'DefaultTextFontname',setGeneralFontName);
+        set(0,'DefaultTextFontSize',14);
+        
+        %# Box thickness, axes font size, etc. --------------------------------
+        set(gca,'TickDir','in',...
+            'FontSize',12,...
+            'LineWidth',2,...
+            'FontName',setGeneralFontName,...
+            'Clipping','off',...
+            'Color',[1 1 1],...
+            'LooseInset',get(gca,'TightInset'));
+        
+        %# Markes and colors ------------------------------------------------------
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+        %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+        % Colored curves
+        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+        if enableBlackAndWhitePlot == 1
+            % Black and white curves
+            setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+        end
         
         [mrda,nrda] = size(runDataArray);
         
@@ -1003,7 +1137,6 @@ if enableCond07Plot == 1
         avgDAD = DAD(:,1)/ms;
         
         %# Plot time vs. output -------------------------------------------
-        
         subplot(3,1,1)
         
         % Set axis data
@@ -1092,7 +1225,6 @@ if enableCond07Plot == 1
         clearvars legendInfo;
         
         %# Plot FFT -------------------------------------------------------
-        
         subplot(3,1,2)
         
         Fs = 200;               % Sampling frequency
@@ -1191,34 +1323,40 @@ if enableCond07Plot == 1
         %legend boxoff;
         
         clearvars legendInfo;
+
+        %# ********************************************************************
+        %# Save plot as PNG
+        %# ********************************************************************
         
-        %# Save plot as PNG -----------------------------------------------
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
         
-        if enablePFPlot == 1
-            
-            %# Figure size on screen (50% scaled, but same aspect ratio)
-            set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-            
-            %# Figure size printed on paper
+        %# Figure size printed on paper
+        if enableA4PaperSizePlot == 1
             set(gcf, 'PaperUnits','centimeters');
             set(gcf, 'PaperSize',[XPlot YPlot]);
             set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
             set(gcf, 'PaperOrientation','portrait');
-            
         end
         
-        %# Plot title -----------------------------------------------------
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
+        %# Plot title ---------------------------------------------------------
+        if enablePlotMainTitle == 1
+            annotation('textbox', [0 0.9 1 0.1], ...
+                'String', strcat('{\bf ', figurename, '}'), ...
+                'EdgeColor', 'none', ...
+                'HorizontalAlignment', 'center');
+        end
         
-        %# Save plots as PDF and PNG
-        %plotsavenamePDF = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots_FFT_Averaged.pdf', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('%s/Cond_%s_Run%s_to_Run%s_Fr_%s_Time_Series_Drag_Plots_FFT_Averaged.png', '_time_series_drag_plots', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo));
-        saveas(fig, plotsavename);                % Save plot as PNG
-        %close;
+        %# Save plots as PDF, PNG and EPS -------------------------------------
+        % Enable renderer for vector graphics output
+        set(gcf, 'renderer', 'painters');
+        setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+        setFileFormat = {'PDF' 'PNG' 'EPS'};
+        for k=1:3
+            plotsavename = sprintf('_plots/%s/%s/Cond_%s_Run_%s_to_Run_%s_Fr_%s_Time_Series_Drag_FFT_Averaged_Plot.%s', '_time_series_drag_plots', setFileFormat{k}, num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), setFileFormat{k});
+            print(gcf, setSaveFormat{k}, plotsavename);
+        end
+        %close;        
         
         % ////////////////////////////////////////
         
@@ -1230,9 +1368,53 @@ if enableCond07Plot == 1
         
     end % For loop
     
-    % Plot identified frequencies (FFT)
+    %# --------------------------------------------------------------------
+    %# Plot identified frequencies (FFT)
+    %# --------------------------------------------------------------------
     figurename = sprintf('Condition %s:: %s', num2str(RunCond), 'Identified frequencies (FFT)');
     fig = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 12;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end    
     
     x = freqArray(:,2);
     y = freqArray(:,3);
@@ -1262,36 +1444,51 @@ if enableCond07Plot == 1
     maxY = max(y)+0.05;
     set(gca,'YLim',[minY maxY]);
     set(gca,'YTick',minY:0.05:maxY);
+
+    %# ********************************************************************
+    %# Save plot as PNG
+    %# ********************************************************************
     
-    %# Save plot as PNG -----------------------------------------------
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
-    if enablePFPlot == 1
-        
-        %# Figure size on screen (50% scaled, but same aspect ratio)
-        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-        
-        %# Figure size printed on paper
+    %# Figure size printed on paper
+    if enableA4PaperSizePlot == 1
         set(gcf, 'PaperUnits','centimeters');
         set(gcf, 'PaperSize',[XPlot YPlot]);
         set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
         set(gcf, 'PaperOrientation','portrait');
-        
     end
     
-    %# Plot title -----------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
+    %# Plot title ---------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
     
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintf('%s/Cond_%s_FFT_Identified_Frequencies_Plot.pdf', '_time_series_drag_plots', num2str(RunCond));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('%s/Cond_%s_FFT_Identified_Frequencies_Plot.png', '_time_series_drag_plots', num2str(RunCond));
-    saveas(fig, plotsavename);                % Save plot as PNG
+    %# Save plots as PDF, PNG and EPS -------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Cond_%s_FFT_Identified_Frequencies_Plot.%s', '_time_series_drag_plots', setFileFormat{k}, num2str(RunCond), setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
     %close;
-    
+
 end % enableCond07Plot
+
+
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# TODO: Code below needs adjusting like condition 7 (enableCond07Plot)
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+break;
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# TODO: Code below needs adjusting like condition 7 (enableCond07Plot)
+%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 %# ------------------------------------------------------------------------

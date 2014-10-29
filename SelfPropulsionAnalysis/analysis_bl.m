@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 28, 2014
+%# Date       :  October 29, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -81,7 +81,7 @@ delete(allPlots);   % Close all plots
 % -------------------------------------------------------------------------
 
 % Time series data
-enableTSDataSave          = 0;    % Enable time series data saving
+enableTSDataSave          = 1;    % Enable time series data saving
 
 % Main and plot titles
 enablePlotMainTitle       = 0;    % Show plot title in saved file
@@ -101,7 +101,7 @@ enableMARINBLData         = 1;    % Show MARIN 112m BL data (cond. T1)
 enableAMCLJ120EBLData     = 0;    % Show AMC LJ120E BL data (Brandner 2007)
 
 % Scaled to A4 paper
-enableA4PaperSizePlot     = 0;    % Show plots scale to A4 size
+enableA4PaperSizePlot     = 1;    % Show plots scale to A4 size
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
@@ -363,7 +363,7 @@ end
 %# ------------------------------------------------------------------------
 %# Read results DAT file
 %# ------------------------------------------------------------------------
-if exist('resultsArrayBlm_copy.dat', 'file') == 2
+if exist('resultsArrayBlm_Repo.dat', 'file') == 2
     
     %# Results array columns:
     %[1]  Run No.
@@ -383,7 +383,7 @@ if exist('resultsArrayBlm_copy.dat', 'file') == 2
     %[15] Estimated boundary layer depth           (mm)
     %[16] Model speed                              (m/s)  
         
-    resultsArrayBlm = csvread('resultsArrayBlm_copy.dat');
+    resultsArrayBlm = csvread('resultsArrayBlm_Repo.dat');
     
     %# Remove zero rows
     resultsArrayBlm(all(resultsArrayBlm==0,2),:)=[];
@@ -617,13 +617,13 @@ else
         resultsArrayBlm(k, 15) = EstBLDepth;
         resultsArrayBlm(k, 16) = roundedspeed;        
         
-        %# ////////////////////////////////////////////////////////////////////
+        %# ////////////////////////////////////////////////////////////////
         %# PST (Boundary Layer Measurements): Time Series Output
-        %# ////////////////////////////////////////////////////////////////////
+        %# ////////////////////////////////////////////////////////////////
         
         if enableTSDataSave == 1
             
-            figurename = sprintf('%s:: Boundary Layer Time Series Plot, Run %s', testName, num2str(runno));
+            figurename = sprintf('Run %s: Boundary Layer Time Series', num2str(k));
             f = figure('Name',figurename,'NumberTitle','off');
             
             %# Paper size settings ----------------------------------------
@@ -643,6 +643,7 @@ else
             setGeneralFontName = 'Helvetica';
             setGeneralFontSize = 14;
             setBorderLineWidth = 2;
+            setLegendFontSize  = 12;
             
             %# Change default text fonts for plot title
             set(0,'DefaultTextFontname',setGeneralFontName);
@@ -661,14 +662,21 @@ else
             setMarker = {'*';'+';'x';'o';'s';'d';'<';'^';'x';'>'};
             % Colored curves
             setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
-            if enableBlackAndWhitePlot == 1
-                % Black and white curves
-                setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
-            end
+            %if enableBlackAndWhitePlot == 1
+            %    % Black and white curves
+            %    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+            %end
+            
+            %# Line, colors and markers
+            setMarkerSize      = 4;
+            setLineWidthMarker = 1;
+            setLineWidth       = 1;
+            setLineStyle       = '-';
+            setLineStyle1      = '--';
+            setLineStyle2      = '-.';
             
             %# Set plot figure background to a defined color --------------
             %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-            
             set(gcf,'Color',[1,1,1]);
             
             % Inboard PST -------------------------------------------------
@@ -682,13 +690,17 @@ else
             polyf = polyfit(x,y,1);
             polyv = polyval(polyf,x);
             
-            h = plot(x,y,'-b',x,polyv,'-k');
-            title('{\bf Inboard PST}');
-            xlabel('{\bf Time (seconds)}');
-            ylabel('{\bf PST output (V)}');
+            h = plot(x,y,'-',x,polyv,'-');
+            title('{\bf Inboard Pitot-Static Tube}','FontSize',setGeneralFontSize);
+            xlabel('{\bf Time (seconds)}','FontSize',setGeneralFontSize);
+            ylabel('{\bf PST output (V)}','FontSize',setGeneralFontSize);
             grid on;
             box on;
             %axis square;
+            
+            %# Line, colors and markers
+            setCurveNo=1;set(h(setCurveNo),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setCurveNo=2;set(h(setCurveNo),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
             
             %# Set plot figure background to a defined color
             %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -711,6 +723,13 @@ else
             hleg1 = legend('Output (real units)','Trendline');
             set(hleg1,'Location','NorthEast');
             set(hleg1,'Interpreter','none');
+            set(hleg1,'LineWidth',1);
+            set(hleg1,'FontSize',setLegendFontSize);
+            %legend boxoff;
+            
+            %# Font sizes and border --------------------------------------------------
+            
+            set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
             
             % Outboard PST ------------------------------------------------
             subplot(3,1,2);
@@ -723,13 +742,17 @@ else
             polyf = polyfit(x,y,1);
             polyv = polyval(polyf,x);
             
-            h = plot(x,y,'-g',x,polyv,'-k');
-            title('{\bf Outboard PST}');
-            xlabel('{\bf Time (seconds)}');
-            ylabel('{\bf PST output (V)}');
+            h = plot(x,y,'-',x,polyv,'-');
+            title('{\bf Outboard Pitot-Static Tube}','FontSize',setGeneralFontSize);
+            xlabel('{\bf Time (seconds)}','FontSize',setGeneralFontSize);
+            ylabel('{\bf PST output (V)}','FontSize',setGeneralFontSize);
             grid on;
             box on;
             %axis square;
+            
+            %# Line, colors and markers
+            setCurveNo=1;set(h(setCurveNo),'Color',setColor{2},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setCurveNo=2;set(h(setCurveNo),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);            
             
             %# Axis limitations
             xlim([min(x) max(x)]);
@@ -748,6 +771,13 @@ else
             hleg1 = legend('Output (real units)','Trendline');
             set(hleg1,'Location','NorthEast');
             set(hleg1,'Interpreter','none');
+            set(hleg1,'LineWidth',1);
+            set(hleg1,'FontSize',setLegendFontSize);
+            %legend boxoff;
+            
+            %# Font sizes and border --------------------------------------------------
+            
+            set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);            
             
             % Compared Inboard/Outboard PST -------------------------------
             subplot(3,1,3);
@@ -764,13 +794,19 @@ else
             polyf2 = polyfit(x,y2,1);
             polyv2 = polyval(polyf2,x);
             
-            h = plot(x,y1,'-b',x,y2,'-g',x,polyv1,'-k',x,polyv2,'--k');
-            title('{\bf Overlayed Inboard/Outboard PST}');
-            xlabel('{\bf Time (seconds)}');
-            ylabel('{\bf PST output (V)}');
+            h = plot(x,y1,'-',x,y2,'-',x,polyv1,'-',x,polyv2,'-');
+            title('{\bf Overlayed Inboard/Outboard Pitot-Static Tube}','FontSize',setGeneralFontSize);
+            xlabel('{\bf Time (seconds)}','FontSize',setGeneralFontSize);
+            ylabel('{\bf PST output (V)}','FontSize',setGeneralFontSize);
             grid on;
             box on;
             %axis square;
+            
+            %# Line, colors and markers
+            setCurveNo=1;set(h(setCurveNo),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setCurveNo=2;set(h(setCurveNo),'Color',setColor{2},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            setCurveNo=3;set(h(setCurveNo),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);            
+            setCurveNo=4;set(h(setCurveNo),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);   
             
             %# Axis limitations
             xlim([min(x) max(x)]);
@@ -791,6 +827,13 @@ else
             hleg1 = legend('Inboard Output','Outboard Output','Inboard Trendline','Outboard Trendline');
             set(hleg1,'Location','NorthEast');
             set(hleg1,'Interpreter','none');
+            set(hleg1,'LineWidth',1);
+            set(hleg1,'FontSize',setLegendFontSize);
+            %legend boxoff;
+            
+            %# Font sizes and border --------------------------------------------------
+            
+            set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);            
             
             %# ************************************************************
             %# Command Window Output
@@ -925,12 +968,10 @@ else
             end
             
             %# Plot title -------------------------------------------------
-            if enablePlotMainTitle == 1
-                annotation('textbox', [0 0.9 1 0.1], ...
-                    'String', strcat('{\bf ', figurename, '}'), ...
-                    'EdgeColor', 'none', ...
-                    'HorizontalAlignment', 'center');
-            end
+            annotation('textbox', [0 0.9 1 0.1], ...
+                'String', strcat('{\bf ', figurename, '}'), ...
+                'EdgeColor', 'none', ...
+                'HorizontalAlignment', 'center');
             
             %# Save plots as PDF, PNG and EPS -----------------------------
             
@@ -938,9 +979,9 @@ else
             set(gcf, 'renderer', 'painters');
             setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
             setFileFormat = {'PDF' 'PNG' 'EPS'};
-            for k=1:3
-                plotsavename = sprintf('_plots/%s/%s/Run_%s_CH_19-20_Bounday_Layer.%s', 'TS', setFileFormat{k}, num2str(runno), setFileFormat{k});
-                print(gcf, setSaveFormat{k}, plotsavename);
+            for kl=1:3
+                plotsavename = sprintf('_plots/%s/%s/Run_%s_CH_19-20_Bounday_Layer.%s', 'TS', setFileFormat{kl}, num2str(k), setFileFormat{kl});
+                print(gcf, setSaveFormat{kl}, plotsavename);
             end
             close;
             
@@ -958,8 +999,8 @@ else
     M = resultsArrayBlm;
     M = M(any(M,2),:);                           % Remove zero rows
     csvwrite('resultsArrayBlm.dat', M)           % Export matrix M to a file delimited by the comma character
-    if exist('resultsArrayBlm_copy.dat', 'file') == 0
-        csvwrite('resultsArrayBlm_copy.dat', M)  % Export matrix M to a file delimited by the comma character
+    if exist('resultsArrayBlm_Repo.dat', 'file') == 0
+        csvwrite('resultsArrayBlm_Repo.dat', M)  % Export matrix M to a file delimited by the comma character
     end
     
     % Time series data, min, max, diff. to avg., STDev, CF and zero values
@@ -991,7 +1032,7 @@ A  = arrayfun(@(x) RA(RA(:,3) == x, :), unique(RA(:,3)), 'uniformoutput', false)
 %# 1. Plot distance from hull vs. speed
 %# ************************************************************************
 
-figurename = sprintf('%s:: Distance from hull vs. speed', testName);
+figurename = sprintf('%s:: Distance from Hull vs. Speed', testName);
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -1011,6 +1052,7 @@ end
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
+setLegendFontSize  = 9;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1235,6 +1277,8 @@ else
 end
 set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
@@ -1271,7 +1315,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Boundary_Layer_Fr_030_to_0.40_Y_vs_Speed.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Boundary_Layer_Fr_30_to_40_Y_vs_Speed.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -1301,6 +1345,7 @@ end
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
+setLegendFontSize  = 9;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1480,6 +1525,8 @@ else
 end
 set(hleg1,'Location','SouthEast');
 set(hleg1,'Interpreter','none');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
@@ -1516,7 +1563,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Boundary_Layer_Fr_030_to_0.40_Speed_vs_u_Uo_Ratio.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Boundary_Layer_Fr_30_to_40_Speed_vs_u_Uo_Ratio.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
