@@ -144,11 +144,11 @@ enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
 enableTurbStimPlot      = 0; % Turbulence stimulator investigation
 enableTrimTabPlot       = 0; % Trim tab investigation
 enableResistancePlot    = 0; % Resistance plots, Ctm, power, heave and trim
-enableProhaskaPlot      = 0; % Prohaska plot, form factor at deep transom
+enableProhaskaPlot      = 1; % Prohaska plot, form factor at deep transom
 enableErrorPlot         = 0; % Error plots (% of max-avg to magnitude)
 enableMeanStdPlot       = 0; % Show Fr vs. mean of standard deviation
 enableStdPlot           = 0; % Show Fr vs. standard deviation
-enableRemVSCFmPlot      = 1; % Show Re vs. Cfm plot
+enableRemVSCFmPlot      = 0; % Show Re vs. Cfm plot
 
 %# ------------------------------------------------------------------------
 %# END: PLOT SWITCHES
@@ -2318,6 +2318,8 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     
     %# Paper size settings ------------------------------------------------
     
+    enableA4PaperSizePlot = 0;
+    
     if enableA4PaperSizePlot == 1
         set(gcf, 'PaperSize', [19 19]);
         set(gcf, 'PaperPositionMode', 'manual');
@@ -2333,7 +2335,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     setGeneralFontName = 'Helvetica';
     setGeneralFontSize = 14;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 9;
+    setLegendFontSize  = 12;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -2359,7 +2361,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     end
     
     %# Plot repeat data: fr^4/Cfm vs. Ctm/Cfm -----------------------------
-    subplot(1,2,1)
+    %subplot(1,2,1)
     
     %# ITTC 1957 Friction Line
     x1 = ittcprohaskadata(:,1);
@@ -2426,18 +2428,19 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     axis square;
     
     %# Annotations
-    text(0.23,1.05,slopeTextITTC,'FontSize',12,'color','k','FontWeight','normal');
-    text(0.23,1.24,slopeTextGrigson,'FontSize',12,'color','k','FontWeight','normal');
+    text(0.23,1.08,slopeTextITTC,'FontSize',12,'color','k','FontWeight','normal');
+    text(0.23,1.22,slopeTextGrigson,'FontSize',12,'color','k','FontWeight','normal');
     
     %# Line, colors and markers
     setMarkerSize      = 8;
     setLineWidthMarker = 1;
     setLineWidth       = 1;
-    setLineStyle       = '-';
+    setLineStyle1      = '--';
+    setLineStyle2      = '-.';
     setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -2457,78 +2460,78 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;
+    %legend boxoff;
     
     %# Font sizes and border --------------------------------------------------
     
     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
-    %# Plot repeat data: Trim vs. Crm -----------------------------
-    subplot(1,2,2)
-    
-    if length(avgcond13) ~= 0
-        xavgcond13 = avgcond13(:,11);
-        
-        %# Multiply resistance data by 1000 for better readibility
-        yavgcond131 = avgcond13(:,32); Raw_Data = num2cell(yavgcond131); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond131 = cell2mat(Raw_Data);
-        yavgcond132 = avgcond13(:,36); Raw_Data = num2cell(yavgcond132); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond132 = cell2mat(Raw_Data);
-        yavgcond133 = avgcond13(:,40); Raw_Data = num2cell(yavgcond133); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond133 = cell2mat(Raw_Data);
-        yavgcond134 = avgcond13(:,44); Raw_Data = num2cell(yavgcond134); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond134 = cell2mat(Raw_Data);
-        
-        x13  = xavgcond13;
-        y131 = yavgcond131;
-        y132 = yavgcond132;
-        y133 = yavgcond133;
-        y134 = yavgcond134;
-    else
-        x13  = 0;
-        y131 = 0;
-        y132 = 0;
-        y133 = 0;
-        y134 = 0;
-    end
-    
-    % Plotting
-    h = plot(x13,y131,'*',x13,y132,'*',x13,y133,'*',x13,y134,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
-    grid on;
-    box on;
-    axis square;
-    
-    %# Line, colors and markers
-    setMarkerSize      = 8;
-    setLineWidthMarker = 1;
-    setLineWidth       = 1;
-    setLineStyle       = '-.';
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    %# Axis limitations
-    set(gca,'XLim',[0.1 0.24]);
-    set(gca,'XTick',[0.1:0.02:0.24]);
-    %set(gca,'YLim',[0 60]);
-    %set(gca,'YTick',[0:5:60]);
-    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
-    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
-    
-    %# Legend
-    hleg1 = legend('Cond. 13: Speed','Cond. 13: Fwd LVDT','Cond. 13: Aft LVDT','Cond. 13: Drag');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    set(hleg1,'LineWidth',1);
-    set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;
-    
-    %# Font sizes and border --------------------------------------------------
-    
-    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+%     %# Plot repeat data: Trim vs. Crm -----------------------------
+%     subplot(1,2,2)
+%     
+%     if length(avgcond13) ~= 0
+%         xavgcond13 = avgcond13(:,11);
+%         
+%         %# Multiply resistance data by 1000 for better readibility
+%         yavgcond131 = avgcond13(:,32); Raw_Data = num2cell(yavgcond131); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond131 = cell2mat(Raw_Data);
+%         yavgcond132 = avgcond13(:,36); Raw_Data = num2cell(yavgcond132); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond132 = cell2mat(Raw_Data);
+%         yavgcond133 = avgcond13(:,40); Raw_Data = num2cell(yavgcond133); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond133 = cell2mat(Raw_Data);
+%         yavgcond134 = avgcond13(:,44); Raw_Data = num2cell(yavgcond134); Raw_Data = cellfun(@(y) y*100, Raw_Data, 'UniformOutput', false); yavgcond134 = cell2mat(Raw_Data);
+%         
+%         x13  = xavgcond13;
+%         y131 = yavgcond131;
+%         y132 = yavgcond132;
+%         y133 = yavgcond133;
+%         y134 = yavgcond134;
+%     else
+%         x13  = 0;
+%         y131 = 0;
+%         y132 = 0;
+%         y133 = 0;
+%         y134 = 0;
+%     end
+%     
+%     % Plotting
+%     h = plot(x13,y131,'*',x13,y132,'*',x13,y133,'*',x13,y134,'*');
+%     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+%     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
+%     grid on;
+%     box on;
+%     axis square;
+%     
+%     %# Line, colors and markers
+%     setMarkerSize      = 8;
+%     setLineWidthMarker = 1;
+%     setLineWidth       = 1;
+%     setLineStyle       = '-.';
+%     setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     
+%     %# Set plot figure background to a defined color
+%     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+%     set(gcf,'Color',[1,1,1]);
+%     
+%     %# Axis limitations
+%     set(gca,'XLim',[0.1 0.24]);
+%     set(gca,'XTick',[0.1:0.02:0.24]);
+%     %set(gca,'YLim',[0 60]);
+%     %set(gca,'YTick',[0:5:60]);
+%     set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
+%     
+%     %# Legend
+%     hleg1 = legend('Cond. 13: Speed','Cond. 13: Fwd LVDT','Cond. 13: Aft LVDT','Cond. 13: Drag');
+%     set(hleg1,'Location','NorthEast');
+%     set(hleg1,'Interpreter','none');
+%     set(hleg1,'LineWidth',1);
+%     set(hleg1,'FontSize',setLegendFontSize);
+%     legend boxoff;
+%     
+%     %# Font sizes and border --------------------------------------------------
+%     
+%     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     %# ********************************************************************
     %# Save plot as PNG
@@ -2547,10 +2550,10 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     
     %# Plot title ---------------------------------------------------------
     if enablePlotMainTitle == 1
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
+%         annotation('textbox', [0 0.9 1 0.1], ...
+%             'String', strcat('{\bf ', figurename, '}'), ...
+%             'EdgeColor', 'none', ...
+%             'HorizontalAlignment', 'center');
     end
     
     %# Save plots as PDF, PNG and EPS -------------------------------------
