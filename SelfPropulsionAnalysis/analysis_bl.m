@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 29, 2014
+%# Date       :  November 4, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -101,7 +101,7 @@ enableMARINBLData         = 1;    % Show MARIN 112m BL data (cond. T1)
 enableAMCLJ120EBLData     = 0;    % Show AMC LJ120E BL data (Brandner 2007)
 
 % Scaled to A4 paper
-enableA4PaperSizePlot     = 1;    % Show plots scale to A4 size
+enableA4PaperSizePlot     = 0;    % Show plots scale to A4 size
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
@@ -725,7 +725,7 @@ else
             set(hleg1,'Interpreter','none');
             set(hleg1,'LineWidth',1);
             set(hleg1,'FontSize',setLegendFontSize);
-            %legend boxoff;
+            legend boxoff;
             
             %# Font sizes and border --------------------------------------------------
             
@@ -773,7 +773,7 @@ else
             set(hleg1,'Interpreter','none');
             set(hleg1,'LineWidth',1);
             set(hleg1,'FontSize',setLegendFontSize);
-            %legend boxoff;
+            legend boxoff;
             
             %# Font sizes and border --------------------------------------------------
             
@@ -829,7 +829,7 @@ else
             set(hleg1,'Interpreter','none');
             set(hleg1,'LineWidth',1);
             set(hleg1,'FontSize',setLegendFontSize);
-            %legend boxoff;
+            legend boxoff;
             
             %# Font sizes and border --------------------------------------------------
             
@@ -1052,7 +1052,7 @@ end
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
-setLegendFontSize  = 9;
+setLegendFontSize  = 10;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1260,12 +1260,17 @@ if enableBLDepthMarker == 1
     set(h2(3),'Color',setColor{10},'Marker',setMarker{12},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
 end
 
-% Set limitations
-% set(gca,'XLim',[minX maxX]);
-% set(gca,'XTick',minX:setXIncr:maxX);
+% Axis limitations
+minX  = 0.8;
+maxX  = 2.8;
+incrX = 0.4;
+% minY  = 0.6;
+% maxY  = 0.95;
+% incrY = 0.05;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
 % set(gca,'YLim',[minY maxY]);
-% set(gca,'YTick',minY:setYIncr:maxY);
-% Limit decimals in X and Y axis numbers
+% set(gca,'YTick',minY:incrY:maxY);
 set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
 
@@ -1279,7 +1284,7 @@ set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-%legend boxoff;
+legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
@@ -1345,7 +1350,7 @@ end
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
-setLegendFontSize  = 9;
+setLegendFontSize  = 10;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1503,12 +1508,17 @@ if enableAMCLJ120EBLData == 1
     setSpeed=6;set(h3(setSpeed),'Color',setColor{10},'Marker','h','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.');
 end
 
-% Set limitations
+% Axis limitations
+% minX  = 0;
+% maxX  = 100;
+% incrX = 20;
+minY  = 0.6;
+maxY  = 1.1;
+incrY = 0.1;
 % set(gca,'XLim',[minX maxX]);
-% set(gca,'XTick',minX:setXIncr:maxX);
-set(gca,'YLim',[0.6 1.1]);
-set(gca,'YTick',0.6:0.1:1.1);
-% Limit decimals in X and Y axis numbers
+% set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
 set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
 
@@ -1527,7 +1537,7 @@ set(hleg1,'Location','SouthEast');
 set(hleg1,'Interpreter','none');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-%legend boxoff;
+legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 

@@ -1,9 +1,9 @@
 %# ------------------------------------------------------------------------
-%# Flow Rate Analysis
+%# Flow Rate Analysis: Real Units and Averaging
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 29, 2014
+%# Date       :  November 4, 2014
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -54,6 +54,7 @@
 %# ------------------------------------------------------------------------
 clear
 clc
+
 
 %# ------------------------------------------------------------------------
 %# Find and close all plots

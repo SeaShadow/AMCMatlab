@@ -1,32 +1,37 @@
 %# ------------------------------------------------------------------------
-%# Pumpcurve for LJ120E waterjet unit supplied by Wärtsilä
+%# function function [BMData EoFPH EoEff] = fcWJPump(shaftSpeeds,PropSys)
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
 %# Date       :  November 4, 2014
 %#
-%# Description:  Pumpcurve analysis for different RPM in full scale.
+%# Function   :  Extrapolate WJ benchmark data
+%#
+%# Description:  Extrapolate WJ benchmark data for supplied shaft speed by:
+%#               >> Q scales with n.D^3 and H with n^2.D^2 so for equal nozzle diameter
+%#
+%# Definition:   Port and ptarboard are defined as seen from stern of vessel.
+%#
+%# Parameters :  shaftSpeeds = (array)  Shaft speeds (RPM) in full scale
+%#               PropSys     = (string) Propulsion system
+%#
+%# Return     :  Data     = (array) Extrapolated data
+%#               EqnOfFit = (array) Equation of fit (Curve Fitting Toolbox)
+%#
+%# Examples of Usage:
+%#
+%#    >> rawPortData = [ 370 380 390 400 410 420 430 440 ];
+%#    >> function [BMData EoFPH EoEff] = fcWJPump(shaftSpeeds,PropSys)
+%#    ans1 =
+%#           (array) Extrapolated bechmark data
+%#    ans2 =
+%#           (array) Head => Eqn. of fit parameters (P1-P5) for poly4
+%#    ans3 =
+%#           (array) Efficiency => Eqn. of fit parameters (P1-P5) for poly4
 %#
 %# ------------------------------------------------------------------------
-%#
-%# CHANGES    :  01/10/2014 - File creation
-%#               dd/mm/yyyy - ...
-%#
-%# ------------------------------------------------------------------------
 
-%# ------------------------------------------------------------------------
-%# Clear workspace
-%# ------------------------------------------------------------------------
-clear
-clc
-
-
-%# ------------------------------------------------------------------------
-%# Find and close all plots
-%# ------------------------------------------------------------------------
-allPlots = findall(0, 'Type', 'figure', 'FileName', []);
-delete(allPlots);   % Close all plots
-
+function [BMData EoFPH EoEff] = fcWJPump(shaftSpeeds,PropSys)
 
 % *************************************************************************
 % START: PLOT SWITCHES: 1 = ENABLED
@@ -42,9 +47,6 @@ enableTextOnPlot          = 0;    % Show text on plot
 
 % Plot color
 enableBlackAndWhitePlot   = 1;    % Show plot in black and white
-
-% Command window output
-enableCommandWindowOutput = 1;    % Show command windown ouput
 
 % Scaled to A4 paper
 enableA4PaperSizePlot     = 0;    % Show plots scale to A4 size
@@ -69,7 +71,6 @@ end
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
 % *************************************************************************
-
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# START DEFINE PLOT SIZE
@@ -112,7 +113,7 @@ else
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     disp('WARNING: Required data file for shaft speed data (LJ120EPumpcurveData568RPM.mat) does not exist!');
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    break;
+    return;
 end
 %# ------------------------------------------------------------------------
 %# END Load LJ120E pumpcurve data (variable name is LJ120EPCData)
@@ -243,33 +244,20 @@ end
 %# START Extrapolate to other RPM values
 %# ------------------------------------------------------------------------
 
-%# Model scale shaft speeds (TG at FD for TG=pQj(vj-vi)
-% MSPortShaftRPM = [2640];
-% MSStbdShaftRPM = [2640];
-% MSAvgShaftRPM  = [2640];
-%
-% MSPortShaftRPM = [1000 2000];
-% MSStbdShaftRPM = [1000 2000];
-% MSAvgShaftRPM  = [1000 2000];
-
-MSPortShaftRPM = [1720.346 1819.177 1932.290 2023.496 2156.079 2254.888 2319.386 2480.594 2655.304];
-MSStbdShaftRPM = [1721.284 1820.759 1933.280 2079.042 2156.444 2257.910 2324.894 2479.207 2656.478];
-MSAvgShaftRPM  = [1720.815 1819.968 1932.785 2051.269 2156.261 2256.399 2322.140 2479.900 2655.891];
-
 % Active shaft RPM list
-activeShaftRPMList = MSAvgShaftRPM;
-[mac,nac] = size(activeShaftRPMList);
+activeShaftRPMList = shaftSpeeds;
+[mac,nac] = size(activeShaftRPMList');
 
 % Array sizes
 [m,n]   = size(LJ120EPCData);
-[mp,np] = size(MSPortShaftRPM);
-[ms,ns] = size(MSStbdShaftRPM);
-[ma,na] = size(MSAvgShaftRPM);
+[mp,np] = size(activeShaftRPMList);
+[ms,ns] = size(activeShaftRPMList);
+[ma,na] = size(activeShaftRPMList);
 
 %# Loop through shaft speeds ----------------------------------------------
 resultsArrayLJ120EPc = [];
 PcArray = [];
-for k=1:na
+for k=1:nac
     
     [mra,nra] = size(resultsArrayLJ120EPc);
     
@@ -413,6 +401,7 @@ setLineWidthMarker = 1;
 setLineWidth       = 1;
 setLineStyle       = '-.';
 
+cfValuesPH = [];
 count1 = 1;
 count2 = 9;
 curve1 = [1 3 5 7 9 11 13 15 17 19];
@@ -426,60 +415,22 @@ for k=1:nac+1
             % Fit: poly4
             fitobject = fit(x,y,'poly4');
             
-            % See: http://stackoverflow.com/questions/16478077/get-function-handle-of-fit-function-in-matlab-and-assign-fit-parameters
-            if enableCommandWindowOutput == 1
-                cvalues = coeffvalues(fitobject);
-                cnames  = coeffnames(fitobject);
-                output  = formula(fitobject);
-
-                setDecimals1 = '%0.3f';
-                setDecimals2 = '+%0.3f';
-                setDecimals3 = '+%0.3f';
-                setDecimals4 = '+%0.3f';
-                setDecimals5 = '+%0.3f';
-                if cvalues(1) < 0
-                    setDecimals1 = '%0.3f';
-                end
-                if cvalues(2) < 0
-                    setDecimals2 = '%0.3f';
-                end
-                if cvalues(3) < 0
-                    setDecimals3 = '%0.3f';
-                end
-                if cvalues(4) < 0
-                    setDecimals4 = '%0.3f';
-                end
-                if cvalues(5) < 0
-                    setDecimals5 = '%0.3f';
-                end
-                
-                p1 = sprintf(setDecimals1,cvalues(1));
-                p2 = sprintf(setDecimals2,cvalues(2));
-                p3 = sprintf(setDecimals3,cvalues(3));
-                p4 = sprintf(setDecimals4,cvalues(4));
-                p5 = sprintf(setDecimals5,cvalues(5));
-                
-                % Display in command window
-                setRPMcw = 568;
-                disp(sprintf('H vs. QJ: %s RPM ==>> EoF (poly4) = %s*x^4%s*x^3%s*x^2%s*x%s',num2str(setRPMcw),p1,p2,p3,p4,p5));
-            end
-            
             if enableCurveFittingToolboxCurvePlot == 1
                 % Plotting
                 h = plot(fitobject,'k-.',x,y,'*');
                 
                 % Legend
                 legendInfo1{curve1(k)} = '568 RPM (Wärtsilä)';
-                legendInfo1{curve2(k)} = '568 RPM (Wärtsilä), Fit';                
+                legendInfo1{curve2(k)} = '568 RPM (Wärtsilä), Fit';
             else
                 % Plotting
                 h = plot(x,y,'*');
                 % Legend
-                legendInfo1{k} = '568 RPM (Wärtsilä)';              
+                legendInfo1{k} = '568 RPM (Wärtsilä)';
             end
-
+            
             % Markers and line
-            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{k}             
+            set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{k}
             
         else
             % Plotting
@@ -498,44 +449,17 @@ for k=1:nac+1
         if enableCurveFittingToolboxPlot == 1
             % Fit: poly4
             fitobject = fit(x,y,'poly4');
+            cvalues   = coeffvalues(fitobject);
+            cnames    = coeffnames(fitobject);
+            output    = formula(fitobject);
             
-            % See: http://stackoverflow.com/questions/16478077/get-function-handle-of-fit-function-in-matlab-and-assign-fit-parameters
-            if enableCommandWindowOutput == 1
-                cvalues = coeffvalues(fitobject);
-                cnames  = coeffnames(fitobject);
-                output  = formula(fitobject);
-                
-                setDecimals1 = '%0.3f';
-                setDecimals2 = '+%0.3f';
-                setDecimals3 = '+%0.3f';
-                setDecimals4 = '+%0.3f';
-                setDecimals5 = '+%0.3f';
-                if cvalues(1) < 0
-                    setDecimals1 = '%0.3f';
-                end
-                if cvalues(2) < 0
-                    setDecimals2 = '%0.3f';
-                end
-                if cvalues(3) < 0
-                    setDecimals3 = '%0.3f';
-                end
-                if cvalues(4) < 0
-                    setDecimals4 = '%0.3f';
-                end
-                if cvalues(5) < 0
-                    setDecimals5 = '%0.3f';
-                end
-                
-                p1 = sprintf(setDecimals1,cvalues(1));
-                p2 = sprintf(setDecimals2,cvalues(2));
-                p3 = sprintf(setDecimals3,cvalues(3));
-                p4 = sprintf(setDecimals4,cvalues(4));
-                p5 = sprintf(setDecimals5,cvalues(5));
-                
-                % Display in command window
-                setRPMcw = round(M(count1,4));
-                disp(sprintf('H vs. QJ: %s RPM ==>> EoF (poly4) = %s*x^4%s*x^3%s*x^2%s*x%s',num2str(setRPMcw),p1,p2,p3,p4,p5));
-            end
+            % Record Equation Fit Values
+            cfValuesPH(k, 1) = M(count1,4);
+            cfValuesPH(k, 2) = cvalues(1);
+            cfValuesPH(k, 3) = cvalues(2);
+            cfValuesPH(k, 4) = cvalues(3);
+            cfValuesPH(k, 5) = cvalues(4);
+            cfValuesPH(k, 6) = cvalues(5);
             
             if enableCurveFittingToolboxCurvePlot == 1
                 % Plotting
@@ -549,12 +473,12 @@ for k=1:nac+1
                 h = plot(x,y,'*');
                 
                 % Legend
-                legendInfo1{k} = [num2str(round(M(count1,4))) ' RPM'];        
-            end            
-
+                legendInfo1{k} = [num2str(round(M(count1,4))) ' RPM'];
+            end
+            
             % Markers and lines
             set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-
+            
         else
             % Plotting
             h = plot(ah,x,y,'*');
@@ -568,100 +492,6 @@ for k=1:nac+1
         
         count1 = count1+9;
         count2 = count2+9;
-    end
-end
-if enableEqnOfFitPlot == 1
-    if enableCommandWindowOutput == 1
-        disp('-----------------------------------------------------------------------------------------------------');
-    end
-    hold on;
-    count1 = 1;
-    count2 = 9;
-    for k=1:nac+1
-        if k == nac+1
-            x = LJ120EPCData(:,4);
-            y = LJ120EPCData(:,5);
-            
-            % Polynomial fit
-            polyf = polyfit(x,y,3);
-            polyv = polyval(polyf,x);
-            
-            ypred = polyv;              % Predictions
-            dev   = y - mean(y);        % Deviations - measure of spread
-            SST   = sum(dev.^2);        % Total variation to be accounted for
-            resid = y - ypred;          % Residuals - measure of mismatch
-            SSE   = sum(resid.^2);      % Variation NOT accounted for
-            Rsquared = 1 - SSE/SST;     % Percent of error explained
-            
-            if enableCommandWindowOutput == 1
-                % Display in command line (poly4)
-                setDecimals1 = '%0.3f';
-                setDecimals2 = '+%0.3f';
-                setDecimals3 = '+%0.3f';
-                setDecimals4 = '+%0.3f';
-                if polyf(1) < 0
-                    setDecimals1 = '%0.3f';
-                end
-                if polyf(2) < 0
-                    setDecimals2 = '%0.3f';
-                end
-                if polyf(3) < 0
-                    setDecimals3 = '%0.3f';
-                end
-                if polyf(4) < 0
-                    setDecimals4 = '%0.3f';
-                end
-                setRPMcw = 568;
-                disp(sprintf('H vs. QJ: %s RPM ==>> EoF (poly4) = %sx^3%sx^2%sx%s | R^2: %s',num2str(setRPMcw),sprintf(setDecimals1,polyf(1)),sprintf(setDecimals2,polyf(2)),sprintf(setDecimals3,polyf(3)),sprintf(setDecimals4,polyf(4)),sprintf('%0.4f',Rsquared)));
-            end
-            
-            % Plotting
-            h = plot(x,polyv,'-');
-            set(h(1),'Color',setColor{k},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-        else
-            x = M(count1:count2,6);
-            y = M(count1:count2,7);
-            
-            % Polynomial fit
-            polyf = polyfit(x,y,3);
-            polyv = polyval(polyf,x);
-            
-            ypred = polyv;              % Predictions
-            dev   = y - mean(y);        % Deviations - measure of spread
-            SST   = sum(dev.^2);        % Total variation to be accounted for
-            resid = y - ypred;          % Residuals - measure of mismatch
-            SSE   = sum(resid.^2);      % Variation NOT accounted for
-            Rsquared = 1 - SSE/SST;     % Percent of error explained
-            
-            if enableCommandWindowOutput == 1
-                % Display in command line (poly4)
-                setDecimals1 = '%0.3f';
-                setDecimals2 = '+%0.3f';
-                setDecimals3 = '+%0.3f';
-                setDecimals4 = '+%0.3f';
-                if polyf(1) < 0
-                    setDecimals1 = '%0.3f';
-                end
-                if polyf(2) < 0
-                    setDecimals2 = '%0.3f';
-                end
-                if polyf(3) < 0
-                    setDecimals3 = '%0.3f';
-                end
-                if polyf(4) < 0
-                    setDecimals4 = '%0.3f';
-                end
-                setRPMcw = round(M(count1,4));
-                disp(sprintf('H vs. QJ: %s RPM ==>> EoF (poly4) = %sx^3%sx^2%sx%s | R^2: %s',num2str(setRPMcw),sprintf(setDecimals1,polyf(1)),sprintf(setDecimals2,polyf(2)),sprintf(setDecimals3,polyf(3)),sprintf(setDecimals4,polyf(4)),sprintf('%0.4f',Rsquared)));
-            end
-            
-            % Plotting
-            h = plot(x,polyv,'-');
-            set(h(1),'Color',setColor{k},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-            
-            count1 = count1+9;
-            count2 = count2+9;
-        end
     end
 end
 if enablePlotTitle == 1
@@ -734,10 +564,11 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/%s_RPM_to_%s_RPM_LJ120E_Waterjet_Head_and_Flow_Rate_Plot.%s', 'LJ120E_Pumpcurve', setFileFormat{k}, num2str(round(minRun)), num2str(round(maxRun)), setFileFormat{k});
+    %plotsavename = sprintf('_plots/%s/%s/%s_RPM_to_%s_RPM_LJ120E_Waterjet_Head_and_Flow_Rate_Plot.%s', 'LJ120E_Pumpcurve', setFileFormat{k}, num2str(round(minRun)), num2str(round(maxRun)), setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/%s_LJ120E_Waterjet_Head_and_Flow_Rate_Plot.%s', 'LJ120E_Pumpcurve', setFileFormat{k}, PropSys, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
-%close;
+close;
 
 %# ************************************************************************
 %# 2. Plotting pump efficiency (npump) vs. shaft speed (n)
@@ -807,6 +638,7 @@ y = M(1:9,10);
 setMarkerSize      = 10;
 setLineWidthMarker = 1;
 
+cfValuesEff = [];
 count1 = 1;
 count2 = 9;
 curve1 = [1 3 5 7 9 11 13 15 17 19];
@@ -820,62 +652,24 @@ for k=1:nac+1
             % Fit: poly4
             fitobject = fit(x,y,'poly4');
             
-            % See: http://stackoverflow.com/questions/16478077/get-function-handle-of-fit-function-in-matlab-and-assign-fit-parameters
-            if enableCommandWindowOutput == 1
-                cvalues = coeffvalues(fitobject);
-                cnames  = coeffnames(fitobject);
-                output  = formula(fitobject);
-                
-                setDecimals1 = '%0.3f';
-                setDecimals2 = '+%0.3f';
-                setDecimals3 = '+%0.3f';
-                setDecimals4 = '+%0.3f';
-                setDecimals5 = '+%0.3f';
-                if cvalues(1) < 0
-                    setDecimals1 = '%0.3f';
-                end
-                if cvalues(2) < 0
-                    setDecimals2 = '%0.3f';
-                end
-                if cvalues(3) < 0
-                    setDecimals3 = '%0.3f';
-                end
-                if cvalues(4) < 0
-                    setDecimals4 = '%0.3f';
-                end
-                if cvalues(5) < 0
-                    setDecimals5 = '%0.3f';
-                end
-                
-                p1 = sprintf(setDecimals1,cvalues(1));
-                p2 = sprintf(setDecimals2,cvalues(2));
-                p3 = sprintf(setDecimals3,cvalues(3));
-                p4 = sprintf(setDecimals4,cvalues(4));
-                p5 = sprintf(setDecimals5,cvalues(5));
-                
-                % Display in command window
-                setRPMcw = 568;
-                disp(sprintf('n. vs. QJ: %s RPM ==>> EoF (poly4) = %s*x^4%s*x^3%s*x^2%s*x%s',num2str(setRPMcw),p1,p2,p3,p4,p5));
-            end
-            
             if enableCurveFittingToolboxCurvePlot == 1
                 % Plotting
-                h = plot(fitobject,'k-.',x,y,'*');         
-
+                h = plot(fitobject,'k-.',x,y,'*');
+                
                 % Legend
                 legendInfo2{curve1(k)} = '568 RPM (Wärtsilä)';
-                legendInfo2{curve2(k)} = '568 RPM (Wärtsilä), Fit';            
+                legendInfo2{curve2(k)} = '568 RPM (Wärtsilä), Fit';
             else
                 % Plotting
-                h = plot(x,y,'*');         
-
+                h = plot(x,y,'*');
+                
                 % Legend
                 legendInfo2{k} = '568 RPM (Wärtsilä)';
             end
-
+            
             % Markers and line
             set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{k}
-
+            
         else
             % Plotting
             h = plot(ah,x,y,'*');
@@ -887,73 +681,42 @@ for k=1:nac+1
             legendInfo2{k} = '568 RPM (Wärtsilä)';
         end
     else
-        if k == 1
-            disp('--------------------------------------------------------------------------------------');
-        end
-        
         x = M(count1:count2,6);
         y = M(count1:count2,10);
         
         if enableCurveFittingToolboxPlot == 1
             % Fit: poly4
             fitobject = fit(x,y,'poly4');
+            cvalues   = coeffvalues(fitobject);
+            cnames    = coeffnames(fitobject);
+            output    = formula(fitobject);
             
-            % See: http://stackoverflow.com/questions/16478077/get-function-handle-of-fit-function-in-matlab-and-assign-fit-parameters
-            if enableCommandWindowOutput == 1
-                cvalues = coeffvalues(fitobject);
-                cnames  = coeffnames(fitobject);
-                output  = formula(fitobject);
-                
-                setDecimals1 = '%0.3f';
-                setDecimals2 = '+%0.3f';
-                setDecimals3 = '+%0.3f';
-                setDecimals4 = '+%0.3f';
-                setDecimals5 = '+%0.3f';
-                if cvalues(1) < 0
-                    setDecimals1 = '%0.3f';
-                end
-                if cvalues(2) < 0
-                    setDecimals2 = '%0.3f';
-                end
-                if cvalues(3) < 0
-                    setDecimals3 = '%0.3f';
-                end
-                if cvalues(4) < 0
-                    setDecimals4 = '%0.3f';
-                end
-                if cvalues(5) < 0
-                    setDecimals5 = '%0.3f';
-                end
-                
-                p1 = sprintf(setDecimals1,cvalues(1));
-                p2 = sprintf(setDecimals2,cvalues(2));
-                p3 = sprintf(setDecimals3,cvalues(3));
-                p4 = sprintf(setDecimals4,cvalues(4));
-                p5 = sprintf(setDecimals5,cvalues(5));
-                
-                % Display in command window
-                setRPMcw = round(M(count1,4));
-                disp(sprintf('n. vs. QJ: %s RPM ==>> EoF (poly4) = %s*x^4%s*x^3%s*x^2%s*x%s',num2str(setRPMcw),p1,p2,p3,p4,p5));
-            end
+            % Record Equation Fit Values
+            cfValuesEff(k, 1) = M(count1,4);
+            cfValuesEff(k, 2) = cvalues(1);
+            cfValuesEff(k, 3) = cvalues(2);
+            cfValuesEff(k, 4) = cvalues(3);
+            cfValuesEff(k, 5) = cvalues(4);
+            cfValuesEff(k, 6) = cvalues(5);
             
             if enableCurveFittingToolboxCurvePlot == 1
                 % Plotting
-                h = plot(fitobject,'k-.',x,y,'*');       
-
+                h = plot(fitobject,'k-.',x,y,'*');
+                
                 % Legend
                 legendInfo2{curve1(k)} = [num2str(round(M(count1,4))) ' RPM'];
-                legendInfo2{curve2(k)} = [num2str(round(M(count1,4))) ' RPM, Fit'];            
+                legendInfo2{curve2(k)} = [num2str(round(M(count1,4))) ' RPM, Fit'];
             else
                 % Plotting
-                h = plot(x,y,'*');       
-
+                h = plot(x,y,'*');
+                
                 % Legend
-                legendInfo2{k} = [num2str(round(M(count1,4))) ' RPM'];               
-            end            
-
+                legendInfo2{k} = [num2str(round(M(count1,4))) ' RPM'];
+            end
+            
             % Markers and lines
             set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-
+            
         else
             % Plotting
             h = plot(ah,x,y,'*');
@@ -967,100 +730,6 @@ for k=1:nac+1
         
         count1 = count1+9;
         count2 = count2+9;
-    end
-end
-if enableEqnOfFitPlot == 1
-    if enableCommandWindowOutput == 1
-        disp('-----------------------------------------------------------------------------------------------------');
-    end
-    hold on;
-    count1 = 1;
-    count2 = 9;
-    for k=1:nac+1
-        if k == nac+1
-            x = LJ120EPCData(:,4);
-            y = LJ120EPCData(:,3);
-            
-            % Polynomial fit
-            polyf = polyfit(x,y,3);
-            polyv = polyval(polyf,x);
-            
-            ypred = polyv;              % Predictions
-            dev   = y - mean(y);        % Deviations - measure of spread
-            SST   = sum(dev.^2);        % Total variation to be accounted for
-            resid = y - ypred;          % Residuals - measure of mismatch
-            SSE   = sum(resid.^2);      % Variation NOT accounted for
-            Rsquared = 1 - SSE/SST;     % Percent of error explained
-            
-            if enableCommandWindowOutput == 1
-                % Display in command line (poly4)
-                setDecimals1 = '%0.3f';
-                setDecimals2 = '+%0.3f';
-                setDecimals3 = '+%0.3f';
-                setDecimals4 = '+%0.3f';
-                if polyf(1) < 0
-                    setDecimals1 = '%0.3f';
-                end
-                if polyf(2) < 0
-                    setDecimals2 = '%0.3f';
-                end
-                if polyf(3) < 0
-                    setDecimals3 = '%0.3f';
-                end
-                if polyf(4) < 0
-                    setDecimals4 = '%0.3f';
-                end
-                setRPMcw = 568;
-                disp(sprintf('n. vs. QJ: %s RPM ==>> EoF (poly4) = %sx^3%sx^2%sx%s | R^2: %s',num2str(setRPMcw),sprintf(setDecimals1,polyf(1)),sprintf(setDecimals2,polyf(2)),sprintf(setDecimals3,polyf(3)),sprintf(setDecimals4,polyf(4)),sprintf('%0.4f',Rsquared)));
-            end
-            
-            % Plotting
-            h = plot(x,polyv,'-');
-            set(h(1),'Color',setColor{k},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-        else
-            x = M(count1:count2,6);
-            y = M(count1:count2,10);
-            
-            % Polynomial fit
-            polyf = polyfit(x,y,3);
-            polyv = polyval(polyf,x);
-            
-            ypred = polyv;              % Predictions
-            dev   = y - mean(y);        % Deviations - measure of spread
-            SST   = sum(dev.^2);        % Total variation to be accounted for
-            resid = y - ypred;          % Residuals - measure of mismatch
-            SSE   = sum(resid.^2);      % Variation NOT accounted for
-            Rsquared = 1 - SSE/SST;     % Percent of error explained
-            
-            if enableCommandWindowOutput == 1
-                % Display in command line (poly4)
-                setDecimals1 = '%0.3f';
-                setDecimals2 = '+%0.3f';
-                setDecimals3 = '+%0.3f';
-                setDecimals4 = '+%0.3f';
-                if polyf(1) < 0
-                    setDecimals1 = '%0.3f';
-                end
-                if polyf(2) < 0
-                    setDecimals2 = '%0.3f';
-                end
-                if polyf(3) < 0
-                    setDecimals3 = '%0.3f';
-                end
-                if polyf(4) < 0
-                    setDecimals4 = '%0.3f';
-                end
-                setRPMcw = round(M(count1,4));
-                disp(sprintf('n. vs. QJ: %s RPM ==>> EoF (poly4) = %sx^3%sx^2%sx%s | R^2: %s',num2str(setRPMcw),sprintf(setDecimals1,polyf(1)),sprintf(setDecimals2,polyf(2)),sprintf(setDecimals3,polyf(3)),sprintf(setDecimals4,polyf(4)),sprintf('%0.4f',Rsquared)));
-            end
-            
-            % Plotting
-            h = plot(x,polyv,'-');
-            set(h(1),'Color',setColor{k},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-            
-            count1 = count1+9;
-            count2 = count2+9;
-        end
     end
 end
 if enablePlotTitle == 1
@@ -1102,9 +771,9 @@ legend boxoff;
 
 set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
-%# ********************************************************************
+%# ************************************************************************
 %# Save plot as PNG
-%# ********************************************************************
+%# ************************************************************************
 
 %# Figure size on screen (50% scaled, but same aspect ratio)
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -1117,7 +786,7 @@ if enableA4PaperSizePlot == 1
     set(gcf, 'PaperOrientation','portrait');
 end
 
-%# Plot title ---------------------------------------------------------
+%# Plot title -------------------------------------------------------------
 if enablePlotMainTitle == 1
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
@@ -1133,28 +802,25 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/%s_RPM_to_%s_RPM_LJ120E_Waterjet_Pump_Efficiency_Plot.%s', 'LJ120E_Pumpcurve', setFileFormat{k}, num2str(round(minRun)), num2str(round(maxRun)), setFileFormat{k});
+    %plotsavename = sprintf('_plots/%s/%s/%s_RPM_to_%s_RPM_LJ120E_Waterjet_Pump_Efficiency_Plot.%s', 'LJ120E_Pumpcurve', setFileFormat{k}, num2str(round(minRun)), num2str(round(maxRun)), setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/%s_LJ120E_Waterjet_Pump_Efficiency_Plot.%s', 'LJ120E_Pumpcurve', setFileFormat{k}, PropSys, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
-%close;
+close;
 
+%# Function output --------------------------------------------------------
+BMData = resultsArrayLJ120EPc;
+EoFPH  = cfValuesPH;
+EoEff  = cfValuesEff;
 
 %# ************************************************************************
 %# START: Write results to DAT and TXT
 %# ------------------------------------------------------------------------
 M = resultsArrayLJ120EPc;
-csvwrite('resultsArrayLJ120EPc.dat', M)                                     % Export matrix M to a file delimited by the comma character
-dlmwrite('resultsArrayLJ120EPc.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
+csvwrite('resultsArrayLJ120EPc2.dat', M)                                     % Export matrix M to a file delimited by the comma character
+dlmwrite('resultsArrayLJ120EPc2.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 %# ------------------------------------------------------------------------
 %# END: Write results to DAT and TXT
 %# ************************************************************************
 
-
-%# ************************************************************************
-%# Clear variables
-%# ************************************************************************
-clearvars allPlots k kl m n mp np ms ns ma na mac nac
-clearvars ShaftSpeed MSShaftSpeed FSShaftSpeed
-clearvars ttlength ttwidth ttwaterdepth ttcsa ttwatertemp gravconst MSKinVis FSKinVis freshwaterdensity saltwaterdensity distbetwposts
-clearvars FStoMSratio FormFactor CorrCoeff FS_PumpDia MS_PumpDia FS_EffNozzDia MS_EffNozzDia FS_NozzArea MS_NozzArea FS_ImpDia MS_ImpDia FS_PumpInlArea MS_PumpInlArea FS_PumpMaxArea MS_PumpMaxArea
-clearvars MSlwl MSwsa MSdraft MSAx BlockCoeff FSlwl FSwsa FSdraft
+end

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 29, 2014
+%# Date       :  November 4, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -66,6 +66,7 @@
 %# ------------------------------------------------------------------------
 clear
 clc
+
 
 %# ------------------------------------------------------------------------
 %# Find and close all plots
@@ -862,7 +863,7 @@ for k=1:ma
     % t = 1-((FatT=0-FD)/TG@SPP)
     thrustDedFracArrayB(k, 5) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);
     
-    % Shaft speed ---------------------------------------------------------
+    % Shaft speed at SPP --------------------------------------------------
     %[1] Froude length number             (-)
     %[2] PORT (MS): Shaft speed at SPP    (RPM)
     %[3] PORT (MS): Shaft speed at SPP    (RPM)
@@ -875,6 +876,7 @@ for k=1:ma
     polyfPORT2             = polyfit(x,yPortSS,1);
     polyvPORT2             = polyval(polyfPORT2,x);
     MSPortShaftSpeed       = spline(x,polyvPORT2,ThrustAtSPP);
+    
     % Stbd
     polyfSTBD2             = polyfit(x,yStbdSS,1);
     polyvSTBD2             = polyval(polyfSTBD2,x);
@@ -1059,13 +1061,19 @@ if ma == 9
             set(gcf,'Color',[1,1,1]);
             
             %# Axis limitations
-            set(gca,'XLim',[0 55]);
-            set(gca,'XTick',[0:5:55]);
-            set(gca,'YLim',[-5 35]);
-            set(gca,'YTick',[-5:5:35]);
+            minX  = 0;
+            maxX  = 55;
+            incrX = 5;
+            minY  = -5;
+            maxY  = 35;
+            incrY = 5;
+            set(gca,'XLim',[minX maxX]);
+            set(gca,'XTick',minX:incrX:maxX);
+            set(gca,'YLim',[minY maxY]);
+            set(gca,'YTick',minY:incrY:maxY);
             %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
             %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
-
+            
             %# Legend
             %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
             hleg1 = legend('Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
@@ -1079,7 +1087,7 @@ if ma == 9
                 [LEGH,OBJH,OUTH,OUTM] = legend;
                 legend([OUTH;h5],OUTM{:},'Force at T_{G}=0');
             end
-            %legend boxoff;
+            legend boxoff;
             
         end
         
@@ -1196,10 +1204,16 @@ if ma == 9
             setSpeed=9;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
             
             %# Axis limitations
-            set(gca,'XLim',[0 35]);
-            set(gca,'XTick',[0:5:35]);
-            set(gca,'YLim',[-5 30]);
-            set(gca,'YTick',[-5:5:30]);
+            minX  = 0;
+            maxX  = 35;
+            incrX = 5;
+            minY  = -5;
+            maxY  = 30;
+            incrY = 5;
+            set(gca,'XLim',[minX maxX]);
+            set(gca,'XTick',minX:incrX:maxX);
+            set(gca,'YLim',[minY maxY]);
+            set(gca,'YTick',minY:incrY:maxY);
             %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
             %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
             
@@ -1216,7 +1230,7 @@ if ma == 9
                 [LEGH,OBJH,OUTH,OUTM] = legend;
                 legend([OUTH;h5],OUTM{:},'Force at T=0');
             end
-            %legend boxoff;
+            legend boxoff;
             
         end
         
@@ -1487,17 +1501,19 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(h1(7),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
         
         %# Axis limitations
-        setXLL = 0.14;
-        setXUL = 0.70;
-        set(gca,'XLim',[setXLL setXUL]);
-        set(gca,'XTick',[setXLL:0.04:setXUL]);
-        setYLL = -0.6;
-        setYUL = 0.7;
-        set(gca,'YLim',[setYLL setYUL]);
-        set(gca,'YTick',[setYLL:0.1:setYUL]);
+        minX  = 0.14;
+        maxX  = 0.7;
+        incrX = 0.08;
+        minY  = -0.6;
+        maxY  = 0.6;
+        incrY = 0.2;
+        set(gca,'XLim',[minX maxX]);
+        set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        set(gca,'YTick',minY:incrY:maxY);
         set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
         set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
-            
+        
         % t = ((FD-FatT=0)/TG@SPP)+1
         % t = 1-((FatT=0-FD)/TG@SPP)
         
@@ -1507,7 +1523,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(hleg1,'Interpreter','none');
         set(hleg1,'LineWidth',1);
         set(hleg1,'FontSize',setLegendFontSize);
-        %legend boxoff;
+        legend boxoff;
         
     end
     
@@ -1578,14 +1594,16 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(h1(7),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
         
         %# Axis limitations
-        setXLL = 0.14;
-        setXUL = 0.70;
-        set(gca,'XLim',[setXLL setXUL]);
-        set(gca,'XTick',[setXLL:0.04:setXUL]);
-        setYLL = -0.6;
-        setYUL = 0.7;
-        set(gca,'YLim',[setYLL setYUL]);
-        set(gca,'YTick',[setYLL:0.1:setYUL]);
+        minX  = 0.14;
+        maxX  = 0.7;
+        incrX = 0.08;
+        minY  = -0.6;
+        maxY  = 0.6;
+        incrY = 0.2;
+        set(gca,'XLim',[minX maxX]);
+        set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        set(gca,'YTick',minY:incrY:maxY);
         set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
         set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
         
@@ -1595,7 +1613,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(hleg1,'Interpreter','none');
         set(hleg1,'LineWidth',1);
         set(hleg1,'FontSize',setLegendFontSize);
-        %legend boxoff;
+        legend boxoff;
         
     end
     
@@ -1753,10 +1771,16 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(h1(5),'Color',setColor{4},'Marker',setMarker{8},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
         
         %# Axis limitations
-        set(gca,'XLim',[0.22 0.42]);
-        set(gca,'XTick',[0.22:0.02:0.42]);
-        set(gca,'YLim',[0 50]);
-        set(gca,'YTick',[0:5:50]);
+        minX  = 0.22;
+        maxX  = 0.42;
+        incrX = 0.02;
+        minY  = 0;
+        maxY  = 50;
+        incrY = 5;
+        set(gca,'XLim',[minX maxX]);
+        set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        set(gca,'YTick',minY:incrY:maxY);
         set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
         %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
         
@@ -1767,7 +1791,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(hleg1,'Interpreter','none');
         set(hleg1,'LineWidth',1);
         set(hleg1,'FontSize',setLegendFontSize);
-        %legend boxoff;
+        legend boxoff;
     end
     
     %# Gross thrust = TG = p Q (vj - vi) --------------------------------------
@@ -1835,10 +1859,16 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(h1(5),'Color',setColor{4},'Marker',setMarker{8},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
         
         %# Axis limitations
-        set(gca,'XLim',[0.22 0.42]);
-        set(gca,'XTick',[0.22:0.02:0.42]);
-        set(gca,'YLim',[0 40]);
-        set(gca,'YTick',[0:5:40]);
+        minX  = 0.22;
+        maxX  = 0.42;
+        incrX = 0.02;
+        minY  = 0;
+        maxY  = 40;
+        incrY = 5;
+        set(gca,'XLim',[minX maxX]);
+        set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        set(gca,'YTick',minY:incrY:maxY);
         set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
         %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
         
@@ -1849,7 +1879,7 @@ if enableTGAllisonPlot ~= 0 || enableTGBosePlot ~= 0
         set(hleg1,'Interpreter','none');
         set(hleg1,'LineWidth',1);
         set(hleg1,'FontSize',setLegendFontSize);
-        %legend boxoff;
+        legend boxoff;
     end
     
     %# ************************************************************************
@@ -1894,6 +1924,10 @@ end
 %# 4. Extrapolation to full scale.
 %$ NOTE: Calculations for TG = p Q (vj - vi) method only!
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+% Extrapolate WJ Benchmark data for calculated shaft speeds (use MS RPM!!)
+[BMDataPort BMEoFPortPH BMEoFPortEff] = fcWJPump(shaftSpeedConvArray(:,2),'Port');
+[BMDataStbd BMEoFStbdPH BMEoFStbdEff] = fcWJPump(shaftSpeedConvArray(:,3),'Stbd');
 
 % Columns:
 % [1] Froude length number                              (-)
@@ -2025,7 +2059,7 @@ for k=1:m
     % [22] PORT: Volumetric flow rate, QJ                    (m^3/s)
     % [22] STBD: Volumetric flow rate, QJ                    (m^3/s)
     % [23] PORT: Mass flow rate, pQJ                         (Kg/s)
-    % [24] STBD: flow rate, pQJ                              (Kg/s)
+    % [24] STBD: Mass flow rate, pQJ                         (Kg/s)
     
     % Port
     var_A         = saltwaterdensity/FS_NozzArea;
@@ -2085,14 +2119,21 @@ for k=1:m
     fullScaleDataArray(k,33) = MSStbdVolFR/((FSStbdSS/60)*FS_PumpDia^3);
     
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    %# TOTO: Replace arrays with function that looks up pump head (m)
-    %#       from WJ benchmark data.
+    %# Pump head based on fit
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    PortPH = [24.69 27.57 31.01 34.98 38.61 42.33 44.76 51.15 58.71];
-    StbdPH = [24.62 27.50 31.00 34.93 38.59 42.26 44.76 51.04 58.55];
+    %PortPH = [24.69 27.57 31.01 34.98 38.61 42.33 44.76 51.15 58.71];
+    %StbdPH = [24.62 27.50 31.00 34.93 38.59 42.26 44.76 51.04 58.55];
+    EOFP = BMEoFPortPH;
+    EOFS = BMEoFStbdPH;
+    VFRP = MSPortVolFR;
+    VFRS = MSStbdVolFR;
+    PortPH = EOFP(k, 2)*VFRP^4+EOFP(k, 3)*VFRP^3+EOFP(k, 4)*VFRP^2+EOFP(k, 5)*VFRP+EOFP(k, 6);
+    StbdPH = EOFS(k, 2)*VFRS^4+EOFS(k, 3)*VFRS^3+EOFS(k, 4)*VFRS^2+EOFS(k, 5)*VFRS+EOFS(k, 6);
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    FSPortPumphead = PortPH(k);
-    FSStbdPumphead = StbdPH(k);
+    %FSPortPumphead = PortPH(k);
+    %FSStbdPumphead = StbdPH(k);
+    FSPortPumphead = PortPH;
+    FSStbdPumphead = StbdPH;
     fullScaleDataArray(k,34) = FSPortPumphead;
     fullScaleDataArray(k,35) = FSStbdPumphead;
     
@@ -2100,14 +2141,21 @@ for k=1:m
     fullScaleDataArray(k,37) = gravconst*FSStbdPumphead/((FSStbdSS/60)*FS_PumpDia)^2;
     
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    %# TOTO: Replace arrays with function that looks up pump efficiency (-)
-    %#       from WJ benchmark data.
+    %# Efficiency based on fit
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    PortPE = [0.66 0.66 0.65 0.65 0.65 0.65 0.65 0.66 0.66];
-    StbdPE = [0.65 0.65 0.65 0.65 0.65 0.65 0.65 0.65 0.65];
+    %PortPE = [0.66 0.66 0.65 0.65 0.65 0.65 0.65 0.66 0.66];
+    %StbdPE = [0.65 0.65 0.65 0.65 0.65 0.65 0.65 0.65 0.65];
+    EOFP = BMEoFPortEff;
+    EOFS = BMEoFStbdEff;
+    VFRP = MSPortVolFR;
+    VFRS = MSStbdVolFR;
+    PortPE = EOFP(k, 2)*VFRP^4+EOFP(k, 3)*VFRP^3+EOFP(k, 4)*VFRP^2+EOFP(k, 5)*VFRP+EOFP(k, 6);
+    StbdPE = EOFS(k, 2)*VFRS^4+EOFS(k, 3)*VFRS^3+EOFS(k, 4)*VFRS^2+EOFS(k, 5)*VFRS+EOFS(k, 6);
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    FSPortPumpEff  = StbdPE(k);
-    FSStbdPumpEff  = StbdPE(k);
+    %FSPortPumpEff  = StbdPE(k);
+    %FSStbdPumpEff  = StbdPE(k);
+    FSPortPumpEff  = StbdPE;
+    FSStbdPumpEff  = StbdPE;
     fullScaleDataArray(k,38) = FSPortPumpEff;
     fullScaleDataArray(k,39) = FSStbdPumpEff;
     
@@ -2243,7 +2291,7 @@ end
 %# 1. Overall propulsive efficiency, nD
 %# ------------------------------------------------------------------------
 
-figurename = 'Full Scale Extrapolation: Propulsive efficiency';
+figurename = 'Full Scale Extrapolation: Propulsive Efficiency';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -2279,7 +2327,6 @@ set(gca,'TickDir','in',...
     'LooseInset',get(gca,'TightInset'));
 
 %# Markes and colors ------------------------------------------------------
-%setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
 setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
 % Colored curves
 setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
@@ -2328,96 +2375,28 @@ set(h(2),'Color',setColor{1},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'
 set(gcf,'Color',[1,1,1]);
 
 %# Axis limitations
-%set(gca,'XLim',[0.22 0.42]);
-%set(gca,'XTick',[0.22:0.02:0.42]);
-set(gca,'XLim',[13 25]);
-set(gca,'XTick',[13:1:25]);
-set(gca,'YLim',[0 1]);
-set(gca,'YTick',[0:0.1:1]);
+minX  = 13;
+maxX  = 25;
+incrX = 1;
+minY  = 0;
+maxY  = 1;
+incrY = 0.1;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
 
 %# Legend
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
 hleg1 = legend('\eta_{D}=P_{E}/P_{D} where P_{D}=P_{PE}/\eta_{pump}','\eta_{D}=P_{E}/P_{D} where P_{D}=P_{JSE}/\eta_{JS}');
-set(hleg1,'Location','NorthWest');
+set(hleg1,'Location','SouthEast');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-%legend boxoff;
-
-%# Font sizes and border --------------------------------------------------
-
-set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-%# ************************************************************************
-%# SUBPLOT #2: Flow and head coefficients
-%# ************************************************************************
-% subplot(1,2,2);
-%
-% %# X and Y axis -----------------------------------------------------------
-%
-% % Port
-% x1 = fullScaleDataArray(:,32);
-% x1 = [0.9986 0.9616 0.9246 0.8876 0.8506 0.8136 0.7767 0.7397 0.5548];
-% y1 = fullScaleDataArray(:,34);
-% y1 = [2.2694 2.6225 2.9896 3.3148 3.6135 3.9261 4.1299 4.2653 4.3965];
-%
-% % Starboard
-% x2 = fullScaleDataArray(:,33);
-% x2 = [0.9986 0.9616 0.9246 0.8876 0.8506 0.8136 0.7767 0.7397 0.5548];
-% y2 = fullScaleDataArray(:,35);
-% y2 = [2.1694 2.5225 2.8896 3.2148 3.5135 3.8261 4.0299 4.1653 4.2965];
-%
-% %# Plotting ---------------------------------------------------------------
-% h = plot(x1,y1,'*',x2,y2,'*');
-% xlabel('{\bf Flow coefficient, \phi (-)}','FontSize',setGeneralFontSize);
-% ylabel('{\bf Head coefficient, \psi (-)}','FontSize',setGeneralFontSize);
-% if enablePlotTitle == 1
-%     title('{\bf Flow and head coefficients}','FontSize',setGeneralFontSize);
-% end
-% grid on;
-% box on;
-% axis square;
-%
-% %# Line, colors and markers
-% setMarkerSize      = 11;
-% setLineWidthMarker = 2;
-% setLineWidth       = 1;
-% setLineStyle       = '-.';
-% set(h(1),'Color',setColor{2},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% set(h(2),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-%
-% %# Set plot figure background to a defined color
-% %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-% set(gcf,'Color',[1,1,1]);
-%
-% %# Axis limitations
-% xStart = str2num(sprintf('%.1f',min(x1)))-0.1;
-% xEnd   = str2num(sprintf('%.1f',max(x1)))+0.1;
-% yStart = str2num(sprintf('%.1f',min(y1)))-0.1;
-% yEnd   = str2num(sprintf('%.1f',max(y1)))+0.1;
-% set(gca,'XLim',[xStart xEnd]);
-% set(gca,'XTick',[xStart:0.1:xEnd]);
-% if mod(yEnd-yStart,0.2)== 0
-%     SetyEnd = yEnd;
-% else
-%     SetyEnd = yEnd+0.1;
-% end
-% set(gca,'YLim',[yStart SetyEnd]);
-% set(gca,'YTick',[yStart:0.2:SetyEnd]);
-% set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'))
-% set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
-%
-% %# Legend
-% %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-% hleg1 = legend('Port WJ','Starboard WJ');
-% set(hleg1,'Location','NorthEast');
-% set(hleg1,'Interpreter','none');
-% set(hleg1,'LineWidth',1);
-% set(hleg1,'FontSize',setLegendFontSize);
-% %legend boxoff;
+legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
@@ -2464,7 +2443,7 @@ end
 %# 2. Power plots (two propulsion systems ==>> a single demihull)
 %# ------------------------------------------------------------------------
 
-figurename = 'Full Scale Extrapolation: Power plots (two propulsion systems for a single demihull)';
+figurename = 'Full Scale Extrapolation: Power for Single Demi Hull (i.e. 2 Propulsion Systems))';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -2582,10 +2561,16 @@ setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{s
 set(gcf,'Color',[1,1,1]);
 
 %# Axis limitations
-set(gca,'XLim',[13 25]);
-set(gca,'XTick',[13:1:25]);
-set(gca,'YLim',[0 6]);
-set(gca,'YTick',[0:1:6]);
+minX  = 13;
+maxX  = 25;
+incrX = 1;
+minY  = 0;
+maxY  = 6;
+incrY = 1;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
 %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
 %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
 
@@ -2598,7 +2583,7 @@ set(hleg1,'Location','NorthWest');
 set(hleg1, 'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-%legend boxoff;
+legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
@@ -2645,7 +2630,7 @@ end
 %# 3. Speed plots
 %# ------------------------------------------------------------------------
 
-figurename = 'Full Scale Extrapolation: Jet velocitiy and inlet velocity';
+figurename = 'Full Scale Extrapolation: Jet and Inlet Velocity';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -2716,7 +2701,7 @@ y5 = fullScaleDataArray(:,29);
 %# Plotting ---------------------------------------------------------------
 h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*',x5,y5,'*');
 xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
-ylabel('{\bf Jet and inlet velocity (m/s)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Jet velocity, v_{j}, and inlet velocity, v_{i} (m/s)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
     title('{\bf Jet velocitiy and inlet velocity}','FontSize',setGeneralFontSize);
 end
@@ -2750,12 +2735,12 @@ set(gca,'YTick',[0:4:24]);
 %# Legend
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
 hleg1 = legend('Ship speed (v_{s})','Port: Jet velocity (v_{j})','Stbd: Jet velocity (v_{j})','Port: Inlet velocity (v_{i})','Stbd: Inlet velocity (v_{i})');
-set(hleg1,'Location','NorthWest');
+set(hleg1,'Location','SouthEast');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-%legend boxoff;
+legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
