@@ -2096,7 +2096,7 @@ for k=1:m
     fullScaleDataArray(k,28) = MSPortInlVel;
     fullScaleDataArray(k,29) = MSStbdInlVel;
     
-    % 9. Efficiencies ---------------------------------------------------------
+    % 9. Efficiencies -----------------------------------------------------
     
     % [30] Hull efficiency, nh                               (-)
     % [31] Optimum efficiency, ni                            (-)
@@ -2402,9 +2402,9 @@ legend boxoff;
 
 set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
-%# ********************************************************************
+%# ************************************************************************
 %# Save plot as PNG
-%# ********************************************************************
+%# ************************************************************************
 
 %# Figure size on screen (50% scaled, but same aspect ratio)
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -2417,7 +2417,7 @@ if enableA4PaperSizePlot == 1
     set(gcf, 'PaperOrientation','portrait');
 end
 
-%# Plot title ---------------------------------------------------------
+%# Plot title -------------------------------------------------------------
 if enablePlotMainTitle == 1
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
@@ -2425,7 +2425,7 @@ if enablePlotMainTitle == 1
         'HorizontalAlignment', 'center');
 end
 
-%# Save plots as PDF, PNG and EPS -------------------------------------
+%# Save plots as PDF, PNG and EPS -----------------------------------------
 minRun = min(resultsArraySPP(:,1));
 maxRun = max(resultsArraySPP(:,1));
 % Enable renderer for vector graphics output
@@ -2589,9 +2589,9 @@ legend boxoff;
 
 set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
-%# ********************************************************************
+%# ************************************************************************
 %# Save plot as PNG
-%# ********************************************************************
+%# ************************************************************************
 
 %# Figure size on screen (50% scaled, but same aspect ratio)
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -2604,7 +2604,7 @@ if enableA4PaperSizePlot == 1
     set(gcf, 'PaperOrientation','portrait');
 end
 
-%# Plot title ---------------------------------------------------------
+%# Plot title -------------------------------------------------------------
 if enablePlotMainTitle == 1
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
@@ -2612,7 +2612,7 @@ if enablePlotMainTitle == 1
         'HorizontalAlignment', 'center');
 end
 
-%# Save plots as PDF, PNG and EPS -------------------------------------
+%# Save plots as PDF, PNG and EPS -----------------------------------------
 minRun = min(resultsArraySPP(:,1));
 maxRun = max(resultsArraySPP(:,1));
 % Enable renderer for vector graphics output
@@ -2746,9 +2746,9 @@ legend boxoff;
 
 set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
-%# ********************************************************************
+%# ************************************************************************
 %# Save plot as PNG
-%# ********************************************************************
+%# ************************************************************************
 
 %# Figure size on screen (50% scaled, but same aspect ratio)
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -2761,7 +2761,7 @@ if enableA4PaperSizePlot == 1
     set(gcf, 'PaperOrientation','portrait');
 end
 
-%# Plot title ---------------------------------------------------------
+%# Plot title -------------------------------------------------------------
 if enablePlotMainTitle == 1
     annotation('textbox', [0 0.9 1 0.1], ...
         'String', strcat('{\bf ', figurename, '}'), ...
@@ -2769,7 +2769,7 @@ if enablePlotMainTitle == 1
         'HorizontalAlignment', 'center');
 end
 
-%# Save plots as PDF, PNG and EPS -------------------------------------
+%# Save plots as PDF, PNG and EPS -----------------------------------------
 minRun = min(resultsArraySPP(:,1));
 maxRun = max(resultsArraySPP(:,1));
 % Enable renderer for vector graphics output
