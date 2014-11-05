@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 29, 2014
+%# Date       :  November 5, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -149,6 +149,23 @@ enableErrorPlot         = 0; % Error plots (% of max-avg to magnitude)
 enableMeanStdPlot       = 0; % Show Fr vs. mean of standard deviation
 enableStdPlot           = 0; % Show Fr vs. standard deviation
 enableRemVSCFmPlot      = 0; % Show Re vs. Cfm plot
+
+% Check if Curve Fitting Toolbox is installed
+% See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
+v = ver;
+toolboxes = setdiff({v.Name}, 'MATLAB');
+ind = find(ismember(toolboxes,'Curve Fitting Toolbox'));
+[mtb,ntb] = size(ind);
+
+% IF ntb > 0 Curve Fitting Toolbox is installed
+enableCurveFittingToolboxCurvePlot = 0;    % Show fit curves when using Curve Fitting Toolbox
+if ntb > 0
+    enableCurveFittingToolboxPlot  = 1;
+    enableEqnOfFitPlot             = 0;
+else
+    enableCurveFittingToolboxPlot  = 0;
+    enableEqnOfFitPlot             = 1;
+end
 
 %# ------------------------------------------------------------------------
 %# END: PLOT SWITCHES
@@ -2360,6 +2377,13 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
         setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
     end
     
+    % Markers sizes, etc.
+    setMarkerSize      = 10;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle1      = '-';
+    setLineStyle2      = '-';    
+    
     %# Plot repeat data: fr^4/Cfm vs. Ctm/Cfm -----------------------------
     %subplot(1,2,1)
     
@@ -2373,20 +2397,53 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     
     %# START: Trendline for ITTC 1957 Friction Line -----------------------
     
-    polyf1 = polyfit(x1,y1,1);
-    polyv1 = polyval(polyf1,x1);
-    % Slope of trendline => Y = (slope1 * X ) + slope2
-    slopeITTC     = polyf1(1,1);    % Slope
-    interceptITTC = polyf1(1,2);    % Intercept
-    if interceptITTC > 0
-        chooseSign = '+';
-        interceptITTC = interceptITTC;
+    % Linear fit using Curve Fitting Toolbox
+    if enableCurveFittingToolboxPlot == 1
+        %fitobjectITTC = fit(x1,y1,'poly1');
+        [fitobjectITTC,gof,output] = fit(x1,y1,'poly1');
+        cvalues       = coeffvalues(fitobjectITTC);
+        cnames        = coeffnames(fitobjectITTC);
+        output        = formula(fitobjectITTC);
+        
+        % Select (+) or (-) signs depending on values
+        setDecimals1 = '%0.3f';
+        setDecimals2 = '+%0.3f';
+        if cvalues(1) < 0
+            setDecimals1 = '%0.3f';
+        end
+        if cvalues(2) < 0
+            setDecimals2 = '%0.3f';
+        end
+        
+        p1 = sprintf(setDecimals1,cvalues(1));
+        p2 = sprintf(setDecimals2,cvalues(2));
+        
+        slopeTextITTC = sprintf('\\bfITTC 1957: y = %s*x%s, R^{2}=%s',p1,p2,sprintf('%.3f',gof.rsquare));
     else
-        chooseSign = '-';
-        interceptITTC = abs(interceptITTC);
+        polyf1 = polyfit(x1,y1,1);
+        polyv1 = polyval(polyf1,x1);
+        
+        % Calculate R^2(RSQ)
+        % See: http://www.mathworks.com.au/help/matlab/data_analysis/linear-regression.html
+        yresid  = y1 - polyv1;
+        SSresid = sum(yresid.^2);
+        SStotal = (length(y1)-1) * var(y1);
+        rsq     = 1 - SSresid/SStotal;
+        rsq_adj = 1 - SSresid/SStotal * (length(y1)-1)/(length(y1)-length(polyf1));
+        
+        % Slope of trendline => Y = (slope1 * X ) + slope2
+        slopeITTC     = polyf1(1,1);    % Slope
+        interceptITTC = polyf1(1,2);    % Intercept
+        if interceptITTC > 0
+            chooseSign = '+';
+            interceptITTC = interceptITTC;
+        else
+            chooseSign = '-';
+            interceptITTC = abs(interceptITTC);
+        end
+        slopeTextITTC = sprintf('\\bfITTC 1957: y = %s*x%s%s, R^{2}=%s', sprintf('%.3f',slopeITTC), chooseSign, sprintf('%.3f',interceptITTC),sprintf('%.3f',rsq));
     end
-    slopeTextITTC = sprintf('ITTC 1957: y = %s*x %s %s', sprintf('%.3f',slopeITTC), chooseSign, sprintf('%.3f',interceptITTC));
-    
+
     %# Use CC1(1,2)
     %# NOTE: A correlation coefficient with a magnitude near 1 (as in this case)
     %#       represents a good fit.  As the fit gets worse, the correlation
@@ -2397,19 +2454,52 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     
     %# START: Trendline for Grigson Friction Line -------------------------
     
-    polyf2 = polyfit(x2,y2,1);
-    polyv2 = polyval(polyf2,x2);
-    % Slope of trendline => Y = (slope1 * X ) + slope2
-    slopeGrigson     = polyf2(1,1);    % Slope
-    interceptGrigson = polyf2(1,2);    % Intercept
-    if interceptGrigson > 0
-        chooseSign = '+';
-        interceptGrigson = interceptGrigson;
+    % Linear fit using Curve Fitting Toolbox
+    if enableCurveFittingToolboxPlot == 1
+        %fitobjectGrigson = fit(x2,y2,'poly1');
+        [fitobjectGrigson,gof,output] = fit(x2,y2,'poly1');
+        cvalues          = coeffvalues(fitobjectGrigson);
+        cnames           = coeffnames(fitobjectGrigson);
+        output           = formula(fitobjectGrigson);
+        
+        % Select (+) or (-) signs depending on values
+        setDecimals1 = '%0.3f';
+        setDecimals2 = '+%0.3f';
+        if cvalues(1) < 0
+            setDecimals1 = '%0.3f';
+        end
+        if cvalues(2) < 0
+            setDecimals2 = '%0.3f';
+        end
+        
+        p1 = sprintf(setDecimals1,cvalues(1));
+        p2 = sprintf(setDecimals2,cvalues(2));
+        
+        slopeTextGrigson = sprintf('\\bfGrigson: y = %s*x%s, R^{2}=%s',p1,p2,sprintf('%.3f',gof.rsquare));
     else
-        chooseSign = '-';
-        interceptGrigson = abs(interceptGrigson);
+        polyf2 = polyfit(x2,y2,1);
+        polyv2 = polyval(polyf2,x2);
+        
+        % Calculate R^2(RSQ)
+        % See: http://www.mathworks.com.au/help/matlab/data_analysis/linear-regression.html
+        yresid  = y2 - polyv2;
+        SSresid = sum(yresid.^2);
+        SStotal = (length(y2)-1) * var(y2);
+        rsq     = 1 - SSresid/SStotal;
+        rsq_adj = 1 - SSresid/SStotal * (length(y2)-1)/(length(y2)-length(polyf2));
+        
+        % Slope of trendline => Y = (slope1 * X ) + slope2
+        slopeGrigson     = polyf2(1,1);    % Slope
+        interceptGrigson = polyf2(1,2);    % Intercept
+        if interceptGrigson > 0
+            chooseSign = '+';
+            interceptGrigson = interceptGrigson;
+        else
+            chooseSign = '-';
+            interceptGrigson = abs(interceptGrigson);
+        end
+        slopeTextGrigson = sprintf('\\bfGrigson: y = %s*x%s%s, R^{2}=%s', sprintf('%.3f',slopeGrigson), chooseSign, sprintf('%.3f',interceptGrigson),sprintf('%.3f',rsq));
     end
-    slopeTextGrigson = sprintf('Grigson: y = %s*x %s %s', sprintf('%.3f',slopeGrigson), chooseSign, sprintf('%.3f',interceptGrigson));
     
     %# Use CC2(1,2)
     %# NOTE: A correlation coefficient with a magnitude near 1 (as in this case)
@@ -2420,7 +2510,25 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     %# END: Trendline for Grigson Friction Line ---------------------------
     
     % Plotting
-    h = plot(x1,y1,'*b',x2,y2,'xg',x1,polyv1,'-b',x2,polyv2,'-g');
+    if enableCurveFittingToolboxPlot == 1
+        h = plot(x1,y1,'*');
+        legendInfo{1} = 'Cond. 13: ITTC 1957';
+        set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        hold on;
+        h = plot(fitobjectITTC,'--');
+        legendInfo{2} = 'Cond. 13: ITTC 1957 (Fit)';
+        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        hold on;
+        h = plot(x2,y2,'x');
+        legendInfo{3} = 'Cond. 13: Grigson';
+        set(h(1),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        hold on;
+        h = plot(fitobjectGrigson,'-.');
+        legendInfo{4} = 'Cond. 13: Grigson (Fit)';
+        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);        
+    else
+        h = plot(x1,y1,'*b',x2,y2,'xg',x1,polyv1,'-b',x2,polyv2,'-g');
+    end
     xlabel('{\bf F_{r}^4/C_{Fm} [-]}','FontSize',setGeneralFontSize);
     ylabel('{\bf C_{Tm}/C_{Fm} [-]}','FontSize',setGeneralFontSize);
     grid on;
@@ -2428,19 +2536,16 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     axis square;
     
     %# Annotations
-    text(0.23,1.08,slopeTextITTC,'FontSize',12,'color','k','FontWeight','normal');
-    text(0.23,1.22,slopeTextGrigson,'FontSize',12,'color','k','FontWeight','normal');
+    text(0.21,1.07,slopeTextITTC,'FontSize',12,'color','k','FontWeight','normal');
+    text(0.21,1.23,slopeTextGrigson,'FontSize',12,'color','k','FontWeight','normal');
     
     %# Line, colors and markers
-    setMarkerSize      = 8;
-    setLineWidthMarker = 1;
-    setLineWidth       = 1;
-    setLineStyle1      = '--';
-    setLineStyle2      = '-.';
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    if enableCurveFittingToolboxPlot == 0
+        setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'LineStyle',setLineStyle2,'linewidth',setLineWidth);        
+    end
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -2455,7 +2560,11 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
-    hleg1 = legend('Cond. 13: ITTC 1957','Cond. 13: Grigson','Cond. 13: ITTC 1957 (Fit)','Cond. 13: Grigson (Fit)');
+    if enableCurveFittingToolboxPlot == 1
+        hleg1 = legend(legendInfo);
+    else
+        hleg1 = legend('Cond. 13: ITTC 1957','Cond. 13: Grigson','Cond. 13: ITTC 1957 (Fit)','Cond. 13: Grigson (Fit)');
+    end
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
