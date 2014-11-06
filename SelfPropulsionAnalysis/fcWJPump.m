@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 4, 2014
+%# Date       :  November 6, 2014
 %#
 %# Function   :  Extrapolate WJ benchmark data
 %#
@@ -816,9 +816,9 @@ EoEff  = cfValuesEff;
 %# ************************************************************************
 %# START: Write results to DAT and TXT
 %# ------------------------------------------------------------------------
-M = resultsArrayLJ120EPc;
-csvwrite('resultsArrayLJ120EPc2.dat', M)                                     % Export matrix M to a file delimited by the comma character
-dlmwrite('resultsArrayLJ120EPc2.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
+%M = resultsArrayLJ120EPc;
+%csvwrite('resultsArrayLJ120EPc2.dat', M)                                     % Export matrix M to a file delimited by the comma character
+%dlmwrite('resultsArrayLJ120EPc2.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 %# ------------------------------------------------------------------------
 %# END: Write results to DAT and TXT
 %# ************************************************************************

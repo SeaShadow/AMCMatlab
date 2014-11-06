@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 5, 2014
+%# Date       :  November 6, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -96,6 +96,23 @@ enableTGBosePlot        = 1;    % Show plots where TG = p Q (vj - vi)
 % Scaled to A4 paper
 enableA4PaperSizePlot   = 0;    % Show plots scale to A4 size
 
+% Check if Curve Fitting Toolbox is installed
+% See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
+v = ver;
+toolboxes = setdiff({v.Name}, 'MATLAB');
+ind = find(ismember(toolboxes,'Curve Fitting Toolbox'));
+[mtb,ntb] = size(ind);
+
+% IF ntb > 0 Curve Fitting Toolbox is installed
+enableCurveFittingToolboxCurvePlot = 0;    % Show fit curves when using Curve Fitting Toolbox
+if ntb > 0
+    enableCurveFittingToolboxPlot  = 1;
+    enableEqnOfFitPlot             = 0;
+else
+    enableCurveFittingToolboxPlot  = 0;
+    enableEqnOfFitPlot             = 1;
+end
+
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
 % *************************************************************************
@@ -161,9 +178,11 @@ FSdraft         = MSdraft*FStoMSratio;           % Full scale draft             
 
 % Form factors and correlaction coefficient
 FormFactor = 1.18;                            % Form factor (1+k)
-CorrCoeff  = 0;                               % Correlation coefficient, Ca
-% Correlation coefficient, typical value. See Bose (2008), equation 2-4, page 6.
-%CorrCoeff  = (105*((150*10^(-6))/MSlwl)^(1/3)-0.64)*10^(-3);
+
+% Correlation coefficients: No Ca (AMC), typical Ca (Bose 2008) and MARIN Ca
+CorrCoeff  = 0;                                               % Correlation coefficient, Ca as used by AMC
+%CorrCoeff  = (105*((150*10^(-6))/FSlwl)^(1/3)-0.64)*10^(-3); % Ca calculcation for typical value as shown in Bose (2008), equation 2-4, page 6
+%CorrCoeff  = 0.00035;                                        % Ca value as used by MARIN for JHSV testing
 
 % Waterjet constants (FS = full scale and MS = model scale) ---------------
 
@@ -783,10 +802,10 @@ end
 [resistance] = calBHResistanceBasedOnFrTempCorr(Froude_Numbers,FormFactor,MSwsa,MSlwl);
 
 % Loop through speeds
-TGA_at_FDArray = [];        % Gross thrust = TG = p Q vj
-TGB_at_FDArray = [];        % Gross thrust = TG = p Q (vj - vi)
-FA_at_TGZero   = [];        % Gross thrust = TG = p Q vj
-FB_at_TGZero   = [];        % Gross thrust = TG = p Q (vj - vi)
+TGA_at_FDArray      = [];   % Gross thrust = TG = p Q vj
+TGB_at_FDArray      = [];   % Gross thrust = TG = p Q (vj - vi)
+FA_at_TGZero        = [];   % Gross thrust = TG = p Q vj
+FB_at_TGZero        = [];   % Gross thrust = TG = p Q (vj - vi)
 thrustDedFracArrayA = [];   % Thrust deduction array where TG = p Q vj
 thrustDedFracArrayB = [];   % Thrust deduction array where TG = p Q (vj - vi)
 shaftSpeedConvArray = [];   % Shaft speed array where TG = p Q (vj - vi)
@@ -1088,7 +1107,6 @@ if ma == 9
                 legend([OUTH;h5],OUTM{:},'Force at T_{G}=0');
             end
             legend boxoff;
-            
         end
         
         %# Gross thrust = TG = p Q (vj - vi) ----------------------------------
@@ -1231,7 +1249,6 @@ if ma == 9
                 legend([OUTH;h5],OUTM{:},'Force at T=0');
             end
             legend boxoff;
-            
         end
         
         %# ********************************************************************
