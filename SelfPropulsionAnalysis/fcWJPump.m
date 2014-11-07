@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 6, 2014
+%# Date       :  November 7, 2014
 %#
 %# Function   :  Extrapolate WJ benchmark data
 %#
