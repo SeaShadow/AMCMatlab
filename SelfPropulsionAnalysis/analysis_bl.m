@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 7, 2014
+%# Date       :  November 10, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -48,6 +48,10 @@
 %#
 %#               => analysis_ts.m    Time series data
 %#                                    ==> Creates resultsArrayTS.dat
+%#
+%#               => analysis_fscomp.m  Full Scale Results Comparison
+%#                                     ==> Uses fullScaleDataArray.dat
+%#                                     ==> Uses SeaTrials1500TonnesCorrPower
 %#
 %# ------------------------------------------------------------------------
 %#

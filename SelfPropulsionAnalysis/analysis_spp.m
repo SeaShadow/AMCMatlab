@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 7, 2014
+%# Date       :  November 10, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -48,6 +48,10 @@
 %#
 %#               => analysis_ts.m    Time series data
 %#                                    ==> Creates resultsArrayTS.dat
+%#
+%#               => analysis_fscomp.m  Full Scale Results Comparison
+%#                                     ==> Uses fullScaleDataArray.dat
+%#                                     ==> Uses SeaTrials1500TonnesCorrPower
 %#
 %# ------------------------------------------------------------------------
 %#
@@ -95,6 +99,9 @@ enableA4PaperSizePlot       = 0;    % Show plots scale to A4 size
 % Adjusted fitting for towing force vs. thrust plot and F at T=0 as well as
 enableAdjustedFitting       = 1;    % Show adjusted fitting for speeds 6,8 and 9
 enableAdjustedCommandWindow = 1;    % Show command window output
+
+% Pump effective power, PPE
+enablePPEEstPumpCurveHead   = 0;    % If TRUE use PPE = ? g QJ H35 (ITTC) instead of PPE = (E7/nn)-niE1 (Bose 2008)
 
 % Check if Curve Fitting Toolbox is installed
 % See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
@@ -283,6 +290,27 @@ else
 end
 %# ------------------------------------------------------------------------
 %# END Load shaft speed list (variable name is shaftSpeedList by default)
+%# ************************************************************************
+
+
+%# ************************************************************************
+%# START Full scale results
+%# ------------------------------------------------------------------------
+if exist('fullScaleDataArray.dat', 'file') == 2
+    %# Results array columns:
+    % See 4. Extrapolation to full scale for column descriptions
+    fullscaleresults = csvread('fullScaleDataArray.dat');
+    [mfsr,nfsr] = size(fullscaleresults);
+    %# Remove zero rows
+    fullscaleresults(all(fullscaleresults==0,2),:)=[];
+else
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('WARNING: File fullScaleDataArray.dat does not exist!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    %break;
+end
+%# ------------------------------------------------------------------------
+%# START Full scale results
 %# ************************************************************************
 
 
@@ -2065,8 +2093,15 @@ for k=1:m
     FSStbdIdealEff  = 2/(1+(MSStbdJetVel/MSStbdInlVel));
     
     % Pump effective power, PPE
-    FSPortPumpEffPower = (FSPortEFStat7/FSPortNozzleEff)-FSPortIdealEff*FSPortEFStat1;
-    FSStbdPumpEffPower = (FSStbdEFStat7/FSStbdNozzleEff)-FSStbdIdealEff*FSStbdEFStat1;
+    if enablePPEEstPumpCurveHead == 1
+        % Pump effective power, PPE using PPE = ? g QJ H35 (ITTC)
+        FSPortPumpEffPower = saltwaterdensity*gravconst*MSPortVolFR*FSPortPumphead;
+        FSStbdPumpEffPower = saltwaterdensity*gravconst*MSStbdVolFR*FSStbdPumphead;
+    else
+        % Pump effective power, PPE using PPE = (E7/nn)-niE1 (Bose 2008)]
+        FSPortPumpEffPower = (FSPortEFStat7/FSPortNozzleEff)-FSPortIdealEff*FSPortEFStat1;
+        FSStbdPumpEffPower = (FSStbdEFStat7/FSStbdNozzleEff)-FSStbdIdealEff*FSStbdEFStat1;        
+    end
     fullScaleDataArray(k,40) = FSPortPumpEffPower;
     fullScaleDataArray(k,41) = FSStbdPumpEffPower;
     
@@ -2162,16 +2197,39 @@ for k=1:m
     FSStbdPDETemp = FSStbdPJSE/FSStbdJetSysEff;
     fullScaleDataArray(k,68) = PEW/(FSPortPDETemp+FSStbdPDETemp);
     
+    % 16. Identifiers for OPE #1, nD --------------------------------------
+    % OPE #1: Overall propulsive efficiency using nD=PE/PD
+    
+    % [69] Adjusted or original curve fitting of T vs. F     (-)
+    %      (1) Original
+    %      (2) Adjusted
+    % [70] Pump effective power using                        (-)
+    %      (1) PPE = (E7/nn)-niE1 (Bose 2008)
+    %      (2) PPE = p g QJ H35   (ITTC)
+    % [71] Correlation coefficient, Ca                       (-)
+    
+    if enableAdjustedFitting == 1
+        fullScaleDataArray(k,69) = 2;
+    else
+        fullScaleDataArray(k,69) = 1;
+    end
+    if enablePPEEstPumpCurveHead == 1
+        fullScaleDataArray(k,70) = 2;
+    else
+        fullScaleDataArray(k,70) = 1;
+    end
+    fullScaleDataArray(k,71) = CorrCoeff;
+    
 end
 
 
-%# ************************************************************************
+%# ////////////////////////////////////////////////////////////////////////
 %# Plotting full scale results
-%# ************************************************************************
+%# ////////////////////////////////////////////////////////////////////////
 
-%# ------------------------------------------------------------------------
+%# ************************************************************************
 %# 1. Overall propulsive efficiency, nD
-%# ------------------------------------------------------------------------
+%# ************************************************************************
 
 %# Plotting Overall propulsive efficiency, nD -----------------------------
 figurename = 'Plot 4: Full Scale Extrapolation: Propulsive Efficiency';
@@ -2324,9 +2382,9 @@ end
 %close;
 
 
-%# ------------------------------------------------------------------------
+%# ************************************************************************
 %# 2. Power plots (two propulsion systems ==>> a single demihull)
-%# ------------------------------------------------------------------------
+%# ************************************************************************
 
 %# Plotting power ---------------------------------------------------------
 figurename = 'Plot 5: Full Scale Extrapolation: Power for Single Demi Hull';
@@ -2453,7 +2511,7 @@ minX  = 13;
 maxX  = 25;
 incrX = 1;
 minY  = 0;
-maxY  = 6;
+maxY  = 8;
 incrY = 1;
 set(gca,'XLim',[minX maxX]);
 set(gca,'XTick',minX:incrX:maxX);
@@ -2514,9 +2572,9 @@ end
 %close;
 
 
-%# ------------------------------------------------------------------------
+%# ************************************************************************
 %# 3. Speed plots
-%# ------------------------------------------------------------------------
+%# ************************************************************************
 
 %# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 6: Full Scale Extrapolation: Jet and Inlet Velocity';
@@ -2677,6 +2735,19 @@ end
 %# ************************************************************************
 %# START: Write results to DAT and TXT
 %# ------------------------------------------------------------------------
+
+% %# Add when creating fullScaleDataArraySets.dat only!!!!
+% if exist('fullScaleDataArray.dat', 'file') == 2 && mfsr == 27
+%     exist('fullScaleDataArray.dat');
+%     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+%     disp('NOTE: fullScaleDataArray.dat contained three (3) datasets and has been deleted!');
+%     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+% end
+% 
+% % Add new sets when more than one set in file
+% if exist('fullScaleDataArray.dat', 'file') == 2 && mfsr >= 9 && fullscaleresults(1,70) ~= CorrCoeff
+%    fullScaleDataArray = [fullscaleresults;fullScaleDataArray];
+% end
 
 fullScaleDataArray = fullScaleDataArray(any(fullScaleDataArray,2),:);       % Remove zero rows
 M = fullScaleDataArray;
