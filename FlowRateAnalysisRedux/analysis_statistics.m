@@ -560,7 +560,6 @@ AStbd = arrayfun(@(x) R(R(:,20) == x, :), unique(R(:,20)), 'uniformoutput', fals
 %# END Sort testRuns, portRuns and stbdRuns bt repeats
 %# ************************************************************************
 
-%repeatability error
 
 %# ************************************************************************
 %# START Loop through repeated runs
@@ -630,6 +629,29 @@ descStatsArray = [];
 %# std(X,1) normalizes by N and produces the square root of the
 %#          second  moment of the sample about its mean
 %# ------------------------------------------------------------------------
+
+% Simple example for descriptive statistics:
+%# 1. Calculate the mean or average of your data. To do this, add your measurements and divide by the number of elements in your sample. For example, if your measurements are 1, 2, 2, 3, 2, the average would be 2 -- 10 divided by 5.
+%# 2. Calculate the variance of your data. To do this, calculate the difference of each result from the mean, square each result and work out the average. For example, if the difference from the mean in a set of data were 1, 2, -2 and -1, the variance would be 2.5. That is, the average of 1, 4, 4 and 1.
+%# 3. Calculate the square root of the variance. This is the repeatability standard deviation of your data. Following our previous example, the standard deviation would be 1.5811.
+% A = [1 2 2 3 2];
+% [m,n] = size(A);
+% meanA = mean(A);
+% varArray  = [];
+% for k=1:n
+% 	varArray (k) = (A(k)-meanA)^2;
+% end
+% meanVA = mean(varArray);
+% stdA = sqrt(meanVA);
+% disp('-----------------------------------------------');
+% disp(sprintf('Mean: %s',num2str(meanA)));
+% disp(sprintf('Variance: %s',num2str(meanVA)));
+% disp(sprintf('Standard deviation: %s',num2str(stdA)));
+% disp('-----------------------------------------------');
+% disp(sprintf('Mean: %s',num2str(mean(A))));
+% disp(sprintf('Variance: %s',num2str(var(A,1))));
+% disp(sprintf('Standard deviation: %s',num2str(std(A,1))));
+% disp('-----------------------------------------------');
 
 % PORT
 for k=1:mport
