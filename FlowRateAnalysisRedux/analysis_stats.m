@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 6, 2014
+%# Date       :  November 12, 2014
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -33,10 +33,10 @@ allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
 
 
-% *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED
-%                       0 = DISABLED
-% -------------------------------------------------------------------------
+%# ************************************************************************
+%# START: PLOT SWITCHES: 1 = ENABLED
+%#                       0 = DISABLED
+%# ------------------------------------------------------------------------
 
 % Plot titles, colours, etc.
 enablePlotMainTitle     = 0;    % Show plot title in saved file
@@ -68,14 +68,14 @@ else
     enableEqnOfFitPlot             = 1;
 end
 
-% -------------------------------------------------------------------------
-% END: PLOT SWITCHES
-% *************************************************************************
+%# ------------------------------------------------------------------------
+%# END: PLOT SWITCHES
+%# ************************************************************************
 
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
+%# START Define plot size
+%# ------------------------------------------------------------------------
 %# Centimeters units
 XPlot = 42.0;                           %# A3 paper size
 YPlot = 29.7;                           %# A3 paper size
@@ -83,13 +83,13 @@ XPlotMargin = 1;                        %# left/right margins from page borders
 YPlotMargin = 1;                        %# bottom/top margins from page borders
 XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
 YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# END DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
 %# ------------------------------------------------------------------------
-%# Read results DAT file
+%# END Define plot size
+%# ************************************************************************
+
+
+%# ************************************************************************
+%# START Read results DAT file
 %# ------------------------------------------------------------------------
 if exist('resultsArray_copy.dat', 'file') == 2
     %# Results array columns:
@@ -124,9 +124,13 @@ else
     disp('-----------------------------------------------------------------');
     break;
 end
-
 %# ------------------------------------------------------------------------
-%# Create directories if not available
+%# START Read results DAT file
+%# ************************************************************************
+
+
+%# ************************************************************************
+%# START Create directories if not available
 %# ------------------------------------------------------------------------
 
 %# _PLOTS directory
@@ -170,6 +174,11 @@ else
 end
 
 %# ------------------------------------------------------------------------
+%# END Create directories if not available
+%# ************************************************************************
+
+
+%# ------------------------------------------------------------------------
 %# Set run numbers based on conditions
 %# ------------------------------------------------------------------------
 
@@ -201,7 +210,6 @@ if exist('June2013FRMT.mat', 'file') == 2
     June13Port = June2013FRMT(1:11,:);
     June13Stbd = June2013FRMT(12:22,:);
     June13Comb = June2013FRMT(23:33,:);
-    
 else
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     disp('WARNING: Required data file for June 2013 Flow Rate Measurement Test (June2013FRMT.mat) does not exist!');
@@ -255,7 +263,7 @@ stbdAvgArray = [stbdAvgArray;stats_avg(2,1000,results([38 41:43],:))];
 stbdAvgArray = [stbdAvgArray;stats_avg(2,1200,results(44,:))];
 stbdAvgArray = [stbdAvgArray;stats_avg(2,1400,results(45:47,:))];
 stbdAvgArray = [stbdAvgArray;stats_avg(2,1600,results(48,:))];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,1800,results(49:50,:))];
+stbdAvgArray = [stbdAvgArray;stats_avg(2,1800,results(49:51,:))];
 stbdAvgArray = [stbdAvgArray;stats_avg(2,2000,results([39 52],:))];
 stbdAvgArray = [stbdAvgArray;stats_avg(2,2200,results(53:55,:))];
 stbdAvgArray = [stbdAvgArray;stats_avg(2,2400,results(56,:))];
@@ -1115,6 +1123,7 @@ for k=1:3
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
+
 
 %# ------------------------------------------------------------------------
 %# Clear variables

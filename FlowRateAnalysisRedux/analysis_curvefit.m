@@ -2,8 +2,8 @@
 %# Flow Rate Analysis: Curve fitting and error estimate
 %# ------------------------------------------------------------------------
 %#
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  September 8, 2014
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  November 12, 2014
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -31,37 +31,74 @@
 clear
 clc
 
+
 %# -------------------------------------------------------------------------
 %# Find and close all plots
 %# -------------------------------------------------------------------------
 allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
 
+
+% *************************************************************************
+% START: PLOT SWITCHES: 1 = ENABLED
+%                       0 = DISABLED
+% -------------------------------------------------------------------------
+
+% Plot titles, colours, etc.
+enablePlotMainTitle         = 1;    % Show plot title in saved file
+enablePlotTitle             = 1;    % Show plot title above plot
+enableBlackAndWhitePlot     = 0;    % Show plot in black and white only
+
+% Scaled to A4 paper
+enableA4PaperSizePlot       = 1;    % Show plots scale to A4 size
+
+% Check if Curve Fitting Toolbox is installed
+% See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
+v = ver;
+toolboxes = setdiff({v.Name}, 'MATLAB');
+ind = find(ismember(toolboxes,'Curve Fitting Toolbox'));
+[mtb,ntb] = size(ind);
+
+% IF ntb > 0 Curve Fitting Toolbox is installed
+enableCurveFittingToolboxCurvePlot = 0;    % Show fit curves when using Curve Fitting Toolbox
+if ntb > 0
+    enableCurveFittingToolboxPlot  = 1;
+    enableEqnOfFitPlot             = 0;
+else
+    enableCurveFittingToolboxPlot  = 0;
+    enableEqnOfFitPlot             = 1;
+end
+
+% -------------------------------------------------------------------------
+% END: PLOT SWITCHES
+% *************************************************************************
+
+
 % -------------------------------------------------------------------------
 % Enable profile
 % -------------------------------------------------------------------------
 %profile on
 
-%# -------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
 %# Path where run directories are located
-%# -------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
 %runfilespath = 'D:\\Flow Rate MTB Backup\\KZ Flow Rate\\';
 runfilespath = '..\\';      % Relative path from Matlab directory
 
-%# -------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
 %# GENERAL SETTINGS
-%# -------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
 Fs = 800;       % Sampling frequency = 800Hz
 
-%# -------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
 %# Number of headerlines in DAT file
-%# -------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
 headerlines             = 27;  % Number of headerlines to data
 headerlinesZeroAndCalib = 21;  % Number of headerlines to zero and calibration factors
 
-%# ------------------------------------------------------------------------------
-%# Omit first 10 seconds of data due to acceleration ----------------------------
-%# ------------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
+%# Omit first 10 seconds of data due to acceleration
+%# ------------------------------------------------------------------------
 
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from start)
 startSamplePos    = 8000;
@@ -71,24 +108,28 @@ startSamplePos    = 8000;
 cutSamplesFromEnd = 8000;
 %cutSamplesFromEnd = 0;
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START FILE LOOP FOR RUNS startRun to endRun
+
+%# ************************************************************************
+%# START File loop for runs, startRun to endRun
 %# ------------------------------------------------------------------------
 
 % startRun = 27;      % Start at run x
 % endRun   = 29;      % Stop at run y
 
-startRun = 1;      % Start at run x
+startRun = 1;       % Start at run x
 endRun   = 67;      % Stop at run y
 
+startRun = 8;       % Start at run x
+endRun   = 8;       % Stop at run y
+
 %# ------------------------------------------------------------------------
-%# END FILE LOOP FOR RUNS startRun to endRun
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# END File loop for runs, startRun to endRun
+%# ************************************************************************
 
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
+%# START Define plot size
+%# ------------------------------------------------------------------------
 %# Centimeters units
 XPlot = 42.0;                           %# A3 paper size
 YPlot = 29.7;                           %# A3 paper size
@@ -96,14 +137,14 @@ XPlotMargin = 1;                        %# left/right margins from page borders
 YPlotMargin = 1;                        %# bottom/top margins from page borders
 XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
 YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# END DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ------------------------------------------------------------------------
+%# END Define plot size
+%# ************************************************************************
 
 
-% /////////////////////////////////////////////////////////////////////
-% START: CREATE PLOTS AND RUN DIRECTORY
-% ---------------------------------------------------------------------
+%# ************************************************************************
+%# START Create directories if not available
+%# ------------------------------------------------------------------------
 
 %# _PLOTS directory
 fPath = '_plots/';
@@ -113,17 +154,43 @@ else
     mkdir(fPath);
 end
 
-%# Time series directory
-fPath = sprintf('_plots/%s', '_wave_probe');
+%# _wave_probe directory --------------------------------------------------
+setDirName = '_plots/_wave_probe';
+
+fPath = setDirName;
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
     mkdir(fPath);
 end
 
-% ---------------------------------------------------------------------
-% END: CREATE PLOTS AND RUN DIRECTORY
-% /////////////////////////////////////////////////////////////////////
+%# PDF directory
+fPath = sprintf('%s/%s', setDirName, 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('%s/%s', setDirName, 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('%s/%s', setDirName, 'EPS');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# ------------------------------------------------------------------------
+%# END Create directories if not available
+%# ************************************************************************
 
 
 %# ////////////////////////////////////////////////////////////////////////
@@ -141,9 +208,16 @@ end
 %[8]  Relative intercept error
 %[9]  Channel number
 
-cfArray = [];
+%# Run distinctions
+TestRunArray = [1:7];
+PortRunArray = [8:37];
+StbdRunArray = [38:67];
 
-%w = waitbar(0,'Processed run files');
+%# ////////////////////////////////////////////////////////////////////////
+%# LOOP THROUGH ALL RUN FILES (depending on startRun and endRun settings)
+%# ////////////////////////////////////////////////////////////////////////
+
+cfArray = [];
 for k=startRun:endRun
     
     %# Allow for 1 to become 01 for run numbers
@@ -266,18 +340,18 @@ for k=startRun:endRun
     % /////////////////////////////////////////////////////////////////////
     % START: WAVE PROBE ANALYSIS
     % ---------------------------------------------------------------------
-
+    
     %# Wave Probe: Summarise data for cfArray
-    disp('------------------------------------------------------------------');
+    disp('--------------------------------------------------------------');
     titleTxt = sprintf('Run %s: Wave probe',num2str(k));
     disp(titleTxt);
-    disp('------------------------------------------------------------------');
+    disp('--------------------------------------------------------------');
     [results] = curvefit(k,timeDataShort,WaveProbe);
     [m,n] = size(cfArray);
     if m == 0
         i=1;
     else
-        i=m+1;        
+        i=m+1;
     end
     cfArray(i,1) = results(1);
     cfArray(i,2) = results(2);
@@ -290,16 +364,16 @@ for k=startRun:endRun
     cfArray(i,9) = 1;
     
     %# Keil Probe (Stbd): Summarise data for cfArray
-    disp('------------------------------------------------------------------');
+    disp('--------------------------------------------------------------');
     titleTxt = sprintf('Run %s: Kiel Probe (Stbd)',num2str(k));
     disp(titleTxt);
-    disp('------------------------------------------------------------------');
+    disp('--------------------------------------------------------------');
     [results] = curvefit(k,timeDataShort,KPStbd);
     [m,n] = size(cfArray);
     if m == 1
         i=2;
     else
-        i=m+1;        
+        i=m+1;
     end
     cfArray(i,1) = results(1);
     cfArray(i,2) = results(2);
@@ -312,16 +386,16 @@ for k=startRun:endRun
     cfArray(i,9) = 2;
     
     %# Keil Probe (Port): Summarise data for cfArray
-    disp('------------------------------------------------------------------');
+    disp('--------------------------------------------------------------');
     titleTxt = sprintf('Run %s: Kiel Probe (Port)',num2str(k));
     disp(titleTxt);
-    disp('------------------------------------------------------------------');
+    disp('--------------------------------------------------------------');
     [results] = curvefit(k,timeDataShort,KPPort);
     [m,n] = size(cfArray);
     if m == 2
         i=3;
     else
-        i=m+1;        
+        i=m+1;
     end
     cfArray(i,1) = results(1);
     cfArray(i,2) = results(2);
@@ -338,32 +412,93 @@ for k=startRun:endRun
     %# --------------------------------------------------------------------
     
     %# Distinguish between PORT and STBD variables ------------------------
-    if RPMStbd == 0
-        shaftSpeed = RPMPort;
+    if ismember(k,TestRunArray)
         propSys    = 'PORT';
-    elseif RPMPort == 0
+        shaftSpeed = RPMStbd;
+    elseif ismember(k,PortRunArray)
+        propSys    = 'PORT';
+        if ismember(k,[8 9 10 11])
+            shaftSpeed = RPMStbd;
+        else
+            shaftSpeed = RPMPort;
+        end
+    elseif ismember(k,StbdRunArray)
         propSys    = 'STBD';
         shaftSpeed = RPMStbd;
     end
     
+    %# Plotting -----------------------------------------------------------
     figurename = sprintf('Wave probe: Run %s, %s Shaft Speed = %s RPM', name(2:3), propSys, num2str(shaftSpeed));
     f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 12;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors --------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
+    
+    %# Line, colors and markers
+    setMarkerSize      = 11;
+    setLineWidthMarker = 2;
+    setLineWidth1      = 1;
+    setLineWidth2      = 2;
+    setLineStyle       = '-';
+    setLineStyle1      = '--';
+    setLineStyle2      = '-.';
     
     %# Time vs. Mass ------------------------------------------------------
     subplot(1,2,1);
     
-    %# X and Y values
+    %# X and Y axis -------------------------------------------------------
     x = timeDataShort;
     y = WaveProbe;
     
-    %# Trendline
+    %# Fitting ------------------------------------------------------------
     p  = polyfit(x,y,1);
     p2 = polyval(p,x);
     
-    h = plot(x,y,'-b',x,p2,'--k');
-    title('{\bf Wave probe}');
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf Mass (Water) [Kg]}');
+    %# Plotting -----------------------------------------------------------
+    h = plot(x,y,'-',x,p2,'-');
+    if enablePlotTitle == 1
+        title('{\bf Wave probe}','FontSize',setGeneralFontSize);
+    end
+    xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Mass of water [Kg]}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -373,28 +508,45 @@ for k=startRun:endRun
     set(gcf,'Color',[1,1,1]);
     
     %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
+    set(h(1),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth1);
+    set(h(2),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth2);
     
     %# Axis limitations
-    xlim([x(1) x(end)]);
-    ylim([y(1) y(end)]);
-    %ylim([0 525]);
+    minX  = x(1);
+    maxX  = x(end);
+    %incrX = 1;
+    minY  = round(y(1));
+    maxY  = round(y(end));
+    %incrY = 0.1;
+    set(gca,'XLim',[minX maxX]);
+    %set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    %set(gca,'YTick',minY:incrY:maxY);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
     
     %# Legend
     hleg1 = legend('Wave probe output','Trendline');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
+    %set(hleg1, 'Interpreter','tex');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     %# Time vs. Kiel Probe Output -----------------------------------------
     subplot(1,2,2);
     
-    %# X and Y values
-    x = timeDataShort;
+    %# X and Y axis -------------------------------------------------------
+    x  = timeDataShort;
     y1 = KPStbd;
     y2 = KPPort;
     
-    %# Trendline
+    %# Fitting ------------------------------------------------------------
     
     %# Starboard
     p1  = polyfit(x,y1,1);
@@ -404,54 +556,106 @@ for k=startRun:endRun
     p2  = polyfit(x,y2,1);
     p22 = polyval(p2,x);
     
-    h = plot(x,y1,'-b',x,p21,'--k',x,y2,'-g',x,p22,'-.k');
-    title('{\bf Kiel probe}');
-    xlabel('{\bf Time [s]}');
-    ylabel('{\bf Kiel probe [V]}');
+    %# Plotting -----------------------------------------------------------
+    if ismember(k,PortRunArray)
+        h = plot(x,y2,'-',x,p22,'-');
+    elseif ismember(k,StbdRunArray)
+        h = plot(x,y1,'-',x,p21,'-');
+    else
+        h = plot(x,y1,'-',x,p21,'-',x,y2,'-',x,p22,'-');
+    end
+    if enablePlotTitle == 1
+        title('{\bf Kiel probe}','FontSize',setGeneralFontSize);
+    end
+    xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Kiel probe [V]}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
     
-    %# Line width
-    set(h(1),'linewidth',1);
-    set(h(2),'linewidth',2);
-    set(h(3),'linewidth',1);
-    set(h(4),'linewidth',2);
+    %# Line, colors and markers
+    if ismember(k,PortRunArray)
+        set(h(1),'Color',setColor{2},'LineStyle',setLineStyle,'linewidth',setLineWidth1);
+        set(h(2),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth2);
+    elseif ismember(k,StbdRunArray)
+        set(h(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth1);
+        set(h(2),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth2);
+    else
+        set(h(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth1);
+        set(h(2),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth2);
+        set(h(3),'Color',setColor{2},'LineStyle',setLineStyle,'linewidth',setLineWidth1);
+        set(h(4),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth2);
+    end
     
     %# Axis limitations
-    xlim([x(1) x(end)]);
-    %ylim([y(1) y(end)]);
-    ylim([1 4.5]);
+    minX  = round(x(1));
+    maxX  = round(x(end));
+    incrX = 10;
+    minY  = 0;
+    if y1(end) > y2(end)
+        maxY  = ceil(y1(end))+1;
+    else
+        maxY  = ceil(y2(end))+1;
+    end
+    incrY = 0.5;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+    set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
     
     %# Legend
-    hleg1 = legend('Kiel probe output (Stbd)','Trendline (Stbd)','Kiel probe output (Port)','Trendline (Port)');
+    if ismember(k,PortRunArray)
+        hleg1 = legend('PORT: Kiel probe output','PORT: Trendline');
+    elseif ismember(k,StbdRunArray)
+        hleg1 = legend('STBD: Kiel probe output','STBD: Trendline');
+    else
+        hleg1 = legend('STBD: Kiel probe output','STBD: Trendline','PORT: Kiel probe output','PORT: Trendline');
+    end    
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
+    %set(hleg1, 'Interpreter','tex');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
     
-    %# ********************************************************************
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# ************************************************************************
     %# Save plot as PNG
-    %# ********************************************************************
+    %# ************************************************************************
     
     %# Figure size on screen (50% scaled, but same aspect ratio)
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
     %# Figure size printed on paper
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
     
-    %# Plot title ---------------------------------------------------------
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
+    %# Plot title -------------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
     
-    %# Save plots as PDF and PNG
-    %plotsavenamePDF = sprintff('_plots/%s/Run_%s_Time_vs_Mass_and_Time_vs_Kiel_Probe_Plot.pdf', '_wave_probe', num2str(k));
-    %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-    plotsavename = sprintf('_plots/%s/Run_%s_Time_vs_Mass_and_Time_vs_Kiel_Probe_Plot.png', '_wave_probe', num2str(k));
-    saveas(f, plotsavename);                % Save plot as PNG
+    %# Save plots as PDF, PNG and EPS -----------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for kl=1:3
+        plotsavename = sprintf('_plots/%s/%s/Run_%s_Time_vs_Mass_and_Time_vs_Kiel_Probe_Plot.%s', '_wave_probe', setFileFormat{kl}, num2str(k), setFileFormat{kl});
+        print(gcf, setSaveFormat{kl}, plotsavename);
+    end
     close;
     
     % ---------------------------------------------------------------------
@@ -461,12 +665,6 @@ for k=startRun:endRun
     %wtot = endRun - startRun;
     %w = waitbar(k/wtot,w,['iteration: ',num2str(k)]);
 end
-
-%# Close progress bar
-%close(w);
-
-%# Remove zero rows
-%results(all(results==0,2),:)=[];
 
 
 % /////////////////////////////////////////////////////////////////////

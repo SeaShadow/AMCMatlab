@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 10, 2014
+%# Date       :  November 12, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -72,6 +72,7 @@
 clear
 clc
 
+
 %# ------------------------------------------------------------------------
 %# Find and close all plots
 %# ------------------------------------------------------------------------
@@ -79,10 +80,10 @@ allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
 
 
-% *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED
-%                       0 = DISABLED
-% -------------------------------------------------------------------------
+%# ************************************************************************
+%# START: PLOT SWITCHES: 1 = ENABLED
+%#                       0 = DISABLED
+%# ------------------------------------------------------------------------
 
 % Time series data
 enableTSDataSave          = 1;    % Enable time series data saving
@@ -107,24 +108,24 @@ enableAMCLJ120EBLData     = 0;    % Show AMC LJ120E BL data (Brandner 2007)
 % Scaled to A4 paper
 enableA4PaperSizePlot     = 0;    % Show plots scale to A4 size
 
-% -------------------------------------------------------------------------
-% END: PLOT SWITCHES
-% *************************************************************************
+%# ------------------------------------------------------------------------
+%# END: PLOT SWITCHES
+%# ************************************************************************
 
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START DEFINE PLOT SIZE
+%# ************************************************************************
+%# START Define plot size
 %# ------------------------------------------------------------------------
 %# Centimeters units
 XPlot = 42.0;                           %# A3 paper size
 YPlot = 29.7;                           %# A3 paper size
 XPlotMargin = 1;                        %# left/right margins from page borders
 YPlotMargin = 1;                        %# bottom/top margins from page borders
-XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (width & height)
-YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (width & height)
+XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
+YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# ------------------------------------------------------------------------
-%# END DEFINE PLOT SIZE
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# END Define plot size
+%# ************************************************************************
 
 
 %# ------------------------------------------------------------------------
@@ -139,9 +140,9 @@ testName = 'Boundary Layer Measurements';
 % -------------------------------------------------------------------------
 %profile on
 
-%# -------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
 %# Path where run directories are located
-%# -------------------------------------------------------------------------
+%# ------------------------------------------------------------------------
 %runfilespath = 'D:\\Flow Rate MTB Backup\\KZ Flow Rate\\';
 runfilespath = '..\\';      % Relative path from Matlab directory
 
@@ -166,9 +167,10 @@ startSamplePos    = 1;
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from end)
 cutSamplesFromEnd = 0;
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+%# ************************************************************************
+%# START File loop for runs, startRun to endRun
+%# ------------------------------------------------------------------------
 
 %startRun = 29;      % Start at run x
 %endRun   = 29;      % Stop at run y
@@ -176,9 +178,9 @@ cutSamplesFromEnd = 0;
 startRun = 29;      % Start at run x
 endRun   = 69;      % Stop at run y
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# END FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ------------------------------------------------------------------------
+%# END File loop for runs, startRun to endRun
+%# ************************************************************************
 
 
 %# ************************************************************************
@@ -214,13 +216,13 @@ FSwsa1500           = MSwsa1500*FStoMSratio^2;           % Full scale wetted sur
 FSdraft1500         = MSdraft1500*FStoMSratio;           % Full scale draft                (m)
 
 %# ------------------------------------------------------------------------
-%# END: START CONSTANTS AND PARTICULARS
+%# END START CONSTANTS AND PARTICULARS
 %# ************************************************************************
 
 
-% /////////////////////////////////////////////////////////////////////////
-% START: CREATE PLOTS AND RUN DIRECTORY
-% -------------------------------------------------------------------------
+%# ************************************************************************
+%# START CREATE PLOTS AND RUN DIRECTORY
+%# ------------------------------------------------------------------------
 
 %# _PLOTS directory
 fPath = '_plots/';
@@ -295,7 +297,7 @@ else
 end
 
 % -------------------------------------------------------------------------
-% END: CREATE PLOTS AND RUN DIRECTORY
+% END CREATE PLOTS AND RUN DIRECTORY
 % /////////////////////////////////////////////////////////////////////////
 
 
@@ -1013,7 +1015,7 @@ else
     csvwrite('resultsArrayBlmTS.dat', M)         % Export matrix M to a file delimited by the comma character
     
     %# ------------------------------------------------------------------------
-    %# END: Write results to CVS
+    %# END Write results to CVS
     %# ////////////////////////////////////////////////////////////////////////
     
     %# Close progress bar
@@ -1584,7 +1586,7 @@ end
 
 %# ------------------------------------------------------------------------
 %# END Plotting boundary layer
-%# ////////////////////////////////////////////////////////////////////////
+%# ************************************************************************
 
 
 % -------------------------------------------------------------------------

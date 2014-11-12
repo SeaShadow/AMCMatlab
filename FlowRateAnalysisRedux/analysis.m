@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 6, 2014
+%# Date       :  November 12, 2014
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -28,10 +28,7 @@
 %#               => analysis_fft.m            Fast Fourier Transform (FFT)
 %#                                            NOTE: Created FFT plots for all channels
 %#
-%#               => analysis_plot.m           Plotting V vs. Q
-%#                                            NOTE: Plot data directly from resultsArray
-%#
-%#               => analysis_stats.m          Averaged plots V vs. ? Qj
+%#               => analysis_stats.m          Averaged plots V vs. p Qj
 %#                                            NOTE: Create averaged flow rate plots
 %#
 %#               => analysis_statistics.m     Statistics
@@ -120,8 +117,9 @@ startSamplePos    = 4000;
 cutSamplesFromEnd = 4000;
 %cutSamplesFromEnd = 0;
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START FILE LOOP FOR RUNS startRun to endRun
+
+%# ************************************************************************
+%# START File loop for runs, startRun to endRun
 %# ------------------------------------------------------------------------
 
 startRun = 1;       % Start at run x
@@ -131,13 +129,13 @@ endRun   = 67;      % Stop at run y
 %endRun   = 21;      % Stop at run y
 
 %# ------------------------------------------------------------------------
-%# END FILE LOOP FOR RUNS startRun to endRun
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# END File loop for runs, startRun to endRun
+%# ************************************************************************
 
 
-% /////////////////////////////////////////////////////////////////////////
-% START: CREATE PLOTS AND RUN DIRECTORY
-% -------------------------------------------------------------------------
+%# ************************************************************************
+%# START Create directories if not available
+%# ------------------------------------------------------------------------
 
 %# _PLOTS directory
 fPath = '_plots/';
@@ -181,13 +179,13 @@ else
     mkdir(fPath);
 end
 
-% -------------------------------------------------------------------------
-% END: CREATE PLOTS AND RUN DIRECTORY
-% /////////////////////////////////////////////////////////////////////////
+%# ------------------------------------------------------------------------
+%# END Create directories if not available
+%# ************************************************************************
 
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS
+%# ************************************************************************
+%# START Define propulsion ststem depending on run numbers
 %# ------------------------------------------------------------------------
 
 % RunNosTest = [1:4];       % Prelimnary testing only
@@ -210,8 +208,8 @@ end
 % end
 
 %# ------------------------------------------------------------------------
-%# END DEFINE PROPULSION SYSTEM DEPENDING ON RUN NUMBERS
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# END Define propulsion ststem depending on run numbers
+%# ************************************************************************
 
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -717,9 +715,9 @@ for k=startRun:endRun
         %# END: TORQUE
         %# ////////////////////////////////////////////////////////////////
         
-        %# ********************************************************************
+        %# ****************************************************************
         %# Save plot as PNG
-        %# ********************************************************************
+        %# ****************************************************************
         
         %# Figure size on screen (50% scaled, but same aspect ratio)
         set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
@@ -732,7 +730,7 @@ for k=startRun:endRun
             set(gcf, 'PaperOrientation','portrait');
         end
         
-        %# Plot title ---------------------------------------------------------
+        %# Plot title -----------------------------------------------------
         if enablePlotMainTitle == 1
             annotation('textbox', [0 0.9 1 0.1], ...
                 'String', strcat('{\bf ', figurename, '}'), ...
@@ -740,13 +738,13 @@ for k=startRun:endRun
                 'HorizontalAlignment', 'center');
         end
         
-        %# Save plots as PDF, PNG and EPS -------------------------------------
+        %# Save plots as PDF, PNG and EPS ---------------------------------
         % Enable renderer for vector graphics output
         set(gcf, 'renderer', 'painters');
         setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
         setFileFormat = {'PDF' 'PNG' 'EPS'};
         for kl=1:3
-            plotsavename = sprintf('_plots/%s/%s/Run_%s_Wave_Probe_and_Time_Series_Plot.%s', '_time_series', setFileFormat{kl}, num2str(k), setFileFormat{kl});
+            plotsavename = sprintf('_plots/%s/%s/Run_%s_Wave_Probe_Time_Series_Plot.%s', '_time_series', setFileFormat{kl}, num2str(k), setFileFormat{kl});
             print(gcf, setSaveFormat{kl}, plotsavename);
         end
         close;
@@ -839,13 +837,12 @@ for k=startRun:endRun
         disp(powerstbd);
         disp(powerport);
     end
-    
     disp('/////////////////////////////////////////////////');
-    
 end
 
-%# ////////////////////////////////////////////////////////////////////////
-%# START: Write results to DAT and TXT
+
+%# ************************************************************************
+%# START Write results to CVS
 %# ------------------------------------------------------------------------
 M = resultsArray;
 csvwrite('resultsArray.dat', M)                                     % Export matrix M to a file delimited by the comma character
@@ -854,8 +851,8 @@ M = slopesArray;
 csvwrite('slopesArray.dat', M)                                      % Export matrix M to a file delimited by the comma character
 dlmwrite('slopesArray.txt', M, 'delimiter', '\t', 'precision', 4)   % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 %# ------------------------------------------------------------------------
-%# END: Write results to DAT and TXT
-%# ////////////////////////////////////////////////////////////////////////
+%# END Write results to CVS
+%# ************************************************************************
 
 
 % -------------------------------------------------------------------------

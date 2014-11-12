@@ -2,8 +2,8 @@
 %# Flow Rate Analysis: Compare repeats of repeated runs and plot data
 %# ------------------------------------------------------------------------
 %# 
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  September 8, 2014
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  November 11, 2014
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -54,7 +54,7 @@ headerlinesZeroAndCalib = 21;  % Number of headerlines to zero and calibration f
 %# START FILE LOOP FOR RUNS startRun to endRun
 %# ------------------------------------------------------------------------
 
-startRun = 9;      % Start at run x
+startRun = 9;       % Start at run x
 endRun   = 11;      % Stop at run y
 
 %# ------------------------------------------------------------------------

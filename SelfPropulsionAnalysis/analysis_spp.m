@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 10, 2014
+%# Date       :  November 12, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -85,7 +85,7 @@ delete(allPlots);   % Close all plots
 % -------------------------------------------------------------------------
 
 % Decide if June 2013 or September 2014 data is used for calculations
-enableSept2014FRMValues     = 0;    % Use enable uses flow rate values established September 2014
+enableSept2014FRMValues     = 1;    % Use enable uses flow rate values established September 2014
 
 % Plot titles, colours, etc.
 enablePlotMainTitle         = 0;    % Show plot title in saved file
@@ -101,7 +101,7 @@ enableAdjustedFitting       = 1;    % Show adjusted fitting for speeds 6,8 and 9
 enableAdjustedCommandWindow = 1;    % Show command window output
 
 % Pump effective power, PPE
-enablePPEEstPumpCurveHead   = 0;    % If TRUE use PPE = ? g QJ H35 (ITTC) instead of PPE = (E7/nn)-niE1 (Bose 2008)
+enablePPEEstPumpCurveHead   = 0;    % If TRUE use PPE = p g QJ H35 (ITTC) instead of PPE = (E7/nn)-niE1 (Bose 2008)
 
 % Check if Curve Fitting Toolbox is installed
 % See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
@@ -343,8 +343,10 @@ else
     mkdir(fPath);
 end
 
-%# _plots/SPP directory
-fPath = sprintf('_plots/%s', 'SPP');
+%# SPP directory ----------------------------------------------------------
+setDirName = '_plots/SPP';
+
+fPath = setDirName;
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
@@ -352,7 +354,7 @@ else
 end
 
 %# PDF directory
-fPath = sprintf('_plots/%s/%s', 'SPP', 'PDF');
+fPath = sprintf('%s/%s', setDirName, 'PDF');
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
@@ -360,7 +362,7 @@ else
 end
 
 %# PNG directory
-fPath = sprintf('_plots/%s/%s', 'SPP', 'PNG');
+fPath = sprintf('%s/%s', setDirName, 'PNG');
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
@@ -368,7 +370,7 @@ else
 end
 
 %# EPS directory
-fPath = sprintf('_plots/%s/%s', 'SPP', 'EPS');
+fPath = sprintf('%s/%s', setDirName, 'EPS');
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
@@ -2094,7 +2096,7 @@ for k=1:m
     
     % Pump effective power, PPE
     if enablePPEEstPumpCurveHead == 1
-        % Pump effective power, PPE using PPE = ? g QJ H35 (ITTC)
+        % Pump effective power, PPE using PPE = p g QJ H35 (ITTC)
         FSPortPumpEffPower = saltwaterdensity*gravconst*MSPortVolFR*FSPortPumphead;
         FSStbdPumpEffPower = saltwaterdensity*gravconst*MSStbdVolFR*FSStbdPumphead;
     else
@@ -2733,7 +2735,7 @@ end
 
 
 %# ************************************************************************
-%# START: Write results to DAT and TXT
+%# START Write results to CVS
 %# ------------------------------------------------------------------------
 
 % %# Add when creating fullScaleDataArraySets.dat only!!!!
@@ -2756,7 +2758,7 @@ csvwrite('fullScaleDataArray.dat', M)                                       % Ex
 dlmwrite('fullScaleDataArray.txt', M, 'delimiter', '\t', 'precision', 4)    % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 
 %# ------------------------------------------------------------------------
-%# END: Write results to DAT and TXT
+%# END Write results to CVS
 %# ************************************************************************
 
 
