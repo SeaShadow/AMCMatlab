@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 12, 2014
+%# Date       :  November 17, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -448,7 +448,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Full_Scale_Comparison_Power_And_OPE_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/FS_Comp_Plot_1_Power_And_OPE.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -509,7 +509,8 @@ setLineWidthMarker = 2;
 setLineWidth       = 2;
 setLineStyle       = '-';
 
-%# Resistance, Thrust vs. Ship Speed //////////////////////////////////////
+%# Velocity Ratios vs. Ship Speed /////////////////////////////////////////
+subplot(1,1,1)
 
 %# X and Y axis -----------------------------------------------------------
 
@@ -638,7 +639,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Full_Scale_Comparison_IVR_JVR_NVR_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/FS_Comp_Plot_2_IVR_JVR_NVR.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -699,7 +700,8 @@ setLineWidthMarker = 2;
 setLineWidth       = 2;
 setLineStyle       = '-';
 
-%# Resistance, Thrust vs. Ship Speed //////////////////////////////////////
+%# Thrust Deduction vs. Ship Speed ////////////////////////////////////////
+subplot(1,1,1)
 
 %# X and Y axis -----------------------------------------------------------
 
@@ -751,7 +753,7 @@ set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
 
 %# Legend
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-hleg1 = legend('IVR (Ca=0)','IVR (Ca=0.00035)','IVR (Ca=0.00059)','JVR (Ca=0)','JVR (Ca=0.00035)','JVR (Ca=0.00059)','NVR (Ca=0)','NVR (Ca=0.00035)','NVR (Ca=0.00059)');
+hleg1 = legend('t (Ca=0)','t (Ca=0.00035)','t (Ca=0.00059)');
 set(hleg1,'Location','SouthEast');
 set(hleg1,'Interpreter','none');
 %set(hleg1, 'Interpreter','tex');
@@ -792,7 +794,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Full_Scale_Comparison_Thrust_Deduction_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/FS_Comp_Plot_3_Thrust_Deduction.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -803,7 +805,7 @@ end
 %# ************************************************************************
 
 %# Plotting speed ---------------------------------------------------------
-figurename = 'Plot 4: Full Scale Comparisons: Power and Energy Flux (Stations 0, 1 and 7)';
+figurename = 'Plot 4: Full Scale Comparisons: Power and Energy Flux (Stations 0, 1 and 7), Ca=0';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -906,7 +908,7 @@ h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*',x5,y5,'*');
 xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Power (MW)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
-    title('{\bf Single Waterjet System, Ca=0}','FontSize',setGeneralFontSize);
+    title('{\bf Single Waterjet System}','FontSize',setGeneralFontSize);
 end
 grid on;
 box on;
@@ -1129,7 +1131,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Full_Scale_Comparison_Power_And_Energy_Flux_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/FS_Comp_Plot_4_Power_And_Energy_Flux.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;

@@ -768,7 +768,7 @@ end
 setRPMArray = [800 1000 1200  1400 1600 1800 2000 2200 2400 2600 2800 3000 3200 3400];
 
 % Plotting
-figurename = sprintf('%s: Standard Deviation', 'Descriptive Statistics');
+figurename = sprintf('%s: Standard Deviation', 'Descriptive Statistics (Repeatability)');
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ------------------------------------------------
@@ -836,7 +836,7 @@ h = bar(x,y');
 if enablePlotTitle == 1
     title('{\bf Mass Flow Rate (1s only)}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Set shaft speed [RPM]}','FontSize',setGeneralFontSize);
+xlabel('{\bf Set shaft speed condition [#]}','FontSize',setGeneralFontSize);
 ylabel('{\bf Standard Deviation [-]}','FontSize',setGeneralFontSize);
 grid on;
 box on;
@@ -888,7 +888,7 @@ h = bar(x,y');
 if enablePlotTitle == 1
     title('{\bf Mass Flow Rate (mean, 1s intervals)}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Set shaft speed [RPM]}','FontSize',setGeneralFontSize);
+xlabel('{\bf Set shaft speed condition [#]}','FontSize',setGeneralFontSize);
 ylabel('{\bf Standard Deviation [-]}','FontSize',setGeneralFontSize);
 grid on;
 box on;
@@ -936,7 +936,7 @@ h = bar(x,y');
 if enablePlotTitle == 1
     title('{\bf Mass Flow Rate (overall, Q/t)}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Set shaft speed [RPM]}','FontSize',setGeneralFontSize);
+xlabel('{\bf Set shaft speed condition [#]}','FontSize',setGeneralFontSize);
 ylabel('{\bf Standard Deviation [-]}','FontSize',setGeneralFontSize);
 grid on;
 box on;
@@ -984,7 +984,7 @@ h = bar(x,y');
 if enablePlotTitle == 1
     title('{\bf Kiel Probe}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Set shaft speed [RPM]}','FontSize',setGeneralFontSize);
+xlabel('{\bf Set shaft speed condition [#]}','FontSize',setGeneralFontSize);
 ylabel('{\bf Standard Deviation [-]}','FontSize',setGeneralFontSize);
 grid on;
 box on;
@@ -1032,7 +1032,7 @@ h = bar(x,y');
 if enablePlotTitle == 1
     title('{\bf Measured shaft speed}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Set shaft speed [RPM]}','FontSize',setGeneralFontSize);
+xlabel('{\bf Set shaft speed condition [#]}','FontSize',setGeneralFontSize);
 ylabel('{\bf Standard Deviation [-]}','FontSize',setGeneralFontSize);
 grid on;
 box on;

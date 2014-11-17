@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 12, 2014
+%# Date       :  November 17, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -84,6 +84,9 @@ delete(allPlots);   % Close all plots
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
+% Profiler
+enableProfiler              = 0;    % Use profiler to show execution times
+
 % Decide if June 2013 or September 2014 data is used for calculations
 enableSept2014FRMValues     = 1;    % Use enable uses flow rate values established September 2014
 
@@ -99,6 +102,10 @@ enableA4PaperSizePlot       = 0;    % Show plots scale to A4 size
 % Adjusted fitting for towing force vs. thrust plot and F at T=0 as well as
 enableAdjustedFitting       = 1;    % Show adjusted fitting for speeds 6,8 and 9
 enableAdjustedCommandWindow = 1;    % Show command window output
+
+% Wake scaling with rudder componets
+% If TRUE (=1) wake scaling uses +(t+0.04)(1-(CFs/CFm)) part of equation
+enableWakeScalingRudderComp = 0;    % Use rudder components in wake scaling
 
 % Pump effective power, PPE
 enablePPEEstPumpCurveHead   = 0;    % If TRUE use PPE = p g QJ H35 (ITTC) instead of PPE = (E7/nn)-niE1 (Bose 2008)
@@ -135,7 +142,9 @@ testName = 'Waterjet Self-Propulsion Test';
 % -------------------------------------------------------------------------
 % Enable profile
 % -------------------------------------------------------------------------
-%profile on
+if enableProfiler == 1
+    profile on
+end
 
 %# -------------------------------------------------------------------------
 %# Path where run directories are located
@@ -311,6 +320,23 @@ else
 end
 %# ------------------------------------------------------------------------
 %# START Full scale results
+%# ************************************************************************
+
+
+%# ************************************************************************
+%# START Sea Trials Data (variable name is SeaTrialsCorrectedPower by default)
+%# ------------------------------------------------------------------------
+if exist('SeaTrials1500TonnesCorrPower.mat', 'file') == 2
+    % Load file into shaftSpeedList variable
+    load('SeaTrials1500TonnesCorrPower.mat');
+else
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('WARNING: Required data file for shaft speed data (SeaTrials1500TonnesCorrPower.mat) does not exist!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    break;
+end
+%# ------------------------------------------------------------------------
+%# END Sea Trials Data (variable name is SeaTrialsCorrectedPower by default)
 %# ************************************************************************
 
 
@@ -978,7 +1004,7 @@ if enableAdjustedFitting == 1
     %# ********************************************************************
     %# 4. Plotting Thrust at F=0 vs. Slope of Linear Fit
     %# ********************************************************************
-    figurename = 'Plot x: Thrust at F=0 vs. Slope of Linear Fit';
+    figurename = 'Plot 1: Thrust at F=0 vs. Slope of Linear Fit';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -1119,7 +1145,7 @@ if enableAdjustedFitting == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for kl=1:3
-        plotsavename = sprintf('_plots/%s/%s/Thrust_at_F_0_vs_Slope_of_Linear_Fit_Plot.%s', 'SPP', setFileFormat{kl}, setFileFormat{kl});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_1_MS_Thrust_at_F_0_vs_Slope_of_Linear_Fit_Plot.%s', 'SPP', setFileFormat{kl}, setFileFormat{kl});
         print(gcf, setSaveFormat{kl}, plotsavename);
     end
     close;
@@ -1184,7 +1210,7 @@ if ma == 9
     slopesArrayB = [];
     
     %# Plotting gross thrust vs. towing force -----------------------------
-    figurename = 'Plot 1: Self-Propulsion Points: Gross Thrust vs. Towing Force';
+    figurename = 'Plot 2: Self-Propulsion Points: Gross Thrust vs. Towing Force';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -1415,7 +1441,7 @@ if ma == 9
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_%s_Thrust_vs_Towing_Force_Plot.%s', 'SPP', setFileFormat{k}, num2str(minRun), num2str(maxRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_2_MS_Thrust_vs_Towing_Force_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -1471,7 +1497,7 @@ end
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 %# ************************************************************************
-%# START Load shaft speed list (variable name is shaftSpeedList by default)
+%# START Load MARIN Data (variable name is Marin112mJHSVData by default)
 %# ------------------------------------------------------------------------
 if exist('Marin112mJHSVData.mat', 'file') == 2
     % Load file into shaftSpeedList variable
@@ -1494,11 +1520,11 @@ else
     break;
 end
 %# ------------------------------------------------------------------------
-%# END Load shaft speed list (variable name is shaftSpeedList by default)
+%# END Load MARIN Data (variable name is Marin112mJHSVData by default)
 %# ************************************************************************
 
 %# Plotting gross thrust vs. towing force ---------------------------------
-figurename = 'Plot 2: Thrust Deduction Fractions';
+figurename = 'Plot 3: Thrust Deduction Fractions';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -1658,7 +1684,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Run_%s_to_%s_Fr_vs_Thrust_Deduction_Fraction_Plot.%s', 'SPP', setFileFormat{k}, num2str(minRun), num2str(maxRun), setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_3_MS_Fr_vs_Thrust_Deduction_Fraction_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -1668,7 +1694,7 @@ end
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 %# Plotting gross thrust vs. towing force ---------------------------------
-figurename = 'Plot 3: Resistance vs. Gross Thrust at Towing Force F_{D} and Force at Zero Thrust F_{T=0}';
+figurename = 'Plot 4: Resistance vs. Gross Thrust at Towing Force F_{D} and Force at Zero Thrust F_{T=0}';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -1827,7 +1853,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Run_%s_to_%s_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot.%s', 'SPP', setFileFormat{k}, num2str(minRun), num2str(maxRun), setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_4_MS_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -1941,8 +1967,11 @@ for k=1:m
     % [19] Thrust deduction, 1-t                             (-)
     
     MSWakeFraction = 1-((A{k}(1,36)+A{k}(1,37))/2);
-    %FSWakeFraction = (MSWakeFraction*(FSCF/MSCF))+(MSThrustDed+0.04)*(1-(FSCF/MSCF));
-    FSWakeFraction = (MSWakeFraction*(FSCF/MSCF));
+    if enableWakeScalingRudderComp == 1
+        FSWakeFraction = (MSWakeFraction*(FSCF/MSCF))+(MSThrustDed+0.04)*(1-(FSCF/MSCF));
+    else
+        FSWakeFraction = (MSWakeFraction*(FSCF/MSCF));
+    end
     fullScaleDataArray(k,16) = FSWakeFraction;
     fullScaleDataArray(k,17) = 1-FSWakeFraction;
     fullScaleDataArray(k,18) = MSThrustDed;
@@ -2234,7 +2263,7 @@ end
 %# ************************************************************************
 
 %# Plotting Overall propulsive efficiency, nD -----------------------------
-figurename = 'Plot 4: Full Scale Extrapolation: Propulsive Efficiency';
+figurename = 'Plot 5: Full Scale Extrapolation: Propulsive Efficiency';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -2378,7 +2407,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Full_Scale_Overall_Propulsive_Efficiency_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_5_FS_Overall_Propulsive_Efficiency_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -2389,7 +2418,7 @@ end
 %# ************************************************************************
 
 %# Plotting power ---------------------------------------------------------
-figurename = 'Plot 5: Full Scale Extrapolation: Power for Single Demi Hull';
+figurename = 'Plot 6: Full Scale Extrapolation: Power for Single Demi Hull';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -2568,7 +2597,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Full_Scale_Power_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_6_FS_Power_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -2579,7 +2608,7 @@ end
 %# ************************************************************************
 
 %# Plotting speed ---------------------------------------------------------
-figurename = 'Plot 6: Full Scale Extrapolation: Jet and Inlet Velocity';
+figurename = 'Plot 7: Full Scale Extrapolation: Jet and Inlet Velocity';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -2721,18 +2750,210 @@ if enablePlotMainTitle == 1
 end
 
 %# Save plots as PDF, PNG and EPS -----------------------------------------
-minRun = min(resultsArraySPP(:,1));
-maxRun = max(resultsArraySPP(:,1));
 % Enable renderer for vector graphics output
 set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Full_Scale_Speed_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_7_FS_Speed_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
 
+
+%# ************************************************************************
+%# 4. Comparison Delivered Power to Sea Trials Data
+%# ************************************************************************
+
+%# Plotting speed ---------------------------------------------------------
+figurename = 'Plot 8: Comparison Delivered Power to Corrected Sea Trials Data';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Paper size settings ----------------------------------------------------
+
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 14;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 11;
+setLineWidthMarker = 2;
+setLineWidth       = 2;
+setLineStyle       = '-';
+
+%# Delivered Power vs. Ship Speed /////////////////////////////////////////
+subplot(1,1,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+x = SeaTrialsCorrectedPower(:,1);
+y = SeaTrialsCorrectedPower(:,3);
+
+% Fitting curve through sea trials delivered power
+fitobject = fit(x,y,'poly5');
+cvalues = coeffvalues(fitobject);
+
+% Sea Trials Data
+fittingSpeeds = [13:1:25];
+[mfs,nfs] = size(fittingSpeeds);
+delpowerMW = [];
+for k=1:nfs
+    actSpeed = fittingSpeeds(k);
+    delpowerMW(k) = cvalues(1)*actSpeed^5+cvalues(2)*actSpeed^4+cvalues(3)*actSpeed^3+cvalues(4)*actSpeed^2+cvalues(5)*actSpeed+cvalues(6);
+end
+xst  = fittingSpeeds;
+yst  = delpowerMW;
+
+% Measured data (Port+Stbd)*2 for two demi hulls
+activeArray = fullScaleDataArray;
+[ma,na] = size(activeArray);
+delpowerMW = [];
+for k=1:ma
+    delpowerMW(k) = ((activeArray(k,42)+activeArray(k,43))*2)/1000^2;
+end
+x  = fullScaleDataArray(:,3);
+y  = delpowerMW';
+%e1  = std(y1)*ones(size(x1));
+
+% Polynomial fit through points for m-th order least-squares regression analysis
+% See: http://stats.stackexchange.com/questions/56596/finding-uncertainty-in-coefficients-from-polyfit-in-matlab
+[p,S,mu]   = polyfit(x,y,4);
+[y2,delta] = polyval(p,x,S,mu);
+
+% MANUAL OVERWRITE (TEST): Calculated STD based on Ca=0 to 0.00059 investigation
+% TODO: How TF do I automate STD for error bars!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+delta = [0.186991398,0.237835128,0.296591541,0.342472228,0.431336445,0.521195046,0.611589281,0.720579588,0.855983868]';
+
+%# Plotting ---------------------------------------------------------------
+h = plot(xst,yst,'-',x,y,'*');
+hold on;
+h1 = errorbar(x,y,delta,'k');
+xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Total delivered power, P_{D} (MW)}','FontSize',setGeneralFontSize);
+if enablePlotTitle == 1
+    title('{\bf Catamaran (i.e. two demi hulls)}','FontSize',setGeneralFontSize);
+end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(2),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h1,'marker','+');
+set(h1,'linestyle','none');
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 13;
+maxX  = 25;
+incrX = 1;
+minY  = 0;
+maxY  = 18;
+incrY = 2;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+%set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
+
+%# Legend
+%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+hleg1 = legend('Corrected Power (Sea Trials)','Measured delivered power, P_{D}');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title -------------------------------------------------------------
+%if enablePlotMainTitle == 1
+annotation('textbox', [0 0.9 1 0.1], ...
+    'String', strcat('{\bf ', figurename, '}'), ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center');
+%end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_8_FS_Comparison_PD_to_Sea_Trials_Data_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
 
 %# ************************************************************************
 %# START Write results to CVS
@@ -2765,4 +2986,6 @@ dlmwrite('fullScaleDataArray.txt', M, 'delimiter', '\t', 'precision', 4)    % Ex
 % -------------------------------------------------------------------------
 % View profile
 % -------------------------------------------------------------------------
-%profile viewer
+if enableProfiler == 1
+    profile viewer
+end
