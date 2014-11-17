@@ -1,5 +1,5 @@
 %# ------------------------------------------------------------------------
-%# Self-Propulsion Test Analysis: Result COmparison
+%# Self-Propulsion Test Analysis: Result Comparison (dfferent wake fractions)
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
