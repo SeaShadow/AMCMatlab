@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 17, 2014
+%# Date       :  November 18, 2014
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -49,7 +49,6 @@ enableA4PaperSizePlot   = 0;    % Show plots scale to A4 size
 % Special plot switches
 enableTextOnPlot        = 0;    % Show equation of fit text on plot
 enableAvgPortStbdPlot   = 0;    % Show averaged port and stbd curve
-enableEqnOfFitPlot      = 1;    % Show equations of fit
 
 % Check if Curve Fitting Toolbox is installed
 % See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
@@ -92,7 +91,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# START Read results DAT file
 %# ------------------------------------------------------------------------
 if exist('resultsArray_copy.dat', 'file') == 2
-    %# Results array columns:
+    %# Results columns:
     %[1]  Run No.
     %[2]  FS                                                        (Hz)
     %[3]  No. of samples                                            (-)
@@ -113,9 +112,7 @@ if exist('resultsArray_copy.dat', 'file') == 2
     %[17] Mass flow rate (mean, 1s intervals)                       (Kg/s)
     %[18] Mass flow rate (overall, Q/t)                             (Kg/s)
     %[19] Diff. mass flow rate (mean, 1s intervals)/(overall, Q/t)  (%)
-    
     results = csvread('resultsArray_copy.dat');
-    
     %# Remove zero rows
     results(all(results==0,2),:)=[];
 else
@@ -178,9 +175,9 @@ end
 %# ************************************************************************
 
 
-%# ------------------------------------------------------------------------
-%# Set run numbers based on conditions
-%# ------------------------------------------------------------------------
+%# ************************************************************************
+%# 0. Set run numbers based on conditions
+%# ************************************************************************
 
 %# Array size -------------------------------------------------------------
 
@@ -211,15 +208,18 @@ if exist('June2013FRMT.mat', 'file') == 2
     June13Stbd = June2013FRMT(12:22,:);
     June13Comb = June2013FRMT(23:33,:);
 else
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    disp('WARNING: Required data file for June 2013 Flow Rate Measurement Test (June2013FRMT.mat) does not exist!');
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('WARNING: Required data file (June2013FRMT.mat) does not exist!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     break;
 end
 
-%# Averaging port and stbd repeated runs ----------------------------------
 
-%# Columns:
+%# ************************************************************************
+%# 1. Averaging port and stbd repeated runs
+%# ************************************************************************
+
+%# AvgPortArray and AvgStbdArray columns:
 %[1]  Set shaft speed                       (RPM)
 %[2]  Prop. system                          (1 = Port, 2 = Stbd)
 %[3]  Measured shaft Speed STBD             (RPM)
@@ -240,54 +240,54 @@ end
 %[17] Mass flow rate (overall, Q/t)         (Kg/s)
 
 %# PORT (averaged repeated runs) ------------------------------------------
-portAvgArray = [];
-portAvgArray = [portAvgArray;stats_avg(1,800,results(8,:))];
-portAvgArray = [portAvgArray;stats_avg(1,1000,results(9:11,:))];
-portAvgArray = [portAvgArray;stats_avg(1,1200,results([12 16],:))];
-portAvgArray = [portAvgArray;stats_avg(1,1400,results([13:15 17],:))];
-portAvgArray = [portAvgArray;stats_avg(1,1600,results(18,:))];
-portAvgArray = [portAvgArray;stats_avg(1,1800,results(19:21,:))];
-portAvgArray = [portAvgArray;stats_avg(1,2000,results(22,:))];
-portAvgArray = [portAvgArray;stats_avg(1,2200,results(23:25,:))];
-portAvgArray = [portAvgArray;stats_avg(1,2400,results(26,:))];
-portAvgArray = [portAvgArray;stats_avg(1,2600,results(27:29,:))];
-portAvgArray = [portAvgArray;stats_avg(1,2800,results(30,:))];
-portAvgArray = [portAvgArray;stats_avg(1,3000,results(31:33,:))];
-portAvgArray = [portAvgArray;stats_avg(1,3200,results(34,:))];
-portAvgArray = [portAvgArray;stats_avg(1,3400,results(35:37,:))];
+AvgPortArray      = [];
+AvgPortArray = [AvgPortArray;stats_avg(1,800,results(8,:))];
+AvgPortArray = [AvgPortArray;stats_avg(1,1000,results(9:11,:))];
+AvgPortArray = [AvgPortArray;stats_avg(1,1200,results([12 16],:))];
+AvgPortArray = [AvgPortArray;stats_avg(1,1400,results([13:15 17],:))];
+AvgPortArray = [AvgPortArray;stats_avg(1,1600,results(18,:))];
+AvgPortArray = [AvgPortArray;stats_avg(1,1800,results(19:21,:))];
+AvgPortArray = [AvgPortArray;stats_avg(1,2000,results(22,:))];
+AvgPortArray = [AvgPortArray;stats_avg(1,2200,results(23:25,:))];
+AvgPortArray = [AvgPortArray;stats_avg(1,2400,results(26,:))];
+AvgPortArray = [AvgPortArray;stats_avg(1,2600,results(27:29,:))];
+AvgPortArray = [AvgPortArray;stats_avg(1,2800,results(30,:))];
+AvgPortArray = [AvgPortArray;stats_avg(1,3000,results(31:33,:))];
+AvgPortArray = [AvgPortArray;stats_avg(1,3200,results(34,:))];
+AvgPortArray = [AvgPortArray;stats_avg(1,3400,results(35:37,:))];
 
 %# STBD (averaged repeated runs) ------------------------------------------
-stbdAvgArray = [];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,800,results(40,:))];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,1000,results([38 41:43],:))];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,1200,results(44,:))];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,1400,results(45:47,:))];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,1600,results(48,:))];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,1800,results(49:51,:))];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,2000,results([39 52],:))];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,2200,results(53:55,:))];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,2400,results(56,:))];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,2600,results(57:59,:))];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,2800,results(60,:))];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,3000,results(61:63,:))];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,3200,results(64,:))];
-stbdAvgArray = [stbdAvgArray;stats_avg(2,3400,results(65:67,:))];
+AvgStbdArray = [];
+AvgStbdArray = [AvgStbdArray;stats_avg(2,800,results(40,:))];
+AvgStbdArray = [AvgStbdArray;stats_avg(2,1000,results([38 41:43],:))];
+AvgStbdArray = [AvgStbdArray;stats_avg(2,1200,results(44,:))];
+AvgStbdArray = [AvgStbdArray;stats_avg(2,1400,results(45:47,:))];
+AvgStbdArray = [AvgStbdArray;stats_avg(2,1600,results(48,:))];
+AvgStbdArray = [AvgStbdArray;stats_avg(2,1800,results(49:51,:))];
+AvgStbdArray = [AvgStbdArray;stats_avg(2,2000,results([39 52],:))];
+AvgStbdArray = [AvgStbdArray;stats_avg(2,2200,results(53:55,:))];
+AvgStbdArray = [AvgStbdArray;stats_avg(2,2400,results(56,:))];
+AvgStbdArray = [AvgStbdArray;stats_avg(2,2600,results(57:59,:))];
+AvgStbdArray = [AvgStbdArray;stats_avg(2,2800,results(60,:))];
+AvgStbdArray = [AvgStbdArray;stats_avg(2,3000,results(61:63,:))];
+AvgStbdArray = [AvgStbdArray;stats_avg(2,3200,results(64,:))];
+AvgStbdArray = [AvgStbdArray;stats_avg(2,3400,results(65:67,:))];
 
 %# Averaged mean runs -----------------------------------------------------
-stbdportAvgArray = [];
+stbdAvgPortArray = [];
 
-[mpaa,npaa] = size(portAvgArray);
-[msaa,nsaa] = size(stbdAvgArray);
+[mpaa,npaa] = size(AvgPortArray);
+[msaa,nsaa] = size(AvgStbdArray);
 
-% Brake script averaged arrays are not the same size
+% Brake script when averaged arrays are not the same size
 if mpaa ~= msaa
     disp('----------------------------------------------------');
-    disp('portAvgArray and stbdAvgArray are not the same size!');
+    disp('AvgPortArray and AvgStbdArray are not the same size!');
     disp('----------------------------------------------------');
     break;
 end
 
-% Average portAvgArray and stbdAvgArray arrays ----------------------------
+% Average AvgPortArray and AvgStbdArray arrays ----------------------------
 
 %# Columns:
 %[1]  Set shaft speed                       (RPM)
@@ -295,28 +295,205 @@ end
 %[3]  Mass Flow rate                        (Kg/s)
 %[4]  Kiel probe                            (V)
 %[5]  Torque                                (Nm)
-%[6]  Volumetric flow rate                  (m3/s)
+%[6]  Volumetric flow rate                  (m^3/s)
 %[7]  Flow coefficient                      (-)
 %[8]  Jet velocity                          (m/s)
 
 for k=1:mpaa
-    stbdportAvgArray(k,1) = mean([stbdAvgArray(k,1) portAvgArray(k,1)]);
-    stbdportAvgArray(k,2) = round(mean([stbdAvgArray(k,3) portAvgArray(k,4)]));
-    stbdportAvgArray(k,3) = mean([stbdAvgArray(k,5) portAvgArray(k,5)]);
-    stbdportAvgArray(k,4) = mean([stbdAvgArray(k,6) portAvgArray(k,7)]);
-    stbdportAvgArray(k,5) = mean([stbdAvgArray(k,10) portAvgArray(k,11)]);
-    stbdportAvgArray(k,6) = mean([stbdAvgArray(k,12) portAvgArray(k,12)]);
-    stbdportAvgArray(k,7) = mean([stbdAvgArray(k,13) portAvgArray(k,13)]);
-    stbdportAvgArray(k,8) = mean([stbdAvgArray(k,14) portAvgArray(k,14)]);
+    stbdAvgPortArray(k,1) = mean([AvgStbdArray(k,1) AvgPortArray(k,1)]);
+    stbdAvgPortArray(k,2) = round(mean([AvgStbdArray(k,3) AvgPortArray(k,4)]));
+    stbdAvgPortArray(k,3) = mean([AvgStbdArray(k,5) AvgPortArray(k,5)]);
+    stbdAvgPortArray(k,4) = mean([AvgStbdArray(k,6) AvgPortArray(k,7)]);
+    stbdAvgPortArray(k,5) = mean([AvgStbdArray(k,10) AvgPortArray(k,11)]);
+    stbdAvgPortArray(k,6) = mean([AvgStbdArray(k,12) AvgPortArray(k,12)]);
+    stbdAvgPortArray(k,7) = mean([AvgStbdArray(k,13) AvgPortArray(k,13)]);
+    stbdAvgPortArray(k,8) = mean([AvgStbdArray(k,14) AvgPortArray(k,14)]);
 end
 
-%# ------------------------------------------------------------------------
-%# Plot kiel probe voltage against mass flow rate
-%# ------------------------------------------------------------------------
+
+%# ************************************************************************
+%# 2. Descriptive statistics for repeated runs
+%# ************************************************************************
+
+% Empty array
+repeatedRunsDescStatArray = [];
+
+%# repeatedRunsDescStatArray columns:
+
+%# PORT: MASS FLOW RATE ///////////////////////////////////////////////////
+
+% MFR (1s only) 
+%[1]  Min                                   (Kg/s)
+%[2]  Max                                   (Kg/s)
+%[3]  Mean (or average)                     (Kg/s)
+%[4]  Variance                              (Kg/s)
+%[5]  Standard deviation                    (-)
+
+% MFR (mean, 1s intervals)
+%[6]  Min                                   (Kg/s)
+%[7]  Max                                   (Kg/s)
+%[8]  Mean (or average)                     (Kg/s)
+%[9]  Variance                              (Kg/s)
+%[10] Standard deviation                    (-)
+
+% MFR (overall, Q/t)
+%[11] Min                                   (Kg/s)
+%[12] Max                                   (Kg/s)
+%[13] Mean (or average)                     (Kg/s)
+%[14] Variance                              (Kg/s)
+%[15] Standard deviation                    (-)
+
+%# STBD: MASS FLOW RATE ///////////////////////////////////////////////////
+
+% MFR (1s only) 
+%[16] Min                                   (Kg/s)
+%[17] Max                                   (Kg/s)
+%[18] Mean (or average)                     (Kg/s)
+%[19] Variance                              (Kg/s)
+%[20] Standard deviation                    (-)
+
+% MFR (mean, 1s intervals)
+%[21] Min                                   (Kg/s)
+%[22] Max                                   (Kg/s)
+%[23] Mean (or average)                     (Kg/s)
+%[24] Variance                              (Kg/s)
+%[25] Standard deviation                    (-)
+
+% MFR (overall, Q/t)
+%[26] Min                                   (Kg/s)
+%[27] Max                                   (Kg/s)
+%[28] Mean (or average)                     (Kg/s)
+%[29] Variance                              (Kg/s)
+%[30] Standard deviation                    (-)
+
+% PORT: KIEL PROBE ////////////////////////////////////////////////////////
+%[31] Min                                   (V)
+%[32] Max                                   (V)
+%[33] Mean (or average)                     (V)
+%[34] Variance                              (V)
+%[35] Standard deviation                    (-)
+
+% STBD: KIEL PROBE ////////////////////////////////////////////////////////
+%[36] Min                                   (V)
+%[37] Max                                   (V)
+%[38] Mean (or average)                     (V)
+%[39] Variance                              (V)
+%[40] Standard deviation                    (-)
+
+% PORT
+sortedByRPMPortArray = [];
+sortedByRPMPortArray{1}  = results(8,:);
+sortedByRPMPortArray{2}  = results(9:11,:);
+sortedByRPMPortArray{3}  = results([12 16],:);
+sortedByRPMPortArray{4}  = results([13:15 17],:);
+sortedByRPMPortArray{5}  = results(18,:);
+sortedByRPMPortArray{6}  = results(19:21,:);
+sortedByRPMPortArray{7}  = results(22,:);
+sortedByRPMPortArray{8}  = results(23:25,:);
+sortedByRPMPortArray{9}  = results(26,:);
+sortedByRPMPortArray{10} = results(27:29,:);
+sortedByRPMPortArray{11} = results(30,:);
+sortedByRPMPortArray{12} = results(31:33,:);
+sortedByRPMPortArray{13} = results(34,:);
+sortedByRPMPortArray{14} = results(35:37,:);
+sortedByRPMPortArray     = sortedByRPMPortArray';
+
+% STBD
+sortedByRPMStbdArray = [];
+sortedByRPMStbdArray{1}  = results(40,:);
+sortedByRPMStbdArray{2}  = results([38 41:43],:);
+sortedByRPMStbdArray{3}  = results(44,:);
+sortedByRPMStbdArray{4}  = results(45:47,:);
+sortedByRPMStbdArray{5}  = results(48,:);
+sortedByRPMStbdArray{6}  = results(49:51,:);
+sortedByRPMStbdArray{7}  = results([39 52],:);
+sortedByRPMStbdArray{8}  = results(53:55,:);
+sortedByRPMStbdArray{9}  = results(56,:);
+sortedByRPMStbdArray{10} = results(57:59,:);
+sortedByRPMStbdArray{11} = results(60,:);
+sortedByRPMStbdArray{12} = results(61:63,:);
+sortedByRPMStbdArray{13} = results(64,:);
+sortedByRPMStbdArray{14} = results(65:67,:);
+sortedByRPMStbdArray     = sortedByRPMStbdArray';
+
+% Loop
+for k=1:14
+    %# PORT: MASS FLOW RATE ///////////////////////////////////////////////
+    
+    % MFR (1s only)
+    dataset = sortedByRPMPortArray{k}(:,16);
+    repeatedRunsDescStatArray(k, 1)  = min(dataset);
+    repeatedRunsDescStatArray(k, 2)  = max(dataset);
+    repeatedRunsDescStatArray(k, 3)  = mean(dataset);
+    repeatedRunsDescStatArray(k, 4)  = var(dataset,1);
+    repeatedRunsDescStatArray(k, 5)  = std(dataset,1);
+    
+    % MFR (mean, 1s intervals) 
+    dataset = sortedByRPMPortArray{k}(:,17);
+    repeatedRunsDescStatArray(k, 6)  = min(dataset);
+    repeatedRunsDescStatArray(k, 7)  = max(dataset);
+    repeatedRunsDescStatArray(k, 8)  = mean(dataset);
+    repeatedRunsDescStatArray(k, 9)  = var(dataset,1);
+    repeatedRunsDescStatArray(k, 10) = std(dataset,1);
+    
+    % MFR (overall, Q/t) 
+    dataset = sortedByRPMPortArray{k}(:,18);
+    repeatedRunsDescStatArray(k, 11) = min(dataset);
+    repeatedRunsDescStatArray(k, 12) = max(dataset);
+    repeatedRunsDescStatArray(k, 13) = mean(dataset);
+    repeatedRunsDescStatArray(k, 14) = var(dataset,1);
+    repeatedRunsDescStatArray(k, 15) = std(dataset,1);
+    
+    %# STBD: MASS FLOW RATE ///////////////////////////////////////////////
+    
+    % MFR (1s only)
+    dataset = sortedByRPMStbdArray{k}(:,16);
+    repeatedRunsDescStatArray(k, 16) = min(dataset);
+    repeatedRunsDescStatArray(k, 17) = max(dataset);
+    repeatedRunsDescStatArray(k, 18) = mean(dataset);
+    repeatedRunsDescStatArray(k, 19) = var(dataset,1);
+    repeatedRunsDescStatArray(k, 20) = std(dataset,1);
+    
+    % MFR (mean, 1s intervals) 
+    dataset = sortedByRPMStbdArray{k}(:,17);
+    repeatedRunsDescStatArray(k, 21) = min(dataset);
+    repeatedRunsDescStatArray(k, 22) = max(dataset);
+    repeatedRunsDescStatArray(k, 23) = mean(dataset);
+    repeatedRunsDescStatArray(k, 25) = var(dataset,1);
+    repeatedRunsDescStatArray(k, 25) = std(dataset,1);
+    
+    % MFR (overall, Q/t) 
+    dataset = sortedByRPMStbdArray{k}(:,18);
+    repeatedRunsDescStatArray(k, 26) = min(dataset);
+    repeatedRunsDescStatArray(k, 27) = max(dataset);
+    repeatedRunsDescStatArray(k, 28) = mean(dataset);
+    repeatedRunsDescStatArray(k, 29) = var(dataset,1);
+    repeatedRunsDescStatArray(k, 30) = std(dataset,1);
+    
+    %# PORT: KIEL PROBE ///////////////////////////////////////////////////
+    dataset = sortedByRPMPortArray{k}(:,7);
+    repeatedRunsDescStatArray(k, 31) = min(dataset);
+    repeatedRunsDescStatArray(k, 32) = max(dataset);
+    repeatedRunsDescStatArray(k, 33) = mean(dataset);
+    repeatedRunsDescStatArray(k, 34) = var(dataset,1);
+    repeatedRunsDescStatArray(k, 35) = std(dataset,1);
+    
+    %# STBD: KIEL PROBE ///////////////////////////////////////////////////
+    dataset = sortedByRPMStbdArray{k}(:,8);
+    repeatedRunsDescStatArray(k, 36) = min(dataset);
+    repeatedRunsDescStatArray(k, 37) = max(dataset);
+    repeatedRunsDescStatArray(k, 38) = mean(dataset);
+    repeatedRunsDescStatArray(k, 39) = var(dataset,1);
+    repeatedRunsDescStatArray(k, 40) = std(dataset,1);
+end
+
+
+%# ************************************************************************
+%# 3. Plot kiel probe voltage against mass flow rate
+%# ************************************************************************
 
 %# Plotting gross thrust vs. towing force
 figurename = 'Flow Rate Measurement Test: Kiel Probe Voltage vs. Mass Flow Rate';
-%figurename = sprintf('%s:: RPM Logger (Raw Data), Run %s', testName, num2str(runno));
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ------------------------------------------------
@@ -373,6 +550,9 @@ setLineStyle2      = '-.';
 setLineStyle3      = ':';
 setLineStyle4      = '--';
 
+%# Subplot #1 -------------------------------------------------------------
+%subplot(1,1,1);
+
 % X and Y values ----------------------------------------------------------
 
 % Port (June 2013)
@@ -384,17 +564,17 @@ xStbd13 = June13Stbd(:,4);
 yStbd13 = June13Stbd(:,3);
 
 % Port (Sept. 2014)
-xPort14 = portAvgArray(:,7);
-yPort14 = portAvgArray(:,5);
+xPort14 = AvgPortArray(:,7);
+yPort14 = AvgPortArray(:,5);
 
 % Stbd (Sept. 2014)
-xStbd14 = stbdAvgArray(:,6);
-yStbd14 = stbdAvgArray(:,5);
+xStbd14 = AvgStbdArray(:,6);
+yStbd14 = AvgStbdArray(:,5);
 
 % Port and Stbd averaged (Sept. 2014)
 if enableAvgPortStbdPlot == 1
-    xPortStbdAvg14 = stbdportAvgArray(:,4);
-    yPortStbdAvg14 = stbdportAvgArray(:,3);
+    xPortStbdAvg14 = stbdAvgPortArray(:,4);
+    yPortStbdAvg14 = stbdAvgPortArray(:,3);
 end
 
 % Equation of fit
@@ -525,7 +705,9 @@ if enableAvgPortStbdPlot == 1
     end
 end
 
-% Display in command window -----------------------------------------------
+%# ************************************************************************
+%# Display in command window
+%# ************************************************************************
 
 % Set number of decimals in command window output
 if enableCurveFittingToolboxPlot == 1
@@ -866,124 +1048,146 @@ end
 
 % Plotting ----------------------------------------------------------------
 if enableCurveFittingToolboxPlot == 1
+    % Port (June 2013)
+    h = plot(xPort13,yPort13,'*');
+    legendInfo{1} = 'Port (June 2013)';
+    set(h(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    hold on;
+    % Fit
+    h = plot(fitobject1,'-.');
+    legendInfo{2} = 'Port (June 2013) Fit';
+    set(h(1),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    hold on;
+    
+    % Stbd (June 2013)
+    h = plot(xStbd13,yStbd13,'*');
+    legendInfo{3} = 'Stbd (June 2013)';
+    set(h(1),'Color',setColor{5},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    hold on;
+    % Fit
+    h = plot(fitobject2,'-.');
+    legendInfo{4} = 'Stbd (June 2013) Fit';
+    set(h(1),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    hold on;
+    
+    % Port (Sept. 2014)
+    h = plot(xPort14,yPort14,'*');
+    legendInfo{5} = 'Port (Sept. 2014)';
+    set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    hold on;
+    % Fit
+    h = plot(fitobject3,'-.');
+    legendInfo{6} = 'Port (Sept. 2014) Fit';
+    set(h(1),'Color',setColor{10},'LineStyle',setLineStyle3,'linewidth',setLineWidth);
+    hold on;
+    
+    % Stbd (Sept. 2014)
+    h = plot(xStbd14,yStbd14,'*');
+    legendInfo{7} = 'Stbd (Sept. 2014)';
+    set(h(1),'Color',setColor{3},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    hold on;
+    % Fit
+    h = plot(fitobject4,'-.');
+    legendInfo{8} = 'Stbd (Sept. 2014) Fit';
+    set(h(1),'Color',setColor{10},'LineStyle',setLineStyle4,'linewidth',setLineWidth);
+    hold on;
+    
+    % Averaged Port and Stbd (Sept. 2014)
     if enableAvgPortStbdPlot == 1
-        % Port (June 2013)
-        h = plot(xPort13,yPort13,'*');
-        legendInfo{1} = 'Port (June 2013)';
-        set(h(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-        hold on;
-        h = plot(fitobject1,'-.');
-        legendInfo{2} = 'Port (June 2013) Fit';
-        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-        hold on;
-        
-        % Stbd (June 2013)
-        h = plot(xStbd13,yStbd13,'*');
-        legendInfo{3} = 'Stbd (June 2013)';
-        set(h(1),'Color',setColor{5},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-        hold on;
-        h = plot(fitobject2,'-.');
-        legendInfo{4} = 'Stbd (June 2013) Fit';
-        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
-        hold on;
-        
-        % Port (Sept. 2014)
-        h = plot(xPort14,yPort14,'*');
-        legendInfo{5} = 'Port (Sept. 2014)';
-        set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-        hold on;
-        h = plot(fitobject3,'-.');
-        legendInfo{6} = 'Port (Sept. 2014) Fit';
-        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle3,'linewidth',setLineWidth);
-        hold on;
-        
-        % Stbd (Sept. 2014)
-        h = plot(xStbd14,yStbd14,'*');
-        legendInfo{7} = 'Stbd (Sept. 2014)';
-        set(h(1),'Color',setColor{3},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-        hold on;
-        h = plot(fitobject4,'-.');
-        legendInfo{8} = 'Stbd (Sept. 2014) Fit';
-        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle4,'linewidth',setLineWidth);
-        hold on;
-        
-        % Port and Stbd averaged (Sept. 2014)
         h = plot(xPortStbdAvg14,yPortStbdAvg14,'*');
-        legendInfo{9} = 'Port and Stbd averaged (Sept. 2014)';
+        legendInfo{9} = 'Averaged (Sept. 2014)';
         set(h(1),'Color',setColor{6},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         hold on;
+        % Fit
         h = plot(fitobject5,'-');
-        legendInfo{10} = 'Port and Stbd averaged (Sept. 2014) Fit';
-        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth1);
-    else
-        % Port (June 2013)
-        h = plot(xPort13,yPort13,'*');
-        legendInfo{1} = 'Port (June 2013)';
-        set(h(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-        hold on;
-        h = plot(fitobject1,'-.');
-        legendInfo{2} = 'Port (June 2013) Fit';
-        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-        hold on;
-        
-        % Stbd (June 2013)
-        h = plot(xStbd13,yStbd13,'*');
-        legendInfo{3} = 'Stbd (June 2013)';
-        set(h(1),'Color',setColor{5},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-        hold on;
-        h = plot(fitobject2,'-.');
-        legendInfo{4} = 'Stbd (June 2013) Fit';
-        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
-        hold on;
-        
-        % Port (Sept. 2014)
-        h = plot(xPort14,yPort14,'*');
-        legendInfo{5} = 'Port (Sept. 2014)';
-        set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-        hold on;
-        h = plot(fitobject3,'-.');
-        legendInfo{6} = 'Port (Sept. 2014) Fit';
-        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle3,'linewidth',setLineWidth);
-        hold on;
-        
-        % Stbd (Sept. 2014)
-        h = plot(xStbd14,yStbd14,'*');
-        legendInfo{7} = 'Stbd (Sept. 2014)';
-        set(h(1),'Color',setColor{3},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-        hold on;
-        h = plot(fitobject4,'-.');
-        legendInfo{8} = 'Stbd (Sept. 2014) Fit';
-        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle4,'linewidth',setLineWidth);
+        legendInfo{10} = 'Averaged (Sept. 2014) Fit';
+        set(h(1),'Color',setColor{6},'LineStyle','--','LineWidth',setLineWidth);
     end
+    
+    % Error Bars: Port (Sept. 2014)
+    hold on;
+    delta = repeatedRunsDescStatArray(:,5);
+    h1    = errorbar(xPort14,yPort14,delta,'k');
+    set(h1,'marker','+');
+    set(h1,'linestyle','none');
+    hold on;
+    
+    % Error Stbd: Port (Sept. 2014)
+    hold on;
+    delta = repeatedRunsDescStatArray(:,20);
+    h1    = errorbar(xStbd14,yStbd14,delta,'k');
+    set(h1,'marker','+');
+    set(h1,'linestyle','none');
 else
+    % Port (June 2013)
+    h = plot(xPort13,yPort13,'*');
+    legendInfo{1} = 'Port (June 2013)';
+    set(h(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    hold on;
+    % Fit
+    h = plot(xPort13,pvPort13,'-.');
+    legendInfo{2} = 'Port (June 2013) Fit';
+    set(h(1),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    hold on;
+    
+    % Stbd (June 2013)
+    h = plot(xStbd13,yStbd13,'*');
+    legendInfo{3} = 'Stbd (June 2013)';
+    set(h(1),'Color',setColor{5},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    hold on;
+    % Fit
+    h = plot(xStbd13,pvStbd13,'-.');
+    legendInfo{4} = 'Stbd (June 2013) Fit';
+    set(h(1),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    hold on;
+    
+    % Port (Sept. 2014)
+    h = plot(xPort14,yPort14,'*');
+    legendInfo{5} = 'Port (Sept. 2014)';
+    set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    % Fit
+    hold on;
+    h = plot(xPort14,pvPort14,'-.');
+    legendInfo{6} = 'Port (Sept. 2014) Fit';
+    set(h(1),'Color',setColor{10},'LineStyle',setLineStyle3,'linewidth',setLineWidth);
+    
+    % Stbd (Sept. 2014)
+    h = plot(xStbd14,yStbd14,'*');
+    legendInfo{7} = 'Stbd (Sept. 2014)';
+    set(h(1),'Color',setColor{3},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    % Fit
+    hold on;
+    h = plot(xStbd14,pvStbd14,'-.');
+    legendInfo{8} = 'Stbd (Sept. 2014) Fit';
+    set(h(1),'Color',setColor{10},'LineStyle',setLineStyle4,'linewidth',setLineWidth);
+    
+    % Averaged Port and Stbd (Sept. 2014)
     if enableAvgPortStbdPlot == 1
-        h1 = plot(xPort13,yPort13,setMarker{1},...
-            xStbd13,yStbd13,setMarker{2},...
-            xPort14,yPort14,setMarker{5},...
-            xStbd14,yStbd14,setMarker{8},...
-            xPortStbdAvg14,yPortStbdAvg14,setMarker{4});
-        if enableEqnOfFitPlot == 1
-            hold on;
-            h2 = plot(xPort13,pvPort13,'-.',...
-                xStbd13,pvStbd13,'-.',...
-                xPort14,pvPort14,'-.',...
-                xStbd14,pvStbd14,'-.',...
-                xPortStbdAvg14,pvPortStbd14,'--');
-        end
-    else
-        h1 = plot(xPort13,yPort13,setMarker{1},...
-            xStbd13,yStbd13,setMarker{2},...
-            xPort14,yPort14,setMarker{5},...
-            xStbd14,yStbd14,setMarker{8});
-        if enableEqnOfFitPlot == 1
-            hold on;
-            h2 = plot(xPort13,pvPort13,'-.',...
-                xStbd13,pvStbd13,'-.',...
-                xPort14,pvPort14,'-.',...
-                xStbd14,pvStbd14,'-.');
-        end
+        h = plot(xPortStbdAvg14,yPortStbdAvg14,'*');
+        legendInfo{9} = 'Averaged (Sept. 2014)';
+        set(h(1),'Color',setColor{6},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        % Fit
+        hold on;
+        h = plot(xPortStbdAvg14,pvPortStbd14,'-.');
+        legendInfo{10} = 'Averaged (Sept. 2014) Fit';
+        set(h(1),'Color',setColor{6},'LineStyle','--','LineWidth',setLineWidth);
     end
-end
+    
+    % Error Bars: Port (Sept. 2014)
+    hold on;
+    delta = repeatedRunsDescStatArray(:,5);
+    h1    = errorbar(xPort14,yPort14,delta,'k');
+    set(h1,'marker','+');
+    set(h1,'linestyle','none');
+    hold on;
+    
+    % Error Bars: Stbd (Sept. 2014)
+    hold on;
+    delta = repeatedRunsDescStatArray(:,20);
+    h1    = errorbar(xStbd14,yStbd14,delta,'k');
+    set(h1,'marker','+');
+    set(h1,'linestyle','none');
+end % enableCurveFittingToolboxPlot
 if enablePlotTitle == 1
     title('{\bf Kiel Probe Output vs. Mass Flow Rate}','FontSize',setGeneralFontSize);
 end
@@ -1006,46 +1210,6 @@ set(gca,'TickDir','in',...
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
 set(gcf,'Color',[1,1,1]);
 
-%# Line, colors and markers -----------------------------------------------
-
-% Port (June 2013)
-if enableCurveFittingToolboxPlot == 0
-    
-    % Overwrite line style
-    setLineStyle = '-.';
-    
-    set(h1(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    if enableEqnOfFitPlot == 1
-        set(h2(1),'Color',setColor{2},'LineStyle',setLineStyle,'LineWidth',setLineWidth);
-    end
-    
-    % Stbd (June 2013)
-    set(h1(2),'Color',setColor{5},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    if enableEqnOfFitPlot == 1
-        set(h2(2),'Color',setColor{5},'LineStyle',setLineStyle,'LineWidth',setLineWidth);
-    end
-    
-    % Port (Sept. 2014)
-    set(h1(3),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    if enableEqnOfFitPlot == 1
-        set(h2(3),'Color',setColor{1},'LineStyle',setLineStyle,'LineWidth',setLineWidth);
-    end
-    
-    % Stbd (Sept. 2014)
-    set(h1(4),'Color',setColor{3},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    if enableEqnOfFitPlot == 1
-        set(h2(4),'Color',setColor{3},'LineStyle',setLineStyle,'LineWidth',setLineWidth);
-    end
-    
-    % Port and Stbd averaged (Sept. 2014)
-    if enableAvgPortStbdPlot == 1
-        set(h1(5),'Color',setColor{6},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-        if enableEqnOfFitPlot == 1
-            set(h2(5),'Color',setColor{6},'LineStyle','--','LineWidth',setLineWidth);
-        end
-    end
-end
-
 %# Text on plot -----------------------------------------------------------
 if enableTextOnPlot == 1
     text(1.5, 1.0, EQoFit1, 'Color', 'k');
@@ -1067,19 +1231,15 @@ set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 %# Legend -----------------------------------------------------------------
 
 %hleg1 = legend('Port (June 2013)','Fit','Starboard (June 2013)','Fit','Port (Sept. 2014)','Fit','Starboard (Sept. 2014)','Fit');
-if enableCurveFittingToolboxPlot == 1
-    hleg1 = legend(legendInfo);
-    legendLoc = 'SouthEast';
-else
-    legendLoc = 'NorthWest';
-    if enableAvgPortStbdPlot == 1
-        hleg1 = legend(h1, 'Port (June 2013)','Starboard (June 2013)','Port (Sept. 2014)','Starboard (Sept. 2014)','Averaged Port/Starboard (Sept. 2014)');
-        legendLoc = 'SouthEast';
-    else
-        hleg1 = legend(h1, 'Port (June 2013)','Starboard (June 2013)','Port (Sept. 2014)','Starboard (Sept. 2014)');
-    end
-end
-set(hleg1,'Location',legendLoc);
+% if enableCurveFittingToolboxPlot == 1
+%     hleg1 = legend(legendInfo);
+%     legendLoc = 'SouthEast';
+% else
+%     hleg1 = legend(legendInfo);
+%     legendLoc = 'NorthWest';
+% end
+hleg1 = legend(legendInfo);
+set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);

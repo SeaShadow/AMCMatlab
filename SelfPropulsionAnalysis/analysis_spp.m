@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 17, 2014
+%# Date       :  November 18, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -2769,18 +2769,7 @@ end
 figurename = 'Plot 8: Comparison Delivered Power to Corrected Sea Trials Data';
 f = figure('Name',figurename,'NumberTitle','off');
 
-%# Font sizes and border --------------------------------------------------
-
-set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-%# ************************************************************************
-%# Save plot as PNG
-%# ************************************************************************
-
-%# Figure size on screen (50% scaled, but same aspect ratio)
-set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-%# Paper size settings ----------------------------------------------------
+%# Paper size settings ------------------------------------------------
 
 if enableA4PaperSizePlot == 1
     set(gcf, 'PaperSize', [19 19]);
@@ -2793,7 +2782,7 @@ if enableA4PaperSizePlot == 1
     set(gcf, 'PaperPosition', [0 0 19 19]);
 end
 
-% Fonts and colours -------------------------------------------------------
+% Fonts and colours ---------------------------------------------------
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
@@ -2868,7 +2857,7 @@ y  = delpowerMW';
 
 % MANUAL OVERWRITE (TEST): Calculated STD based on Ca=0 to 0.00059 investigation
 % TODO: How TF do I automate STD for error bars!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-delta = [0.186991398,0.237835128,0.296591541,0.342472228,0.431336445,0.521195046,0.611589281,0.720579588,0.855983868]';
+delta = [0.19,0.24,0.30,0.34,0.43,0.52,0.61,0.72,0.86,]';
 
 %# Plotting ---------------------------------------------------------------
 h = plot(xst,yst,'-',x,y,'*');

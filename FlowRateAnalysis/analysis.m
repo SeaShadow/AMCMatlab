@@ -2,8 +2,8 @@
 %# Flow Rate Analysis
 %# ------------------------------------------------------------------------
 %# 
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  June 11, 2013
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  November 18, 2014
 %#
 %# Test date  :  June 5-14, 2013
 %# Facility   :  AMC, Model Test Basin (MTB)
