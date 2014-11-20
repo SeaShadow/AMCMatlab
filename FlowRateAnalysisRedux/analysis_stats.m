@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 18, 2014
+%# Date       :  November 20, 2014
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -191,10 +191,17 @@ if m ~= 67
     break;
 end
 
-%# Distinguish between PORT and STBD --------------------------------------
-testRuns = results(1:7,:);
-portRuns = results(8:37,:);
-stbdRuns = results(38:end,:);
+
+%# ************************************************************************
+%# START Distinguish between PORT and STBD
+%# ------------------------------------------------------------------------
+testRuns = 1:7;
+portRuns = 8:37;
+stbdRuns = 38:67;
+%# ------------------------------------------------------------------------
+%# END Distinguish between PORT and STBD
+%# ************************************************************************
+
 
 %# Shaft speeds and repeats -----------------------------------------------
 
@@ -551,7 +558,7 @@ setLineStyle3      = ':';
 setLineStyle4      = '--';
 
 %# Subplot #1 -------------------------------------------------------------
-%subplot(1,1,1);
+subplot(1,1,1);
 
 % X and Y values ----------------------------------------------------------
 

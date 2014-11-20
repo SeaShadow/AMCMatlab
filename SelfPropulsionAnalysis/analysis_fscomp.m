@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 17, 2014
+%# Date       :  November 20, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -130,7 +130,7 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 
 
 %# ************************************************************************
-%# START Full scale results
+%# START Full scale results fullScaleDataArraySetsOriginalFit.dat
 %# ------------------------------------------------------------------------
 if exist('fullScaleDataArraySetsOriginalFit.dat', 'file') == 2
     %# Results array columns:
@@ -146,7 +146,28 @@ else
     break;
 end
 %# ------------------------------------------------------------------------
-%# END Full scale results
+%# END Full scale results fullScaleDataArraySetsOriginalFit.dat
+%# ************************************************************************
+
+
+%# ************************************************************************
+%# START Full scale results fullScaleDataArraySetsAdjustedFit.dat
+%# ------------------------------------------------------------------------
+% if exist('fullScaleDataArraySetsAdjustedFit.dat', 'file') == 2
+%     %# Results array columns:
+%     % See 4. Extrapolation to full scale for column descriptions
+%     fullscaleresults = csvread('fullScaleDataArraySetsAdjustedFit.dat');
+%     [mfsr,nfsr] = size(fullscaleresults);
+%     %# Remove zero rows
+%     fullscaleresults(all(fullscaleresults==0,2),:)=[];
+% else
+%     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+%     disp('WARNING: File fullScaleDataArraySets.dat does not exist!');
+%     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+%     break;
+% end
+%# ------------------------------------------------------------------------
+%# END Full scale results fullScaleDataArraySetsAdjustedFit.dat
 %# ************************************************************************
 
 
@@ -295,7 +316,7 @@ h = plot(xst,yst,'-',x1,y1,'*',x2,y2,'*',x3,y3,'*');
 xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Delivered power, P_{D} (MW)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
-    title('{\bf Two Demi Hulls (Catamaran)}','FontSize',setGeneralFontSize);
+    title('{\bf Catamaran (i.e. two demi hulls)}','FontSize',setGeneralFontSize);
 end
 grid on;
 box on;
@@ -373,7 +394,7 @@ h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*',x5,y5,'*',x6,y6,'*');
 xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Overall propulsive efficiency (-)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
-    title('{\bf Two Demi Hulls (Catamaran)}','FontSize',setGeneralFontSize);
+    title('{\bf Catamaran (i.e. two demi hulls)}','FontSize',setGeneralFontSize);
 end
 grid on;
 box on;
@@ -509,7 +530,7 @@ setLineWidthMarker = 2;
 setLineWidth       = 2;
 setLineStyle       = '-';
 
-%# Velocity Ratios vs. Ship Speed /////////////////////////////////////////
+% Single subplot to allow titles ------------------------------------------
 subplot(1,1,1)
 
 %# X and Y axis -----------------------------------------------------------
@@ -700,7 +721,7 @@ setLineWidthMarker = 2;
 setLineWidth       = 2;
 setLineStyle       = '-';
 
-%# Thrust Deduction vs. Ship Speed ////////////////////////////////////////
+% Single subplot to allow titles ------------------------------------------
 subplot(1,1,1)
 
 %# X and Y axis -----------------------------------------------------------

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 18, 2014
+%# Date       :  November 20, 2014
 %#
 %# Description:  Pumpcurve analysis for different RPM in full scale.
 %#
@@ -348,7 +348,7 @@ M = resultsArrayLJ120EPc;
 %# ************************************************************************
 
 %# Plotting gross thrust vs. towing force
-figurename = 'LJ120E Watejet: Pump Head vs. Volume Flow Rate';
+figurename = 'Plot 1: LJ120E Watejet: Pump Head vs. Volume Flow Rate';
 f  = figure('Name',figurename,'NumberTitle','off');
 hold all;
 ah = gca;
@@ -744,7 +744,7 @@ end
 %# ************************************************************************
 
 %# Plotting gross thrust vs. towing force
-figurename = 'LJ120E Watejet: Pump Efficiency vs. Volume Flow Rate';
+figurename = 'Plot 2: LJ120E Watejet: Pump Efficiency vs. Volume Flow Rate';
 f  = figure('Name',figurename,'NumberTitle','off');
 hold all;
 ah = gca;

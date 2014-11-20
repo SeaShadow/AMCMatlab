@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 18, 2014
+%# Date       :  November 20, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -547,10 +547,10 @@ if exist('resultsArraySPP.dat', 'file') == 0
         %[29] Towing force coefficient, (CFD)                              (-)
         
         % Mass flow rate and jet velocity
-        %[30] PORT: Mass flow rate (pQJ)  (Kg/s)
-        %[31] STBD: Mass flow rate (pQJ)  (Kg/s)
-        %[32] PORT: Mass flow rate (QJ)   (m^3/s)
-        %[33] STBD: Mass flow rate (QJ)   (m^3/s)
+        %[30] PORT: Mass flow rate (pQJ)      (Kg/s)
+        %[31] STBD: Mass flow rate (pQJ)      (Kg/s)
+        %[32] PORT: Volumetric flow rate (QJ) (m^3/s)
+        %[33] STBD: Volumetric flow rate (QJ) (m^3/s)
         
         %[34] PORT: Jet velocity (vj)     (m/s)
         %[35] STBD: Jet velocity (vj)     (m/s)

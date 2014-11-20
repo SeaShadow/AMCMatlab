@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 18, 2014
+%# Date       :  November 20, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -101,7 +101,7 @@ enableNumber2Plot           = 0;    % PD and OPE for Ca=0.00035
 enableNumber3Plot           = 0;    % PD and OPE for Ca=0.00059
 enableNumber4Plot           = 1;    % PD and OPE using ws=wm(CFs/CFm) only
 enableNumber5Plot           = 1;    % PD and OPE using ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
-enableNumber6Plot           = 0;    % Thrust deduction using Ca=0
+enableNumber6Plot           = 1;    % Thrust deduction using Ca=0
 enableNumber7Plot           = 0;    % Barplot showing Differences in results when
                                     % using ws=wm(CFs/CFm) or ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
 

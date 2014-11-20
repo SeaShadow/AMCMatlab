@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 18, 2014
+%# Date       :  November 20, 2014
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -208,10 +208,17 @@ end
 %[8]  Relative intercept error
 %[9]  Channel number
 
-%# Run distinctions
-TestRunArray = [1:7];
-PortRunArray = [8:37];
-StbdRunArray = [38:67];
+
+%# ************************************************************************
+%# START Distinguish between PORT and STBD
+%# ------------------------------------------------------------------------
+TestRunArray = 1:7;
+PortRunArray = 8:37;
+StbdRunArray = 38:67;
+%# ------------------------------------------------------------------------
+%# END Distinguish between PORT and STBD
+%# ************************************************************************
+
 
 %# ////////////////////////////////////////////////////////////////////////
 %# LOOP THROUGH ALL RUN FILES (depending on startRun and endRun settings)
@@ -448,7 +455,7 @@ for k=startRun:endRun
     setGeneralFontName = 'Helvetica';
     setGeneralFontSize = 14;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 12;
+    setLegendFontSize  = 14;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -656,7 +663,7 @@ for k=startRun:endRun
         plotsavename = sprintf('_plots/%s/%s/Run_%s_Time_vs_Mass_and_Time_vs_Kiel_Probe_Plot.%s', '_wave_probe', setFileFormat{kl}, num2str(k), setFileFormat{kl});
         print(gcf, setSaveFormat{kl}, plotsavename);
     end
-    close;
+    %close;
     
     % ---------------------------------------------------------------------
     % END: WAVE PROBE ANALYSIS

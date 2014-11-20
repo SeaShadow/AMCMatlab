@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 18, 2014
+%# Date       :  November 20, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -731,7 +731,7 @@ else
             set(hleg1,'Interpreter','none');
             set(hleg1,'LineWidth',1);
             set(hleg1,'FontSize',setLegendFontSize);
-            legend boxoff;
+            %legend boxoff;
             
             %# Font sizes and border --------------------------------------------------
             
@@ -779,7 +779,7 @@ else
             set(hleg1,'Interpreter','none');
             set(hleg1,'LineWidth',1);
             set(hleg1,'FontSize',setLegendFontSize);
-            legend boxoff;
+            %legend boxoff;
             
             %# Font sizes and border --------------------------------------------------
             
@@ -835,7 +835,7 @@ else
             set(hleg1,'Interpreter','none');
             set(hleg1,'LineWidth',1);
             set(hleg1,'FontSize',setLegendFontSize);
-            legend boxoff;
+            %legend boxoff;
             
             %# Font sizes and border --------------------------------------------------
             
@@ -1038,7 +1038,7 @@ A  = arrayfun(@(x) RA(RA(:,3) == x, :), unique(RA(:,3)), 'uniformoutput', false)
 %# 1. Plot distance from hull vs. speed
 %# ************************************************************************
 
-figurename = sprintf('%s:: Distance from Hull vs. Speed', testName);
+figurename = sprintf('Plot 1: %s:: Distance from Hull vs. Speed', testName);
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -1058,7 +1058,7 @@ end
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
-setLegendFontSize  = 10;
+setLegendFontSize  = 12;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1081,6 +1081,12 @@ if enableBlackAndWhitePlot == 1
     % Black and white curves
     setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
 end
+
+%# Line, colors and markers
+setMarkerSize      = 10;
+setLineWidthMarker = 1;
+setLineWidth       = 1;
+setLineStyle       = '-.';
 
 %# Set plot figure background to a defined color --------------------------
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -1161,6 +1167,9 @@ if enableAveragedRunsPlot1 == 1 || enableAveragedRunsPlot2 == 1
         SpeedFr40Avg(k, 9) = mean(A3{k}(:,14));
     end
 end
+
+% Single subplot to allow titles ------------------------------------------
+subplot(1,1,1)
 
 % X and Y values ----------------------------------------------------------
 
@@ -1247,10 +1256,6 @@ box on;
 axis square;
 
 %# Line, colors and markers
-setMarkerSize      = 10;
-setLineWidthMarker = 1;
-setLineWidth       = 1;
-setLineStyle       = '-.';
 setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
 setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
@@ -1290,7 +1295,7 @@ set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-legend boxoff;
+%legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
@@ -1336,7 +1341,7 @@ end
 %# 2. Plot speed vs. u/U0
 %# ************************************************************************
 
-figurename = sprintf('%s:: Speed vs. u/U0', testName);
+figurename = sprintf('Plot 2: %s:: Speed vs. u/U0', testName);
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -1356,7 +1361,7 @@ end
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
-setLegendFontSize  = 10;
+setLegendFontSize  = 12;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1381,10 +1386,19 @@ if enableBlackAndWhitePlot == 1
 end
 setLineStyle  = {'-';'--';'-.';':';'-';'--';'-.';':';'-';'--'};
 
+%# Line, colors and markers
+setMarkerSize      = 10;
+setLineWidthMarker = 1;
+setLineWidth       = 1;
+%setLineStyle       = '-.';
+
 %# Set plot figure background to a defined color --------------------------
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
 
 set(gcf,'Color',[1,1,1]);
+
+% Single subplot to allow titles ------------------------------------------
+subplot(1,1,1)
 
 % X and Y values ----------------------------------------------------------
 
@@ -1484,10 +1498,6 @@ box on;
 axis square;
 
 %# Line, colors and markers
-setMarkerSize      = 10;
-setLineWidthMarker = 1;
-setLineWidth       = 1;
-%setLineStyle       = '-.';
 setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
 setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
@@ -1543,7 +1553,7 @@ set(hleg1,'Location','SouthEast');
 set(hleg1,'Interpreter','none');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-legend boxoff;
+%legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
