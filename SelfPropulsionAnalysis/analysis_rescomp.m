@@ -101,7 +101,7 @@ enableNumber2Plot           = 0;    % PD and OPE for Ca=0.00035
 enableNumber3Plot           = 0;    % PD and OPE for Ca=0.00059
 enableNumber4Plot           = 1;    % PD and OPE using ws=wm(CFs/CFm) only
 enableNumber5Plot           = 1;    % PD and OPE using ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
-enableNumber6Plot           = 1;    % Thrust deduction using Ca=0
+enableNumber6Plot           = 0;    % Thrust deduction using Ca=0
 enableNumber7Plot           = 0;    % Barplot showing Differences in results when
                                     % using ws=wm(CFs/CFm) or ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
 
@@ -109,6 +109,9 @@ enableNumber7Plot           = 0;    % Barplot showing Differences in results whe
 enableAdjOrNotAdjCurvesPlot = 0;    % If enabled show BOTH adjust and not adjusted graphs
                                     % If disabled show adjusted graph only!
 
+% Enable curves for delivered power (PD) using WJ benchmark data
+enableWJBMDelPowerOPEPlot   = 1;    % Show delivered power calculated using WJBM data
+                                    
 % Check if Curve Fitting Toolbox is installed
 % See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
 v = ver;
@@ -399,6 +402,117 @@ if exist(fsFilename, 'file') == 2
     fsrCond24(all(fsrCond24==0,2),:)=[];
 else
     disp('WARNING: File Cond_24/fullScaleDataArray.dat does not exist!');
+    break;
+end
+
+%# Conditions added 21/11/2014 (using WJ benchmark data): -----------------
+
+% CONDITION 25
+fsFilename = '_result_comparison_data/Cond_25/fullScaleDataArray.dat';
+if exist(fsFilename, 'file') == 2
+    fsrCond25 = csvread(fsFilename);
+    fsrCond25(all(fsrCond25==0,2),:)=[];
+else
+    disp('WARNING: File Cond_25/fullScaleDataArray.dat does not exist!');
+    break;
+end
+% CONDITION 26
+fsFilename = '_result_comparison_data/Cond_26/fullScaleDataArray.dat';
+if exist(fsFilename, 'file') == 2
+    fsrCond26 = csvread(fsFilename);
+    fsrCond26(all(fsrCond26==0,2),:)=[];
+else
+    disp('WARNING: File Cond_26/fullScaleDataArray.dat does not exist!');
+    break;
+end
+% CONDITION 27
+fsFilename = '_result_comparison_data/Cond_27/fullScaleDataArray.dat';
+if exist(fsFilename, 'file') == 2
+    fsrCond27 = csvread(fsFilename);
+    fsrCond27(all(fsrCond27==0,2),:)=[];
+else
+    disp('WARNING: File Cond_27/fullScaleDataArray.dat does not exist!');
+    break;
+end
+% CONDITION 28
+fsFilename = '_result_comparison_data/Cond_28/fullScaleDataArray.dat';
+if exist(fsFilename, 'file') == 2
+    fsrCond28 = csvread(fsFilename);
+    fsrCond28(all(fsrCond28==0,2),:)=[];
+else
+    disp('WARNING: File Cond_28/fullScaleDataArray.dat does not exist!');
+    break;
+end
+% CONDITION 29
+fsFilename = '_result_comparison_data/Cond_29/fullScaleDataArray.dat';
+if exist(fsFilename, 'file') == 2
+    fsrCond29 = csvread(fsFilename);
+    fsrCond29(all(fsrCond29==0,2),:)=[];
+else
+    disp('WARNING: File Cond_29/fullScaleDataArray.dat does not exist!');
+    break;
+end
+% CONDITION 30
+fsFilename = '_result_comparison_data/Cond_30/fullScaleDataArray.dat';
+if exist(fsFilename, 'file') == 2
+    fsrCond30 = csvread(fsFilename);
+    fsrCond30(all(fsrCond30==0,2),:)=[];
+else
+    disp('WARNING: File Cond_30/fullScaleDataArray.dat does not exist!');
+    break;
+end
+% CONDITION 31
+fsFilename = '_result_comparison_data/Cond_31/fullScaleDataArray.dat';
+if exist(fsFilename, 'file') == 2
+    fsrCond31 = csvread(fsFilename);
+    fsrCond31(all(fsrCond31==0,2),:)=[];
+else
+    disp('WARNING: File Cond_31/fullScaleDataArray.dat does not exist!');
+    break;
+end
+% CONDITION 32
+fsFilename = '_result_comparison_data/Cond_32/fullScaleDataArray.dat';
+if exist(fsFilename, 'file') == 2
+    fsrCond32 = csvread(fsFilename);
+    fsrCond32(all(fsrCond32==0,2),:)=[];
+else
+    disp('WARNING: File Cond_32/fullScaleDataArray.dat does not exist!');
+    break;
+end
+% CONDITION 33
+fsFilename = '_result_comparison_data/Cond_33/fullScaleDataArray.dat';
+if exist(fsFilename, 'file') == 2
+    fsrCond33 = csvread(fsFilename);
+    fsrCond33(all(fsrCond33==0,2),:)=[];
+else
+    disp('WARNING: File Cond_33/fullScaleDataArray.dat does not exist!');
+    break;
+end
+% CONDITION 34
+fsFilename = '_result_comparison_data/Cond_34/fullScaleDataArray.dat';
+if exist(fsFilename, 'file') == 2
+    fsrCond34 = csvread(fsFilename);
+    fsrCond34(all(fsrCond34==0,2),:)=[];
+else
+    disp('WARNING: File Cond_34/fullScaleDataArray.dat does not exist!');
+    break;
+end
+% CONDITION 35
+fsFilename = '_result_comparison_data/Cond_35/fullScaleDataArray.dat';
+if exist(fsFilename, 'file') == 2
+    fsrCond35 = csvread(fsFilename);
+    fsrCond35(all(fsrCond35==0,2),:)=[];
+else
+    disp('WARNING: File Cond_35/fullScaleDataArray.dat does not exist!');
+    break;
+end
+% CONDITION 36
+fsFilename = '_result_comparison_data/Cond_36/fullScaleDataArray.dat';
+if exist(fsFilename, 'file') == 2
+    fsrCond36 = csvread(fsFilename);
+    fsrCond36(all(fsrCond36==0,2),:)=[];
+else
+    disp('WARNING: File Cond_36/fullScaleDataArray.dat does not exist!');
     break;
 end
 %# ------------------------------------------------------------------------
@@ -2008,7 +2122,7 @@ if enableNumber4Plot == 1
         %# Line, colors and markers
         set(h(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
         set(h(2),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-        set(h(3),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h(3),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         
         %# Set plot figure background to a defined color
         %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -2117,7 +2231,7 @@ if enableNumber4Plot == 1
         
         %# Line, colors and markers
         set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-        set(h(2),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h(2),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         
         %# Set plot figure background to a defined color
         %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -2265,8 +2379,102 @@ if enableNumber4Plot == 1
         DSStdevArray(kl,4) = mean(powerArray2);
     end
     
+    if enableWJBMDelPowerOPEPlot == 1
+        %# Conditions added 21/11/2014 (using WJ benchmark data): -------------------------------
+        
+        %# CONDITION 25
+        fsData = fsrCond25;
+        [ma,na] = size(fsData);
+        delpowerMW = [];
+        for k=1:ma
+            delpowerMW(k) = ((fsData(k,42)+fsData(k,43))*2)/1000^2;
+        end
+        x7 = fsData(:,3);
+        y7 = delpowerMW;
+        
+        %# CONDITION 26
+        fsData = fsrCond26;
+        [ma,na] = size(fsData);
+        delpowerMW = [];
+        for k=1:ma
+            delpowerMW(k) = ((fsData(k,42)+fsData(k,43))*2)/1000^2;
+        end
+        x8 = fsData(:,3);
+        y8 = delpowerMW;
+        
+        %# CONDITION 27
+        fsData = fsrCond27;
+        [ma,na] = size(fsData);
+        delpowerMW = [];
+        for k=1:ma
+            delpowerMW(k) = ((fsData(k,42)+fsData(k,43))*2)/1000^2;
+        end
+        x9 = fsData(:,3);
+        y9 = delpowerMW;
+        
+        %# CONDITION 28
+        fsData = fsrCond28;
+        [ma,na] = size(fsData);
+        delpowerMW = [];
+        for k=1:ma
+            delpowerMW(k) = ((fsData(k,42)+fsData(k,43))*2)/1000^2;
+        end
+        x10 = fsData(:,3);
+        y10 = delpowerMW;
+        
+        %# CONDITION 29
+        fsData = fsrCond29;
+        [ma,na] = size(fsData);
+        delpowerMW = [];
+        for k=1:ma
+            delpowerMW(k) = ((fsData(k,42)+fsData(k,43))*2)/1000^2;
+        end
+        x11 = fsData(:,3);
+        y11 = delpowerMW;
+        
+        %# CONDITION 30
+        fsData = fsrCond30;
+        [ma,na] = size(fsData);
+        delpowerMW = [];
+        for k=1:ma
+            delpowerMW(k) = ((fsData(k,42)+fsData(k,43))*2)/1000^2;
+        end
+        x12 = fsData(:,3);
+        y12 = delpowerMW;
+        
+        % Descriptive statistics: Calculate Standard Deviation (StDev)
+        [meb,neb] = size(fsrCond1);
+        DSStdevWJBMArray = [];
+        fsData1 = fsrCond25;
+        fsData2 = fsrCond26;
+        fsData3 = fsrCond27;
+        fsData4 = fsrCond28;
+        fsData5 = fsrCond29;
+        fsData6 = fsrCond30;
+        for kl=1:meb
+            delPower1  = ((fsData1(kl,42)+fsData1(kl,43))*2)/1000^2;
+            delPower2  = ((fsData2(kl,42)+fsData2(kl,43))*2)/1000^2;
+            delPower3  = ((fsData3(kl,42)+fsData3(kl,43))*2)/1000^2;
+            delPower4  = ((fsData4(kl,42)+fsData4(kl,43))*2)/1000^2;
+            delPower5  = ((fsData5(kl,42)+fsData5(kl,43))*2)/1000^2;
+            delPower6  = ((fsData6(kl,42)+fsData6(kl,43))*2)/1000^2;
+            powerArray1 = [delPower1 delPower2 delPower3];
+            powerArray2 = [delPower4 delPower5 delPower6];
+            % Standard deviation
+            DSStdevWJBMArray(kl,1) = std(powerArray1,1);
+            DSStdevWJBMArray(kl,2) = std(powerArray2,1);
+            % Mean/average
+            DSStdevWJBMArray(kl,3) = mean(powerArray1);
+            DSStdevWJBMArray(kl,4) = mean(powerArray2);
+        end
+    end % enableWJBMDelPowerOPEPlot
+    
     %# Plotting -----------------------------------------------------------
-    h = plot(xst,yst,'-',x2,y2,'*',x5,y5,'*');
+    if enableWJBMDelPowerOPEPlot == 1
+        h = plot(xst,yst,'-',x2,y2,'*',x5,y5,'*',x8,y8,'*',x11,y11,'*');
+    else
+        h = plot(xst,yst,'-',x2,y2,'*',x5,y5,'*');
+    end
     % Error bars based on STD
     hold on;
     h1 = errorbar(x2,y2,DSStdevArray(:,1),'k');
@@ -2274,6 +2482,14 @@ if enableNumber4Plot == 1
     hold on;
     h1 = errorbar(x5,y5,DSStdevArray(:,2),'k');
     set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    if enableWJBMDelPowerOPEPlot == 1
+        hold on;
+        h1 = errorbar(x8,y8,DSStdevWJBMArray(:,1),'k');
+        set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+        hold on;
+        h1 = errorbar(x11,y11,DSStdevWJBMArray(:,2),'k');
+        set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    end
     xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Delivered power, P_{D} (MW)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1 && enableAdjOrNotAdjCurvesPlot == 1
@@ -2286,7 +2502,11 @@ if enableNumber4Plot == 1
     %# Line, colors and markers
     set(h(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
     set(h(2),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    set(h(3),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(3),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    if enableWJBMDelPowerOPEPlot == 1
+        set(h(4),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h(5),'Color',setColor{4},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    end
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -2297,8 +2517,12 @@ if enableNumber4Plot == 1
     maxX  = 25;
     incrX = 1;
     minY  = 0;
-    maxY  = 20;
-    incrY = 4;
+    if enableWJBMDelPowerOPEPlot == 1
+        maxY  = 45;
+    else
+        maxY  = 20;
+    end
+    incrY = 5;
     set(gca,'XLim',[minX maxX]);
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
@@ -2308,7 +2532,11 @@ if enableNumber4Plot == 1
     
     %# Legend
     %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-    hleg1 = legend('Corrected Power (Sea Trials)','P_{D} (FRM June 2013)','P_{D} (FRM Sept. 2014)');
+    if enableWJBMDelPowerOPEPlot == 1
+        hleg1 = legend('Corrected Power (Sea Trials)','P_{D} (FRM June 2013) Momentum','P_{D} (FRM Sept. 2014) Momentum','P_{D} (FRM June 2013) WJ Benchmark','P_{D} (FRM Sept. 2014) WJ Benchmark');
+    else
+        hleg1 = legend('Corrected Power (Sea Trials)','P_{D} (FRM June 2013)','P_{D} (FRM Sept. 2014)');
+    end
     set(hleg1,'Location','NorthWest');
     %set(hleg1,'Interpreter','none');
     set(hleg1, 'Interpreter','tex');
@@ -2378,9 +2606,67 @@ if enableNumber4Plot == 1
         DSOPEArray(kl,3) = mean(effArray1);
         DSOPEArray(kl,4) = mean(effArray2);
     end
-
+    
+    if enableWJBMDelPowerOPEPlot == 1
+    %# Conditions added 21/11/2014 (using WJ benchmark data): -------------
+    
+    %# CONDITION 25
+    fsData = fsrCond25;
+    x7 = fsData(:,3);
+    y7 = fsData(:,46);
+    
+    %# CONDITION 26
+    fsData = fsrCond26;
+    x8 = fsData(:,3);
+    y8 = fsData(:,46);
+    
+    %# CONDITION 27
+    fsData = fsrCond27;
+    x9 = fsData(:,3);
+    y9 = fsData(:,46);
+    
+    %# CONDITION 28
+    fsData = fsrCond28;
+    x10 = fsData(:,3);
+    y10 = fsData(:,46);
+    
+    %# CONDITION 29
+    fsData = fsrCond29;
+    x11 = fsData(:,3);
+    y11 = fsData(:,46);
+    
+    %# CONDITION 30
+    fsData = fsrCond30;
+    x12 = fsData(:,3);
+    y12 = fsData(:,46);
+    
+    % Descriptive statistics: Calculate Standard Deviation (StDev)
+    [meb,neb] = size(fsrCond1);
+    DSOPEWJBMArray = [];
+    fsData1 = fsrCond25;
+    fsData2 = fsrCond25;
+    fsData3 = fsrCond27;
+    fsData4 = fsrCond28;
+    fsData5 = fsrCond29;
+    fsData6 = fsrCond30;
+    for kl=1:meb
+        effArray1 = [fsData1(kl,46) fsData3(kl,46) fsData2(kl,46)];
+        effArray2 = [fsData4(kl,46) fsData5(kl,46) fsData6(kl,46)];
+        % Standard deviation
+        DSOPEWJBMArray(kl,1) = std(effArray1,1);
+        DSOPEWJBMArray(kl,2) = std(effArray2,1);
+        % Mean/average
+        DSOPEWJBMArray(kl,3) = mean(effArray1);
+        DSOPEWJBMArray(kl,4) = mean(effArray2);
+    end
+    end % enableWJBMDelPowerOPEPlot
+    
     %# Plotting -----------------------------------------------------------
-    h = plot(x2,y2,'*',x5,y5,'*');
+    if enableWJBMDelPowerOPEPlot == 1
+        h = plot(x2,y2,'*',x5,y5,'*',x8,y8,'*',x11,y11,'*');
+    else
+        h = plot(x2,y2,'*',x5,y5,'*');
+    end
     % Error bars based on STD
     hold on;
     h1 = errorbar(x2,y2,DSOPEArray(:,1),'k');
@@ -2388,6 +2674,14 @@ if enableNumber4Plot == 1
     hold on;
     h1 = errorbar(x5,y5,DSOPEArray(:,2),'k');
     set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    if enableWJBMDelPowerOPEPlot == 1
+        hold on;
+        h1 = errorbar(x8,y8,DSOPEWJBMArray(:,1),'k');
+        set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+        hold on;
+        h1 = errorbar(x11,y11,DSOPEWJBMArray(:,2),'k');
+        set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    end
     xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Propulsive Efficiency (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1 && enableAdjOrNotAdjCurvesPlot == 1
@@ -2399,7 +2693,11 @@ if enableNumber4Plot == 1
     
     %# Line, colors and markers
     set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    set(h(2),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    if enableWJBMDelPowerOPEPlot == 1
+        set(h(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h(4),'Color',setColor{4},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    end
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -2421,7 +2719,11 @@ if enableNumber4Plot == 1
     
     %# Legend
     %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-    hleg1 = legend('\eta_{D} (FRM June 2013)','\eta_{D} (FRM Sept. 2014)');
+    if enableWJBMDelPowerOPEPlot == 1
+        hleg1 = legend('P_{D} (FRM June 2013) Momentum','P_{D} (FRM Sept. 2014) Momentum','P_{D} (FRM June 2013) WJ Benchmark','P_{D} (FRM Sept. 2014) WJ Benchmark');
+    else
+        hleg1 = legend('P_{D} (FRM June 2013)','P_{D} (FRM Sept. 2014)');
+    end
     set(hleg1,'Location','NorthWest');
     %set(hleg1,'Interpreter','none');
     set(hleg1, 'Interpreter','tex');
@@ -3454,8 +3756,102 @@ if enableNumber5Plot == 1
         DSStdevArray(kl,4) = mean(powerArray2);
     end
     
+    if enableWJBMDelPowerOPEPlot == 1
+        %# Conditions added 21/11/2014 (using WJ benchmark data): -------------------------------
+        
+        %# CONDITION 31
+        fsData = fsrCond31;
+        [ma,na] = size(fsData);
+        delpowerMW = [];
+        for k=1:ma
+            delpowerMW(k) = ((fsData(k,42)+fsData(k,43))*2)/1000^2;
+        end
+        x7 = fsData(:,3);
+        y7 = delpowerMW;
+        
+        %# CONDITION 32
+        fsData = fsrCond32;
+        [ma,na] = size(fsData);
+        delpowerMW = [];
+        for k=1:ma
+            delpowerMW(k) = ((fsData(k,42)+fsData(k,43))*2)/1000^2;
+        end
+        x8 = fsData(:,3);
+        y8 = delpowerMW;
+        
+        %# CONDITION 33
+        fsData = fsrCond33;
+        [ma,na] = size(fsData);
+        delpowerMW = [];
+        for k=1:ma
+            delpowerMW(k) = ((fsData(k,42)+fsData(k,43))*2)/1000^2;
+        end
+        x9 = fsData(:,3);
+        y9 = delpowerMW;
+        
+        %# CONDITION 34
+        fsData = fsrCond34;
+        [ma,na] = size(fsData);
+        delpowerMW = [];
+        for k=1:ma
+            delpowerMW(k) = ((fsData(k,42)+fsData(k,43))*2)/1000^2;
+        end
+        x10 = fsData(:,3);
+        y10 = delpowerMW;
+        
+        %# CONDITION 35
+        fsData = fsrCond35;
+        [ma,na] = size(fsData);
+        delpowerMW = [];
+        for k=1:ma
+            delpowerMW(k) = ((fsData(k,42)+fsData(k,43))*2)/1000^2;
+        end
+        x11 = fsData(:,3);
+        y11 = delpowerMW;
+        
+        %# CONDITION 36
+        fsData = fsrCond36;
+        [ma,na] = size(fsData);
+        delpowerMW = [];
+        for k=1:ma
+            delpowerMW(k) = ((fsData(k,42)+fsData(k,43))*2)/1000^2;
+        end
+        x12 = fsData(:,3);
+        y12 = delpowerMW;
+        
+        % Descriptive statistics: Calculate Standard Deviation (StDev)
+        [meb,neb] = size(fsrCond1);
+        DSStdevWJBMArray = [];
+        fsData1 = fsrCond31;
+        fsData2 = fsrCond32;
+        fsData3 = fsrCond33;
+        fsData4 = fsrCond34;
+        fsData5 = fsrCond35;
+        fsData6 = fsrCond36;
+        for kl=1:meb
+            delPower1  = ((fsData1(kl,42)+fsData1(kl,43))*2)/1000^2;
+            delPower2  = ((fsData2(kl,42)+fsData2(kl,43))*2)/1000^2;
+            delPower3  = ((fsData3(kl,42)+fsData3(kl,43))*2)/1000^2;
+            delPower4  = ((fsData4(kl,42)+fsData4(kl,43))*2)/1000^2;
+            delPower5  = ((fsData5(kl,42)+fsData5(kl,43))*2)/1000^2;
+            delPower6  = ((fsData6(kl,42)+fsData6(kl,43))*2)/1000^2;
+            powerArray1 = [delPower1 delPower2 delPower3];
+            powerArray2 = [delPower4 delPower5 delPower6];
+            % Standard deviation
+            DSStdevWJBMArray(kl,1) = std(powerArray1,1);
+            DSStdevWJBMArray(kl,2) = std(powerArray2,1);
+            % Mean/average
+            DSStdevWJBMArray(kl,3) = mean(powerArray1);
+            DSStdevWJBMArray(kl,4) = mean(powerArray2);
+        end
+    end % enableWJBMDelPowerOPEPlot
+
     %# Plotting ---------------------------------------------------------------
-    h = plot(xst,yst,'-',x2,y2,'*',x5,y5,'*');
+    if enableWJBMDelPowerOPEPlot == 1
+        h = plot(xst,yst,'-',x2,y2,'*',x5,y5,'*',x8,y8,'*',x11,y11,'*');
+    else
+        h = plot(xst,yst,'-',x2,y2,'*',x5,y5,'*');
+    end
     % Error bars based on STD
     hold on;
     h1 = errorbar(x2,y2,DSStdevArray(:,1),'k');
@@ -3463,6 +3859,14 @@ if enableNumber5Plot == 1
     hold on;
     h1 = errorbar(x5,y5,DSStdevArray(:,2),'k');
     set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    if enableWJBMDelPowerOPEPlot == 1
+        hold on;
+        h1 = errorbar(x8,y8,DSStdevWJBMArray(:,1),'k');
+        set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+        hold on;
+        h1 = errorbar(x11,y11,DSStdevWJBMArray(:,2),'k');
+        set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    end
     xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Delivered power, P_{D} (MW)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1 && enableAdjOrNotAdjCurvesPlot == 1
@@ -3476,6 +3880,10 @@ if enableNumber5Plot == 1
     set(h(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
     set(h(2),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     set(h(3),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    if enableWJBMDelPowerOPEPlot == 1
+        set(h(4),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h(5),'Color',setColor{4},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    end
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -3486,8 +3894,12 @@ if enableNumber5Plot == 1
     maxX  = 25;
     incrX = 1;
     minY  = 0;
-    maxY  = 20;
-    incrY = 4;
+    if enableWJBMDelPowerOPEPlot == 1
+        maxY  = 45;
+    else
+        maxY  = 20;
+    end
+    incrY = 5;
     set(gca,'XLim',[minX maxX]);
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
@@ -3497,7 +3909,11 @@ if enableNumber5Plot == 1
     
     %# Legend
     %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-    hleg1 = legend('Corrected Power (Sea Trials)','P_{D} (FRM June 2013)','P_{D} (FRM Sept. 2014)');
+    if enableWJBMDelPowerOPEPlot == 1
+        hleg1 = legend('Corrected Power (Sea Trials)','P_{D} (FRM June 2013) Momentum','P_{D} (FRM Sept. 2014) Momentum','P_{D} (FRM June 2013) WJ Benchmark','P_{D} (FRM Sept. 2014) WJ Benchmark');
+    else
+        hleg1 = legend('Corrected Power (Sea Trials)','P_{D} (FRM June 2013)','P_{D} (FRM Sept. 2014)');
+    end
     set(hleg1,'Location','NorthWest');
     %set(hleg1,'Interpreter','none');
     set(hleg1, 'Interpreter','tex');
@@ -3568,8 +3984,66 @@ if enableNumber5Plot == 1
         DSOPEArray(kl,4) = mean(effArray2);
     end
     
+    if enableWJBMDelPowerOPEPlot == 1
+        %# Conditions added 21/11/2014 (using WJ benchmark data): -------------------------------
+        
+        %# CONDITION 31
+        fsData = fsrCond31;
+        x7 = fsData(:,3);
+        y7 = fsData(:,46);
+        
+        %# CONDITION 32
+        fsData = fsrCond32;
+        x8 = fsData(:,3);
+        y8 = fsData(:,46);
+        
+        %# CONDITION 33
+        fsData = fsrCond33;
+        x9 = fsData(:,3);
+        y9 = fsData(:,46);
+        
+        %# CONDITION 34
+        fsData = fsrCond34;
+        x10 = fsData(:,3);
+        y10 = fsData(:,46);
+        
+        %# CONDITION 35
+        fsData = fsrCond35;
+        x11 = fsData(:,3);
+        y11 = fsData(:,46);
+        
+        %# CONDITION 36
+        fsData = fsrCond36;
+        x12 = fsData(:,3);
+        y12 = fsData(:,46);
+        
+        % Descriptive statistics: Calculate Standard Deviation (StDev)
+        [meb,neb] = size(fsrCond1);
+        DSOPEWJBMArray = [];
+        fsData1 = fsrCond31;
+        fsData2 = fsrCond32;
+        fsData3 = fsrCond33;
+        fsData4 = fsrCond34;
+        fsData5 = fsrCond35;
+        fsData6 = fsrCond36;
+        for kl=1:meb
+            effArray1 = [fsData1(kl,46) fsData3(kl,46) fsData2(kl,46)];
+            effArray2 = [fsData4(kl,46) fsData5(kl,46) fsData6(kl,46)];
+            % Standard deviation
+            DSOPEWJBMArray(kl,1) = std(effArray1,1);
+            DSOPEWJBMArray(kl,2) = std(effArray2,1);
+            % Mean/average
+            DSOPEWJBMArray(kl,3) = mean(effArray1);
+            DSOPEWJBMArray(kl,4) = mean(effArray2);
+        end
+    end % enableWJBMDelPowerOPEPlot
+
     %# Plotting ---------------------------------------------------------------
-    h = plot(x2,y2,'*',x5,y5,'*');
+    if enableWJBMDelPowerOPEPlot == 1
+        h = plot(x2,y2,'*',x5,y5,'*',x8,y8,'*',x11,y11,'*');
+    else
+        h = plot(x2,y2,'*',x5,y5,'*');
+    end
     % Error bars based on STD
     hold on;
     h1 = errorbar(x2,y2,DSOPEArray(:,1),'k');
@@ -3577,6 +4051,14 @@ if enableNumber5Plot == 1
     hold on;
     h1 = errorbar(x5,y5,DSOPEArray(:,2),'k');
     set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    if enableWJBMDelPowerOPEPlot == 1
+        hold on;
+        h1 = errorbar(x8,y8,DSOPEWJBMArray(:,1),'k');
+        set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+        hold on;
+        h1 = errorbar(x11,y11,DSOPEWJBMArray(:,2),'k');
+        set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    end
     xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Propulsive Efficiency (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1 && enableAdjOrNotAdjCurvesPlot == 1
@@ -3589,6 +4071,10 @@ if enableNumber5Plot == 1
     %# Line, colors and markers
     set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     set(h(2),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    if enableWJBMDelPowerOPEPlot == 1
+        set(h(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h(4),'Color',setColor{4},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    end
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -3610,7 +4096,11 @@ if enableNumber5Plot == 1
     
     %# Legend
     %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-    hleg1 = legend('\eta_{D} (FRM June 2013)','\eta_{D} (FRM Sept. 2014)');
+    if enableWJBMDelPowerOPEPlot == 1
+        hleg1 = legend('P_{D} (FRM June 2013) Momentum','P_{D} (FRM Sept. 2014) Momentum','P_{D} (FRM June 2013) WJ Benchmark','P_{D} (FRM Sept. 2014) WJ Benchmark');
+    else
+        hleg1 = legend('\eta_{D} (FRM June 2013)','\eta_{D} (FRM Sept. 2014)');
+    end
     set(hleg1,'Location','NorthWest');
     %set(hleg1,'Interpreter','none');
     set(hleg1, 'Interpreter','tex');

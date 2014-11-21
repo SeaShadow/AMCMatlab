@@ -51,7 +51,7 @@ enableBlackAndWhitePlot = 1;    % Show plot in black and white only
 enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
 
 % Loop through stats
-enableStatsLoop         = 0;    % Show original statistics
+enableStatsLoop         = 1;    % Show original statistics
 
 % Check if Curve Fitting Toolbox is installed
 % See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
@@ -115,8 +115,8 @@ cutSamplesFromEnd = 8000;
 startRun = 1;      % Start at run x
 endRun   = 67;     % Stop at run y
 
-%startRun = 8;      % Start at run x
-%endRun   = 8;      % Stop at run y
+startRun = 8;      % Start at run x
+endRun   = 67;     % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END File loop for runs, startRun to endRun
@@ -135,6 +135,17 @@ XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
 YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# ------------------------------------------------------------------------
 %# END Define plot size
+%# ************************************************************************
+
+
+%# ************************************************************************
+%# START Distinguish between PORT and STBD
+%# ------------------------------------------------------------------------
+testRuns = 1:7;
+portRuns = 8:37;
+stbdRuns = 38:67;
+%# ------------------------------------------------------------------------
+%# END Distinguish between PORT and STBD
 %# ************************************************************************
 
 
@@ -222,11 +233,12 @@ end
 %# ************************************************************************
 
 
-%# ////////////////////////////////////////////////////////////////////////
-%# LOOP THROUGH ALL RUN FILES (depending on startRun and endRun settings)
-%# ////////////////////////////////////////////////////////////////////////
+%# ************************************************************************
+%# 1. Calculate Descriptive Statistics for Time Series Data
+%# ************************************************************************
 if enableStatsLoop == 1
-    statisticsArray = [];
+    
+    statisticsArray    = [];
     for k=startRun:endRun
         
         %# Allow for 1 to become 01 for run numbers
@@ -325,7 +337,7 @@ if enableStatsLoop == 1
         ThrustPort  = abs(CH_8_ThrustPort(startSamplePos:end-cutSamplesFromEnd));
         TorqueStbd  = CH_9_TorqueStbd(startSamplePos:end-cutSamplesFromEnd);
         TorquePort  = abs(CH_10_TorquePort(startSamplePos:end-cutSamplesFromEnd));
-        
+ 
         %# Determine RPM
         %[RPMStbd RPMPort] = analysis_rpm(k,name,Fs,timeData,Raw_CH_5_RPMStbd,Raw_CH_6_RPMPort);
         
@@ -349,6 +361,9 @@ if enableStatsLoop == 1
         % [27:31] Min, Max, Mean, Var, Std >> PORT: Dynamometer: Torque (Nm)
         % [32]    STBD: Shaft Speed                                     (RPM)
         % [33]    PORT: Shaft Speed                                     (RPM)
+        %# Columns added 21/11/2014:
+        % [34]    Propulsion system (0=Test, 1=Port and 2=Stbd)         (#)
+        % [35]    Set shaft speed                                       (RPM)
         
         statisticsArray(k, 1) = k;
         
@@ -405,6 +420,52 @@ if enableStatsLoop == 1
         
         %# PORT: Measured shaft RPM
         statisticsArray(k, 33) = RPMPort;
+
+        % Add static number for propulsion system where 0=Test, 1=Port and 2=Stbd
+        if ismember(k,testRuns) == 1
+            setPropSys = 0;
+        elseif ismember(k,portRuns) == 1
+            setPropSys = 1;
+        elseif ismember(k,stbdRuns) == 1
+            setPropSys = 2;
+        end
+        statisticsArray(k, 34) = setPropSys;
+        
+        % Add set shaft speed
+        
+        % Port and Stbd
+        if ismember(k,8) || ismember(k,40)
+            setSS = 800;
+        elseif ismember(k,9:11) || ismember(k,[38 41:43])
+            setSS = 1000;
+        elseif ismember(k,[12 16]) || ismember(k,44)
+            setSS = 1200;
+        elseif ismember(k,[13:15 17]) || ismember(k,45:47)
+            setSS = 1400;
+        elseif ismember(k,18) || ismember(k,48)
+            setSS = 1600;
+        elseif ismember(k,19:21) || ismember(k,49:51)
+            setSS = 1800;
+        elseif ismember(k,22) || ismember(k,[39 52])
+            setSS = 2000;
+        elseif ismember(k,23:25) || ismember(k,53:55)
+            setSS = 2200;
+        elseif ismember(k,26) || ismember(k,56)
+            setSS = 2400;
+        elseif ismember(k,27:29) || ismember(k,57:59)
+            setSS = 2600;
+        elseif ismember(k,30) || ismember(k,60)
+            setSS = 2800
+        elseif ismember(k,31:33) || ismember(k,61:63)
+            setSS = 3000;
+        elseif ismember(k,34) || ismember(k,64)
+            setSS = 3200;
+        elseif ismember(k,35:37) || ismember(k,65:67)
+            setSS = 3400;
+        else
+            setSS = 0;
+        end
+        statisticsArray(k, 35) = setSS;
         
     end % Loop
     
@@ -423,7 +484,8 @@ end % enableStatsLoop
 
 
 %# ************************************************************************
-%# Repeatability Errors
+%# 2. Calculate Descriptive Statistics (Repeatability)
+%#    NOTE: Source of calculations are results for averaged repeated runs
 %# ************************************************************************
 
 %# Distinguish between PORT and STBD --------------------------------------
@@ -440,10 +502,7 @@ StbdRunArray = [38:67];
 [mpr,npr] = size(portRuns);
 [msr,nsr] = size(stbdRuns);
 
-
-%# ************************************************************************
-%# START Put RPM values in correct column (because wrong DAQ channel)
-%# ------------------------------------------------------------------------
+% Put RPM values in correct column (because wrong DAQ channel)
 for k=1:mpr
     if ismember(k,[1 2 3 4])
         %disp(sprintf('Run %s',num2str(k)));
@@ -451,14 +510,6 @@ for k=1:mpr
         portRuns(k,12) = 0;
     end
 end
-%# ------------------------------------------------------------------------
-%# END Put RPM values in correct column (wrong DAQ channel)
-%# ************************************************************************
-
-
-%# ************************************************************************
-%# START Distinguish repeated runs
-%# ------------------------------------------------------------------------
 
 % PORT
 for k=1:mpr
@@ -532,16 +583,6 @@ for k=1:msr
     stbdRuns(k,20) = runSeries;
 end
 
-%# ------------------------------------------------------------------------
-%# END Distinguish repeated runs
-%# ************************************************************************
-
-
-%# ************************************************************************
-%# START Sort testRuns, portRuns and stbdRuns bt repeats
-%# Repeatablity calculations (for variance in flow rates):
-%# ------------------------------------------------------------------------
-
 %# 1. Calculate the mean or average of your data. To do this, add your measurements and divide by the number of elements in your sample. For example, if your measurements are 1, 2, 2, 3, 2, the average would be 2 -- 10 divided by 5.
 %# 2. Calculate the variance of your data. To do this, calculate the difference of each result from the mean, square each result and work out the average. For example, if the difference from the mean in a set of data were 1, 2, -2 and -1, the variance would be 2.5. That is, the average of 1, 4, 4 and 1.
 %# 3. Calculate the square root of the variance. This is the repeatability standard deviation of your data. Following our previous example, the standard deviation would be 1.5811.
@@ -556,15 +597,7 @@ R = stbdRuns;   % Results array
 AStbd = arrayfun(@(x) R(R(:,20) == x, :), unique(R(:,20)), 'uniformoutput', false);
 [mstbd,nstbd] = size(AStbd);
 
-%# ------------------------------------------------------------------------
-%# END Sort testRuns, portRuns and stbdRuns bt repeats
-%# ************************************************************************
-
-
-%# ************************************************************************
-%# START Loop through repeated runs
-%# ------------------------------------------------------------------------
-
+% Create array for descriptive statistics
 descStatsArray = [];
 
 % Columns descStatsArray:
@@ -755,14 +788,10 @@ for k=1:mstbd
     descStatsArray(kadd,27) = 2;
 end
 
-%# ------------------------------------------------------------------------
-%# END Loop through repeated runs
-%# ************************************************************************
-
 
 %# ************************************************************************
-%# START Plotting
-%# ------------------------------------------------------------------------
+%# 3. Plotting Descriptive Statistics (Repeatability)
+%# ************************************************************************
 
 % Set RPM speeds
 setRPMArray = [800 1000 1200  1400 1600 1800 2000 2200 2400 2600 2800 3000 3200 3400];
@@ -1104,11 +1133,6 @@ for kl=1:3
     print(gcf, setSaveFormat{kl}, plotsavename);
 end
 %close;
-
-%# ------------------------------------------------------------------------
-%# END Plotting
-%# ************************************************************************
-
 
 % -------------------------------------------------------------------------
 % View profile
