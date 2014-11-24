@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 20, 2014
+%# Date       :  November 24, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -99,18 +99,20 @@ enableA4PaperSizePlot       = 1;    % Show plots scale to A4 size
 enableNumber1Plot           = 0;    % PD and OPE for Ca=0
 enableNumber2Plot           = 0;    % PD and OPE for Ca=0.00035
 enableNumber3Plot           = 0;    % PD and OPE for Ca=0.00059
-enableNumber4Plot           = 1;    % PD and OPE using ws=wm(CFs/CFm) only
-enableNumber5Plot           = 1;    % PD and OPE using ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
+enableNumber4Plot           = 0;    % PD and OPE using ws=wm(CFs/CFm) only
+enableNumber5Plot           = 0;    % PD and OPE using ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
 enableNumber6Plot           = 0;    % Thrust deduction using Ca=0
 enableNumber7Plot           = 0;    % Barplot showing Differences in results when
                                     % using ws=wm(CFs/CFm) or ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
+enableNumber8Plot           = 0;    % Wake fraction comparison
+enableNumber9Plot           = 1;    % Corrected sea trials data (delivered power)
 
 % Enable distinction between adjuste and not adjusted F vs. curves
 enableAdjOrNotAdjCurvesPlot = 0;    % If enabled show BOTH adjust and not adjusted graphs
                                     % If disabled show adjusted graph only!
 
 % Enable curves for delivered power (PD) using WJ benchmark data
-enableWJBMDelPowerOPEPlot   = 1;    % Show delivered power calculated using WJBM data
+enableWJBMDelPowerOPEPlot   = 0;    % Show delivered power calculated using WJBM data
                                     
 % Check if Curve Fitting Toolbox is installed
 % See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
@@ -6132,6 +6134,503 @@ if enableNumber7Plot == 1
     %close;
 end % enableNumber7Plot
 
+
+%# ************************************************************************
+%# 8. Plotting Comparisons: Wake fractions
+%# ************************************************************************
+
+if enableNumber8Plot == 1
+    figurename = 'Plot 8: Full Scale and Model Scale: Wake Fraction';
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 10;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors --------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
+    
+    %# Line, colors and markers
+    setMarkerSize      = 12;
+    setLineWidthMarker = 1;
+    setLineWidth       = 2;
+    setLineStyle       = '-';
+ 
+    % Model scale wake fraction -------------------------------------------
+    MS_W  = [0.188 0.190 0.189 0.188 0.185 0.185 0.182 0.176 0.168];
+    MS_1W = [0.812 0.810 0.811 0.812 0.815 0.815 0.818 0.824 0.832];    
+    
+    %#Wake Fraction vs. Ship Speed ////////////////////////////////////////
+    subplot(1,2,1)
+    
+    %# X and Y axis -------------------------------------------------------
+    x = fsrCond4(:,3);
+    y = MS_W;
+    
+    %# CONDITION 4
+    fsData = fsrCond4;
+    x1 = fsData(:,3);
+    y1 = fsData(:,16);
+    
+    %# CONDITION 5
+    fsData = fsrCond5;
+    x2 = fsData(:,3);
+    y2 = fsData(:,16);
+    
+    %# CONDITION 6
+    fsData = fsrCond6;
+    x3 = fsData(:,3);
+    y3 = fsData(:,16);
+    
+    %# CONDITION 10
+    fsData = fsrCond10;
+    x4 = fsData(:,3);
+    y4 = fsData(:,16);
+    
+    %# CONDITION 11
+    fsData = fsrCond11;
+    x5 = fsData(:,3);
+    y5 = fsData(:,16);
+    
+    %# CONDITION 12
+    fsData = fsrCond12;
+    x6 = fsData(:,3);
+    y6 = fsData(:,16);
+    
+    % Descriptive statistics: Calculate Standard Deviation (StDev)
+    [meb,neb] = size(fsrCond4);
+    WFArray = [];
+    fsData1 = fsrCond4;
+    fsData2 = fsrCond5;
+    fsData3 = fsrCond6;
+    fsData4 = fsrCond10;
+    fsData5 = fsrCond11;
+    fsData6 = fsrCond12;
+    for kl=1:meb
+        effArray1 = [fsData1(kl,16) fsData3(kl,16) fsData2(kl,16)];
+        effArray2 = [fsData4(kl,16) fsData5(kl,16) fsData6(kl,16)];
+        % Standard deviation
+        WFArray(kl,1) = std(effArray1,1);
+        WFArray(kl,2) = std(effArray2,1);
+        % Mean/average
+        WFArray(kl,3) = mean(effArray1);
+        WFArray(kl,4) = mean(effArray2);
+    end
+    
+    %# Plotting -----------------------------------------------------------
+    h = plot(x,y,'*',x2,y2,'*',x5,y5,'*');
+    % Error bars based on STD
+    %hold on;
+    %h1 = errorbar(x2,y2,WFArray(:,1),'k');
+    %set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    %hold on;
+    %h1 = errorbar(x5,y5,WFArray(:,2),'k');
+    %set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Wake fraction, (1-w) (-)}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf w_{s}=w_{m}(C_{Fs}/C_{Fm})}','FontSize',setGeneralFontSize); % ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
+    end
+    grid on;
+    box on;
+    axis square;
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(2),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(3),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    minX  = 13;
+    maxX  = 25;
+    incrX = 1;
+    minY  = -0.2;
+    maxY  = 0.8;
+    incrY = 0.1;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+    set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+    hleg1 = legend('w_{m} (Model scale wake fraction)','w_{s1} (FRM June 2013)','w_{s2} (FRM Sept. 2014)');
+    set(hleg1,'Location','NorthWest');
+    %set(hleg1,'Interpreter','none');
+    set(hleg1, 'Interpreter','tex');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border ----------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+ 
+    %#Wake Fraction vs. Ship Speed ////////////////////////////////////////
+    subplot(1,2,2)
+    
+    %# X and Y axis -------------------------------------------------------
+    x = fsrCond4(:,3);
+    y = MS_W;
+    
+    %# CONDITION 16
+    fsData = fsrCond16;
+    x1 = fsData(:,3);
+    y1 = fsData(:,16);
+    
+    %# CONDITION 17
+    fsData = fsrCond17;
+    x2 = fsData(:,3);
+    y2 = fsData(:,16);
+    
+    %# CONDITION 18
+    fsData = fsrCond18;
+    x3 = fsData(:,3);
+    y3 = fsData(:,16);
+    
+    %# CONDITION 22
+    fsData = fsrCond22;
+    x4 = fsData(:,3);
+    y4 = fsData(:,16);
+    
+    %# CONDITION 23
+    fsData = fsrCond23;
+    x5 = fsData(:,3);
+    y5 = fsData(:,16);
+    
+    %# CONDITION 24
+    fsData = fsrCond24;
+    x6 = fsData(:,3);
+    y6 = fsData(:,16);
+    
+    % Descriptive statistics: Calculate Standard Deviation (StDev)
+    [meb,neb] = size(fsrCond4);
+    WFArray = [];
+    fsData1 = fsrCond16;
+    fsData2 = fsrCond17;
+    fsData3 = fsrCond19;
+    fsData4 = fsrCond22;
+    fsData5 = fsrCond23;
+    fsData6 = fsrCond24;
+    for kl=1:meb
+        effArray1 = [fsData1(kl,16) fsData3(kl,16) fsData2(kl,16)];
+        effArray2 = [fsData4(kl,16) fsData5(kl,16) fsData6(kl,16)];
+        % Standard deviation
+        WFArray(kl,1) = std(effArray1,1);
+        WFArray(kl,2) = std(effArray2,1);
+        % Mean/average
+        WFArray(kl,3) = mean(effArray1);
+        WFArray(kl,4) = mean(effArray2);
+    end
+    
+    %# Plotting -----------------------------------------------------------
+    h = plot(x,y,'*',x2,y2,'*',x5,y5,'*');
+    % Error bars based on STD
+    %hold on;
+    %h1 = errorbar(x2,y2,WFArray(:,1),'k');
+    %set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    %hold on;
+    %h1 = errorbar(x5,y5,WFArray(:,2),'k');
+    %set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Wake fraction, (1-w) (-)}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1
+        title('{\bf w_{s}=w_{m}(C_{Fs}/C_{Fm})+(t+0.04)(1-C_{Fs}/C_{Fm})}','FontSize',setGeneralFontSize);
+    end
+    grid on;
+    box on;
+    axis square;
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(2),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(3),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    minX  = 13;
+    maxX  = 25;
+    incrX = 1;
+    minY  = -0.2;
+    maxY  = 0.8;
+    incrY = 0.1;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+    set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+    hleg1 = legend('w_{m} (Model scale wake fraction)','w_{s1} (FRM June 2013)','w_{s2} (FRM Sept. 2014)');
+    set(hleg1,'Location','NorthWest');
+    %set(hleg1,'Interpreter','none');
+    set(hleg1, 'Interpreter','tex');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border ----------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+    %# ************************************************************************
+    %# Save plot as PNG
+    %# ************************************************************************
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
+    
+    %# Plot title -------------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
+    
+    %# Save plots as PDF, PNG and EPS -----------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/FS_Result_Comp_Plot_8_Wake_Fractions.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;
+end % enableNumber8Plot
+
+
+%# ************************************************************************
+%# 9. Cprrected Sea Trials Data (Delivered Power)
+%# ************************************************************************
+
+if enableNumber9Plot == 1
+    figurename = 'Plot 8: Full Scale and Model Scale: Wake Fraction';
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 10;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors --------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
+    
+    %# Line, colors and markers
+    setMarkerSize      = 12;
+    setLineWidthMarker = 1;
+    setLineWidth       = 2;
+    setLineStyle       = '-';
+    setLineStyle1      = '-.';
+
+    %#FS PD (Sea Trials) vs. Ship Speed ///////////////////////////////////
+    subplot(1,1,1)
+    
+    %# X and Y axis -------------------------------------------------------
+
+    x1 = SeaTrialsCorrectedPower(:,1);
+    y1 = SeaTrialsCorrectedPower(:,2);
+    
+    x2 = SeaTrialsCorrectedPower(:,1);
+    y2 = SeaTrialsCorrectedPower(:,3);
+    
+    % Fitting curve through sea trials delivered power
+    fitobject1 = fit(x1,y1,'poly5');
+    cvalues1   = coeffvalues(fitobject1);
+    
+    fitobject2 = fit(x2,y2,'poly5');
+    cvalues2   = coeffvalues(fitobject2);    
+    
+    % Sea Trials Data
+    fittingSpeeds = [10:1:38];
+    [mfs,nfs] = size(fittingSpeeds);
+    
+    delpowerMW = [];
+    for k=1:nfs
+        actSpeed = fittingSpeeds(k);
+        delpowerMW(k) = cvalues1(1)*actSpeed^5+cvalues1(2)*actSpeed^4+cvalues1(3)*actSpeed^3+cvalues1(4)*actSpeed^2+cvalues1(5)*actSpeed+cvalues1(6);
+    end
+    xst1  = fittingSpeeds;
+    yst1  = delpowerMW;
+    
+    delpowerMW = [];
+    for k=1:nfs
+        actSpeed = fittingSpeeds(k);
+        delpowerMW(k) = cvalues2(1)*actSpeed^5+cvalues2(2)*actSpeed^4+cvalues2(3)*actSpeed^3+cvalues2(4)*actSpeed^2+cvalues2(5)*actSpeed+cvalues2(6);
+    end
+    xst2  = fittingSpeeds;
+    yst2  = delpowerMW;
+    
+    %# Plotting -----------------------------------------------------------
+    h = plot(xst1,yst1,'-',xst2,yst2,'-');
+    xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Delivered power, P_{D} (MW)}','FontSize',setGeneralFontSize);
+    if enablePlotTitle == 1 && enableAdjOrNotAdjCurvesPlot == 1
+        title('{\bf Sea Trials Data}','FontSize',setGeneralFontSize);
+    end
+    grid on;
+    box on;
+    axis square;
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    set(h(2),'Color',setColor{2},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    minX  = 10;
+    maxX  = 38;
+    incrX = 4;
+    minY  = 0;
+    maxY  = 35;
+    incrY = 5;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
+    
+    %# Legend
+    %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+    hleg1 = legend('Uncorrected Power (Sea Trials)','Corrected Power (Sea Trials)');
+    set(hleg1,'Location','NorthWest');
+    %set(hleg1,'Interpreter','none');
+    set(hleg1, 'Interpreter','tex');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;    
+    
+    %# Font sizes and border ----------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+    %# ************************************************************************
+    %# Save plot as PNG
+    %# ************************************************************************
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
+    
+    %# Plot title -------------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
+    
+    %# Save plots as PDF, PNG and EPS -----------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/FS_Result_Comp_Plot_9_Corrected_Sea_Trials_Data_Delivered_Power.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;
+end % enableNumber9Plot
+
+    
 % -------------------------------------------------------------------------
 % View profile
 % -------------------------------------------------------------------------
