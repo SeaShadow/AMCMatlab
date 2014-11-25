@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 20, 2014
+%# Date       :  November 25, 2014
 %#
 %# Description:  Pumpcurve analysis for different RPM in full scale.
 %#

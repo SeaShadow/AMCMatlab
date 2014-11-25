@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 24, 2014
+%# Date       :  November 25, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -99,13 +99,13 @@ enableA4PaperSizePlot       = 1;    % Show plots scale to A4 size
 enableNumber1Plot           = 0;    % PD and OPE for Ca=0
 enableNumber2Plot           = 0;    % PD and OPE for Ca=0.00035
 enableNumber3Plot           = 0;    % PD and OPE for Ca=0.00059
-enableNumber4Plot           = 0;    % PD and OPE using ws=wm(CFs/CFm) only
-enableNumber5Plot           = 0;    % PD and OPE using ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
+enableNumber4Plot           = 1;    % PD and OPE using ws=wm(CFs/CFm) only
+enableNumber5Plot           = 1;    % PD and OPE using ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
 enableNumber6Plot           = 0;    % Thrust deduction using Ca=0
 enableNumber7Plot           = 0;    % Barplot showing Differences in results when
                                     % using ws=wm(CFs/CFm) or ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
 enableNumber8Plot           = 0;    % Wake fraction comparison
-enableNumber9Plot           = 1;    % Corrected sea trials data (delivered power)
+enableNumber9Plot           = 0;    % Corrected sea trials data (delivered power)
 
 % Enable distinction between adjuste and not adjusted F vs. curves
 enableAdjOrNotAdjCurvesPlot = 0;    % If enabled show BOTH adjust and not adjusted graphs
@@ -2379,6 +2379,10 @@ if enableNumber4Plot == 1
         % Mean/average
         DSStdevArray(kl,3) = mean(powerArray1);
         DSStdevArray(kl,4) = mean(powerArray2);
+        % Difference to mean (i.e. max()/mean())
+        diffToMean1 = (1-(max(powerArray1)/mean(powerArray1)))*100;
+        diffToMean2 = (1-(max(powerArray2)/mean(powerArray2)))*100;
+        disp(sprintf('Plot 4: Del. Power: Speed: %s: Diff. to mean (ws=wm(CFs/CFm)): %s%%, Diff. to mean (ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)): %s%%',num2str(kl),sprintf('%.0f',diffToMean1),sprintf('%.0f',diffToMean2)));
     end
     
     if enableWJBMDelPowerOPEPlot == 1
@@ -3756,6 +3760,10 @@ if enableNumber5Plot == 1
         % Mean/average
         DSStdevArray(kl,3) = mean(powerArray1);
         DSStdevArray(kl,4) = mean(powerArray2);
+        % Difference to mean (i.e. max()/mean())
+        diffToMean1 = (1-(max(powerArray1)/mean(powerArray1)))*100;
+        diffToMean2 = (1-(max(powerArray2)/mean(powerArray2)))*100;
+        disp(sprintf('Plot 5: Del. Power: Speed: %s: Diff. to mean (ws=wm(CFs/CFm)): %s%%, Diff. to mean (ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)): %s%%',num2str(kl),sprintf('%.0f',diffToMean1),sprintf('%.0f',diffToMean2)));        
     end
     
     if enableWJBMDelPowerOPEPlot == 1
@@ -5212,6 +5220,134 @@ if enableNumber7Plot == 1
         diffArray(row,10) = dataset1(k,3);
         disp(sprintf('Speed %s (Differences): ws=%s%%, VFR=%s%%, MFR=%s%%, PEFF=%s%%, JVEL=%s%%, IVEL=%s%%, OPE=%s%%',num2str(k),sprintf('%.1f',WF),sprintf('%.1f',VFR),sprintf('%.1f',MFR),sprintf('%.1f',PEFF),sprintf('%.1f',JVEL),sprintf('%.1f',IVEL),sprintf('%.1f',OPE)));
     end
+
+    % AVERAGED DIFFERENCES: Condition 1-2 ---------------------------------
+    runCond = '1-3';
+    runRows = 1:27;
+    % Min
+    minWF   = min(diffArray(runRows,2));
+    minVFR  = min(diffArray(runRows,3));
+    minMFR  = min(diffArray(runRows,4));
+    minPEFF = min(diffArray(runRows,5));
+    minJVEL = min(diffArray(runRows,6));
+    minIVEL = min(diffArray(runRows,7));
+    minOPE  = min(diffArray(runRows,8)); 
+    % Max
+    maxWF   = max(diffArray(runRows,2));
+    maxVFR  = max(diffArray(runRows,3));
+    maxMFR  = max(diffArray(runRows,4));
+    maxPEFF = max(diffArray(runRows,5));
+    maxJVEL = max(diffArray(runRows,6));
+    maxIVEL = max(diffArray(runRows,7));
+    maxOPE  = max(diffArray(runRows,8));    
+    % Mean
+    avgWF   = mean(diffArray(runRows,2));
+    avgVFR  = mean(diffArray(runRows,3));
+    avgMFR  = mean(diffArray(runRows,4));
+    avgPEFF = mean(diffArray(runRows,5));
+    avgJVEL = mean(diffArray(runRows,6));
+    avgIVEL = mean(diffArray(runRows,7));
+    avgOPE  = mean(diffArray(runRows,8));
+    disp('-----------------------------------------------------------------');
+    disp(sprintf('Conditions %s (Min Differences): ws=%s%%, VFR=%s%%, MFR=%s%%, PEFF=%s%%, JVEL=%s%%, IVEL=%s%%, OPE=%s%%',runCond,sprintf('%.1f',minWF),sprintf('%.1f',minVFR),sprintf('%.1f',minMFR),sprintf('%.1f',minPEFF),sprintf('%.1f',minJVEL),sprintf('%.1f',minIVEL),sprintf('%.1f',minOPE)));
+    disp(sprintf('Conditions %s (Max Differences): ws=%s%%, VFR=%s%%, MFR=%s%%, PEFF=%s%%, JVEL=%s%%, IVEL=%s%%, OPE=%s%%',runCond,sprintf('%.1f',maxWF),sprintf('%.1f',maxVFR),sprintf('%.1f',maxMFR),sprintf('%.1f',maxPEFF),sprintf('%.1f',maxJVEL),sprintf('%.1f',maxIVEL),sprintf('%.1f',maxOPE)));
+    disp(sprintf('Conditions %s (Avg. Differences): ws=%s%%, VFR=%s%%, MFR=%s%%, PEFF=%s%%, JVEL=%s%%, IVEL=%s%%, OPE=%s%%',runCond,sprintf('%.1f',avgWF),sprintf('%.1f',avgVFR),sprintf('%.1f',avgMFR),sprintf('%.1f',avgPEFF),sprintf('%.1f',avgJVEL),sprintf('%.1f',avgIVEL),sprintf('%.1f',avgOPE)));
+    
+    % AVERAGED DIFFERENCES: Condition 3-6 ---------------------------------
+    runCond = '4-6';
+    runRows = 28:54;
+    % Min
+    minWF   = min(diffArray(runRows,2));
+    minVFR  = min(diffArray(runRows,3));
+    minMFR  = min(diffArray(runRows,4));
+    minPEFF = min(diffArray(runRows,5));
+    minJVEL = min(diffArray(runRows,6));
+    minIVEL = min(diffArray(runRows,7));
+    minOPE  = min(diffArray(runRows,8)); 
+    % Max
+    maxWF   = max(diffArray(runRows,2));
+    maxVFR  = max(diffArray(runRows,3));
+    maxMFR  = max(diffArray(runRows,4));
+    maxPEFF = max(diffArray(runRows,5));
+    maxJVEL = max(diffArray(runRows,6));
+    maxIVEL = max(diffArray(runRows,7));
+    maxOPE  = max(diffArray(runRows,8));    
+    % Mean
+    avgWF   = mean(diffArray(runRows,2));
+    avgVFR  = mean(diffArray(runRows,3));
+    avgMFR  = mean(diffArray(runRows,4));
+    avgPEFF = mean(diffArray(runRows,5));
+    avgJVEL = mean(diffArray(runRows,6));
+    avgIVEL = mean(diffArray(runRows,7));
+    avgOPE  = mean(diffArray(runRows,8));
+    disp('-----------------------------------------------------------------');
+    disp(sprintf('Conditions %s (Min Differences): ws=%s%%, VFR=%s%%, MFR=%s%%, PEFF=%s%%, JVEL=%s%%, IVEL=%s%%, OPE=%s%%',runCond,sprintf('%.1f',minWF),sprintf('%.1f',minVFR),sprintf('%.1f',minMFR),sprintf('%.1f',minPEFF),sprintf('%.1f',minJVEL),sprintf('%.1f',minIVEL),sprintf('%.1f',minOPE)));
+    disp(sprintf('Conditions %s (Max Differences): ws=%s%%, VFR=%s%%, MFR=%s%%, PEFF=%s%%, JVEL=%s%%, IVEL=%s%%, OPE=%s%%',runCond,sprintf('%.1f',maxWF),sprintf('%.1f',maxVFR),sprintf('%.1f',maxMFR),sprintf('%.1f',maxPEFF),sprintf('%.1f',maxJVEL),sprintf('%.1f',maxIVEL),sprintf('%.1f',maxOPE)));
+    disp(sprintf('Conditions %s (Avg. Differences): ws=%s%%, VFR=%s%%, MFR=%s%%, PEFF=%s%%, JVEL=%s%%, IVEL=%s%%, OPE=%s%%',runCond,sprintf('%.1f',avgWF),sprintf('%.1f',avgVFR),sprintf('%.1f',avgMFR),sprintf('%.1f',avgPEFF),sprintf('%.1f',avgJVEL),sprintf('%.1f',avgIVEL),sprintf('%.1f',avgOPE)));
+    
+    % AVERAGED DIFFERENCES: Condition 7-9 ---------------------------------
+    runCond = '7-9';
+    runRows = 55:81;
+    % Min
+    minWF   = min(diffArray(runRows,2));
+    minVFR  = min(diffArray(runRows,3));
+    minMFR  = min(diffArray(runRows,4));
+    minPEFF = min(diffArray(runRows,5));
+    minJVEL = min(diffArray(runRows,6));
+    minIVEL = min(diffArray(runRows,7));
+    minOPE  = min(diffArray(runRows,8)); 
+    % Max
+    maxWF   = max(diffArray(runRows,2));
+    maxVFR  = max(diffArray(runRows,3));
+    maxMFR  = max(diffArray(runRows,4));
+    maxPEFF = max(diffArray(runRows,5));
+    maxJVEL = max(diffArray(runRows,6));
+    maxIVEL = max(diffArray(runRows,7));
+    maxOPE  = max(diffArray(runRows,8));    
+    % Mean
+    avgWF   = mean(diffArray(runRows,2));
+    avgVFR  = mean(diffArray(runRows,3));
+    avgMFR  = mean(diffArray(runRows,4));
+    avgPEFF = mean(diffArray(runRows,5));
+    avgJVEL = mean(diffArray(runRows,6));
+    avgIVEL = mean(diffArray(runRows,7));
+    avgOPE  = mean(diffArray(runRows,8));
+    disp('-----------------------------------------------------------------');
+    disp(sprintf('Conditions %s (Min Differences): ws=%s%%, VFR=%s%%, MFR=%s%%, PEFF=%s%%, JVEL=%s%%, IVEL=%s%%, OPE=%s%%',runCond,sprintf('%.1f',minWF),sprintf('%.1f',minVFR),sprintf('%.1f',minMFR),sprintf('%.1f',minPEFF),sprintf('%.1f',minJVEL),sprintf('%.1f',minIVEL),sprintf('%.1f',minOPE)));
+    disp(sprintf('Conditions %s (Max Differences): ws=%s%%, VFR=%s%%, MFR=%s%%, PEFF=%s%%, JVEL=%s%%, IVEL=%s%%, OPE=%s%%',runCond,sprintf('%.1f',maxWF),sprintf('%.1f',maxVFR),sprintf('%.1f',maxMFR),sprintf('%.1f',maxPEFF),sprintf('%.1f',maxJVEL),sprintf('%.1f',maxIVEL),sprintf('%.1f',maxOPE)));
+    disp(sprintf('Conditions %s (Avg. Differences): ws=%s%%, VFR=%s%%, MFR=%s%%, PEFF=%s%%, JVEL=%s%%, IVEL=%s%%, OPE=%s%%',runCond,sprintf('%.1f',avgWF),sprintf('%.1f',avgVFR),sprintf('%.1f',avgMFR),sprintf('%.1f',avgPEFF),sprintf('%.1f',avgJVEL),sprintf('%.1f',avgIVEL),sprintf('%.1f',avgOPE)));
+    
+    % AVERAGED DIFFERENCES: Condition 10-12 -------------------------------
+    runCond = '10-12';
+    runRows = 82:108;
+    % Min
+    minWF   = min(diffArray(runRows,2));
+    minVFR  = min(diffArray(runRows,3));
+    minMFR  = min(diffArray(runRows,4));
+    minPEFF = min(diffArray(runRows,5));
+    minJVEL = min(diffArray(runRows,6));
+    minIVEL = min(diffArray(runRows,7));
+    minOPE  = min(diffArray(runRows,8)); 
+    % Max
+    maxWF   = max(diffArray(runRows,2));
+    maxVFR  = max(diffArray(runRows,3));
+    maxMFR  = max(diffArray(runRows,4));
+    maxPEFF = max(diffArray(runRows,5));
+    maxJVEL = max(diffArray(runRows,6));
+    maxIVEL = max(diffArray(runRows,7));
+    maxOPE  = max(diffArray(runRows,8));    
+    % Mean
+    avgWF   = mean(diffArray(runRows,2));
+    avgVFR  = mean(diffArray(runRows,3));
+    avgMFR  = mean(diffArray(runRows,4));
+    avgPEFF = mean(diffArray(runRows,5));
+    avgJVEL = mean(diffArray(runRows,6));
+    avgIVEL = mean(diffArray(runRows,7));
+    avgOPE  = mean(diffArray(runRows,8));
+    disp('-----------------------------------------------------------------');
+    disp(sprintf('Conditions %s (Min Differences): ws=%s%%, VFR=%s%%, MFR=%s%%, PEFF=%s%%, JVEL=%s%%, IVEL=%s%%, OPE=%s%%',runCond,sprintf('%.1f',minWF),sprintf('%.1f',minVFR),sprintf('%.1f',minMFR),sprintf('%.1f',minPEFF),sprintf('%.1f',minJVEL),sprintf('%.1f',minIVEL),sprintf('%.1f',minOPE)));
+    disp(sprintf('Conditions %s (Max Differences): ws=%s%%, VFR=%s%%, MFR=%s%%, PEFF=%s%%, JVEL=%s%%, IVEL=%s%%, OPE=%s%%',runCond,sprintf('%.1f',maxWF),sprintf('%.1f',maxVFR),sprintf('%.1f',maxMFR),sprintf('%.1f',maxPEFF),sprintf('%.1f',maxJVEL),sprintf('%.1f',maxIVEL),sprintf('%.1f',maxOPE)));
+    disp(sprintf('Conditions %s (Avg. Differences): ws=%s%%, VFR=%s%%, MFR=%s%%, PEFF=%s%%, JVEL=%s%%, IVEL=%s%%, OPE=%s%%',runCond,sprintf('%.1f',avgWF),sprintf('%.1f',avgVFR),sprintf('%.1f',avgMFR),sprintf('%.1f',avgPEFF),sprintf('%.1f',avgJVEL),sprintf('%.1f',avgIVEL),sprintf('%.1f',avgOPE)));
     
     %# Split array by overall condition (column 1)
     R = diffArray;

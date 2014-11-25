@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 24, 2014
+%# Date       :  November 25, 2014
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -1246,7 +1246,7 @@ set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 %     legendLoc = 'NorthWest';
 % end
 hleg1 = legend(legendInfo);
-set(hleg1,'Location','NorthWest');
+set(hleg1,'Location','SouthEast');
 set(hleg1,'Interpreter','none');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
