@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 26, 2014
+%# Date       :  November 27, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -99,13 +99,14 @@ enableA4PaperSizePlot       = 1;    % Show plots scale to A4 size
 enableNumber1Plot           = 0;    % PD and OPE for Ca=0
 enableNumber2Plot           = 0;    % PD and OPE for Ca=0.00035
 enableNumber3Plot           = 0;    % PD and OPE for Ca=0.00059
-enableNumber4Plot           = 1;    % PD and OPE using ws=wm(CFs/CFm) only
-enableNumber5Plot           = 1;    % PD and OPE using ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
+enableNumber4Plot           = 0;    % PD and OPE using ws=wm(CFs/CFm) only
+enableNumber5Plot           = 0;    % PD and OPE using ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
 enableNumber6Plot           = 0;    % Thrust deduction using Ca=0
 enableNumber7Plot           = 0;    % Barplot showing Differences in results when
                                     % using ws=wm(CFs/CFm) or ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
 enableNumber8Plot           = 0;    % Wake fraction comparison
 enableNumber9Plot           = 0;    % Corrected sea trials data (delivered power)
+enableNumber10Plot          = 1;    % Show resistance vs. power and prop. efficiency
 
 % Enable distinction between adjuste and not adjusted F vs. curves
 enableAdjOrNotAdjCurvesPlot = 0;    % If enabled show BOTH adjust and not adjusted graphs
@@ -6591,11 +6592,11 @@ end % enableNumber8Plot
 
 
 %# ************************************************************************
-%# 9. Cprrected Sea Trials Data (Delivered Power)
+%# 9. Corrected Sea Trials Data (Delivered Power)
 %# ************************************************************************
 
 if enableNumber9Plot == 1
-    figurename = 'Plot 8: Full Scale and Model Scale: Wake Fraction';
+    figurename = 'Plot 9: Corrected Sea Trials Data (Delivered Power)';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -6766,7 +6767,164 @@ if enableNumber9Plot == 1
     %close;
 end % enableNumber9Plot
 
+
+%# ************************************************************************
+%# 10. Resistance vs. Power and Propulsive Efficiency
+%# ************************************************************************
+
+if enableNumber10Plot == 1
+    figurename = 'Plot 10: Resistance vs. Power and Propulsive Efficiency';
+    f = figure('Name',figurename,'NumberTitle','off');
     
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 10;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors --------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
+    
+    %# Line, colors and markers
+    setMarkerSize      = 12;
+    setLineWidthMarker = 1;
+    setLineWidth       = 2;
+    setLineStyle       = '-';
+    setLineStyle1      = '-.';
+
+    %#FS PD (Sea Trials) vs. Ship Speed ///////////////////////////////////
+    subplot(1,1,1)
+    
+    %# X and Y axis -------------------------------------------------------
+
+    x1 = [1 2 3 4 5 6];
+    y1 = [1 2 3 4 5 6];
+    
+    x2 = [2 3 4 5 6 7];
+    y2 = [2 3 4 5 6 7];
+    
+    %# Plotting -----------------------------------------------------------
+    %h = plot(x1,y1,'-',x2,y2,'-');
+    [ax,p1,p2] = plotyy(x1,y1,x2,y2);
+    xlabel(ax(2),'{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize) % label x-axis    
+    ylabel(ax(1),'{\bf Delivered power, P_{D} (MW)}','FontSize',setGeneralFontSize) % label left y-axis
+    ylabel(ax(2),'{\bf Residual resistance, C_{R} (-)}','FontSize',setGeneralFontSize) % label right y-axis
+    %xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
+    %ylabel('{\bf Delivered power, P_{D} (MW)}','FontSize',setGeneralFontSize);
+    %if enablePlotTitle == 1 && enableAdjOrNotAdjCurvesPlot == 1
+    %    title('{\bf Sea Trials Data}','FontSize',setGeneralFontSize);
+    %end
+    grid(ax(1),'on');
+    box(ax(1),'on');
+    axis(ax(1),'square');
+    grid(ax(2),'on');
+    box(ax(2),'on');
+    axis(ax(2),'square');
+    
+    %# Line, colors and markers   
+    set(p1,'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    set(p2,'Color',setColor{2},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+%     minX  = 10;
+%     maxX  = 38;
+%     incrX = 4;
+%     minY  = 0;
+%     maxY  = 35;
+%     incrY = 5;
+%     set(gca,'XLim',[minX maxX]);
+%     set(gca,'XTick',minX:incrX:maxX);
+%     set(gca,'YLim',[minY maxY]);
+%     set(gca,'YTick',minY:incrY:maxY);
+%     %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+%     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
+    
+    %# Legend
+%     %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+%     hleg1 = legend('11','22');
+%     set(hleg1,'Location','NorthWest');
+%     %set(hleg1,'Interpreter','none');
+%     set(hleg1, 'Interpreter','tex');
+%     set(hleg1,'LineWidth',1);
+%     set(hleg1,'FontSize',setLegendFontSize);
+%     %legend boxoff;    
+    
+    %# Font sizes and border ----------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+    %# ************************************************************************
+    %# Save plot as PNG
+    %# ************************************************************************
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
+    
+    %# Plot title -------------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
+    
+    %# Save plots as PDF, PNG and EPS -----------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/FS_Result_Comp_Plot_10_Resistance_vs_Power_and_Propulsive_Efficiency.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;
+end % enableNumber10Plot
+
+
 % -------------------------------------------------------------------------
 % View profile
 % -------------------------------------------------------------------------

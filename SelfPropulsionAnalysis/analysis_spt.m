@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 26, 2014
+%# Date       :  November 27, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -85,7 +85,7 @@ delete(allPlots);   % Close all plots
 enableProfiler              = 0;    % Use profiler to show execution times
 
 % Decide if June 2013 or September 2014 data is used for calculations
-%enableSept2014FRMValues     = 1;    % Use enable uses flow rate values established September 2014
+enableSept2014FRMValues     = 1;    % Use enable uses flow rate values established September 2014
 
 % Plot titles, colours, etc.
 enablePlotMainTitle         = 0;    % Show plot title in saved file
@@ -777,6 +777,11 @@ resultsArraySPT_RAvg = [];
 %[23] PORT static pressure ITTC station 1a  (mmH20)
 %[24] STBD static pressure ITTC station 1a  (mmH20)
 
+%[25] PORT: Mass flow rate (pQJ)            (Kg/s)
+%[26] STBD: Mass flow rate (pQJ)            (Kg/s)
+%[27] PORT: Volumetric flow rate (QJ)       (m^3/s)
+%[28] STBD: Volumetric flow rate (QJ)       (m^3/s)
+        
 resultsArraySPT_DS   = [];
 %# resultsArraySPT_DS columns:
 
@@ -845,6 +850,41 @@ for k=1:9
         resultsArraySPT_RAvg(k, 22) = mean(resultsArraySPT_R{k}(:,22));
         resultsArraySPT_RAvg(k, 23) = mean(resultsArraySPT_R{k}(:,23));
         resultsArraySPT_RAvg(k, 24) = mean(resultsArraySPT_R{k}(:,24));
+                
+        %# START Handle mass flow rate ------------------------------------
+        
+        PortKP = mean(resultsArraySPT_R{k}(:,16));
+        StbdKP = mean(resultsArraySPT_R{k}(:,17));
+        
+        if enableSept2014FRMValues == 1
+            % PORT and STBD (September 2014 FRM test): Mass flow rate (Kg/s)
+            PortMfr = -0.0421*PortKP^4+0.5718*PortKP^3-2.9517*PortKP^2+7.8517*PortKP-5.1976;
+            StbdMfr = -0.0946*StbdKP^4+1.1259*StbdKP^3-5.0067*StbdKP^2+11.0896*StbdKP-6.8705;
+        else
+            % PORT (June 2013 FRM test): Mass flow rate (Kg/s)
+            if PortKP > 1.86
+                PortMfr = 0.1133*PortKP^3-1.0326*PortKP^2+4.3652*PortKP-2.6737;
+            else
+                PortMfr = 0.4186*PortKP^5-4.5094*PortKP^4+19.255*PortKP^3-41.064*PortKP^2+45.647*PortKP-19.488;
+            end
+            % STBD (June 2013 FRM test): Mass flow rate (Kg/s)
+            if StbdKP > 1.86
+                StbdMfr = 0.1133*StbdKP^3-1.0326*StbdKP^2+4.3652*StbdKP-2.6737;
+            else
+                StbdMfr = 0.4186*StbdKP^5-4.5094*StbdKP^4+19.255*StbdKP^3-41.064*StbdKP^2+45.647*StbdKP-19.488;
+            end
+        end
+        %# END Handle mass flow rate --------------------------------------        
+        
+        % Mass flow rate
+        resultsArraySPT_RAvg(k, 25) = PortMfr;
+        resultsArraySPT_RAvg(k, 26) = StbdMfr;
+        
+        % Volume flow rate
+        PortVfr = PortMfr/freshwaterdensity;
+        StbdVfr = StbdMfr/freshwaterdensity;        
+        resultsArraySPT_RAvg(k, 27) = PortVfr;
+        resultsArraySPT_RAvg(k, 28) = StbdVfr;
         
         % Descriptive statistics ------------------------------------------
         resultsArraySPT_DS(k,1) = k;
@@ -1024,8 +1064,8 @@ end
 set(gcf,'Color',[1,1,1]);
 
 %# Axis limitations
-minX  = 1900;
-maxX  = 3100;
+minX  = 1800;
+maxX  = 3200;
 incrX = 200;
 minY  = -600;
 maxY  = 1600;
@@ -1225,6 +1265,339 @@ for k=1:3
 end
 %close;
 
+%# ************************************************************************
+%# 2. Static Pressures
+%# ************************************************************************
+
+%# Plotting speed ---------------------------------------------------------
+figurename = 'Plot 2: Static Pressure and Pump Head (Pressure at Station 5 - Pressure at Station 3)';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ------------------------------------------------
+
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
+
+% Fonts and colours ---------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 14;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 11;
+setLineWidthMarker = 2;
+setLineWidth       = 2;
+setLineStyle       = '-';
+setLineStyle1      = '-.';
+setLineStyle2      = ':';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+subplot(1,2,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+% Repated runs
+%activeArray = resultsArraySPT;
+
+% Averaged runs
+activeArray = resultsArraySPT_RAvg;
+
+x1 = activeArray(:,26);
+y1 = activeArray(:,23);
+
+x2 = activeArray(:,26);
+y2 = activeArray(:,22);
+
+x3 = activeArray(:,26);
+y3 = activeArray(:,21);
+
+x4 = activeArray(:,26);
+y4 = activeArray(:,20);
+
+x5 = activeArray(:,26);
+y5 = activeArray(:,19);
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*',x5,y5,'*');
+if enableErrorStDevPlot == 1
+    % Error (StDev): Station 1a
+    hold on;
+    h1 = errorbar(x1,y1,resultsArraySPT_DS(:,6),'k');
+    set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    % Error (StDev): Station 3
+    hold on;
+    h1 = errorbar(x2,y2,resultsArraySPT_DS(:,11),'k');
+    set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    % Error (StDev): Station 4
+    hold on;
+    h1 = errorbar(x3,y3,resultsArraySPT_DS(:,16),'k');
+    set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    % Error (StDev): Station 5
+    hold on;
+    h1 = errorbar(x4,y4,resultsArraySPT_DS(:,21),'k');
+    set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+    % Error (StDev): Station 6
+    hold on;
+    h1 = errorbar(x5,y5,resultsArraySPT_DS(:,26),'k');
+    set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+end % enableErrorStDevPlot
+xlabel('{\bf Mass flow rate (Kg/s)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Static pressure (mmH20)}','FontSize',setGeneralFontSize);
+%if enablePlotTitle == 1
+title('{\bf Static Pressure}','FontSize',setGeneralFontSize);
+%end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+%set(h(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(4),'Color',setColor{4},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(5),'Color',setColor{5},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+if enableErrorStDevPlot == 1
+    set(h1,'marker','+');
+    set(h1,'linestyle','none');
+end
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 2.5;
+maxX  = 5;
+incrX = 0.5;
+minY  = -600;
+maxY  = 1600;
+incrY = 200;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
+
+%# Legend
+%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+hleg1 = legend('Starboard: Station 1a','Starboard: Station 3','Starboard: Station 4','Starboard: Station 5','Starboard: Station 6');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+subplot(1,2,2)
+
+%# X and Y axis -----------------------------------------------------------
+
+% Repated runs
+%activeArray = resultsArraySPT;
+
+% Averaged runs
+activeArray = resultsArraySPT_RAvg;
+[msa,nsa] = size(activeArray);
+
+resultsArraySPT_PH = [];
+for kl=1:msa
+    resultsArraySPT_PH(kl,1) = resultsArraySPT_RAvg(kl,26);
+    resultsArraySPT_PH(kl,2) = resultsArraySPT_RAvg(kl,20)-resultsArraySPT_RAvg(kl,22);
+    lowest  = min(resultsArraySPT_R{kl}(:,20))-max(resultsArraySPT_R{kl}(:,22));
+    highest = max(resultsArraySPT_R{kl}(:,20))-min(resultsArraySPT_R{kl}(:,22));
+    resultsArraySPT_PH(kl,3) = lowest;
+    resultsArraySPT_PH(kl,4) = highest;
+    resultsArraySPT_PH(kl,5) = std([lowest highest],1);
+end
+
+activeArray = resultsArraySPT_PH;
+
+x = activeArray(:,1);
+y = activeArray(:,2);
+e = activeArray(:,5);
+
+% Fitting curve through sea trials delivered power ------------------------
+[fitobject,gof,output] = fit(x,y,'poly2');
+cvalues = coeffvalues(fitobject);
+cnames  = coeffnames(fitobject);
+output  = formula(fitobject);
+
+setDec = '%.4f';
+setDecimals1 = setDec;
+setDecimals2 = sprintf('+%s',setDec);
+setDecimals3 = sprintf('+%s',setDec);
+setDecimals4 = sprintf('+%s',setDec);
+setDecimals5 = sprintf('+%s',setDec);
+if cvalues(1) < 0
+    setDecimals1 = setDec;
+end
+if cvalues(2) < 0
+    setDecimals2 = setDec;
+end
+if cvalues(3) < 0
+    setDecimals3 = setDec;
+end
+%if cvalues(4) < 0
+%    setDecimals4 = setDec;
+%end
+%if cvalues(5) < 0
+%    setDecimals5 = setDec;
+%end
+p1 = sprintf(setDecimals1,cvalues(1));
+p2 = sprintf(setDecimals2,cvalues(2));
+p3 = sprintf(setDecimals3,cvalues(3));
+%p4 = sprintf(setDecimals4,cvalues(4));
+%p5 = sprintf(setDecimals5,cvalues(5));
+EqnOfFitText = sprintf('\\bfy = %s*x^2%s*x%s, R^{2}=%s',p1,p2,p3,sprintf('%.1f',gof.rsquare));
+
+% Fitting
+fitSS = [2.5:0.5:5];
+[mf,nf] = size(fitSS);
+
+fitArray = [];
+for kl=1:nf
+    fitArray(kl,1) = fitSS(kl);
+    fitArray(kl,2) = cvalues(1)*fitSS(kl)^2+cvalues(2)*fitSS(kl)+cvalues(3);
+end
+
+%# Plotting ---------------------------------------------------------------
+h = plot(fitobject,'-k',x,y,'*');
+legendInfo{1} = 'Starboard: Pump Head';
+if enableErrorStDevPlot == 1
+    % Error (StDev)
+    hold on;
+    h1 = errorbar(x,y,e,'k');
+    set(h1,'Marker','none','LineStyle','none','LineWidth',1);
+end
+% Fitting
+hold on;
+h2 = plot(fitArray(:,1),fitArray(:,2),'-');
+legendInfo{2} = 'Starboard: Pump Head Fitted';
+xlabel('{\bf Mass flow rate (Kg/s)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Pump head (mm)}','FontSize',setGeneralFontSize);
+%if enablePlotTitle == 1
+title('{\bf Pump Head}','FontSize',setGeneralFontSize);
+%end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h2(1),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',1);
+%set(h2(1),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+if enableErrorStDevPlot == 1
+    set(h1,'marker','+');
+    set(h1,'linestyle','none');
+end
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Annotations
+text(2000,400,EqnOfFitText,'FontSize',12,'color','k','FontWeight','normal');
+
+%# Axis limitations
+minX  = 2.5;
+maxX  = 5;
+incrX = 0.5;
+minY  = 0;
+maxY  = 1500;
+incrY = 300;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
+
+%# Legend
+%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+%hleg1 = legend('Starboard: Pump Head');
+hleg1 = legend(legendInfo);
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title -------------------------------------------------------------
+%if enablePlotMainTitle == 1
+annotation('textbox', [0 0.9 1 0.1], ...
+    'String', strcat('{\bf ', figurename, '}'), ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center');
+%end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/SPT_Plot_1_Static_Pressure_Station_5_and_3_and_Pump_Heads_2.%s', 'SPT', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
 
 % -------------------------------------------------------------------------
 % View profile
