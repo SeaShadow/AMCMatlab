@@ -196,9 +196,9 @@ FSdraft         = MSdraft*FStoMSratio;           % Full scale draft             
 FormFactor = 1.18;                            % Form factor (1+k)
 
 % Correlation coefficients: No Ca (AMC), typical Ca (Bose 2008) and MARIN Ca
-CorrCoeff  = 0;                                               % Correlation coefficient, Ca as used by AMC
-%CorrCoeff  = (105*((150*10^(-6))/FSlwl)^(1/3)-0.64)*10^(-3); % Ca calculcation for typical value as shown in Bose (2008), equation 2-4, page 6
-%CorrCoeff  = 0.00035;                                        % Ca value as used by MARIN for JHSV testing
+CorrCoeff  = 0.00035;                                           % Ca value as used by MARIN for JHSV testing (USE AS DEFAULT)
+%CorrCoeff  = 0;                                                % Correlation coefficient, Ca as used by AMC
+%CorrCoeff  = (105*((150*10^(-6))/FSlwl)^(1/3)-0.64)*10^(-3);   % Ca calculcation for typical value as shown in Bose (2008), equation 2-4, page 6
 
 % Waterjet constants (FS = full scale and MS = model scale) ---------------
 
@@ -960,6 +960,7 @@ for k=1:ma
     polyvSTBD2             = polyval(polyfSTBD2,x);
     MSStbdShaftSpeed       = spline(x,polyvSTBD2,ThrustAtSPP);
     
+    % Speed array - MS and FS
     shaftSpeedConvArray(k, 1) = Froude_Numbers(k,1);
     shaftSpeedConvArray(k, 2) = MSPortShaftSpeed;
     shaftSpeedConvArray(k, 3) = MSStbdShaftSpeed;
@@ -1144,7 +1145,7 @@ if enableAdjustedFitting == 1
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;
+    %legend boxoff;
     
     %# Font sizes and border ----------------------------------------------
     
@@ -1442,7 +1443,7 @@ if ma == 9
         [LEGH,OBJH,OUTH,OUTM] = legend;
         legend([OUTH;h5],OUTM{:},'Force at T=0');
     end
-    legend boxoff;
+    %legend boxoff;
     
     %# ********************************************************************
     %# Save plot as PNG
@@ -1685,7 +1686,7 @@ set(hleg1,'Location','NorthEast');
 set(hleg1,'Interpreter','none');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-legend boxoff;
+%legend boxoff;
 
 %# ************************************************************************
 %# Save plot as PNG
@@ -1849,12 +1850,13 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
 
 %# Legend
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-hleg1 = legend('Resistance (RC)','Gross thrust (TG) at zero drag','Towing force at zero thrust','Thrust at SPP','Towing force, FD');
+hleg1 = legend('Resistance (R_{C})','Thrust at zero drag (T_{F=0})','Towing force at zero thrust (F_{T=0})','Thrust at SPP (T_{SPP})','Towing force, F_{D}');
 set(hleg1,'Location','NorthWest');
-set(hleg1,'Interpreter','none');
+%set(hleg1,'Interpreter','none');
+set(hleg1,'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-legend boxoff;
+%legend boxoff;
 
 %# ************************************************************************
 %# Save plot as PNG
@@ -2404,7 +2406,7 @@ set(hleg1,'Location','SouthEast');
 set(hleg1, 'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-legend boxoff;
+%legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
@@ -2594,7 +2596,7 @@ set(hleg1,'Location','NorthWest');
 set(hleg1, 'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-legend boxoff;
+%legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
@@ -2754,7 +2756,7 @@ set(hleg1,'Location','SouthEast');
 set(hleg1, 'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-legend boxoff;
+%legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 

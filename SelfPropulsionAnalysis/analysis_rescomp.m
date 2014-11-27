@@ -105,7 +105,7 @@ enableNumber6Plot           = 0;    % Thrust deduction using Ca=0
 enableNumber7Plot           = 0;    % Barplot showing Differences in results when
                                     % using ws=wm(CFs/CFm) or ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
 enableNumber8Plot           = 0;    % Wake fraction comparison
-enableNumber9Plot           = 0;    % Corrected sea trials data (delivered power)
+enableNumber9Plot           = 9;    % Corrected sea trials data (delivered power)
 enableNumber10Plot          = 1;    % Show resistance vs. power and prop. efficiency
 
 % Enable distinction between adjuste and not adjusted F vs. curves
@@ -161,7 +161,8 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 
 
 %# ************************************************************************
-%# START Load MARIN Data (variable name is Marin112mJHSVData by default)
+%# START Load MARIN Data
+%#       >> Default variable name: Marin112mJHSVData
 %# ------------------------------------------------------------------------
 if exist('Marin112mJHSVData.mat', 'file') == 2
     % Load file into shaftSpeedList variable
@@ -184,7 +185,51 @@ else
     break;
 end
 %# ------------------------------------------------------------------------
-%# END Load MARIN Data (variable name is Marin112mJHSVData by default)
+%# END Load MARIN Data
+%# ************************************************************************
+
+
+%# ************************************************************************
+%# START Full Scale Resistance Results (Based on ITTC (2011) 7.5-02-03-01.4
+%#       >> Default variable name: FullScaleRT_ITTC1978_2011
+%# ------------------------------------------------------------------------
+if exist('FullScaleRT_ITTC1978_2011.mat', 'file') == 2
+    % Load file into shaftSpeedList variable
+    load('FullScaleRT_ITTC1978_2011.mat');
+    %# Results array columns:
+    %[1]  Froude length number                              (-)
+    %[2]  Model speed                                       (m/s)
+    %[3]  MS Reynolds number                                (-)
+    %[4]  MS Total resistance (catamaran), RT               (N)
+    %[5]  MS Total resistance coeff., CT                    (-)
+    %[6]  GRIGSON:  MS Frictional resistance coeff., CF     (-)
+    %[7]  ITTC1957: MS Frictional resistance coeff., CF     (-)
+    %[8]  GRIGSON:  MS Residual resistance coeff., CR       (-)
+    %[9]  ITTC1957: MS Residual resistance coeff., CR       (-)
+    %[10] FS Ship speed                                     (m/s)
+    %[11] FS Ship speed                                     (knots)
+    %[12] FS Reynolds number                                (-)
+    %[13] Roughness allowance, delta CF                     (-)
+    %[14] Correlation coeff., Ca                            (-)
+    %[15] FS Air resistance coefficient                     (-)
+    %[16] GRIGSON:  FS Total resistance (catamaran), RT     (N)
+    %[17] ITTC1957: FS Total resistance (catamaran), RT     (N)
+    %[18] GRIGSON:  FS Total resistance coeff., CT          (-)
+    %[19] ITTC1957: FS Total resistance coeff., CT          (-)
+    %[20] GRIGSON:  FS Frictional resistance coeff., CF     (-)
+    %[21] ITTC1957: FS Frictional resistance coeff., CF     (-)
+    %[22] GRIGSON:  FS Residual resistance coeff., CR       (-)
+    %[23] ITTC1957: FS Residual resistance coeff., CR       (-)
+    %[24] GRIGSON:  FS Total resistance (catamaran), RT     (kN)
+    %[25] ITTC1957: FS Total resistance (catamaran), RT     (kN)
+else
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('WARNING: Required full scale resistance data file (FullScaleRT_ITTC1978_2011.mat) does not exist!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    break;
+end
+%# ------------------------------------------------------------------------
+%# END Full Scale Resistance Results (Based on ITTC (2011) 7.5-02-03-01.4
 %# ************************************************************************
 
 
@@ -2525,11 +2570,11 @@ if enableNumber4Plot == 1
     incrX = 1;
     minY  = 0;
     if enableWJBMDelPowerOPEPlot == 1
-        maxY  = 45;
+        maxY  = 44;
     else
         maxY  = 20;
     end
-    incrY = 5;
+    incrY = 4;
     set(gca,'XLim',[minX maxX]);
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
@@ -3906,11 +3951,11 @@ if enableNumber5Plot == 1
     incrX = 1;
     minY  = 0;
     if enableWJBMDelPowerOPEPlot == 1
-        maxY  = 45;
+        maxY  = 44;
     else
         maxY  = 20;
     end
-    incrY = 5;
+    incrY = 4;
     set(gca,'XLim',[minX maxX]);
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
@@ -6616,7 +6661,7 @@ if enableNumber9Plot == 1
     setGeneralFontName = 'Helvetica';
     setGeneralFontSize = 14;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 10;
+    setLegendFontSize  = 14;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -6819,76 +6864,299 @@ if enableNumber10Plot == 1
     
     %# Line, colors and markers
     setMarkerSize      = 12;
-    setLineWidthMarker = 1;
+    setLineWidthMarker = 2;
     setLineWidth       = 2;
     setLineStyle       = '-';
     setLineStyle1      = '-.';
-
-    %#FS PD (Sea Trials) vs. Ship Speed ///////////////////////////////////
-    subplot(1,1,1)
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////
+    subplot(3,2,1)
     
     %# X and Y axis -------------------------------------------------------
-
-    x1 = [1 2 3 4 5 6];
-    y1 = [1 2 3 4 5 6];
     
-    x2 = [2 3 4 5 6 7];
-    y2 = [2 3 4 5 6 7];
+    %# CONDITION 11
+    fsData = fsrCond11;
+    [ma,na] = size(fsData);
+    delpowerMW = [];
+    for k=1:ma
+        delpowerMW(k) = ((fsData(k,42)+fsData(k,43))*2)/1000^2;
+    end
+    x = fsData(:,3);
+    y = delpowerMW;
     
     %# Plotting -----------------------------------------------------------
-    %h = plot(x1,y1,'-',x2,y2,'-');
-    [ax,p1,p2] = plotyy(x1,y1,x2,y2);
-    xlabel(ax(2),'{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize) % label x-axis    
-    ylabel(ax(1),'{\bf Delivered power, P_{D} (MW)}','FontSize',setGeneralFontSize) % label left y-axis
-    ylabel(ax(2),'{\bf Residual resistance, C_{R} (-)}','FontSize',setGeneralFontSize) % label right y-axis
-    %xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
-    %ylabel('{\bf Delivered power, P_{D} (MW)}','FontSize',setGeneralFontSize);
+    h = plot(x,y,'*');
+    xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Delivered power, P_{D} (MW)}','FontSize',setGeneralFontSize);
     %if enablePlotTitle == 1 && enableAdjOrNotAdjCurvesPlot == 1
-    %    title('{\bf Sea Trials Data}','FontSize',setGeneralFontSize);
+    title('{\bf Delivered Power, P_{D}}','FontSize',setGeneralFontSize);
     %end
-    grid(ax(1),'on');
-    box(ax(1),'on');
-    axis(ax(1),'square');
-    grid(ax(2),'on');
-    box(ax(2),'on');
-    axis(ax(2),'square');
+    grid on;
+    box on;
+    %axis square;
     
-    %# Line, colors and markers   
-    set(p1,'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    set(p2,'Color',setColor{2},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-%     minX  = 10;
-%     maxX  = 38;
-%     incrX = 4;
-%     minY  = 0;
-%     maxY  = 35;
-%     incrY = 5;
-%     set(gca,'XLim',[minX maxX]);
-%     set(gca,'XTick',minX:incrX:maxX);
-%     set(gca,'YLim',[minY maxY]);
-%     set(gca,'YTick',minY:incrY:maxY);
+    minX  = 8;
+    maxX  = 30;
+    incrX = 2;
+    minY  = 0;
+    maxY  = 14;
+    incrY = 2;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
 %     %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
 %     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
     
-    %# Legend
-%     %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-%     hleg1 = legend('11','22');
-%     set(hleg1,'Location','NorthWest');
-%     %set(hleg1,'Interpreter','none');
-%     set(hleg1, 'Interpreter','tex');
-%     set(hleg1,'LineWidth',1);
-%     set(hleg1,'FontSize',setLegendFontSize);
-%     %legend boxoff;    
+    %# Font sizes and border ----------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////
+    subplot(3,2,3)
+    
+    %# X and Y axis -------------------------------------------------------
+    
+    %# CONDITION 11
+    fsData = fsrCond11;
+    x = fsData(:,3);
+    y = fsData(:,46);
+    
+    %# Plotting -----------------------------------------------------------
+    h = plot(x,y,'*');
+    xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Propulsive efficiency, \eta_{D} (-)}','FontSize',setGeneralFontSize);
+    %if enablePlotTitle == 1 && enableAdjOrNotAdjCurvesPlot == 1
+    title('{\bf Propulsive efficiency, \eta_{D}}','FontSize',setGeneralFontSize);
+    %end
+    grid on;
+    box on;
+    %axis square;
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    minX  = 8;
+    maxX  = 30;
+    incrX = 2;
+    minY  = 0;
+    maxY  = 1;
+    incrY = 0.2;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+%     %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+	set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Font sizes and border ----------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////
+    subplot(3,2,5)
+    
+    %# X and Y axis -------------------------------------------------------
+    
+    % Full scale resistance data
+    FSR = FullScaleRT_ITTC1978_2011;
+    
+    x = FSR(4:22,11);
+    y = FSR(4:22,22);
+    
+    %# Plotting -----------------------------------------------------------
+    h = plot(x,y,'*');
+    xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Residual resistance, C_{R} (-)}','FontSize',setGeneralFontSize);
+    %if enablePlotTitle == 1 && enableAdjOrNotAdjCurvesPlot == 1
+    title('{\bf Residual resistance, C_{R}}','FontSize',setGeneralFontSize);
+    %end
+    grid on;
+    box on;
+    %axis square;
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    minX  = 8;
+    maxX  = 30;
+    incrX = 2;
+    minY  = 0.006;
+    maxY  = 0.012;
+    incrY = 0.002;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+%     %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+	set(gca,'yticklabel',num2str(get(gca,'ytick')','%.3f'));
     
     %# Font sizes and border ----------------------------------------------
     
     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
+    %# SUBPLOT ////////////////////////////////////////////////////////////
+    subplot(3,2,2)
+    
+    %# X and Y axis -------------------------------------------------------
+    
+    %# CONDITION 11
+    fsData = fsrCond11;
+    [ma,na] = size(fsData);
+    delpowerMW = [];
+    for k=1:ma
+        delpowerMW(k) = ((fsData(k,42)+fsData(k,43))*2)/1000^2;
+    end
+    x = fsData(:,1);
+    y = delpowerMW;
+    
+    %# Plotting -----------------------------------------------------------
+    h = plot(x,y,'*');
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Delivered power, P_{D} (MW)}','FontSize',setGeneralFontSize);
+    %if enablePlotTitle == 1 && enableAdjOrNotAdjCurvesPlot == 1
+    title('{\bf Delivered Power, P_{D}}','FontSize',setGeneralFontSize);
+    %end
+    grid on;
+    box on;
+    %axis square;
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    minX  = 0.14;
+    maxX  = 0.5;
+    incrX = 0.04;
+    minY  = 0;
+    maxY  = 14;
+    incrY = 2;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
+    
+    %# Font sizes and border ----------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////
+    subplot(3,2,4)
+    
+    %# X and Y axis -------------------------------------------------------
+    
+    %# CONDITION 11
+    fsData = fsrCond11;
+    x = fsData(:,1);
+    y = fsData(:,46);
+    
+    %# Plotting -----------------------------------------------------------
+    h = plot(x,y,'*');
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Propulsive efficiency, \eta_{D} (-)}','FontSize',setGeneralFontSize);
+    %if enablePlotTitle == 1 && enableAdjOrNotAdjCurvesPlot == 1
+    title('{\bf Propulsive efficiency, \eta_{D}}','FontSize',setGeneralFontSize);
+    %end
+    grid on;
+    box on;
+    %axis square;
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    minX  = 0.14;
+    maxX  = 0.5;
+    incrX = 0.04;
+    minY  = 0;
+    maxY  = 1;
+    incrY = 0.2;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+	set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
+    
+    %# Font sizes and border ----------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////
+    subplot(3,2,6)
+    
+    %# X and Y axis -------------------------------------------------------
+    
+    % Full scale resistance data
+    FSR = FullScaleRT_ITTC1978_2011;
+    
+    x = FSR(4:22,1);
+    y = FSR(4:22,22);
+    
+    %# Plotting -----------------------------------------------------------
+    h = plot(x,y,'*');
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Residual resistance, C_{R} (-)}','FontSize',setGeneralFontSize);
+    %if enablePlotTitle == 1 && enableAdjOrNotAdjCurvesPlot == 1
+    title('{\bf Residual resistance, C_{R}}','FontSize',setGeneralFontSize);
+    %end
+    grid on;
+    box on;
+    %axis square;
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    minX  = 0.14;
+    maxX  = 0.5;
+    incrX = 0.04;
+    minY  = 0.006;
+    maxY  = 0.012;
+    incrY = 0.002;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+ 	set(gca,'yticklabel',num2str(get(gca,'ytick')','%.3f'));
+    
+    %# Font sizes and border ----------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
     %# ************************************************************************
     %# Save plot as PNG
     %# ************************************************************************
