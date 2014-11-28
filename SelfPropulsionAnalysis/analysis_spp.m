@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 27, 2014
+%# Date       :  November 28, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -1850,7 +1850,7 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
 
 %# Legend
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-hleg1 = legend('Resistance (R_{C})','Thrust at zero drag (T_{F=0})','Towing force at zero thrust (F_{T=0})','Thrust at SPP (T_{SPP})','Towing force, F_{D}');
+hleg1 = legend('Resistance (R_{C})','Thrust at zero drag (T_{F=0})','Towing force at zero thrust (F_{T=0})','Thrust at SPP (T_{SPP})','Towing force (F_{D})');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1,'Interpreter','tex');
