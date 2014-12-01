@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 27, 2014
+%# Date       :  December 1, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -1152,7 +1152,8 @@ p2 = sprintf(setDecimals2,cvalues(2));
 p3 = sprintf(setDecimals3,cvalues(3));
 %p4 = sprintf(setDecimals4,cvalues(4));
 %p5 = sprintf(setDecimals5,cvalues(5));
-EqnOfFitText = sprintf('\\bfy = %s*x^2%s*x%s, R^{2}=%s',p1,p2,p3,sprintf('%.1f',gof.rsquare));
+EqnOfFitText   = sprintf('\\bfy = %s*x^2%s*x%s, R^{2}=%s',p1,p2,p3,sprintf('%.1f',gof.rsquare));
+EqnOfFitTextNF = sprintf('y = %s*x^2%s*x%s, R^{2}=%s',p1,p2,p3,sprintf('%.1f',gof.rsquare));
 
 % Fitting
 fitSS = [1500:100:3100];
@@ -1201,6 +1202,7 @@ set(gcf,'Color',[1,1,1]);
 
 %# Annotations
 text(2000,400,EqnOfFitText,'FontSize',12,'color','k','FontWeight','normal');
+disp(sprintf('Eqn. of Fit Plot 1: %s',EqnOfFitTextNF));
 
 %# Axis limitations
 minX  = 1400;
@@ -1486,7 +1488,8 @@ p2 = sprintf(setDecimals2,cvalues(2));
 p3 = sprintf(setDecimals3,cvalues(3));
 %p4 = sprintf(setDecimals4,cvalues(4));
 %p5 = sprintf(setDecimals5,cvalues(5));
-EqnOfFitText = sprintf('\\bfy = %s*x^2%s*x%s, R^{2}=%s',p1,p2,p3,sprintf('%.1f',gof.rsquare));
+EqnOfFitText   = sprintf('\\bfy = %s*x^2%s*x%s, R^{2}=%s',p1,p2,p3,sprintf('%.1f',gof.rsquare));
+EqnOfFitTextNF = sprintf('y = %s*x^2%s*x%s, R^{2}=%s',p1,p2,p3,sprintf('%.1f',gof.rsquare));
 
 % Fitting
 fitSS = [2.5:0.5:5];
@@ -1534,7 +1537,8 @@ end
 set(gcf,'Color',[1,1,1]);
 
 %# Annotations
-text(2000,400,EqnOfFitText,'FontSize',12,'color','k','FontWeight','normal');
+text(3.2,400,EqnOfFitText,'FontSize',12,'color','k','FontWeight','normal');
+disp(sprintf('Eqn. of Fit Plot 2: %s',EqnOfFitTextNF));
 
 %# Axis limitations
 minX  = 2.5;

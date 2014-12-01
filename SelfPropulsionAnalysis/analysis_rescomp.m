@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 27, 2014
+%# Date       :  December 1, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -96,17 +96,17 @@ enableBlackAndWhitePlot     = 1;    % Show plot in black and white only
 enableA4PaperSizePlot       = 1;    % Show plots scale to A4 size
 
 % Enable individual plots
-enableNumber1Plot           = 0;    % PD and OPE for Ca=0
-enableNumber2Plot           = 0;    % PD and OPE for Ca=0.00035
-enableNumber3Plot           = 0;    % PD and OPE for Ca=0.00059
+enableNumber1Plot           = 1;    % PD and OPE for Ca=0
+enableNumber2Plot           = 1;    % PD and OPE for Ca=0.00035
+enableNumber3Plot           = 1;    % PD and OPE for Ca=0.00059
 enableNumber4Plot           = 0;    % PD and OPE using ws=wm(CFs/CFm) only
 enableNumber5Plot           = 0;    % PD and OPE using ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
 enableNumber6Plot           = 0;    % Thrust deduction using Ca=0
 enableNumber7Plot           = 0;    % Barplot showing Differences in results when
                                     % using ws=wm(CFs/CFm) or ws=wm(CFs/CFm)+(t+0.04)(1-CFs/CFm)
 enableNumber8Plot           = 0;    % Wake fraction comparison
-enableNumber9Plot           = 9;    % Corrected sea trials data (delivered power)
-enableNumber10Plot          = 1;    % Show resistance vs. power and prop. efficiency
+enableNumber9Plot           = 0;    % Corrected sea trials data (delivered power)
+enableNumber10Plot          = 0;    % Show resistance vs. power and prop. efficiency
 
 % Enable distinction between adjuste and not adjusted F vs. curves
 enableAdjOrNotAdjCurvesPlot = 0;    % If enabled show BOTH adjust and not adjusted graphs
