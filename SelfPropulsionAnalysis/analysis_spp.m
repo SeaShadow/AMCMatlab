@@ -1,9 +1,9 @@
 %# ------------------------------------------------------------------------
-%# Self-Propulsion Test Analysis
+%# Self-Propulsion: Test Analysis (SPP)
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 1, 2014
+%# Date       :  December 2, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -104,7 +104,7 @@ enableAdjustedFitting       = 1;    % Show adjusted fitting for speeds 6,8 and 9
 enableAdjustedCommandWindow = 1;    % Show command window output
 
 % Wake scaling with rudder componets
-% If TRUE (=1) wake scaling uses +(t+0.04)(1-(CFs/CFm)) part of equation
+% If TRUE (1) wake scaling uses +(t+0.04)(1-(CFs/CFm)) part of equation
 enableWakeScalingRudderComp = 0;    % Use rudder components in wake scaling
 
 % Pump effective power, PPE
@@ -1344,7 +1344,8 @@ if ma == 9
     
     %# Set marker and line sizes
     setMarkerSize      = 12;
-    setMarkerSize2     = 9;
+    setMarkerSize1     = 8;
+    setMarkerSize2     = 6;
     setLineWidthMarker = 1;
     setLineWidth       = 1;
     setLineStyle       = '-';
@@ -1441,22 +1442,23 @@ if ma == 9
     set(gcf,'Color',[1,1,1]);
     
     %# Line, colors and markers
-    setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-    setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-    setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-    setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-    setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-    setSpeed=7;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-    setSpeed=8;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setSpeed=9;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    % setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+    setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{10},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{2},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+    setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{3},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+    setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{4},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+    setSpeed=7;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{5},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+    setSpeed=8;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{6},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+    setSpeed=9;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{7},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
     
     %# Extended linear curve fit
     if enableTowingForceFDPlot == 1
         setMarkerSize      = 12;
         setLineWidthMarker = 2;
-        set(h3(1),'Color',setColor{10},'Marker',setMarker{10},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'MarkerFaceColor',setColor{10}
-        set(h5(1),'Color',setColor{10},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h3(1),'Color',setColor{10},'Marker',setMarker{3},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10}); %,'MarkerFaceColor',setColor{10}
+        set(h5(1),'Color',setColor{10},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
     end
     
     setSpeed=1;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
@@ -1581,7 +1583,7 @@ else
 end
 
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-%# 2. Thrust deduction fractions
+%# 3. Thrust deduction fractions
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 %# ************************************************************************
@@ -1723,8 +1725,8 @@ set(h1(7),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidt
 minX  = 0.14;
 maxX  = 0.7;
 incrX = 0.08;
-minY  = -0.6;
-maxY  = 0.6;
+minY  = -1;
+maxY  = 1;
 incrY = 0.2;
 set(gca,'XLim',[minX maxX]);
 set(gca,'XTick',minX:incrX:maxX);
@@ -1778,7 +1780,7 @@ end
 %close;
 
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-%# 3. Resistance vs. TG at Towing Force (FD) and F at zero Thrust (FT=0)
+%# 4. Resistance vs. TG at Towing Force (FD) and F at zero Thrust (FT=0)
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 %# Plotting gross thrust vs. towing force ---------------------------------
@@ -1903,7 +1905,7 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
 
 %# Legend
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-hleg1 = legend('Resistance (R_{C})','Thrust at zero drag (T_{F=0})','Towing force at zero thrust (F_{T=0})','Thrust at SPP (T_{SPP})','Towing force (F_{D})');
+hleg1 = legend('Bare Hull Resistance (R_{C})','Thrust at zero drag (T_{F=0})','Towing force at zero thrust (F_{T=0})','Thrust at SPP (T_{SPP})','Towing force (F_{D})');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1,'Interpreter','tex');
@@ -2533,20 +2535,27 @@ for k=1:m
     
     if enableAdjustedFitting == 1
         modelScaleDataArray(k,69) = 2;
-        fullScaleDataArray(k,69) = 2;
+        fullScaleDataArray(k,69)  = 2;
     else
         modelScaleDataArray(k,69) = 1;
-        fullScaleDataArray(k,69) = 1;
+        fullScaleDataArray(k,69)  = 1;
     end
     if enablePPEEstPumpCurveHead == 1
         modelScaleDataArray(k,70) = 2;
-        fullScaleDataArray(k,70) = 2;
+        fullScaleDataArray(k,70)  = 2;
     else
         modelScaleDataArray(k,70) = 1;
-        fullScaleDataArray(k,70) = 1;
+        fullScaleDataArray(k,70)  = 1;
     end
     modelScaleDataArray(k,71) = CorrCoeff;
-    fullScaleDataArray(k,71) = CorrCoeff;
+    fullScaleDataArray(k,71)  = CorrCoeff;
+    
+    % 17. Prop. Efficiency using nD=PE/PD or nD=(thrust V)/PPE  -----------
+    % Added: 02/12/2014
+   
+    % nD=(thrust V)/PPE
+    modelScaleDataArray(k,72) = ((MSPortGrosThrust+MSStbdGrosThrust)*MSSpeed)/(MSPortPumpEffPower+MSStbdPumpEffPower);
+    fullScaleDataArray(k,72)  = ((FSPortGrosThrust+FSStbdGrosThrust)*FSSpeed)/(FSPortPumpEffPower+FSStbdPumpEffPower);
     
 end
 
@@ -2556,7 +2565,7 @@ end
 %# ////////////////////////////////////////////////////////////////////////
 
 %# ************************************************************************
-%# 1. Overall propulsive efficiency, nD
+%# 5. Overall propulsive efficiency, nD
 %# ************************************************************************
 
 %# Plotting Overall propulsive efficiency, nD -----------------------------
@@ -2711,7 +2720,7 @@ end
 
 
 %# ************************************************************************
-%# 2. Power plots (two propulsion systems ==>> a single demihull)
+%# 6. Power plots (two propulsion systems ==>> a single demihull)
 %# ************************************************************************
 
 %# Plotting power ---------------------------------------------------------
@@ -2810,9 +2819,7 @@ x6 = fullScaleDataArray(:,3);
 y6 = TotalPower;
 
 %# Plotting ---------------------------------------------------------------
-%h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*',x5,y5,'*',x6,y6,'*');
 h = plot(x1,y1,'*',x2,y2,'*',x4,y4,'*',x5,y5,'*',x6,y6,'*');
-%xlabel('{\bf Froude length number, F_{R} (-)}','FontSize',setGeneralFontSize);
 xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Power (MW)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
@@ -2828,7 +2835,6 @@ setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{s
 setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-%setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -2901,7 +2907,7 @@ end
 
 
 %# ************************************************************************
-%# 3. Speed plots
+%# 7. Speed plots
 %# ************************************************************************
 
 %# Plotting speed ---------------------------------------------------------
@@ -2950,7 +2956,7 @@ if enableBlackAndWhitePlot == 1
 end
 
 %# Line, colors and markers
-setMarkerSize      = 11;
+setMarkerSize      = 12;
 setLineWidthMarker = 2;
 setLineWidth       = 1;
 setLineStyle       = '-.';
@@ -2992,9 +2998,9 @@ axis square;
 
 %# Line, colors and markers
 setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 
 %# Set plot figure background to a defined color
@@ -3059,7 +3065,7 @@ end
 
 
 %# ************************************************************************
-%# 4. Comparison Delivered Power to Sea Trials Data
+%# 8. Comparison Delivered Power to Sea Trials Data
 %# ************************************************************************
 
 %# Plotting speed ---------------------------------------------------------
@@ -3108,7 +3114,7 @@ if enableBlackAndWhitePlot == 1
 end
 
 %# Line, colors and markers
-setMarkerSize      = 11;
+setMarkerSize      = 12;
 setLineWidthMarker = 2;
 setLineWidth       = 2;
 setLineStyle       = '-';
@@ -3195,7 +3201,7 @@ set(gca,'YTick',minY:incrY:maxY);
 
 %# Legend
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-hleg1 = legend('Corrected Power (Sea Trials)','Measured delivered power, P_{D}');
+hleg1 = legend('Corrected power from sea trials (P_{D})','Measured delivered power (P_{D})');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
@@ -3240,6 +3246,164 @@ for k=1:3
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
+
+
+%# ************************************************************************
+%# 9. Comparison Delivered Power to Sea Trials Data
+%# ************************************************************************
+
+%# Plotting speed ---------------------------------------------------------
+figurename = 'Plot 9: Comparison Propulsive Efficiency Using nD=PE/PD and nD=(thrust V)/PPE';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ------------------------------------------------
+
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
+
+% Fonts and colours ---------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 14;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 11;
+setLineWidthMarker = 2;
+setLineWidth       = 2;
+setLineStyle       = '-';
+
+%# Delivered Power vs. Ship Speed /////////////////////////////////////////
+subplot(1,1,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+% Overall Propulsive Efficiency using Resistance - nD=PE/PD where PD = PPE/hpump
+x1 = fullScaleDataArray(:,3);
+y1 = fullScaleDataArray(:,46);
+
+%# Overall propulsive efficiency using Resistance - nD = PE/PD where PD = PJSE/hJS
+% x2 = fullScaleDataArray(:,3);
+% y2 = fullScaleDataArray(:,68);
+
+% Overall Propulsive Efficiency using Thrust - nD=(thrust V)/PPE
+x3 = fullScaleDataArray(:,3);
+y3 = fullScaleDataArray(:,72);
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'*',x3,y3,'*');
+xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Overall propulsive efficiency, \eta_{D} (-)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+%     title('{\bf Catamaran (i.e. two demi hulls)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(2),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+% set(h1,'marker','+');
+% set(h1,'linestyle','none');
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+% %# Axis limitations
+minX  = 13;
+maxX  = 25;
+incrX = 1;
+minY  = 0;
+maxY  = 1;
+incrY = 0.1;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+% %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+hleg1 = legend('\eta_{D}=P_{E}/P_{D}','n_{D}=\Delta M V/P_{PE}'); % '\eta_{D}=P_{E}/P_{D} where P_{D}=P_{JSE}/\eta_{JS}'
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title -------------------------------------------------------------
+%if enablePlotMainTitle == 1
+annotation('textbox', [0 0.9 1 0.1], ...
+    'String', strcat('{\bf ', figurename, '}'), ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center');
+%end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_9_FS_Comparison_Propulsive_Efficiency_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
 
 %# ************************************************************************
 %# START Write results to CVS

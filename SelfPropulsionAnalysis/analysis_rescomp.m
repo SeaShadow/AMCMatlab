@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 1, 2014
+%# Date       :  December 2, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -583,6 +583,57 @@ end
 %# ------------------------------------------------------------------------
 %# END Sea Trials Data (variable name is SeaTrialsCorrectedPower by default)
 %# ************************************************************************
+
+
+%# ////////////////////////////////////////////////////////////////////////
+%# START: CREATE PLOTS AND RUN DIRECTORY
+%# ------------------------------------------------------------------------
+
+%# _PLOTS directory
+fPath = '_plots/';
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# SPP directory ----------------------------------------------------------
+setDirName = '_plots/SPP';
+
+fPath = setDirName;
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PDF directory
+fPath = sprintf('%s/%s', setDirName, 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('%s/%s', setDirName, 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('%s/%s', setDirName, 'EPS');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# ------------------------------------------------------------------------
+%# END: CREATE PLOTS AND RUN DIRECTORY
+%# ////////////////////////////////////////////////////////////////////////
 
 
 %# ************************************************************************
