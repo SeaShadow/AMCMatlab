@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 11, 2014
+%# Date       :  December 9, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -141,10 +141,10 @@ enableBlackAndWhitePlot = 1;    % Show plot in black and white only
 enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
 
 % Individual plots
-enableTurbStimPlot      = 0; % Turbulence stimulator investigation
+enableTurbStimPlot      = 1; % Turbulence stimulator investigation
 enableTrimTabPlot       = 0; % Trim tab investigation
 enableResistancePlot    = 0; % Resistance plots, Ctm, power, heave and trim
-enableProhaskaPlot      = 1; % Prohaska plot, form factor at deep transom
+enableProhaskaPlot      = 0; % Prohaska plot, form factor at deep transom
 enableErrorPlot         = 0; % Error plots (% of max-avg to magnitude)
 enableMeanStdPlot       = 0; % Show Fr vs. mean of standard deviation
 enableStdPlot           = 0; % Show Fr vs. standard deviation
@@ -379,7 +379,7 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     setGeneralFontName = 'Helvetica';
     setGeneralFontSize = 14;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 9;
+    setLegendFontSize  = 12;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -463,15 +463,21 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.45]);
-    set(gca,'XTick',[0.2:0.05:0.45]);
-    set(gca,'YLim',[5.9 6.6]);
-    set(gca,'YTick',[5.9:0.1:6.6]);
+    minX  = 0.2;
+    maxX  = 0.45;
+    incrX = 0.05;
+    minY  = 6;
+    maxY  = 6.5;
+    incrY = 0.1;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',[minX:incrX:maxX]);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',[minY:incrY:maxY]);
     set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    hleg1 = legend('Cond. 1: 1,500t (Barehull)','Cond. 2: 1,500t (1st row)','Cond. 3: 1,500t (1st and 2nd row)');
+    hleg1 = legend('Cond. 1: 1,500t (Barehull, no TS)','Cond. 2: 1,500t (1st row TS)','Cond. 3: 1,500t (1st and 2nd row TS)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -537,15 +543,21 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     
     %# Axis limitations
-    set(gca,'XLim',[0.2 0.45]);
-    set(gca,'XTick',[0.2:0.05:0.45]);
-    set(gca,'YLim',[5.9 6.6]);
-    set(gca,'YTick',[5.9:0.1:6.6]);
+    minX  = 0.2;
+    maxX  = 0.45;
+    incrX = 0.05;
+    minY  = 6;
+    maxY  = 6.5;
+    incrY = 0.1;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',[minX:incrX:maxX]);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',[minY:incrY:maxY]);
     set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    hleg1 = legend('Cond. 1: 1,500t (Barehull)','Cond. 2: 1,500t (1st row)','Cond. 3: 1,500t (1st and 2nd row)');
+    hleg1 = legend('Cond. 1: 1,500t (Barehull, no TS)','Cond. 2: 1,500t (1st row TS)','Cond. 3: 1,500t (1st and 2nd row TS)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -620,7 +632,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     setGeneralFontName = 'Helvetica';
     setGeneralFontSize = 14;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 9;
+    setLegendFontSize  = 12;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1032,7 +1044,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     setGeneralFontName = 'Helvetica';
     setGeneralFontSize = 14;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 9;
+    setLegendFontSize  = 12;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1490,7 +1502,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     setGeneralFontName = 'Helvetica';
     setGeneralFontSize = 14;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 9;
+    setLegendFontSize  = 12;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1954,7 +1966,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     setGeneralFontName = 'Helvetica';
     setGeneralFontSize = 14;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 9;
+    setLegendFontSize  = 12;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -2706,7 +2718,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     setGeneralFontName = 'Helvetica';
     setGeneralFontSize = 14;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 9;
+    setLegendFontSize  = 12;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -3215,7 +3227,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     setGeneralFontName = 'Helvetica';
     setGeneralFontSize = 14;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 9;
+    setLegendFontSize  = 12;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -3724,7 +3736,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     setGeneralFontName = 'Helvetica';
     setGeneralFontSize = 14;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 9;
+    setLegendFontSize  = 12;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -4113,7 +4125,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     setGeneralFontName = 'Helvetica';
     setGeneralFontSize = 14;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 9;
+    setLegendFontSize  = 12;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);

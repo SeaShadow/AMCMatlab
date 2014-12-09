@@ -1,9 +1,9 @@
 %# ------------------------------------------------------------------------
-%# Self-Propulsion Test Analysis
+%# Self-Propulsion: Test Analysis (SPP)
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 25, 2014
+%# Date       :  December 9, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -104,7 +104,7 @@ enableAdjustedFitting       = 1;    % Show adjusted fitting for speeds 6,8 and 9
 enableAdjustedCommandWindow = 1;    % Show command window output
 
 % Wake scaling with rudder componets
-% If TRUE (=1) wake scaling uses +(t+0.04)(1-(CFs/CFm)) part of equation
+% If TRUE (1) wake scaling uses +(t+0.04)(1-(CFs/CFm)) part of equation
 enableWakeScalingRudderComp = 0;    % Use rudder components in wake scaling
 
 % Pump effective power, PPE
@@ -196,9 +196,9 @@ FSdraft         = MSdraft*FStoMSratio;           % Full scale draft             
 FormFactor = 1.18;                            % Form factor (1+k)
 
 % Correlation coefficients: No Ca (AMC), typical Ca (Bose 2008) and MARIN Ca
-CorrCoeff  = 0;                                               % Correlation coefficient, Ca as used by AMC
-%CorrCoeff  = (105*((150*10^(-6))/FSlwl)^(1/3)-0.64)*10^(-3); % Ca calculcation for typical value as shown in Bose (2008), equation 2-4, page 6
-%CorrCoeff  = 0.00035;                                        % Ca value as used by MARIN for JHSV testing
+CorrCoeff  = 0.00035;                                           % Ca value as used by MARIN for JHSV testing (USE AS DEFAULT)
+%CorrCoeff  = 0;                                                % Correlation coefficient, Ca as used by AMC
+%CorrCoeff  = (105*((150*10^(-6))/FSlwl)^(1/3)-0.64)*10^(-3);   % Ca calculcation for typical value as shown in Bose (2008), equation 2-4, page 6
 
 % Waterjet constants (FS = full scale and MS = model scale) ---------------
 
@@ -894,6 +894,7 @@ end
 % Loop through speeds
 TG_at_FDArray       = [];   % Gross thrust = TG = p Q (vj - vi)
 F_at_TGZero         = [];   % Gross thrust = TG = p Q (vj - vi)
+FR_at_SPP           = [];   % Flow rates at self-propulsion point (SPP)
 thrustDedFracArray  = [];   % Thrust deduction array where TG = p Q (vj - vi)
 shaftSpeedConvArray = [];   % Shaft speed array where TG = p Q (vj - vi)
 for k=1:ma
@@ -905,6 +906,12 @@ for k=1:ma
     %# TG at FD -----------------------------------------------------------
     y1       = A{k}(:,45);   % Gross thrust = TG = p Q vj        (N)
     y2       = A{k}(:,42);   % Gross thrust = TG = p Q (vj - vi) (N)
+    
+    yPortTQ  = A{k}(:,15);   % PORT: Torque                      (N)
+    yStbdTQ  = A{k}(:,16);   % STBD: Torque                      (N)
+    
+    yPortKP  = A{k}(:,17);   % PORT: Kiel Probe                  (V)
+    yStbdKP  = A{k}(:,18);   % STBD: Kiel Probe                  (V)
     
     yPortSS  = A{k}(:,11);   % PORT: Shaft speed                 (PRM)
     yStbdSS  = A{k}(:,12);   % STBD: Shaft speed                 (PRM)
@@ -960,11 +967,58 @@ for k=1:ma
     polyvSTBD2             = polyval(polyfSTBD2,x);
     MSStbdShaftSpeed       = spline(x,polyvSTBD2,ThrustAtSPP);
     
+    % Speed array - MS and FS
     shaftSpeedConvArray(k, 1) = Froude_Numbers(k,1);
     shaftSpeedConvArray(k, 2) = MSPortShaftSpeed;
     shaftSpeedConvArray(k, 3) = MSStbdShaftSpeed;
     shaftSpeedConvArray(k, 4) = MSPortShaftSpeed/sqrt(FStoMSratio);
     shaftSpeedConvArray(k, 5) = MSStbdShaftSpeed/sqrt(FStoMSratio);
+    
+    % Flow Rate at SPP ----------------------------------------------------
+    %[1] Froude length number             (-)
+    %[2] PORT (MS): Kiel Probe            (V)
+    %[3] STBD (MS): Kiel Probe            (V)
+    %[4] PORT (MS): Mass flow rate        (RPM)
+    %[5] STBD (MS): Mass flow rate        (RPM)
+    %[6] PORT (MS): Volumetric flow rate  (RPM)
+    %[7] STBD (MS): Volumetric flow rate  (RPM)
+    %[8] PORT (MS): Torque                (Nm)
+    %[9] STBD (MS): Torque                (Nm)
+    
+    x = A{k}(:,42);     % Gross thrust = TG = p Q (vj - vi)    (N)
+    
+    % Port - Kiel Probe
+    polyfPortKP = polyfit(x,yPortKP,1);
+    polyvPortKP = polyval(polyfPortKP,x);
+    PortKPatSPP = spline(x,polyvPortKP,ThrustAtSPP);
+    
+    % Port - Torque
+    polyfPortTQ = polyfit(x,yPortTQ,1);
+    polyvPortTQ = polyval(polyfPortTQ,x);
+    PortTQatSPP = spline(x,polyvPortTQ,ThrustAtSPP);
+    
+    % Stbd - Kiel Probe
+    polyfStbdKP = polyfit(x,yStbdKP,1);
+    polyvStbdKP = polyval(polyfStbdKP,x);
+    StbdKPatSPP = spline(x,polyvStbdKP,ThrustAtSPP);
+    
+    % Stbd - Torque
+    polyfStbdTQ = polyfit(x,yStbdTQ,1);
+    polyvStbdTQ = polyval(polyfStbdTQ,x);
+    StbdTQatSPP = spline(x,polyvStbdTQ,ThrustAtSPP);
+    
+    MSPortMFR = -0.0421*PortKPatSPP^4+0.5718*PortKPatSPP^3-2.9517*PortKPatSPP^2+7.8517*PortKPatSPP-5.1976;
+    MSStbdMFR = -0.0946*StbdKPatSPP^4+1.1259*StbdKPatSPP^3-5.0067*StbdKPatSPP^2+11.0896*StbdKPatSPP-6.8705;
+    
+    FR_at_SPP(k,1) = Froude_Numbers(k,1);
+    FR_at_SPP(k,2) = PortKPatSPP;
+    FR_at_SPP(k,3) = StbdKPatSPP;
+    FR_at_SPP(k,4) = MSPortMFR;
+    FR_at_SPP(k,5) = MSStbdMFR;
+    FR_at_SPP(k,6) = MSPortMFR/freshwaterdensity;
+    FR_at_SPP(k,7) = MSStbdMFR/freshwaterdensity;    
+    FR_at_SPP(k,8) = PortTQatSPP;
+    FR_at_SPP(k,9) = StbdTQatSPP;
 end
 
 
@@ -1144,7 +1198,7 @@ if enableAdjustedFitting == 1
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;
+    %legend boxoff;
     
     %# Font sizes and border ----------------------------------------------
     
@@ -1290,7 +1344,8 @@ if ma == 9
     
     %# Set marker and line sizes
     setMarkerSize      = 12;
-    setMarkerSize2     = 9;
+    setMarkerSize1     = 8;
+    setMarkerSize2     = 6;
     setLineWidthMarker = 1;
     setLineWidth       = 1;
     setLineStyle       = '-';
@@ -1387,22 +1442,23 @@ if ma == 9
     set(gcf,'Color',[1,1,1]);
     
     %# Line, colors and markers
-    setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-    setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-    setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-    setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-    setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-    setSpeed=7;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-    setSpeed=8;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setSpeed=9;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    % setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+    setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{10},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setSpeed=4;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{2},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+    setSpeed=5;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{3},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+    setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{4},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+    setSpeed=7;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{5},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+    setSpeed=8;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{6},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+    setSpeed=9;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{7},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
     
     %# Extended linear curve fit
     if enableTowingForceFDPlot == 1
         setMarkerSize      = 12;
         setLineWidthMarker = 2;
-        set(h3(1),'Color',setColor{10},'Marker',setMarker{10},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'MarkerFaceColor',setColor{10}
-        set(h5(1),'Color',setColor{10},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h3(1),'Color',setColor{10},'Marker',setMarker{3},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10}); %,'MarkerFaceColor',setColor{10}
+        set(h5(1),'Color',setColor{10},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
     end
     
     setSpeed=1;set(h4(setSpeed),'Color',setColor{setSpeed},'LineStyle',setLineStyle,'linewidth',setLineWidth);
@@ -1442,7 +1498,7 @@ if ma == 9
         [LEGH,OBJH,OUTH,OUTM] = legend;
         legend([OUTH;h5],OUTM{:},'Force at T=0');
     end
-    legend boxoff;
+    %legend boxoff;
     
     %# ********************************************************************
     %# Save plot as PNG
@@ -1527,7 +1583,7 @@ else
 end
 
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-%# 2. Thrust deduction fractions
+%# 3. Thrust deduction fractions
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 %# ************************************************************************
@@ -1669,8 +1725,8 @@ set(h1(7),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidt
 minX  = 0.14;
 maxX  = 0.7;
 incrX = 0.08;
-minY  = -0.6;
-maxY  = 0.6;
+minY  = -1;
+maxY  = 1;
 incrY = 0.2;
 set(gca,'XLim',[minX maxX]);
 set(gca,'XTick',minX:incrX:maxX);
@@ -1685,7 +1741,7 @@ set(hleg1,'Location','NorthEast');
 set(hleg1,'Interpreter','none');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-legend boxoff;
+%legend boxoff;
 
 %# ************************************************************************
 %# Save plot as PNG
@@ -1724,7 +1780,7 @@ end
 %close;
 
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-%# 3. Resistance vs. TG at Towing Force (FD) and F at zero Thrust (FT=0)
+%# 4. Resistance vs. TG at Towing Force (FD) and F at zero Thrust (FT=0)
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 %# Plotting gross thrust vs. towing force ---------------------------------
@@ -1849,12 +1905,13 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
 
 %# Legend
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-hleg1 = legend('Resistance (RC)','Gross thrust (TG) at zero drag','Towing force at zero thrust','Thrust at SPP','Towing force, FD');
+hleg1 = legend('Bare Hull Resistance (R_{C})','Thrust at zero drag (T_{F=0})','Towing force at zero thrust (F_{T=0})','Thrust at SPP (T_{SPP})','Towing force (F_{D})');
 set(hleg1,'Location','NorthWest');
-set(hleg1,'Interpreter','none');
+%set(hleg1,'Interpreter','none');
+set(hleg1,'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-legend boxoff;
+%legend boxoff;
 
 %# ************************************************************************
 %# Save plot as PNG
@@ -1914,7 +1971,8 @@ ThrustDedFracArray = thrustDedFracArray;
 ForcesArray = TG_and_F_at_T0;
 [m,n] = size(ForcesArray);
 
-fullScaleDataArray = [];
+fullScaleDataArray  = [];
+modelScaleDataArray = [];
 for k=1:m
     
     % Model scale variables
@@ -1942,6 +2000,13 @@ for k=1:m
     % [3]  Full scale speed                                  (knots)
     % [4]  Full scale reynolds number                        (-)
     
+    % Model Scale
+    modelScaleDataArray(k,1)  = ForcesArray(k,1);
+    modelScaleDataArray(k,2)  = MSSpeed;
+    modelScaleDataArray(k,3)  = FSSpeed/0.51444;
+    modelScaleDataArray(k,4)  = MSReynoldsNo;
+    
+    % Full Scale
     fullScaleDataArray(k,1)  = ForcesArray(k,1);
     fullScaleDataArray(k,2)  = FSSpeed;
     fullScaleDataArray(k,3)  = FSSpeed/0.51444;
@@ -1954,6 +2019,15 @@ for k=1:m
     % [7] PORT: Shaft speed                                  (RPS)
     % [8] STBD: Shaft speed                                  (RPS)
     
+    % Model Scale
+    MSPortSS = shaftSpeedConvArray(k,2);
+    MSStbdSS = shaftSpeedConvArray(k,3);
+    modelScaleDataArray(k,5) = MSPortSS;
+    modelScaleDataArray(k,6) = MSStbdSS;
+    modelScaleDataArray(k,7) = MSPortSS/60;
+    modelScaleDataArray(k,8) = MSStbdSS/60;
+    
+    % Full Scale
     FSPortSS = shaftSpeedConvArray(k,4);
     FSStbdSS = shaftSpeedConvArray(k,5);
     fullScaleDataArray(k,5) = FSPortSS;
@@ -1968,6 +2042,13 @@ for k=1:m
     % [11] Total resistannce coefficient, CTs                (-)
     % [12] Total resistance, RT                              (-)
     
+    % Model Scale
+    modelScaleDataArray(k,9)  = MSCF;
+    modelScaleDataArray(k,10) = MSCR;
+    modelScaleDataArray(k,11) = MSCT;
+    modelScaleDataArray(k,12) = MSRT;
+    
+    % Full Scale
     if FSReynoldsNo < 10000000
         FSCF = 10^(2.98651-10.8843*(log10(log10(FSReynoldsNo)))+5.15283*(log10(log10(FSReynoldsNo)))^2);
     else
@@ -1986,12 +2067,21 @@ for k=1:m
     % [14] Effective power, PE                               (kW)
     % [15] Effective power, PE                               (mW)
     
-    PEW  = FSRT*FSSpeed;
-    PEkW = PEW/1000;
-    PEmW = PEkW/1000;
-    fullScaleDataArray(k,13) = PEW;
-    fullScaleDataArray(k,14) = PEkW;
-    fullScaleDataArray(k,15) = PEmW;
+    % Model Scale
+    MSPEW  = MSRT*MSSpeed;
+    MSPEkW = MSPEW/1000;
+    MSPEmW= MSPEkW/1000;
+    modelScaleDataArray(k,13) = MSPEW;
+    modelScaleDataArray(k,14) = MSPEkW;
+    modelScaleDataArray(k,15) = MSPEmW;
+    
+    % Full Scale
+    FSPEW  = FSRT*FSSpeed;
+    FSPEkW = FSPEW/1000;
+    FSPEmW = FSPEkW/1000;
+    fullScaleDataArray(k,13) = FSPEW;
+    fullScaleDataArray(k,14) = FSPEkW;
+    fullScaleDataArray(k,15) = FSPEmW;
     
     % 5. Wake fraction (w) and thrust deduction (t) -----------------------
     
@@ -2000,7 +2090,14 @@ for k=1:m
     % [18] Thrust deduction, t                               (-)
     % [19] Thrust deduction, 1-t                             (-)
     
+    % Model Scale
     MSWakeFraction = 1-((A{k}(1,36)+A{k}(1,37))/2);
+    modelScaleDataArray(k,16) = MSWakeFraction;
+    modelScaleDataArray(k,17) = 1-MSWakeFraction;
+    modelScaleDataArray(k,18) = MSThrustDed;
+    modelScaleDataArray(k,19) = 1-MSThrustDed;
+    
+    % Full Scale
     if enableWakeScalingRudderComp == 1
         FSWakeFraction = (MSWakeFraction*(FSCF/MSCF))+(MSThrustDed+0.04)*(1-(FSCF/MSCF));
     else
@@ -2015,13 +2112,23 @@ for k=1:m
     
     % [20] PORT: Gross thrust, TGs                           (N)
     % [21] STBD: Gross thrust, TGs                           (N)
-    
-    % Neglect run 70 and 71 (as faulty)
+
+    % Stbd to port ratio
     if k == 4
         ratioRow = 3;
     else
         ratioRow = 1;
     end
+    
+    % Model Scale
+    PortStbdRatio    = A{k}(ratioRow,40)/A{k}(ratioRow,42);
+    MSPortGrosThrust = TG_at_FDArray(k,4)*PortStbdRatio;
+    PortStbdRatio    = A{k}(ratioRow,41)/A{k}(ratioRow,42);
+    MSStbdGrosThrust = TG_at_FDArray(k,4)*PortStbdRatio;    
+    modelScaleDataArray(k,20) = MSPortGrosThrust;
+    modelScaleDataArray(k,21) = MSStbdGrosThrust;    
+    
+    % Full Scale - Neglect run 70 and 71 (as faulty)
     PortStbdRatio    = A{k}(ratioRow,40)/A{k}(ratioRow,42);
     FSPortGrosThrust = (TG_at_FDArray(k,4)*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
     PortStbdRatio    = A{k}(ratioRow,41)/A{k}(ratioRow,42);
@@ -2036,24 +2143,33 @@ for k=1:m
     % [23] PORT: Mass flow rate, pQJ                         (Kg/s)
     % [24] STBD: Mass flow rate, pQJ                         (Kg/s)
     
+    % Model Scale
+    modelScaleDataArray(k,22) = FR_at_SPP(k,6);
+    modelScaleDataArray(k,23) = FR_at_SPP(k,7);
+    modelScaleDataArray(k,24) = FR_at_SPP(k,4);
+    modelScaleDataArray(k,25) = FR_at_SPP(k,5);
+    
+    % Full Scale
+    
     % Port
     var_A         = saltwaterdensity/FS_NozzArea;
     var_B         = saltwaterdensity*((1-FSWakeFraction)*FSSpeed)*-1;
     var_C         = FSPortGrosThrust*-1;
-    MSPortVolFR   = (((-1)*var_B)+sqrt(var_B^2-4*var_A*var_C))/(2*var_A);
+    FSPortVolFR   = (((-1)*var_B)+sqrt(var_B^2-4*var_A*var_C))/(2*var_A);
+    
     % Stbd
     var_C         = FSStbdGrosThrust*-1;
-    MSStbdVolFR   = (((-1)*var_B)+sqrt(var_B^2-4*var_A*var_C))/(2*var_A);
+    FSStbdVolFR   = (((-1)*var_B)+sqrt(var_B^2-4*var_A*var_C))/(2*var_A);
     
     % Show variables A,B and C for quadratic equation
     %disp(sprintf('Fr=%s | TP=%s | TS=%s | A=%s | B=%s | CP=%s | CS=%s | VFRP=%s | VFRP=%s',sprintf('%.2f',ForcesArray(k,1)),num2str(FSPortGrosThrust),num2str(FSStbdGrosThrust),num2str(var_A),num2str(var_B),num2str(FSPortGrosThrust*-1),num2str(FSStbdGrosThrust*-1),num2str(MSPortVolFR),num2str(MSStbdVolFR)));
     
-    MSPortMasFR = MSPortVolFR*saltwaterdensity;
-    MSStbdMasFR = MSStbdVolFR*saltwaterdensity;
-    fullScaleDataArray(k,22) = MSPortVolFR;
-    fullScaleDataArray(k,23) = MSStbdVolFR;
-    fullScaleDataArray(k,24) = MSPortMasFR;
-    fullScaleDataArray(k,25) = MSStbdMasFR;
+    FSPortMasFR = FSPortVolFR*saltwaterdensity;
+    FSStbdMasFR = FSStbdVolFR*saltwaterdensity;
+    fullScaleDataArray(k,22) = FSPortVolFR;
+    fullScaleDataArray(k,23) = FSStbdVolFR;
+    fullScaleDataArray(k,24) = FSPortMasFR;
+    fullScaleDataArray(k,25) = FSStbdMasFR;
     
     % 8. Jet and inlet velocities -----------------------------------------
     
@@ -2062,22 +2178,40 @@ for k=1:m
     % [28] PORT: Inlet velocity, vi                          (m/s)
     % [29] STBD: Inlet velocity, vi                          (m/s)\
     
-    MSPortJetVel = MSPortVolFR/FS_NozzArea;
-    MSStbdJetVel = MSStbdVolFR/FS_NozzArea;
-    MSPortInlVel = (1-FSWakeFraction)*FSSpeed;
-    MSStbdInlVel = (1-FSWakeFraction)*FSSpeed;
-    fullScaleDataArray(k,26) = MSPortJetVel;
-    fullScaleDataArray(k,27) = MSStbdJetVel;
-    fullScaleDataArray(k,28) = MSPortInlVel;
-    fullScaleDataArray(k,29) = MSStbdInlVel;
+    % Model Scale
+    MSPortVolFR = FR_at_SPP(k,6);
+    MSStbdVolFR = FR_at_SPP(k,7);
+    MSPortJetVel = MSPortVolFR/MS_NozzArea;
+    MSStbdJetVel = MSStbdVolFR/MS_NozzArea;
+    MSPortInlVel = (1-MSWakeFraction)*MSSpeed;
+    MSStbdInlVel = (1-MSWakeFraction)*MSSpeed;
+    modelScaleDataArray(k,26) = MSPortJetVel;
+    modelScaleDataArray(k,27) = MSStbdJetVel;
+    modelScaleDataArray(k,28) = MSPortInlVel;
+    modelScaleDataArray(k,29) = MSStbdInlVel;
+    
+    % Full Scale
+    FSPortJetVel = FSPortVolFR/FS_NozzArea;
+    FSStbdJetVel = FSStbdVolFR/FS_NozzArea;
+    FSPortInlVel = (1-FSWakeFraction)*FSSpeed;
+    FSStbdInlVel = (1-FSWakeFraction)*FSSpeed;
+    fullScaleDataArray(k,26) = FSPortJetVel;
+    fullScaleDataArray(k,27) = FSStbdJetVel;
+    fullScaleDataArray(k,28) = FSPortInlVel;
+    fullScaleDataArray(k,29) = FSStbdInlVel;
     
     % 9. Efficiencies -----------------------------------------------------
     
     % [30] Hull efficiency, nh                               (-)
     % [31] Optimum efficiency, ni                            (-)
     
+    % Model Scale
+    modelScaleDataArray(k,30) = (1-MSThrustDed)/(1-MSWakeFraction);
+    modelScaleDataArray(k,31) = 1-((MSPortJetVel/MSSpeed)-1)^2;
+    
+    % Full Scale
     fullScaleDataArray(k,30) = (1-MSThrustDed)/(1-FSWakeFraction);
-    fullScaleDataArray(k,31) = 1-((MSPortJetVel/FSSpeed)-1)^2;
+    fullScaleDataArray(k,31) = 1-((FSPortJetVel/FSSpeed)-1)^2;
     
     % 10. Pump related data -----------------------------------------------
     
@@ -2090,9 +2224,23 @@ for k=1:m
     % [38] PORT: Pump efficieny, npump                       (-)
     % [39] STBD: Pump efficieny, npump                       (-)
     
-    fullScaleDataArray(k,32) = MSPortVolFR/((FSPortSS/60)*FS_PumpDia^3);
-    fullScaleDataArray(k,33) = MSStbdVolFR/((FSStbdSS/60)*FS_PumpDia^3);
+    % Model Scale
+    modelScaleDataArray(k,32) = MSPortVolFR/((MSPortSS/60)*MS_PumpDia^3);
+    modelScaleDataArray(k,33) = MSStbdVolFR/((MSStbdSS/60)*MS_PumpDia^3);    
     
+    % Full Scale
+    fullScaleDataArray(k,32) = FSPortVolFR/((FSPortSS/60)*FS_PumpDia^3);
+    fullScaleDataArray(k,33) = FSStbdVolFR/((FSStbdSS/60)*FS_PumpDia^3);
+    
+    % Model Scale
+    MSPortPumphead = (24.3499*FR_at_SPP(k,4)^2+212.9700*FR_at_SPP(k,4)-320.9491)/1000;
+    MSStbdPumphead = (24.3499*FR_at_SPP(k,5)^2+212.9700*FR_at_SPP(k,5)-320.9491)/1000;
+    modelScaleDataArray(k,34) = MSPortPumphead;
+    modelScaleDataArray(k,35) = MSStbdPumphead;
+    modelScaleDataArray(k,36) = gravconst*MSPortPumphead/((MSPortSS/60)*MS_PumpDia)^2;
+    modelScaleDataArray(k,37) = gravconst*MSStbdPumphead/((MSStbdSS/60)*MS_PumpDia)^2;
+    
+    % Full Scale
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     %# Pump head based on fit
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2100,35 +2248,48 @@ for k=1:m
     %StbdPH = [24.62 27.50 31.00 34.93 38.59 42.26 44.76 51.04 58.55];
     EOFP = BMEoFPortPH;
     EOFS = BMEoFStbdPH;
-    VFRP = MSPortVolFR;
-    VFRS = MSStbdVolFR;
+    VFRP = FSPortVolFR;
+    VFRS = FSStbdVolFR;
     PortPH = EOFP(k, 2)*VFRP^4+EOFP(k, 3)*VFRP^3+EOFP(k, 4)*VFRP^2+EOFP(k, 5)*VFRP+EOFP(k, 6);
     StbdPH = EOFS(k, 2)*VFRS^4+EOFS(k, 3)*VFRS^3+EOFS(k, 4)*VFRS^2+EOFS(k, 5)*VFRS+EOFS(k, 6);
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    %FSPortPumphead = PortPH(k);
-    %FSStbdPumphead = StbdPH(k);
     FSPortPumphead = PortPH;
     FSStbdPumphead = StbdPH;
     fullScaleDataArray(k,34) = FSPortPumphead;
     fullScaleDataArray(k,35) = FSStbdPumphead;
-    
     fullScaleDataArray(k,36) = gravconst*FSPortPumphead/((FSPortSS/60)*FS_PumpDia)^2;
     fullScaleDataArray(k,37) = gravconst*FSStbdPumphead/((FSStbdSS/60)*FS_PumpDia)^2;
     
+    % Model Scale
+    
+    % Port
+    MSPortJP  = MSPortVolFR/((MSPortSS/60)*MS_PumpDia^3);
+    MSPortKH  = (gravconst*MSPortPumphead)/((MSPortSS/60)^2*MS_PumpDia^2);
+    MSPortTQ  = FR_at_SPP(k,8);
+    MSKPortQm = MSPortTQ/(freshwaterdensity*(MSPortSS/60)^2*MS_PumpDia^5);
+    
+    % Stbd
+    MSStbdJP  = MSStbdVolFR/((MSStbdSS/60)*MS_PumpDia^3);
+    MSStbdKH  = (gravconst*MSStbdPumphead)/((MSStbdSS/60)^2*MS_PumpDia^2);
+    MSStbdTQ  = FR_at_SPP(k,9);
+    MSKStbdQm = MSStbdTQ/(freshwaterdensity*(MSStbdSS/60)^2*MS_PumpDia^5);
+    
+    MSPortPumpEff  = (MSPortJP*MSPortKH)/(2*pi*MSKPortQm);
+    MSStbdPumpEff  = (MSStbdJP*MSStbdKH)/(2*pi*MSKStbdQm);
+    modelScaleDataArray(k,38) = MSPortPumpEff;
+    modelScaleDataArray(k,39) = MSStbdPumpEff;
+    
+    % Full Scale
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     %# Efficiency based on fit
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    %PortPE = [0.66 0.66 0.65 0.65 0.65 0.65 0.65 0.66 0.66];
-    %StbdPE = [0.65 0.65 0.65 0.65 0.65 0.65 0.65 0.65 0.65];
     EOFP = BMEoFPortEff;
     EOFS = BMEoFStbdEff;
-    VFRP = MSPortVolFR;
-    VFRS = MSStbdVolFR;
+    VFRP = FSPortVolFR;
+    VFRS = FSStbdVolFR;
     PortPE = EOFP(k, 2)*VFRP^4+EOFP(k, 3)*VFRP^3+EOFP(k, 4)*VFRP^2+EOFP(k, 5)*VFRP+EOFP(k, 6);
     StbdPE = EOFS(k, 2)*VFRS^4+EOFS(k, 3)*VFRS^3+EOFS(k, 4)*VFRS^2+EOFS(k, 5)*VFRS+EOFS(k, 6);
     %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    %FSPortPumpEff  = StbdPE(k);
-    %FSStbdPumpEff  = StbdPE(k);
     FSPortPumpEff  = StbdPE;
     FSStbdPumpEff  = StbdPE;
     fullScaleDataArray(k,38) = FSPortPumpEff;
@@ -2144,24 +2305,71 @@ for k=1:m
     % [45] PORT: Brake power, PB                             (W)
     % [46] Overall propulsive efficieny, nD=PE/PD            (-)
     
+    % Model Scale
+    
     % Energy fluxes at stations 0, 1 and 7
-    FSPortEFStat1 = 0.5*saltwaterdensity*MSPortVolFR*(MSPortInlVel^2)*(1-FSWakeFraction)^2;
-    FSStbdEFStat1 = 0.5*saltwaterdensity*MSStbdVolFR*(MSStbdInlVel^2)*(1-FSWakeFraction)^2;
-    FSPortEFStat7 = 0.5*saltwaterdensity*MSPortVolFR*MSPortJetVel^2;
-    FSStbdEFStat7 = 0.5*saltwaterdensity*MSPortVolFR*MSStbdJetVel^2;
+    MSPortEFStat1 = 0.5*freshwaterdensity*MSPortVolFR*(MSPortInlVel^2)*(1-MSWakeFraction)^2;
+    MSStbdEFStat1 = 0.5*freshwaterdensity*MSStbdVolFR*(MSStbdInlVel^2)*(1-MSWakeFraction)^2;
+    MSPortEFStat7 = 0.5*freshwaterdensity*MSPortVolFR*MSPortJetVel^2;
+    MSStbdEFStat7 = 0.5*freshwaterdensity*MSPortVolFR*MSStbdJetVel^2;
+    MSEFStat0     = 0.5*freshwaterdensity*MSSpeed^2;
+    
+    % Nozzle and ideal efficiency
+    MSPortNozzleEff = 0.98;
+    MSStbdNozzleEff = 0.98;
+    MSPortIdealEff  = 2/(1+(MSPortJetVel/MSPortInlVel));
+    MSStbdIdealEff  = 2/(1+(MSStbdJetVel/MSStbdInlVel));    
+    
+    % Pump effective power, PPE
+    if enablePPEEstPumpCurveHead == 1
+        % Pump effective power, PPE using PPE = p g QJ H35 (ITTC)
+        MSPortPumpEffPower = freshwaterdensity*gravconst*MSPortVolFR*MSPortPumphead;
+        MSStbdPumpEffPower = freshwaterdensity*gravconst*MSStbdVolFR*MSStbdPumphead;
+    else
+        % Pump effective power, PPE using PPE = (E7/nn)-niE1 (Bose 2008)]
+        MSPortPumpEffPower = (MSPortEFStat7/MSPortNozzleEff)-MSPortIdealEff*MSPortEFStat1;
+        MSStbdPumpEffPower = (MSStbdEFStat7/MSStbdNozzleEff)-MSStbdIdealEff*MSStbdEFStat1;        
+    end
+    modelScaleDataArray(k,40) = MSPortPumpEffPower;
+    modelScaleDataArray(k,41) = MSStbdPumpEffPower;    
+    
+    % Delivered power, PD
+    MSPortDelPower = MSPortPumpEffPower/MSPortPumpEff;
+    MSStbdDelPower = MSStbdPumpEffPower/MSStbdPumpEff;
+    modelScaleDataArray(k,42) = MSPortDelPower;
+    modelScaleDataArray(k,43) = MSStbdDelPower;    
+    
+    % Brake power (assumed shaft loss 2% and gear box 2%), PB
+    MSPortBrakePower = MSPortDelPower/0.98;
+    MSStbdBrakePower = MSStbdDelPower/0.98;
+    MSPortBrakePower = MSPortBrakePower/0.98;
+    MSStbdBrakePower = MSStbdBrakePower/0.98;
+    modelScaleDataArray(k,44) = MSPortBrakePower;
+    modelScaleDataArray(k,45) = MSStbdBrakePower;
+    
+    % Overall propulsive efficiency based on nD = PE/PD where PD = PPE/hpump
+    modelScaleDataArray(k,46) = MSPEW/(MSPortDelPower+MSStbdDelPower);    
+       
+    % Full Scale
+    
+    % Energy fluxes at stations 0, 1 and 7
+    FSPortEFStat1 = 0.5*saltwaterdensity*FSPortVolFR*(FSPortInlVel^2)*(1-FSWakeFraction)^2;
+    FSStbdEFStat1 = 0.5*saltwaterdensity*FSStbdVolFR*(FSStbdInlVel^2)*(1-FSWakeFraction)^2;
+    FSPortEFStat7 = 0.5*saltwaterdensity*FSPortVolFR*FSPortJetVel^2;
+    FSStbdEFStat7 = 0.5*saltwaterdensity*FSPortVolFR*FSStbdJetVel^2;
     FSEFStat0     = 0.5*saltwaterdensity*FSSpeed^2;
     
     % Nozzle and ideal efficiency
     FSPortNozzleEff = 0.98;
     FSStbdNozzleEff = 0.98;
-    FSPortIdealEff  = 2/(1+(MSPortJetVel/MSPortInlVel));
-    FSStbdIdealEff  = 2/(1+(MSStbdJetVel/MSStbdInlVel));
+    FSPortIdealEff  = 2/(1+(FSPortJetVel/FSPortInlVel));
+    FSStbdIdealEff  = 2/(1+(FSStbdJetVel/FSStbdInlVel));
     
     % Pump effective power, PPE
     if enablePPEEstPumpCurveHead == 1
         % Pump effective power, PPE using PPE = p g QJ H35 (ITTC)
-        FSPortPumpEffPower = saltwaterdensity*gravconst*MSPortVolFR*FSPortPumphead;
-        FSStbdPumpEffPower = saltwaterdensity*gravconst*MSStbdVolFR*FSStbdPumphead;
+        FSPortPumpEffPower = saltwaterdensity*gravconst*FSPortVolFR*FSPortPumphead;
+        FSStbdPumpEffPower = saltwaterdensity*gravconst*FSStbdVolFR*FSStbdPumphead;
     else
         % Pump effective power, PPE using PPE = (E7/nn)-niE1 (Bose 2008)]
         FSPortPumpEffPower = (FSPortEFStat7/FSPortNozzleEff)-FSPortIdealEff*FSPortEFStat1;
@@ -2185,7 +2393,7 @@ for k=1:m
     fullScaleDataArray(k,45) = FSStbdBrakePower;
     
     % Overall propulsive efficiency based on nD = PE/PD where PD = PPE/hpump
-    fullScaleDataArray(k,46) = PEW/(FSPortDelPower+FSStbdDelPower);
+    fullScaleDataArray(k,46) = FSPEW/(FSPortDelPower+FSStbdDelPower);
     
     % 12. IVR, JVR and NVR ------------------------------------------------
     
@@ -2196,12 +2404,27 @@ for k=1:m
     % [51] PORT: Nozzle velocity ratio, NVR=Vj/Vin           (-)
     % [52] STBD: Nozzle velocity ratio, NVR=Vj/Vin           (-)
     
-    FSPortIVR = MSPortInlVel/FSSpeed;
-    FSStbdIVR = MSStbdInlVel/FSSpeed;
-    FSPortJVR = MSPortJetVel/FSSpeed;
-    FSStbdJVR = MSStbdJetVel/FSSpeed;
-    FSPortNVR = MSPortJetVel/FSSpeed; %MSPortInlVel
-    FSStbdNVR = MSStbdJetVel/FSSpeed; %MSStbdInlVel
+    % Model Scale
+    MSPortIVR = MSPortInlVel/MSSpeed;
+    MSStbdIVR = MSStbdInlVel/MSSpeed;
+    MSPortJVR = MSPortJetVel/MSSpeed;
+    MSStbdJVR = MSStbdJetVel/MSSpeed;
+    MSPortNVR = MSPortJetVel/MSSpeed;
+    MSStbdNVR = MSStbdJetVel/MSSpeed;
+    modelScaleDataArray(k,47) = MSPortIVR;
+    modelScaleDataArray(k,48) = MSStbdIVR;
+    modelScaleDataArray(k,49) = MSPortJVR;
+    modelScaleDataArray(k,50) = MSStbdJVR;
+    modelScaleDataArray(k,51) = MSPortNVR;
+    modelScaleDataArray(k,52) = MSStbdNVR;  
+    
+    % Full Scale
+    FSPortIVR = FSPortInlVel/FSSpeed;
+    FSStbdIVR = FSStbdInlVel/FSSpeed;
+    FSPortJVR = FSPortJetVel/FSSpeed;
+    FSStbdJVR = FSStbdJetVel/FSSpeed;
+    FSPortNVR = FSPortJetVel/FSSpeed;
+    FSStbdNVR = FSStbdJetVel/FSSpeed;
     fullScaleDataArray(k,47) = FSPortIVR;
     fullScaleDataArray(k,48) = FSStbdIVR;
     fullScaleDataArray(k,49) = FSPortJVR;
@@ -2219,6 +2442,18 @@ for k=1:m
     % [58] PORT: Eff. jet system power, PJSE                 (W)
     % [59] STBD: Eff. jet system power, PJSE                 (W)
     
+    % Model Scale
+    MSPortPJSE    = MSPortEFStat7-MSPortEFStat1;
+    MSStbdPJSE    = MSStbdEFStat7-MSStbdEFStat1;
+    modelScaleDataArray(k,53) = MSPortEFStat1;
+    modelScaleDataArray(k,54) = MSStbdEFStat1;
+    modelScaleDataArray(k,55) = MSPortEFStat7;
+    modelScaleDataArray(k,56) = MSStbdEFStat7;
+    modelScaleDataArray(k,57) = MSEFStat0;
+    modelScaleDataArray(k,58) = MSPortPJSE;
+    modelScaleDataArray(k,59) = MSStbdPJSE;
+    
+    % Full Scale
     FSPortPJSE    = FSPortEFStat7-FSPortEFStat1;
     FSStbdPJSE    = FSStbdEFStat7-FSStbdEFStat1;
     fullScaleDataArray(k,53) = FSPortEFStat1;
@@ -2234,6 +2469,13 @@ for k=1:m
     % [60] PORT: Thrust effective power, PTE                 (W)
     % [61] STBD: Thrust effective power, PTE                 (W)
     
+    % Model Scale
+    MSPortPTE = MSPortGrosThrust*MSSpeed;
+    MSStbdPTE = MSStbdGrosThrust*MSSpeed;
+    modelScaleDataArray(k,60) = MSPortPTE;
+    modelScaleDataArray(k,61) = MSStbdPTE;
+    
+    % Full Scale
     FSPortPTE = FSPortGrosThrust*FSSpeed;
     FSStbdPTE = FSStbdGrosThrust*FSSpeed;
     fullScaleDataArray(k,60) = FSPortPTE;
@@ -2248,6 +2490,17 @@ for k=1:m
     % [66] PORT: Jet system efficiency, nJS                  (-)
     % [67] STBD: Jet system efficiency, nJS                  (-)
     
+    % Model Scale
+    MSPortJetSysEff = MSPortPTE/MSPortPJSE;
+    MSStbdJetSysEff = MSStbdPTE/MSStbdPJSE;
+    modelScaleDataArray(k,62) = MSPortNozzleEff;
+    modelScaleDataArray(k,63) = MSStbdNozzleEff;
+    modelScaleDataArray(k,64) = MSPortIdealEff;
+    modelScaleDataArray(k,65) = MSStbdIdealEff;
+    modelScaleDataArray(k,66) = MSPortJetSysEff;
+    modelScaleDataArray(k,67) = MSStbdJetSysEff;
+    
+    % Full Scale
     FSPortJetSysEff = FSPortPTE/FSPortPJSE;
     FSStbdJetSysEff = FSStbdPTE/FSStbdPJSE;
     fullScaleDataArray(k,62) = FSPortNozzleEff;
@@ -2258,9 +2511,16 @@ for k=1:m
     fullScaleDataArray(k,67) = FSStbdJetSysEff;
     
     % Overall propulsive efficiency based on nD = PE/PD where PD = PJSE/hJS
+    
+    % Model Scale
+    MSPortPDETemp = MSPortPJSE/MSPortJetSysEff;
+    MSStbdPDETemp = MSStbdPJSE/MSStbdJetSysEff;
+    modelScaleDataArray(k,68) = MSPEW/(MSPortPDETemp+MSStbdPDETemp);    
+    
+    % Full Scale
     FSPortPDETemp = FSPortPJSE/FSPortJetSysEff;
     FSStbdPDETemp = FSStbdPJSE/FSStbdJetSysEff;
-    fullScaleDataArray(k,68) = PEW/(FSPortPDETemp+FSStbdPDETemp);
+    fullScaleDataArray(k,68) = FSPEW/(FSPortPDETemp+FSStbdPDETemp);
     
     % 16. Identifiers for OPE #1, nD --------------------------------------
     % OPE #1: Overall propulsive efficiency using nD=PE/PD
@@ -2274,16 +2534,28 @@ for k=1:m
     % [71] Correlation coefficient, Ca                       (-)
     
     if enableAdjustedFitting == 1
-        fullScaleDataArray(k,69) = 2;
+        modelScaleDataArray(k,69) = 2;
+        fullScaleDataArray(k,69)  = 2;
     else
-        fullScaleDataArray(k,69) = 1;
+        modelScaleDataArray(k,69) = 1;
+        fullScaleDataArray(k,69)  = 1;
     end
     if enablePPEEstPumpCurveHead == 1
-        fullScaleDataArray(k,70) = 2;
+        modelScaleDataArray(k,70) = 2;
+        fullScaleDataArray(k,70)  = 2;
     else
-        fullScaleDataArray(k,70) = 1;
+        modelScaleDataArray(k,70) = 1;
+        fullScaleDataArray(k,70)  = 1;
     end
-    fullScaleDataArray(k,71) = CorrCoeff;
+    modelScaleDataArray(k,71) = CorrCoeff;
+    fullScaleDataArray(k,71)  = CorrCoeff;
+    
+    % 17. Prop. Efficiency using nD=PE/PD or nD=(thrust V)/PPE  -----------
+    % Added: 02/12/2014
+   
+    % nD=(thrust V)/PPE
+    modelScaleDataArray(k,72) = ((MSPortGrosThrust+MSStbdGrosThrust)*MSSpeed)/(MSPortPumpEffPower+MSStbdPumpEffPower);
+    fullScaleDataArray(k,72)  = ((FSPortGrosThrust+FSStbdGrosThrust)*FSSpeed)/(FSPortPumpEffPower+FSStbdPumpEffPower);
     
 end
 
@@ -2293,7 +2565,7 @@ end
 %# ////////////////////////////////////////////////////////////////////////
 
 %# ************************************************************************
-%# 1. Overall propulsive efficiency, nD
+%# 5. Overall propulsive efficiency, nD
 %# ************************************************************************
 
 %# Plotting Overall propulsive efficiency, nD -----------------------------
@@ -2404,7 +2676,7 @@ set(hleg1,'Location','SouthEast');
 set(hleg1, 'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-legend boxoff;
+%legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
@@ -2448,7 +2720,7 @@ end
 
 
 %# ************************************************************************
-%# 2. Power plots (two propulsion systems ==>> a single demihull)
+%# 6. Power plots (two propulsion systems ==>> a single demihull)
 %# ************************************************************************
 
 %# Plotting power ---------------------------------------------------------
@@ -2547,9 +2819,7 @@ x6 = fullScaleDataArray(:,3);
 y6 = TotalPower;
 
 %# Plotting ---------------------------------------------------------------
-%h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*',x5,y5,'*',x6,y6,'*');
 h = plot(x1,y1,'*',x2,y2,'*',x4,y4,'*',x5,y5,'*',x6,y6,'*');
-%xlabel('{\bf Froude length number, F_{R} (-)}','FontSize',setGeneralFontSize);
 xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Power (MW)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
@@ -2565,7 +2835,6 @@ setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{s
 setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-%setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -2594,7 +2863,7 @@ set(hleg1,'Location','NorthWest');
 set(hleg1, 'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-legend boxoff;
+%legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
@@ -2638,7 +2907,7 @@ end
 
 
 %# ************************************************************************
-%# 3. Speed plots
+%# 7. Speed plots
 %# ************************************************************************
 
 %# Plotting speed ---------------------------------------------------------
@@ -2687,7 +2956,7 @@ if enableBlackAndWhitePlot == 1
 end
 
 %# Line, colors and markers
-setMarkerSize      = 11;
+setMarkerSize      = 12;
 setLineWidthMarker = 2;
 setLineWidth       = 1;
 setLineStyle       = '-.';
@@ -2729,9 +2998,9 @@ axis square;
 
 %# Line, colors and markers
 setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 
 %# Set plot figure background to a defined color
@@ -2754,7 +3023,7 @@ set(hleg1,'Location','SouthEast');
 set(hleg1, 'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
-legend boxoff;
+%legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
@@ -2796,7 +3065,7 @@ end
 
 
 %# ************************************************************************
-%# 4. Comparison Delivered Power to Sea Trials Data
+%# 8. Comparison Delivered Power to Sea Trials Data
 %# ************************************************************************
 
 %# Plotting speed ---------------------------------------------------------
@@ -2845,7 +3114,7 @@ if enableBlackAndWhitePlot == 1
 end
 
 %# Line, colors and markers
-setMarkerSize      = 11;
+setMarkerSize      = 12;
 setLineWidthMarker = 2;
 setLineWidth       = 2;
 setLineStyle       = '-';
@@ -2932,7 +3201,7 @@ set(gca,'YTick',minY:incrY:maxY);
 
 %# Legend
 %hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-hleg1 = legend('Corrected Power (Sea Trials)','Measured delivered power, P_{D}');
+hleg1 = legend('Corrected power from sea trials (P_{D})','Measured delivered power (P_{D})');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
@@ -2977,6 +3246,164 @@ for k=1:3
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
+
+
+%# ************************************************************************
+%# 9. Comparison Delivered Power to Sea Trials Data
+%# ************************************************************************
+
+%# Plotting speed ---------------------------------------------------------
+figurename = 'Plot 9: Comparison Propulsive Efficiency Using nD=PE/PD and nD=(thrust V)/PPE';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ------------------------------------------------
+
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
+
+% Fonts and colours ---------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 14;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 11;
+setLineWidthMarker = 2;
+setLineWidth       = 2;
+setLineStyle       = '-';
+
+%# Delivered Power vs. Ship Speed /////////////////////////////////////////
+subplot(1,1,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+% Overall Propulsive Efficiency using Resistance - nD=PE/PD where PD = PPE/hpump
+x1 = fullScaleDataArray(:,3);
+y1 = fullScaleDataArray(:,46);
+
+%# Overall propulsive efficiency using Resistance - nD = PE/PD where PD = PJSE/hJS
+% x2 = fullScaleDataArray(:,3);
+% y2 = fullScaleDataArray(:,68);
+
+% Overall Propulsive Efficiency using Thrust - nD=(thrust V)/PPE
+x3 = fullScaleDataArray(:,3);
+y3 = fullScaleDataArray(:,72);
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'*',x3,y3,'*');
+xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Overall propulsive efficiency, \eta_{D} (-)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+%     title('{\bf Catamaran (i.e. two demi hulls)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(2),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+% set(h1,'marker','+');
+% set(h1,'linestyle','none');
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+% %# Axis limitations
+minX  = 13;
+maxX  = 25;
+incrX = 1;
+minY  = 0;
+maxY  = 1;
+incrY = 0.1;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+% %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+hleg1 = legend('\eta_{D}=P_{E}/P_{D}','n_{D}=\Delta M V/P_{PE}'); % '\eta_{D}=P_{E}/P_{D} where P_{D}=P_{JSE}/\eta_{JS}'
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title -------------------------------------------------------------
+%if enablePlotMainTitle == 1
+annotation('textbox', [0 0.9 1 0.1], ...
+    'String', strcat('{\bf ', figurename, '}'), ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center');
+%end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_9_FS_Comparison_Propulsive_Efficiency_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
 
 %# ************************************************************************
 %# START Write results to CVS

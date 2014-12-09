@@ -1,9 +1,9 @@
 %# ------------------------------------------------------------------------
-%# Self-Propulsion: Test Analysis (SPP)
+%# Self-Propulsion: Test Analysis (SPP) - Using Øyan (2012) for SPP
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 2, 2014
+%# Date       :  December 9, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -685,7 +685,7 @@ if exist('resultsArraySPP.dat', 'file') == 0
         resultsArraySPP(k, 26)  = CorrCoeff;                                            % Correlation coefficient, Ca (-)
         resultsArraySPP(k, 27)  = FormFactor;                                           % Form factor (-)
         
-        % Towing force and twoing force coefficient
+        % Towing force (FD) and towing force coefficient
         setCFm = resultsArraySPP(k, 24);
         setCFs = resultsArraySPP(k, 25);
         resultsArraySPP(k, 28)  = 0.5*freshwaterdensity*(MSspeed^2)*MSwsa*(FormFactor*(setCFm-setCFs)-CorrCoeff);  % Towing force, FD (N)
@@ -859,6 +859,7 @@ else
     
 end
 
+
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 %# 1. Plot gross thrust (TG) vs. towing force (F)
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -878,20 +879,26 @@ for k=1:ma
     Froude_Numbers(k,2) = mean(A{k}(:,6));
 end
 
-% Bare hull resistance
 
-%# calBHResistanceBasedOnFr results array columns:
+% Bare hull resistance ----------------------------------------------------
+
+%# UNCORRECTED: calBHResistanceBasedOnFr results array columns:
 %[1]  Froude length number             (-)
 %[2]  Resistance (uncorrected)         (N)
 %[resistance] = calBHResistanceBasedOnFr(Froude_Numbers);
 
-%# calBHResistanceBasedOnFrTempCorr results array columns:
+%# CORRECTED: calBHResistanceBasedOnFrTempCorr results array columns:
 %[1]  Froude length number             (-)
 %[2]  Resistance (uncorrected)         (N)
 %[3]  Resistance (corrected for temp.) (N) -> See ITTC 7.5-02-03-01.4 (2008)
 [resistance] = calBHResistanceBasedOnFrTempCorr(Froude_Numbers,FormFactor,MSwsa,MSlwl);
 
-% Loop through speeds
+
+%# ************************************************************************
+%# Self-Propulsion Points Based on:
+%#   Øyan, E., (2012). "Speed and powering prediction for ships based on model 
+%#   testing". Master thesis, Norwegian University of Science and Technology (NTNU).
+%# ************************************************************************
 TG_at_FDArray       = [];   % Gross thrust = TG = p Q (vj - vi)
 F_at_TGZero         = [];   % Gross thrust = TG = p Q (vj - vi)
 FR_at_SPP           = [];   % Flow rates at self-propulsion point (SPP)

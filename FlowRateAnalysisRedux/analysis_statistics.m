@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 2, 2014
+%# Date       :  December 9, 2014
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -1061,7 +1061,7 @@ y     = [yPort; yStbd];
 %# Plotting ---------------------------------------------------------------
 h = bar(x,y');
 if enablePlotTitle == 1
-    title('{\bf Measured shaft speed}','FontSize',setGeneralFontSize);
+    title('{\bf Measured Shaft Speed}','FontSize',setGeneralFontSize);
 end
 xlabel('{\bf Set shaft speed condition [#]}','FontSize',setGeneralFontSize);
 ylabel('{\bf Standard Deviation [-]}','FontSize',setGeneralFontSize);
