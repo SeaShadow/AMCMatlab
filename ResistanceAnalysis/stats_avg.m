@@ -1,23 +1,23 @@
 %# ------------------------------------------------------------------------
 %# function stats_avg( input )
 %# ------------------------------------------------------------------------
-%# 
-%# Author:       K. Zürcher (kzurcher@amc.edu.au)
-%# Date:         September 10, 2013
-%# 
+%#
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  December 10, 2014
+%#
 %# Function   :  Average data
-%# 
+%#
 %# Description:  Average run data
-%# 
+%#
 %# Parameters :  prepeatrunnos = run numbers of repeats
 %#               results       = results MxN array
 %#
 %# Return     :  averagedArray = Nx1 array
-%# 
-%# Examples of Usage: 
-%# 
-%#    >> prepeatrunnos   = [1,2,3]; 
-%#    >> results         = [1 2 3;2 3 4;5 6 7]; 
+%#
+%# Examples of Usage:
+%#
+%#    >> prepeatrunnos   = [1,2,3];
+%#    >> results         = [1 2 3;2 3 4;5 6 7];
 %#    >> [averagedArray] = stats_avg(repeatrunnos,results)
 %#    ans = [1 2 3 4 5 6 7 8 9 10]
 %#
@@ -57,61 +57,64 @@ A = arrayfun(@(x) RA(RA(:,11) == x, :), unique(RA(:,11)), 'uniformoutput', false
 % Array dimensions of split down array
 [ma,na] = size(A);
 
-%# Array columns: 
-    %[1]  Run No.                                                                  (-)
-    %[2]  FS                                                                       (Hz)
-    %[3]  No. of samples                                                           (-)
-    %[4]  Record time                                                              (s)
-    %[5]  Model Averaged speed                                                     (m/s)
-    %[6]  Model Averaged fwd LVDT                                                  (m)
-    %[7]  Model Averaged aft LVDT                                                  (m)
-    %[8]  Model Averaged drag                                                      (g)
-    %[9]  Model (Rtm) Total resistance                                             (N)
-    %[10] Model (Ctm) Total resistance Coefficient                                 (-)
-    %[11] Model Froude length number                                               (-)
-    %[12] Model Heave                                                              (mm)
-    %[13] Model Trim                                                               (Degrees)
-    %[14] Equivalent full scale speed                                              (m/s)
-    %[15] Equivalent full scale speed                                              (knots)
-    %[16] Model (Rem) Reynolds Number                                              (-)
-    %[17] Model (Cfm) Frictional Resistance Coefficient (ITTC'57)                  (-)
-    %[18] Model (Cfm) Frictional Resistance Coefficient (Grigson)                  (-)
-    %[19] Model (Crm) Residual Resistance Coefficient                              (-)
-    %[20] Model (PEm) Model Effective Power                                        (W)
-    %[21] Model (PBm) Model Brake Power (using 50% prop. efficiency estimate)      (W)
-    %[22] Full Scale (Res) Reynolds Number                                         (-)
-    %[23] Full Scale (Cfs) Frictional Resistance Coefficient (ITTC'57)             (-)
-    %[24] Full Scale (Cts) Total resistance Coefficient                            (-)
-    %[25] Full Scale (Rts) Total resistance (Rt)                                   (N)
-    %[26] Full Scale (PEs) Model Effective Power                                   (W)
-    %[27] Full Scale (PBs) Model Brake Power (using 50% prop. efficiency estimate) (W)
-    %[28] Run condition                                                            (-)
-    %[29] SPEED: Minimum value                                                     (m/s)
-    %[30] SPEED: Maximum value                                                     (m/s)
-    %[31] SPEED: Average value                                                     (m/s)
-    %[32] SPEED: Percentage (max.-avg.) to max. value (exp. 3%)                    (m/s)
-    %[33] LVDT (FWD): Minimum value                                                (mm)
-    %[34] LVDT (FWD): Maximum value                                                (mm)
-    %[35] LVDT (FWD): Average value                                                (mm)
-    %[36] LVDT (FWD): Percentage (max.-avg.) to max. value (exp. 3%)               (mm)
-    %[37] LVDT (AFT): Minimum value                                                (mm)
-    %[38] LVDT (AFT): Maximum value                                                (mm)
-    %[39] LVDT (AFT): Average value                                                (mm)
-    %[40] LVDT (AFT): Percentage (max.-avg.) to max. value (exp. 3%)               (mm)
-    %[41] DRAG: Minimum value                                                      (g)
-    %[42] DRAG: Maximum value                                                      (g)
-    %[43] DRAG: Average value                                                      (g)
-    %[44] DRAG: Percentage (max.-avg.) to max. value (exp. 3%)                     (g)
-    %[45] SPEED: Standard deviation                                                (m/s)
-    %[46] LVDT (FWD): Standard deviation                                           (mm)
-    %[47] LVDT (AFT): Standard deviation                                           (mm)
-    %[48] DRAG: Standard deviation                                                 (g)
-    %[49] SPEED: Mean of standard deviation                                        (-)
-    %[50] LVDT (FWD): Mean of standard deviation                                   (-)
-    %[51] LVDT (AFT): Mean of standard deviation                                   (-)
-    %[52] DRAG: Mean of standard deviation                                         (-)
-    %[53] Number how many times run has been repeated                              (-)
-    
+%# Array columns:
+%[1]  Run No.                                                                  (-)
+%[2]  FS                                                                       (Hz)
+%[3]  No. of samples                                                           (-)
+%[4]  Record time                                                              (s)
+%[5]  Model Averaged speed                                                     (m/s)
+%[6]  Model Averaged fwd LVDT                                                  (m)
+%[7]  Model Averaged aft LVDT                                                  (m)
+%[8]  Model Averaged drag                                                      (g)
+%[9]  Model (Rtm) Total resistance                                             (N)
+%[10] Model (Ctm) Total resistance Coefficient                                 (-)
+%[11] Model Froude length number                                               (-)
+%[12] Model Heave                                                              (mm)
+%[13] Model Trim                                                               (Degrees)
+%[14] Equivalent full scale speed                                              (m/s)
+%[15] Equivalent full scale speed                                              (knots)
+%[16] Model (Rem) Reynolds Number                                              (-)
+%[17] Model (Cfm) Frictional Resistance Coefficient (ITTC'57)                  (-)
+%[18] Model (Cfm) Frictional Resistance Coefficient (Grigson)                  (-)
+%[19] Model (Crm) Residual Resistance Coefficient                              (-)
+%[20] Model (PEm) Model Effective Power                                        (W)
+%[21] Model (PBm) Model Brake Power (using 50% prop. efficiency estimate)      (W)
+%[22] Full Scale (Res) Reynolds Number                                         (-)
+%[23] Full Scale (Cfs) Frictional Resistance Coefficient (ITTC'57)             (-)
+%[24] Full Scale (Cts) Total resistance Coefficient                            (-)
+%[25] Full Scale (Rts) Total resistance (Rt)                                   (N)
+%[26] Full Scale (PEs) Model Effective Power                                   (W)
+%[27] Full Scale (PBs) Model Brake Power (using 50% prop. efficiency estimate) (W)
+%[28] Run condition                                                            (-)
+%[29] SPEED: Minimum value                                                     (m/s)
+%[30] SPEED: Maximum value                                                     (m/s)
+%[31] SPEED: Average value                                                     (m/s)
+%[32] SPEED: Percentage (max.-avg.) to max. value (exp. 3%)                    (m/s)
+%[33] LVDT (FWD): Minimum value                                                (mm)
+%[34] LVDT (FWD): Maximum value                                                (mm)
+%[35] LVDT (FWD): Average value                                                (mm)
+%[36] LVDT (FWD): Percentage (max.-avg.) to max. value (exp. 3%)               (mm)
+%[37] LVDT (AFT): Minimum value                                                (mm)
+%[38] LVDT (AFT): Maximum value                                                (mm)
+%[39] LVDT (AFT): Average value                                                (mm)
+%[40] LVDT (AFT): Percentage (max.-avg.) to max. value (exp. 3%)               (mm)
+%[41] DRAG: Minimum value                                                      (g)
+%[42] DRAG: Maximum value                                                      (g)
+%[43] DRAG: Average value                                                      (g)
+%[44] DRAG: Percentage (max.-avg.) to max. value (exp. 3%)                     (g)
+%[45] SPEED: Standard deviation                                                (m/s)
+%[46] LVDT (FWD): Standard deviation                                           (mm)
+%[47] LVDT (AFT): Standard deviation                                           (mm)
+%[48] DRAG: Standard deviation                                                 (g)
+%[49] SPEED: Mean of standard deviation                                        (-)
+%[50] LVDT (FWD): Mean of standard deviation                                   (-)
+%[51] LVDT (AFT): Mean of standard deviation                                   (-)
+%[52] DRAG: Mean of standard deviation                                         (-)
+%[53] Number how many times run has been repeated                              (-)
+% Added: 10/12/2014, Multiplied CTm data by 1000 for better readibility
+%[54] CTm: Average value                                                       (-)
+%[55] CTm: Standard deviation                                                  (-)
+
 for m=1:ma
     
     [mcond,ncond] = size(A{m});
@@ -119,7 +122,7 @@ for m=1:ma
     averagedArray(m,1)  = 0;
     averagedArray(m,2)  = 0;
     averagedArray(m,3)  = 0;
-    averagedArray(m,4)  = 0; 
+    averagedArray(m,4)  = 0;
     averagedArray(m,5)  = mean(A{m}(:,5));
     averagedArray(m,6)  = mean(A{m}(:,6));
     averagedArray(m,7)  = mean(A{m}(:,7));
@@ -160,14 +163,21 @@ for m=1:ma
     averagedArray(m,42) = mean(A{m}(:,42));
     averagedArray(m,43) = mean(A{m}(:,43));
     averagedArray(m,44) = mean(A{m}(:,44));
-    averagedArray(m,45) = std(A{m}(:,45));
-    averagedArray(m,46) = std(A{m}(:,46));
-    averagedArray(m,47) = std(A{m}(:,47));
-    averagedArray(m,48) = std(A{m}(:,48));
+    averagedArray(m,45) = std(A{m}(:,45),1);
+    averagedArray(m,46) = std(A{m}(:,46),1);
+    averagedArray(m,47) = std(A{m}(:,47),1);
+    averagedArray(m,48) = std(A{m}(:,48),1);
     averagedArray(m,49) = averagedArray(m,45)/sqrt(mcond);
     averagedArray(m,50) = averagedArray(m,46)/sqrt(mcond);
     averagedArray(m,51) = averagedArray(m,47)/sqrt(mcond);
     averagedArray(m,52) = averagedArray(m,48)/sqrt(mcond);
     averagedArray(m,53) = mcond;
+    % Added: 10/12/2014, Multiplied CTm data by 1000 for better readibility
+    C = A{m}(:,10);
+    Raw_Data = num2cell(C);
+    Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false);
+    C = cell2mat(Raw_Data);
+    averagedArray(m,54) = mean(C);
+    averagedArray(m,55) = std(C,1);
     
 end

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 9, 2014
+%# Date       :  December 10, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -138,7 +138,7 @@ enablePlotTitle         = 1;    % Show plot title above plot
 enableBlackAndWhitePlot = 1;    % Show plot in black and white only
 
 % Scaled to A4 paper
-enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
+enableA4PaperSizePlot   = 0;    % Show plots scale to A4 size
 
 % Individual plots
 enableTurbStimPlot      = 1; % Turbulence stimulator investigation
@@ -335,6 +335,8 @@ testName = 'Resistance Test Summary';
 %[51] LVDT (AFT): Mean of standard deviation                            (-)
 %[52] DRAG: Mean of standard deviation                                  (-)
 %[53] Number how many times run has been repeated                       (-)
+%[54] CTm: Average value                                                (-)
+%[55] CTm: Standard deviation                                           (-)
 
 [avgcond1]  = stats_avg(1:15,results);
 [avgcond2]  = stats_avg(16:25,results);
@@ -404,92 +406,94 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
         setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
     end
     
-    %# Plot repeat data ---------------------------------------------------
-    subplot(1,2,1)
-    
-    if length(cond1) ~= 0
-        xcond1 = cond1(:,11); ycond1 = cond1(:,10);
-        
-        %# Multiply resistance data by 1000 for better readibility
-        Raw_Data = num2cell(ycond1); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond1 = cell2mat(Raw_Data);
-        
-        x1 = xcond1; y1 = ycond1;
-    else
-        x1 = 0; y1 = 0;
-    end
-    if length(cond2) ~= 0
-        xcond2 = cond2(:,11); ycond2 = cond2(:,10);
-        
-        %# Multiply resistance data by 1000 for better readibility
-        Raw_Data = num2cell(ycond2); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond2 = cell2mat(Raw_Data);
-        
-        x2 = xcond2; y2 = ycond2;
-    else
-        x2 = 0; y2 = 0;
-    end
-    if length(cond3) ~= 0
-        xcond3 = cond3(:,11); ycond3 = cond3(:,10);
-        
-        %# Multiply resistance data by 1000 for better readibility
-        Raw_Data = num2cell(ycond3); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond3 = cell2mat(Raw_Data);
-        
-        x3 = xcond3; y3 = ycond3;
-    else
-        x3 = 0; y3 = 0;
-    end
-    
-    % Plotting
-    h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
-    if enablePlotTitle == 1
-        title('{\bf Repeated runs}','FontSize',setGeneralFontSize);
-    end
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Total resistance coefficient C_{Tm}*1000 [-]}','FontSize',setGeneralFontSize);
-    grid on;
-    box on;
-    axis square;
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
     %# Line, colors and markers
-    setMarkerSize      = 10;
+    setMarkerSize      = 16;
     setLineWidthMarker = 2;
     setLineWidth       = 1;
     setLineStyle       = '-.';
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     
-    %# Axis limitations
-    minX  = 0.2;
-    maxX  = 0.45;
-    incrX = 0.05;
-    minY  = 6;
-    maxY  = 6.5;
-    incrY = 0.1;
-    set(gca,'XLim',[minX maxX]);
-    set(gca,'XTick',[minX:incrX:maxX]);
-    set(gca,'YLim',[minY maxY]);
-    set(gca,'YTick',[minY:incrY:maxY]);
-    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
-    set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
-    
-    %# Legend
-    hleg1 = legend('Cond. 1: 1,500t (Barehull, no TS)','Cond. 2: 1,500t (1st row TS)','Cond. 3: 1,500t (1st and 2nd row TS)');
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    set(hleg1,'LineWidth',1);
-    set(hleg1,'FontSize',setLegendFontSize);
-    %legend boxoff;
-    
-    %# Font sizes and border --------------------------------------------------
-    
-    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+%     %# Plot repeat data ---------------------------------------------------
+%     subplot(1,2,1)
+%     
+%     if length(cond1) ~= 0
+%         xcond1 = cond1(:,11); ycond1 = cond1(:,10);
+%         
+%         %# Multiply resistance data by 1000 for better readibility
+%         Raw_Data = num2cell(ycond1); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond1 = cell2mat(Raw_Data);
+%         
+%         x1 = xcond1; y1 = ycond1;
+%     else
+%         x1 = 0; y1 = 0;
+%     end
+%     if length(cond2) ~= 0
+%         xcond2 = cond2(:,11); ycond2 = cond2(:,10);
+%         
+%         %# Multiply resistance data by 1000 for better readibility
+%         Raw_Data = num2cell(ycond2); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond2 = cell2mat(Raw_Data);
+%         
+%         x2 = xcond2; y2 = ycond2;
+%     else
+%         x2 = 0; y2 = 0;
+%     end
+%     if length(cond3) ~= 0
+%         xcond3 = cond3(:,11); ycond3 = cond3(:,10);
+%         
+%         %# Multiply resistance data by 1000 for better readibility
+%         Raw_Data = num2cell(ycond3); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond3 = cell2mat(Raw_Data);
+%         
+%         x3 = xcond3; y3 = ycond3;
+%     else
+%         x3 = 0; y3 = 0;
+%     end
+%     
+%     % Plotting
+%     h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
+%     if enablePlotTitle == 1
+%         title('{\bf Repeated runs}','FontSize',setGeneralFontSize);
+%     end
+%     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+%     ylabel('{\bf Total resistance coefficient C_{Tm}*1000 [-]}','FontSize',setGeneralFontSize);
+%     grid on;
+%     box on;
+%     axis square;
+%     
+%     %# Set plot figure background to a defined color
+%     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+%     set(gcf,'Color',[1,1,1]);
+%     
+%     %# Line, colors and markers
+%     setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     
+%     %# Axis limitations
+%     minX  = 0.2;
+%     maxX  = 0.48;
+%     incrX = 0.04;
+%     minY  = 6;
+%     maxY  = 6.5;
+%     incrY = 0.1;
+%     set(gca,'XLim',[minX maxX]);
+%     set(gca,'XTick',[minX:incrX:maxX]);
+%     set(gca,'YLim',[minY maxY]);
+%     set(gca,'YTick',[minY:incrY:maxY]);
+%     set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+%     
+%     %# Legend
+%     hleg1 = legend('Cond. 1: 1,500t (Barehull, no TS)','Cond. 2: 1,500t (1st row TS)','Cond. 3: 1,500t (1st and 2nd row TS)');
+%     set(hleg1,'Location','NorthWest');
+%     set(hleg1,'Interpreter','none');
+%     set(hleg1,'LineWidth',1);
+%     set(hleg1,'FontSize',setLegendFontSize);
+%     %legend boxoff;
+%     
+%     %# Font sizes and border --------------------------------------------------
+%     
+%     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     %# Plot averaged data -----------------------------------------------------
-    subplot(1,2,2)
+    %subplot(1,2,2)
     
     if length(avgcond1) ~= 0
         xavgcond1 = avgcond1(:,11); yavgcond1 = avgcond1(:,10);
@@ -522,30 +526,57 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
         x3 = 0; y3 = 0;
     end
     
-    % Plotting
-    h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
-    if enablePlotTitle == 1
-        title('{\bf Average of repeated runs}','FontSize',setGeneralFontSize);
-    end
+    % Errors ------------------------------------------------------------------
+    
+    % Mean CTm values (CTm*1000)
+    meancon1 = [avgcond1(1,54);avgcond1(2,54)];
+    meancon2 = [avgcond2(1,54);avgcond2(2,54)];
+    meancon3 = [avgcond3(1,54);avgcond3(2,54)];
+    
+    % Standard deviation based on mean (CTm*1000)
+    delta1   = [avgcond1(1,55);avgcond1(2,55)];
+    delta2   = [avgcond2(1,55);avgcond2(2,55)];
+    delta3   = [avgcond3(1,55);avgcond3(2,55)];
+
+    % Plotting ----------------------------------------------------------------
+    h = plot(x1,meancon1,'*',x2,meancon2,'*',x3,meancon3,'*');
+    % Error Cond. #1
+    hold on;
+    h1 = errorbar(x1,meancon1,delta1,'k');
+    set(h1,'marker','+');
+    set(h1,'linestyle','none');
+    % Error Cond. #2
+    hold on;
+    h2 = errorbar(x2,meancon2,delta2,'k');
+    set(h2,'marker','+');
+    set(h2,'linestyle','none');
+    % Error Cond. #3
+    hold on;
+    h3 = errorbar(x3,meancon3,delta3,'k');
+    set(h3,'marker','+');
+    set(h3,'linestyle','none');
+%     if enablePlotTitle == 1
+%         title('{\bf Average of repeated runs}','FontSize',setGeneralFontSize);
+%     end
     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
     ylabel('{\bf Total resistance coefficient C_{Tm}*1000 [-]}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
     
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
     %# Line, colors and markers
-    setMarkerSize      = 10;
-    setLineWidthMarker = 2;
-    setLineWidth       = 1;
-    setLineStyle       = '-.';
     setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle,'linewidth',setLineWidth
     setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);  
     
     %# Axis limitations
     minX  = 0.2;
-    maxX  = 0.45;
-    incrX = 0.05;
+    maxX  = 0.48;
+    incrX = 0.04;
     minY  = 6;
     maxY  = 6.5;
     incrY = 0.1;
@@ -584,12 +615,12 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     end
     
     %# Plot title ---------------------------------------------------------
-    if enablePlotMainTitle == 1
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
-    end
+%     if enablePlotMainTitle == 1
+%         annotation('textbox', [0 0.9 1 0.1], ...
+%             'String', strcat('{\bf ', figurename, '}'), ...
+%             'EdgeColor', 'none', ...
+%             'HorizontalAlignment', 'center');
+%     end
     
     %# Save plots as PDF, PNG and EPS -------------------------------------
     % Enable renderer for vector graphics output
