@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 10, 2014
+%# Date       :  December 12, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -142,7 +142,7 @@ enableA4PaperSizePlot   = 0;    % Show plots scale to A4 size
 
 % Individual plots
 enableTurbStimPlot      = 1; % Turbulence stimulator investigation
-enableTrimTabPlot       = 0; % Trim tab investigation
+enableTrimTabPlot       = 1; % Trim tab investigation
 enableResistancePlot    = 0; % Resistance plots, Ctm, power, heave and trim
 enableProhaskaPlot      = 0; % Prohaska plot, form factor at deep transom
 enableErrorPlot         = 0; % Error plots (% of max-avg to magnitude)
@@ -335,8 +335,10 @@ testName = 'Resistance Test Summary';
 %[51] LVDT (AFT): Mean of standard deviation                            (-)
 %[52] DRAG: Mean of standard deviation                                  (-)
 %[53] Number how many times run has been repeated                       (-)
-%[54] CTm: Average value                                                (-)
-%[55] CTm: Standard deviation                                           (-)
+% Added: 11/12/2014
+%[54] CTm: Standard deviation                                           (-)
+% Added: 12/12/2014
+%[55] Trim: Standard deviation                                          (deg)
 
 [avgcond1]  = stats_avg(1:15,results);
 [avgcond2]  = stats_avg(16:25,results);
@@ -361,7 +363,7 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     startRun = 1;
     endRun   = 35;
     
-    figurename = sprintf('Resistance Test:: Turbulence Stimulator Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
+    figurename = sprintf('Plot 1: Turbulence Stimulator Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -528,31 +530,27 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     
     % Errors ------------------------------------------------------------------
     
-    % Mean CTm values (CTm*1000)
-    meancon1 = [avgcond1(1,54);avgcond1(2,54)];
-    meancon2 = [avgcond2(1,54);avgcond2(2,54)];
-    meancon3 = [avgcond3(1,54);avgcond3(2,54)];
-    
     % Standard deviation based on mean (CTm*1000)
-    delta1   = [avgcond1(1,55);avgcond1(2,55)];
-    delta2   = [avgcond2(1,55);avgcond2(2,55)];
-    delta3   = [avgcond3(1,55);avgcond3(2,55)];
+    setColumn = 54;
+    delta1   = [avgcond1(1,setColumn);avgcond1(2,setColumn)];
+    delta2   = [avgcond2(1,setColumn);avgcond2(2,setColumn)];
+    delta3   = [avgcond3(1,setColumn);avgcond3(2,setColumn)];
 
     % Plotting ----------------------------------------------------------------
-    h = plot(x1,meancon1,'*',x2,meancon2,'*',x3,meancon3,'*');
+    h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
     % Error Cond. #1
     hold on;
-    h1 = errorbar(x1,meancon1,delta1,'k');
+    h1 = errorbar(x1,y1,delta1,'k');
     set(h1,'marker','+');
     set(h1,'linestyle','none');
     % Error Cond. #2
     hold on;
-    h2 = errorbar(x2,meancon2,delta2,'k');
+    h2 = errorbar(x2,y2,delta2,'k');
     set(h2,'marker','+');
     set(h2,'linestyle','none');
     % Error Cond. #3
     hold on;
-    h3 = errorbar(x3,meancon3,delta3,'k');
+    h3 = errorbar(x3,y3,delta3,'k');
     set(h3,'marker','+');
     set(h3,'linestyle','none');
 %     if enablePlotTitle == 1
@@ -569,9 +567,9 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     set(gcf,'Color',[1,1,1]);
     
     %# Line, colors and markers
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle,'linewidth',setLineWidth
-    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);  
+    set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle,'linewidth',setLineWidth
+    set(h(2),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);  
     
     %# Axis limitations
     minX  = 0.2;
@@ -588,7 +586,7 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    hleg1 = legend('Cond. 1: 1,500t (Barehull, no TS)','Cond. 2: 1,500t (1st row TS)','Cond. 3: 1,500t (1st and 2nd row TS)');
+    hleg1 = legend('Turbulence stimulators: Barehull','Turbulence stimulators: 1st row','Turbulence stimulators: 1st and 2nd');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -628,12 +626,13 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Turbulence_Stimulator_Resistance_Data_Plots_Repeats_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Turbulence_Stimulator_Resistance_Thesis_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
     
-end
+end % enableTurbStimPlot
+
 
 % *************************************************************************
 % TRIM TAB CONDITIONS
@@ -642,8 +641,420 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     
     startRun = 36;
     endRun   = 62;
+
+    % Switch overwrite
+    %enableA4PaperSizePlot   = 0;    % Show plots scale to A4 size
     
-    figurename = sprintf('Resistance Test:: Trim Tab Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
+    %# --------------------------------------------------------------------
+    %# 2.0 Plot CTm (repeats), CTm (averaged), trim and CRm
+    %# --------------------------------------------------------------------
+%     figurename = sprintf('Plot 2: Trim Tab Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
+%     f = figure('Name',figurename,'NumberTitle','off');
+%     
+%     %# Paper size settings ------------------------------------------------
+%     
+%     if enableA4PaperSizePlot == 1
+%         set(gcf, 'PaperSize', [19 19]);
+%         set(gcf, 'PaperPositionMode', 'manual');
+%         set(gcf, 'PaperPosition', [0 0 19 19]);
+%         
+%         set(gcf, 'PaperUnits', 'centimeters');
+%         set(gcf, 'PaperSize', [19 19]);
+%         set(gcf, 'PaperPositionMode', 'manual');
+%         set(gcf, 'PaperPosition', [0 0 19 19]);
+%     end
+%     
+%     % Fonts and colours ---------------------------------------------------
+%     setGeneralFontName = 'Helvetica';
+%     setGeneralFontSize = 14;
+%     setBorderLineWidth = 2;
+%     setLegendFontSize  = 12;
+%     
+%     %# Change default text fonts for plot title
+%     set(0,'DefaultTextFontname',setGeneralFontName);
+%     set(0,'DefaultTextFontSize',14);
+%     
+%     %# Box thickness, axes font size, etc. --------------------------------
+%     set(gca,'TickDir','in',...
+%         'FontSize',12,...
+%         'LineWidth',2,...
+%         'FontName',setGeneralFontName,...
+%         'Clipping','off',...
+%         'Color',[1 1 1],...
+%         'LooseInset',get(gca,'TightInset'));
+%     
+%     %# Markes and colors ------------------------------------------------------
+%     setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+%     %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+%     % Colored curves
+%     setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+%     if enableBlackAndWhitePlot == 1
+%         % Black and white curves
+%         setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+%     end
+%     
+%     %# Plot repeat data: Fr vs. Ctm ---------------------------------------
+%     subplot(2,2,1)
+%     
+%     if length(cond4) ~= 0
+%         xcond4 = cond4(:,11); ycond4 = cond4(:,10);
+%         
+%         %# Multiply resistance data by 1000 for better readibility
+%         Raw_Data = num2cell(ycond4); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond4 = cell2mat(Raw_Data);
+%         
+%         x4 = xcond4; y4 = ycond4;
+%     else
+%         x4 = 0; y4 = 0;
+%     end
+%     if length(cond5) ~= 0
+%         xcond5 = cond5(:,11); ycond5 = cond5(:,10);
+%         
+%         %# Multiply resistance data by 1000 for better readibility
+%         Raw_Data = num2cell(ycond5); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond5 = cell2mat(Raw_Data);
+%         
+%         x5 = xcond5; y5 = ycond5;
+%     else
+%         x5 = 0; y5 = 0;
+%     end
+%     if length(cond6) ~= 0
+%         xcond6 = cond6(:,11); ycond6 = cond6(:,10);
+%         
+%         %# Multiply resistance data by 1000 for better readibility
+%         Raw_Data = num2cell(ycond6); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond6 = cell2mat(Raw_Data);
+%         
+%         x6 = xcond6; y6 = ycond6;
+%     else
+%         x6 = 0; y6 = 0;
+%     end
+%     
+%     % Plotting
+%     h = plot(x4,y4,'*',x5,y5,'*',x6,y6,'*');
+%     if enablePlotTitle == 1
+%         title('{\bf C_{Tm} vs. F_{r} (repeated runs)}','FontSize',setGeneralFontSize);
+%     end
+%     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+%     ylabel('{\bf Total resistance coefficient C_{Tm}*1000 [-]}','FontSize',setGeneralFontSize);
+%     grid on;
+%     box on;
+%     axis square;
+%     
+%     %# Line, colors and markers
+%     setMarkerSize      = 8;
+%     setLineWidthMarker = 1;
+%     setLineWidth       = 1;
+%     setLineStyle       = '-.';
+%     setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     
+%     %# Set plot figure background to a defined color
+%     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+%     set(gcf,'Color',[1,1,1]);
+%     
+%     %# Axis limitations
+%     set(gca,'XLim',[0.42 0.48]);
+%     set(gca,'XTick',[0.42:0.01:0.48]);
+%     set(gca,'YLim',[6.2 6.6]);
+%     set(gca,'YTick',[6.2:0.05:6.6]);
+%     set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
+%     
+%     %# Legend
+%     hleg1 = legend('Cond. 4: 1,500t (5 degrees)','Cond. 5: 1,500t (0 degrees)','Cond. 6: 1,500t (10 degrees)');
+%     set(hleg1,'Location','NorthEast');
+%     set(hleg1,'Interpreter','none');
+%     set(hleg1,'LineWidth',1);
+%     set(hleg1,'FontSize',setLegendFontSize);
+%     legend boxoff;
+%     
+%     %# Font sizes and border --------------------------------------------------
+%     
+%     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+%     
+%     %# Plot averaged data: Fr vs. Ctm -------------------------------------
+%     subplot(2,2,2)
+%     
+%     if length(avgcond4) ~= 0
+%         xavgcond4 = avgcond4(:,11); yavgcond4 = avgcond4(:,10);
+%         
+%         %# Multiply resistance data by 1000 for better readibility
+%         Raw_Data = num2cell(yavgcond4); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond4 = cell2mat(Raw_Data);
+%         
+%         x4 = xavgcond4; y4 = yavgcond4;
+%     else
+%         x4 = 0; y4 = 0;
+%     end
+%     if length(avgcond5) ~= 0
+%         xavgcond5 = avgcond5(:,11); yavgcond5 = avgcond5(:,10);
+%         
+%         %# Multiply resistance data by 1000 for better readibility
+%         Raw_Data = num2cell(yavgcond5); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond5 = cell2mat(Raw_Data);
+%         
+%         x5 = xavgcond5; y5 = yavgcond5;
+%     else
+%         x5 = 0; y5 = 0;
+%     end
+%     if length(avgcond6) ~= 0
+%         xavgcond6 = avgcond6(:,11); yavgcond6 = avgcond6(:,10);
+%         
+%         %# Multiply resistance data by 1000 for better readibility
+%         Raw_Data = num2cell(yavgcond6); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond6 = cell2mat(Raw_Data);
+%         
+%         x6 = xavgcond6; y6 = yavgcond6;
+%     else
+%         x6 = 0; y6 = 0;
+%     end
+%     
+%     % Plotting
+%     h = plot(x4,y4,'*',x5,y5,'*',x6,y6,'*');
+%     if enablePlotTitle == 1
+%         title('{\bf C_{Tm} vs. F_{r} (averaged runs)}','FontSize',setGeneralFontSize);
+%     end
+%     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+%     ylabel('{\bf Total resistance coefficient C_{Tm}*1000 [-]}','FontSize',setGeneralFontSize);
+%     grid on;
+%     box on;
+%     axis square;
+%     
+%     %# Line, colors and markers
+%     setMarkerSize      = 8;
+%     setLineWidthMarker = 1;
+%     setLineWidth       = 1;
+%     setLineStyle       = '-.';
+%     setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     
+%     %# Set plot figure background to a defined color
+%     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+%     set(gcf,'Color',[1,1,1]);
+%     
+%     %# Axis limitations
+%     set(gca,'XLim',[0.42 0.48]);
+%     set(gca,'XTick',[0.42:0.01:0.48]);
+%     set(gca,'YLim',[6.2 6.6]);
+%     set(gca,'YTick',[6.2:0.05:6.6]);
+%     set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
+%     
+%     %# Legend
+%     hleg1 = legend('Cond. 4: 1,500t (5 degrees)','Cond. 5: 1,500t (0 degrees)','Cond. 6: 1,500t (10 degrees)');
+%     set(hleg1,'Location','NorthEast');
+%     set(hleg1,'Interpreter','none');
+%     set(hleg1,'LineWidth',1);
+%     set(hleg1,'FontSize',setLegendFontSize);
+%     legend boxoff;
+%     
+%     %# Font sizes and border --------------------------------------------------
+%     
+%     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+%     
+%     %# Plot Fr vs. Trim  -----------------------------------------------------
+%     subplot(2,2,3)
+%     
+%     if length(avgcond4) ~= 0
+%         xavgcond4 = avgcond4(:,11); yavgcond4 = avgcond4(:,13);
+%         x4 = xavgcond4; y4 = yavgcond4;
+%     else
+%         x4 = 0; y4 = 0;
+%     end
+%     if length(avgcond5) ~= 0
+%         xavgcond5 = avgcond5(:,11); yavgcond5 = avgcond5(:,13);
+%         x5 = xavgcond5; y5 = yavgcond5;
+%     else
+%         x5 = 0; y5 = 0;
+%     end
+%     if length(avgcond6) ~= 0
+%         xavgcond6 = avgcond6(:,11); yavgcond6 = avgcond6(:,13);
+%         x6 = xavgcond6; y6 = yavgcond6;
+%     else
+%         x6 = 0; y6 = 0;
+%     end
+%     
+%     % Plotting
+%     h = plot(x4,y4,'*',x5,y5,'*',x6,y6,'*');
+%     if enablePlotTitle == 1
+%         title('{\bf Trim vs. F_{r}}','FontSize',setGeneralFontSize);
+%     end
+%     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+%     ylabel('{\bf Trim [deg]}','FontSize',setGeneralFontSize);
+%     grid on;
+%     box on;
+%     axis square;
+%     
+%     %# Line, colors and markers
+%     setMarkerSize      = 8;
+%     setLineWidthMarker = 1;
+%     setLineWidth       = 1;
+%     setLineStyle       = '-.';
+%     setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     
+%     %# Set plot figure background to a defined color
+%     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+%     set(gcf,'Color',[1,1,1]);
+%     
+%     %# Axis limitations
+%     set(gca,'XLim',[0.42 0.48]);
+%     set(gca,'XTick',[0.42:0.01:0.48]);
+%     set(gca,'YLim',[0.4 1.3]);
+%     set(gca,'YTick',[0.4:0.1:1.3]);
+%     set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+%     
+%     %# Legend
+%     hleg1 = legend('Cond. 4: 1,500t (5 degrees)','Cond. 5: 1,500t (0 degrees)','Cond. 6: 1,500t (10 degrees)');
+%     set(hleg1,'Location','NorthWest');
+%     set(hleg1,'Interpreter','none');
+%     set(hleg1,'LineWidth',1);
+%     set(hleg1,'FontSize',setLegendFontSize);
+%     legend boxoff;
+%     
+%     %# Font sizes and border --------------------------------------------------
+%     
+%     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+%     
+%     %# Plot Trim vs. Crm  -----------------------------------------------------
+%     subplot(2,2,4)
+%     
+%     if length(avgcond4) ~= 0
+%         xavgcond4 = avgcond4(:,13); yavgcond4 = avgcond4(:,19);
+%         
+%         %# Multiply resistance data by 1000 for better readibility
+%         Raw_Data = num2cell(yavgcond4); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond4 = cell2mat(Raw_Data);
+%         
+%         x4 = xavgcond4; y4 = yavgcond4;
+%     else
+%         x4 = 0; y4 = 0;
+%     end
+%     if length(avgcond5) ~= 0
+%         xavgcond5 = avgcond5(:,13); yavgcond5 = avgcond5(:,19);
+%         
+%         %# Multiply resistance data by 1000 for better readibility
+%         Raw_Data = num2cell(yavgcond5); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond5 = cell2mat(Raw_Data);
+%         
+%         x5 = xavgcond5; y5 = yavgcond5;
+%     else
+%         x5 = 0; y5 = 0;
+%     end
+%     if length(avgcond6) ~= 0
+%         xavgcond6 = avgcond6(:,13); yavgcond6 = avgcond6(:,19);
+%         
+%         %# Multiply resistance data by 1000 for better readibility
+%         Raw_Data = num2cell(yavgcond6); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond6 = cell2mat(Raw_Data);
+%         
+%         x6 = xavgcond6; y6 = yavgcond6;
+%     else
+%         x6 = 0; y6 = 0;
+%     end
+%     
+%     % Fr = 0.43 only
+%     fr043 = [];
+%     fr043(1,1) = x4(1);           % Condition 4, Fr = 0.43
+%     fr043(1,2) = y4(1);           % Condition 4, Fr = 0.43
+%     fr043(2,1) = x5(1);           % Condition 5, Fr = 0.43
+%     fr043(2,2) = y5(1);           % Condition 5, Fr = 0.43
+%     fr043(3,1) = x6(1);           % Condition 6, Fr = 0.43
+%     fr043(3,2) = y6(1);           % Condition 6, Fr = 0.43
+%     fr043l = [];
+%     fr043l(1,1) = avgcond7(20,13);      % Condition 7: 1,500t, level trim, Fr = 0.43
+%     fr043l(1,2) = avgcond7(20,19)*1000; % Condition 7: 1,500t, level trim, Fr = 0.43
+%     fr041b = [];
+%     fr041b(1,1) = avgcond8(4,13)-0.5;   % Condition 7: 1,500t, -0.5 by bow, Fr = 0.41
+%     fr041b(1,2) = avgcond8(4,19)*1000;  % Condition 7: 1,500t, -0.5 by bow, Fr = 0.41
+%     fr041s = [];
+%     fr041s(1,1) = avgcond9(5,13)+0.5;   % Condition 7: 1,500t, 0.5 by stern, Fr = 0.41
+%     fr041s(1,2) = avgcond9(5,19)*1000;  % Condition 7: 1,500t, 0.5 by stern, Fr = 0.41
+%     
+%     % Sort arrays by rows
+%     fr043 = sortrows(fr043);
+%     
+%     % Plotting
+%     h = plot(fr043(:,1),fr043(:,2),'*',fr043l(:,1),fr043l(:,2),'*',fr041b(:,1),fr041b(:,2),'*',fr041s(:,1),fr041s(:,2),'*');
+%     if enablePlotTitle == 1
+%         title('{\bf C_{Rm} vs. trim}','FontSize',setGeneralFontSize);
+%     end
+%     xlabel('{\bf Trim [deg]}','FontSize',setGeneralFontSize);
+%     ylabel('{\bf Residual resistance coefficient C_{Rm}*1000 [-]}','FontSize',setGeneralFontSize);
+%     grid on;
+%     box on;
+%     axis square;
+%     
+%     %# Line, colors and markers
+%     setMarkerSize      = 8;
+%     setLineWidthMarker = 1;
+%     setLineWidth       = 1;
+%     setLineStyle       = '-.';
+%     setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%     
+%     %# Set plot figure background to a defined color
+%     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+%     set(gcf,'Color',[1,1,1]);
+%     
+%     %# Axis limitations
+%     set(gca,'XLim',[-0.2 1.2]);
+%     set(gca,'XTick',[-0.2:0.2:1.2]);
+%     set(gca,'YLim',[3 3.8]);
+%     set(gca,'YTick',[3:0.1:3.8]);
+%     set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+%     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+%     
+%     %# Legend
+%     %hleg1 = legend('Fr=0.43');
+%     hleg1 = legend('Cond.4/5/6: Fr=0.43','Cond.7: Fr=0.43, level','Cond.8: Fr=0.41, -0.5 deg','Cond.9: Fr=0.42, 0.5 deg');
+%     set(hleg1,'Location','NorthWest');
+%     set(hleg1,'Interpreter','none');
+%     set(hleg1,'LineWidth',1);
+%     set(hleg1,'FontSize',setLegendFontSize);
+%     legend boxoff;
+%     
+%     %# Font sizes and border --------------------------------------------------
+%     
+%     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+%     
+%     %# ********************************************************************
+%     %# Save plot as PNG
+%     %# ********************************************************************
+%     
+%     %# Figure size on screen (50% scaled, but same aspect ratio)
+%     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+%     
+%     %# Figure size printed on paper
+%     if enableA4PaperSizePlot == 1
+%         set(gcf, 'PaperUnits','centimeters');
+%         set(gcf, 'PaperSize',[XPlot YPlot]);
+%         set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%         set(gcf, 'PaperOrientation','portrait');
+%     end
+%     
+%     %# Plot title ---------------------------------------------------------
+%     if enablePlotMainTitle == 1
+%         annotation('textbox', [0 0.9 1 0.1], ...
+%             'String', strcat('{\bf ', figurename, '}'), ...
+%             'EdgeColor', 'none', ...
+%             'HorizontalAlignment', 'center');
+%     end
+%     
+%     %# Save plots as PDF, PNG and EPS -------------------------------------
+%     % Enable renderer for vector graphics output
+%     set(gcf, 'renderer', 'painters');
+%     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+%     setFileFormat = {'PDF' 'PNG' 'EPS'};
+%     for k=1:3
+%         plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Trim_Tab_Resistance_Data_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+%         print(gcf, setSaveFormat{k}, plotsavename);
+%     end
+%     %close;
+   
+    
+    %# --------------------------------------------------------------------
+    %# 2.1 Plot CTm (averaged + errrors) and trim
+    %# --------------------------------------------------------------------
+    figurename = sprintf('Plot 2.1: Trim Tab Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -688,86 +1099,16 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
         setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
     end
     
-    %# Plot repeat data: Fr vs. Ctm ---------------------------------------
-    subplot(2,2,1)
-    
-    if length(cond4) ~= 0
-        xcond4 = cond4(:,11); ycond4 = cond4(:,10);
-        
-        %# Multiply resistance data by 1000 for better readibility
-        Raw_Data = num2cell(ycond4); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond4 = cell2mat(Raw_Data);
-        
-        x4 = xcond4; y4 = ycond4;
-    else
-        x4 = 0; y4 = 0;
-    end
-    if length(cond5) ~= 0
-        xcond5 = cond5(:,11); ycond5 = cond5(:,10);
-        
-        %# Multiply resistance data by 1000 for better readibility
-        Raw_Data = num2cell(ycond5); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond5 = cell2mat(Raw_Data);
-        
-        x5 = xcond5; y5 = ycond5;
-    else
-        x5 = 0; y5 = 0;
-    end
-    if length(cond6) ~= 0
-        xcond6 = cond6(:,11); ycond6 = cond6(:,10);
-        
-        %# Multiply resistance data by 1000 for better readibility
-        Raw_Data = num2cell(ycond6); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); ycond6 = cell2mat(Raw_Data);
-        
-        x6 = xcond6; y6 = ycond6;
-    else
-        x6 = 0; y6 = 0;
-    end
-    
-    % Plotting
-    h = plot(x4,y4,'*',x5,y5,'*',x6,y6,'*');
-    if enablePlotTitle == 1
-        title('{\bf C_{Tm} vs. F_{r} (repeated runs)}','FontSize',setGeneralFontSize);
-    end
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Total resistance coefficient C_{Tm}*1000 [-]}','FontSize',setGeneralFontSize);
-    grid on;
-    box on;
-    axis square;
-    
     %# Line, colors and markers
-    setMarkerSize      = 8;
-    setLineWidthMarker = 1;
+    setMarkerSize      = 16;
+    setLineWidthMarker = 2;
     setLineWidth       = 1;
     setLineStyle       = '-.';
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
+    %# SUBPLOT 1  -------------------------------------------------------------
+    %subplot(1,1,1)
     
-    %# Axis limitations
-    set(gca,'XLim',[0.42 0.48]);
-    set(gca,'XTick',[0.42:0.01:0.48]);
-    set(gca,'YLim',[6.2 6.6]);
-    set(gca,'YTick',[6.2:0.05:6.6]);
-    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
-    set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
-    
-    %# Legend
-    hleg1 = legend('Cond. 4: 1,500t (5 degrees)','Cond. 5: 1,500t (0 degrees)','Cond. 6: 1,500t (10 degrees)');
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    set(hleg1,'LineWidth',1);
-    set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;
-    
-    %# Font sizes and border --------------------------------------------------
-    
-    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-    
-    %# Plot averaged data: Fr vs. Ctm -------------------------------------
-    subplot(2,2,2)
+    %# X and Y axis -----------------------------------------------------------
     
     if length(avgcond4) ~= 0
         xavgcond4 = avgcond4(:,11); yavgcond4 = avgcond4(:,10);
@@ -800,52 +1141,167 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
         x6 = 0; y6 = 0;
     end
     
-    % Plotting
-    h = plot(x4,y4,'*',x5,y5,'*',x6,y6,'*');
-    if enablePlotTitle == 1
-        title('{\bf C_{Tm} vs. F_{r} (averaged runs)}','FontSize',setGeneralFontSize);
-    end
+    % Errors ------------------------------------------------------------------
+
+    % Standard deviation based on mean (CTm*1000)
+    setColumn = 54;
+    delta4   = [avgcond4(1,setColumn);avgcond4(2,setColumn);avgcond4(3,setColumn)];
+    delta5   = [avgcond5(1,setColumn);avgcond5(2,setColumn);avgcond5(3,setColumn)];
+    delta6   = [avgcond6(1,setColumn);avgcond6(2,setColumn);avgcond6(3,setColumn)];
+    
+    %# Plotting ---------------------------------------------------------------
+    h = plot(x5,y5,'*',x4,y4,'*',x6,y6,'*');
+    % Error Cond. #5
+    hold on;
+    h1 = errorbar(x5,y5,delta5,'k');
+    set(h1,'marker','+');
+    set(h1,'linestyle','none');
+    % Error Cond. #4
+    hold on;
+    h2 = errorbar(x4,y4,delta4,'k');
+    set(h2,'marker','+');
+    set(h2,'linestyle','none');
+    % Error Cond. #6
+    hold on;
+    h3 = errorbar(x6,y6,delta6,'k');
+    set(h3,'marker','+');
+    set(h3,'linestyle','none');
+    %if enablePlotTitle == 1
+    %    title('{\bf C_{Tm} vs. F_{r} (averaged runs)}','FontSize',setGeneralFontSize);
+    %end
     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Total resistance coefficient C_{Tm}*1000 [-]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance coefficient, C_{Tm}*1000 [-]}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
     
     %# Line, colors and markers
-    setMarkerSize      = 8;
-    setLineWidthMarker = 1;
-    setLineWidth       = 1;
-    setLineStyle       = '-.';
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.42 0.48]);
-    set(gca,'XTick',[0.42:0.01:0.48]);
-    set(gca,'YLim',[6.2 6.6]);
-    set(gca,'YTick',[6.2:0.05:6.6]);
+    minX  = 0.42;
+    maxX  = 0.48;
+    incrX = 0.01;
+    minY  = 6.3;
+    maxY  = 6.5;
+    incrY = 0.05;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
     set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
-    
+        
     %# Legend
-    hleg1 = legend('Cond. 4: 1,500t (5 degrees)','Cond. 5: 1,500t (0 degrees)','Cond. 6: 1,500t (10 degrees)');
+    hleg1 = legend('Trim tab: 0 degrees','Trim tab: 5 degrees','Trim tab: 10 degrees');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;
+    %legend boxoff;    
     
     %# Font sizes and border --------------------------------------------------
     
     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+    %# ********************************************************************
+    %# Save plot as PNG
+    %# ********************************************************************
     
-    %# Plot Fr vs. Trim  -----------------------------------------------------
-    subplot(2,2,3)
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    end
+    
+    %# Plot title ---------------------------------------------------------
+    %if enablePlotMainTitle == 1
+    %    annotation('textbox', [0 0.9 1 0.1], ...
+    %        'String', strcat('{\bf ', figurename, '}'), ...
+    %        'EdgeColor', 'none', ...
+    %        'HorizontalAlignment', 'center');
+    %end
+    
+    %# Save plots as PDF, PNG and EPS -------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Trim_Tab_Resistance_Data_Ctm_Thesis_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;    
+    
+    %# --------------------------------------------------------------------
+    %# 2.2 Plot Trim
+    %# --------------------------------------------------------------------
+    figurename = sprintf('Plot 2.2: Trim Tab Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+    if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 12;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
+    
+    %# Line, colors and markers
+    setMarkerSize      = 16;
+    setLineWidthMarker = 2;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';
+
+    %# SUBPLOT 1  -------------------------------------------------------------
+    %subplot(1,1,1)
+    
+    %# X and Y axis -----------------------------------------------------------
     
     if length(avgcond4) ~= 0
         xavgcond4 = avgcond4(:,11); yavgcond4 = avgcond4(:,13);
@@ -866,146 +1322,70 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
         x6 = 0; y6 = 0;
     end
     
-    % Plotting
-    h = plot(x4,y4,'*',x5,y5,'*',x6,y6,'*');
-    if enablePlotTitle == 1
-        title('{\bf Trim vs. F_{r}}','FontSize',setGeneralFontSize);
-    end
+    % Errors ------------------------------------------------------------------
+    
+    % Standard deviation based on mean (CTm*1000)
+    setColumn = 55;
+    delta4   = [avgcond4(1,setColumn);avgcond4(2,setColumn);avgcond4(3,setColumn)];
+    delta5   = [avgcond5(1,setColumn);avgcond5(2,setColumn);avgcond5(3,setColumn)];
+    delta6   = [avgcond6(1,setColumn);avgcond6(2,setColumn);avgcond6(3,setColumn)];
+    
+    %# Plotting ---------------------------------------------------------------
+    h = plot(x5,y5,'*',x4,y4,'*',x6,y6,'*');
+%     % Error Cond. #5
+%     hold on;
+%     h1 = errorbar(x5,y5,delta5,'k');
+%     set(h1,'marker','+');
+%     set(h1,'linestyle','none');
+%     % Error Cond. #4
+%     hold on;
+%     h2 = errorbar(x4,y4,delta4,'k');
+%     set(h2,'marker','+');
+%     set(h2,'linestyle','none');
+%     % Error Cond. #6
+%     hold on;
+%     h3 = errorbar(x6,y6,delta6,'k');
+%     set(h3,'marker','+');
+%     set(h3,'linestyle','none');    
+    %if enablePlotTitle == 1
+    %    title('{\bf Trim vs. F_{r}}','FontSize',setGeneralFontSize);
+    %end
     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Trim [deg]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Running trim [deg]}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
     
     %# Line, colors and markers
-    setMarkerSize      = 8;
-    setLineWidthMarker = 1;
-    setLineWidth       = 1;
-    setLineStyle       = '-.';
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.42 0.48]);
-    set(gca,'XTick',[0.42:0.01:0.48]);
-    set(gca,'YLim',[0.4 1.3]);
-    set(gca,'YTick',[0.4:0.1:1.3]);
+    minX  = 0.42;
+    maxX  = 0.48;
+    incrX = 0.01;
+    minY  = 0.4;
+    maxY  = 1.4;
+    incrY = 0.2;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
     set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    hleg1 = legend('Cond. 4: 1,500t (5 degrees)','Cond. 5: 1,500t (0 degrees)','Cond. 6: 1,500t (10 degrees)');
+    hleg1 = legend('Trim tab: 0 degrees','Trim tab: 5 degrees','Trim tab: 10 degrees');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;
-    
-    %# Font sizes and border --------------------------------------------------
-    
-    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-    
-    %# Plot Trim vs. Crm  -----------------------------------------------------
-    subplot(2,2,4)
-    
-    if length(avgcond4) ~= 0
-        xavgcond4 = avgcond4(:,13); yavgcond4 = avgcond4(:,19);
-        
-        %# Multiply resistance data by 1000 for better readibility
-        Raw_Data = num2cell(yavgcond4); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond4 = cell2mat(Raw_Data);
-        
-        x4 = xavgcond4; y4 = yavgcond4;
-    else
-        x4 = 0; y4 = 0;
-    end
-    if length(avgcond5) ~= 0
-        xavgcond5 = avgcond5(:,13); yavgcond5 = avgcond5(:,19);
-        
-        %# Multiply resistance data by 1000 for better readibility
-        Raw_Data = num2cell(yavgcond5); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond5 = cell2mat(Raw_Data);
-        
-        x5 = xavgcond5; y5 = yavgcond5;
-    else
-        x5 = 0; y5 = 0;
-    end
-    if length(avgcond6) ~= 0
-        xavgcond6 = avgcond6(:,13); yavgcond6 = avgcond6(:,19);
-        
-        %# Multiply resistance data by 1000 for better readibility
-        Raw_Data = num2cell(yavgcond6); Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); yavgcond6 = cell2mat(Raw_Data);
-        
-        x6 = xavgcond6; y6 = yavgcond6;
-    else
-        x6 = 0; y6 = 0;
-    end
-    
-    % Fr = 0.43 only
-    fr043 = [];
-    fr043(1,1) = x4(1);           % Condition 4, Fr = 0.43
-    fr043(1,2) = y4(1);           % Condition 4, Fr = 0.43
-    fr043(2,1) = x5(1);           % Condition 5, Fr = 0.43
-    fr043(2,2) = y5(1);           % Condition 5, Fr = 0.43
-    fr043(3,1) = x6(1);           % Condition 6, Fr = 0.43
-    fr043(3,2) = y6(1);           % Condition 6, Fr = 0.43
-    fr043l = [];
-    fr043l(1,1) = avgcond7(20,13);      % Condition 7: 1,500t, level trim, Fr = 0.43
-    fr043l(1,2) = avgcond7(20,19)*1000; % Condition 7: 1,500t, level trim, Fr = 0.43
-    fr041b = [];
-    fr041b(1,1) = avgcond8(4,13)-0.5;   % Condition 7: 1,500t, -0.5 by bow, Fr = 0.41
-    fr041b(1,2) = avgcond8(4,19)*1000;  % Condition 7: 1,500t, -0.5 by bow, Fr = 0.41
-    fr041s = [];
-    fr041s(1,1) = avgcond9(5,13)+0.5;   % Condition 7: 1,500t, 0.5 by stern, Fr = 0.41
-    fr041s(1,2) = avgcond9(5,19)*1000;  % Condition 7: 1,500t, 0.5 by stern, Fr = 0.41
-    
-    % Sort arrays by rows
-    fr043 = sortrows(fr043);
-    
-    % Plotting
-    h = plot(fr043(:,1),fr043(:,2),'*',fr043l(:,1),fr043l(:,2),'*',fr041b(:,1),fr041b(:,2),'*',fr041s(:,1),fr041s(:,2),'*');
-    if enablePlotTitle == 1
-        title('{\bf C_{Rm} vs. trim}','FontSize',setGeneralFontSize);
-    end
-    xlabel('{\bf Trim [deg]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Residual resistance coefficient C_{Rm}*1000 [-]}','FontSize',setGeneralFontSize);
-    grid on;
-    box on;
-    axis square;
-    
-    %# Line, colors and markers
-    setMarkerSize      = 8;
-    setLineWidthMarker = 1;
-    setLineWidth       = 1;
-    setLineStyle       = '-.';
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    %# Axis limitations
-    set(gca,'XLim',[-0.2 1.2]);
-    set(gca,'XTick',[-0.2:0.2:1.2]);
-    set(gca,'YLim',[3 3.8]);
-    set(gca,'YTick',[3:0.1:3.8]);
-    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
-    set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
-    
-    %# Legend
-    %hleg1 = legend('Fr=0.43');
-    hleg1 = legend('Cond.4/5/6: Fr=0.43','Cond.7: Fr=0.43, level','Cond.8: Fr=0.41, -0.5 deg','Cond.9: Fr=0.42, 0.5 deg');
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    set(hleg1,'LineWidth',1);
-    set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;
+    %legend boxoff;    
     
     %# Font sizes and border --------------------------------------------------
     
@@ -1027,12 +1407,12 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     end
     
     %# Plot title ---------------------------------------------------------
-    if enablePlotMainTitle == 1
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
-    end
+    %if enablePlotMainTitle == 1
+    %    annotation('textbox', [0 0.9 1 0.1], ...
+    %        'String', strcat('{\bf ', figurename, '}'), ...
+    %        'EdgeColor', 'none', ...
+    %        'HorizontalAlignment', 'center');
+    %end
     
     %# Save plots as PDF, PNG and EPS -------------------------------------
     % Enable renderer for vector graphics output
@@ -1040,12 +1420,13 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Trim_Tab_Resistance_Data_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Trim_Tab_Resistance_Data_Trim_Thesis_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
-    %close;
+    %close;     
     
-end
+end % enableTrimTabPlot
+
 
 % *************************************************************************
 % REPEATS: 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
@@ -1055,7 +1436,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     startRun = 81;
     endRun   = 231;
     
-    figurename = sprintf('Resistance Test (Repeated Runs):: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
+    figurename = sprintf('Plot 3: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -1513,7 +1894,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     startRun = 81;
     endRun   = 231;
     
-    figurename = sprintf('Resistance Test (Averaged Runs):: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
+    figurename = sprintf('Plot 4: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -1977,7 +2358,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     startRun = 81;
     endRun   = 231;
     
-    figurename = sprintf('Resistance Test (Averaged):: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
+    figurename = sprintf('Plot 5: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -2373,7 +2754,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
         ittcprohaskadata(q,4) = cond13(q,10)/cond13(q,18);
     end
     
-    figurename = sprintf('Resistance Test:: Prohaska Runs, Form Factor, Deep Transom, Run %s to %s', num2str(startRun), num2str(endRun));
+    figurename = sprintf('Plot 6: Prohaska Runs, Form Factor, Deep Transom, Run %s to %s', num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -2729,7 +3110,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     startRun = 81;
     endRun   = 231;
     
-    figurename = sprintf('Resistance Test (Errors, Repeated Runs):: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
+    figurename = sprintf('Plot 7: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -3238,7 +3619,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     startRun = 81;
     endRun   = 231;
     
-    figurename = sprintf('Resistance Test (Errors, Averaged Runs):: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
+    figurename = sprintf('Plot 8: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
     
 	%# Paper size settings ------------------------------------------------
@@ -3747,7 +4128,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     startRun = 81;
     endRun   = 231;
     
-    figurename = sprintf('Resistance Test (Avg. Mean of StdDev):: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
+    figurename = sprintf('Plot 9: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
     
 	%# Paper size settings ------------------------------------------------
@@ -4136,7 +4517,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     startRun = 81;
     endRun   = 231;
     
-    figurename = sprintf('Resistance Test (Avg. StdDev):: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
+    figurename = sprintf('Plot 10: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
     
 	%# Paper size settings ------------------------------------------------
@@ -4597,7 +4978,7 @@ if enableRemVSCFmPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || lengt
     startRun = 81;
     endRun   = 231;
     
-    figurename = sprintf('Resistance Test (C_{Fm} vs. R_{em}):: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
+    figurename = sprintf('Plot 11: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
     f = figure('Name',figurename,'NumberTitle','off');
     
 	%# Paper size settings ------------------------------------------------

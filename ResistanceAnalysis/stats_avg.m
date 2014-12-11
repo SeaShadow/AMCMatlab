@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 10, 2014
+%# Date       :  December 12, 2014
 %#
 %# Function   :  Average data
 %#
@@ -111,9 +111,12 @@ A = arrayfun(@(x) RA(RA(:,11) == x, :), unique(RA(:,11)), 'uniformoutput', false
 %[51] LVDT (AFT): Mean of standard deviation                                   (-)
 %[52] DRAG: Mean of standard deviation                                         (-)
 %[53] Number how many times run has been repeated                              (-)
-% Added: 10/12/2014, Multiplied CTm data by 1000 for better readibility
-%[54] CTm: Average value                                                       (-)
-%[55] CTm: Standard deviation                                                  (-)
+
+% Added: 11/12/2014, Multiplied CTm data by 1000 for better readibility
+%[54] CTm: Standard deviation                                                  (-)
+
+% Added: 12/12/2014, Running trim
+%[55] Trim: Standard deviation                                                 (deg)
 
 for m=1:ma
     
@@ -172,12 +175,15 @@ for m=1:ma
     averagedArray(m,51) = averagedArray(m,47)/sqrt(mcond);
     averagedArray(m,52) = averagedArray(m,48)/sqrt(mcond);
     averagedArray(m,53) = mcond;
-    % Added: 10/12/2014, Multiplied CTm data by 1000 for better readibility
+    
+    % Added: 11/12/2014, Multiplied CTm data by 1000 for better readibility
     C = A{m}(:,10);
     Raw_Data = num2cell(C);
     Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false);
     C = cell2mat(Raw_Data);
-    averagedArray(m,54) = mean(C);
-    averagedArray(m,55) = std(C,1);
+    averagedArray(m,54) = std(C,1);
+    
+    % Added: 12/12/2014, Running trim
+    averagedArray(m,55) = std(A{m}(:,13),1);
     
 end
