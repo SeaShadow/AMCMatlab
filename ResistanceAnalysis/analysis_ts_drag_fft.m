@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 29, 2014
+%# Date       :  December 16, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -133,8 +133,8 @@ delete(allPlots);   % Close all plots
 %# ------------------------------------------------------------------------
 
 % Plot titles, colours, etc.
-enablePlotMainTitle     = 0;    % Show plot title in saved file
-enablePlotTitle         = 0;    % Show plot title above plot
+enablePlotMainTitle     = 1;    % Show plot title in saved file
+enablePlotTitle         = 1;    % Show plot title above plot
 enableBlackAndWhitePlot = 0;    % Show plot in black and white only
 
 % Scaled to A4 paper
@@ -142,7 +142,7 @@ enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
 
 % Frequency plots
 % FILE: fft_frequency_data.dat
-enableCond07FreqPlot    = 0;    % Frequency plot condition 7
+enableCond07FreqPlot    = 1;    % Frequency plot condition 7
 enableCond08FreqPlot    = 0;    % Frequency plot condition 8
 enableCond09FreqPlot    = 0;    % Frequency plot condition 9
 enableCond10FreqPlot    = 0;    % Frequency plot condition 10
@@ -151,7 +151,7 @@ enableCond12FreqPlot    = 0;    % Frequency plot condition 12
 
 % FFT and periodogram plots
 % FILE: full_resistance_data.dat
-enableCond07Plot        = 1;    % Plot condition 7
+enableCond07Plot        = 0;    % Plot condition 7
 enableCond08Plot        = 0;    % Plot condition 8
 enableCond09Plot        = 0;    % Plot condition 9
 enableCond10Plot        = 0;    % Plot condition 10
@@ -159,7 +159,7 @@ enableCond11Plot        = 0;    % Plot condition 12
 enableCond12Plot        = 0;    % Plot condition 12
 
 % Enable printer friendly graphs (slow)
-enablePFPlot            = 1;    % Printer friendly plots
+enablePFPlot            = 0;    % Printer friendly plots
 
 % Check if any plots enabled, if not stop
 % if enableCond07Plot == 0 && enableCond08Plot == 0 && enableCond09Plot == 0 && enableCond10Plot == 0 && enableCond11Plot == 0 && enableCond12Plot == 0
@@ -217,6 +217,57 @@ endRun   = 141;   % Stop at run y
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+%# ////////////////////////////////////////////////////////////////////////
+%# START: CREATE PLOTS AND RUN DIRECTORY
+%# ------------------------------------------------------------------------
+
+%# _PLOTS directory
+fPath = '_plots/';
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# SPP directory ----------------------------------------------------------
+setDirName = '_plots/_time_series_drag_plots';
+
+fPath = setDirName;
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PDF directory
+fPath = sprintf('%s/%s', setDirName, 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('%s/%s', setDirName, 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('%s/%s', setDirName, 'EPS');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# ------------------------------------------------------------------------
+%# END: CREATE PLOTS AND RUN DIRECTORY
+%# ////////////////////////////////////////////////////////////////////////
 
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -383,10 +434,9 @@ end
 % *************************************************************************
 
 
-%# ------------------------------------------------------------------------
+%# ************************************************************************
 %# CONDITION 7: FFT Frequencies
-%# ------------------------------------------------------------------------
-
+%# ************************************************************************
 if enableCond07FreqPlot == 1
     
     % Set condition number
@@ -405,7 +455,7 @@ if enableCond07FreqPlot == 1
             RunCond  = sortedArray{j}(1,3);
             
             % Plots
-            figurename = sprintf('Condition %s:: Run %s to %s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), 'Maximum frequencies from drag FFT');
+            figurename = sprintf('Condition %s:: %s', num2str(RunCond), 'Maximum frequencies from drag FFT');
             fig = figure('Name',figurename,'NumberTitle','off');
             
             %# Paper size settings ------------------------------------------------
@@ -450,7 +500,7 @@ if enableCond07FreqPlot == 1
                 setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
             end
             
-            % Plot frequencies (bar)
+            % Plot frequencies (bar) //////////////////////////////////////
             subplot(2,1,1);
             
             x = sortedArray{j}(:,2);
@@ -473,29 +523,36 @@ if enableCond07FreqPlot == 1
             %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
             set(gcf,'Color',[1,1,1]);
             
-            % Plot frequencies (scatter)
+            %# Font sizes and border --------------------------------------
+
+            set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+            
+            % Plot frequencies (scatter) //////////////////////////////////
             subplot(2,1,2);
             
-            plot(x,y,'rs',...
-                'LineWidth',2,...
-                'MarkerEdgeColor','b',...
-                'MarkerFaceColor','w',...
-                'MarkerSize',8);
-            xlabel('Froude length number (-)');
+            x = sortedArray{j}(:,1);
+            y = sortedArray{j}(:,4);
+            
+            bar(y,0.4,'b');
+            set(gca,'XTickLabel',x,'XTick',1:numel(x));
+            
+            % Rotate x label due to space issues
+            xticklabel_rotate([],90,[],'Fontsize',10)
+            
+            xlabel('Run number (-)');
             ylabel('Frequency (-)');
-            %title('Scatter plot');
+            %title('Bar plot');
             grid on;
             box on;
             %axis square;
             
-            %# Axis limitations
-            minX = min(x);
-            maxX = max(x);
-            set(gca,'XLim',[minX maxX]);
-            set(gca,'XTick',[minX:0.01:maxX]);
+            %# Set plot figure background to a defined color
+            %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+            set(gcf,'Color',[1,1,1]);
             
-            % Rotate x label due to space issues
-            xticklabel_rotate([],90,[],'Fontsize',10)
+            %# Font sizes and border --------------------------------------
+
+            set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);          
             
             %# ********************************************************************
             %# Save plot as PNG
@@ -526,7 +583,7 @@ if enableCond07FreqPlot == 1
             setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
             setFileFormat = {'PDF' 'PNG' 'EPS'};
             for k=1:3
-                plotsavename = sprintf('_plots/%s/%s/Cond_%s_Run_%s_to_Run_%s_FFT_Frequency_Plot_FFT_Plot.%s', '_time_series_drag_plots', setFileFormat{k}, num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), setFileFormat{k});
+                plotsavename = sprintf('_plots/%s/%s/Cond_%s_FFT_Drag_Frequencies_Plot.%s', '_time_series_drag_plots', setFileFormat{k}, num2str(RunCond), setFileFormat{k});
                 print(gcf, setSaveFormat{k}, plotsavename);
             end
             %close;
@@ -537,12 +594,10 @@ if enableCond07FreqPlot == 1
     
 end % enableCond07FreqPlot
 
-%test = arrayfun(@(x) cond7(cond7(:,11) == x, :), unique(cond7(:,11)), 'uniformoutput', false);
 
-%# ------------------------------------------------------------------------
+%# ************************************************************************
 %# CONDITION 7: Time Series FFT
-%# ------------------------------------------------------------------------
-
+%# ************************************************************************
 if enableCond07Plot == 1
     
     sortedArray = arrayfun(@(x) cond7(cond7(:,11) == x, :), unique(cond7(:,11)), 'uniformoutput', false);
@@ -657,7 +712,6 @@ if enableCond07Plot == 1
             end
             
             % Column names for timeSeriesData
-            
             %[1] Time               (s)
             %[2] RU: Speed          (m/s)
             %[3] RU: Forward LVDT   (mm)
@@ -709,14 +763,11 @@ if enableCond07Plot == 1
             end
             
             % Column names for timeSeriesData (see analysis.m)
-            
             %[1] Time                 (s)
-            
             %[2] UNIT: Speed          (m/s)
             %[3] UNIT: Forward LVDT   (mm)
             %[4] UNIT: Aft LVDT       (mm)
             %[5] UNIT: Drag           (g)
-            
             %[6] VOLT: Speed          (V)
             %[7] VOLT: Forward LVDT   (V)
             %[8] VOLT: Aft LVDT       (V)
@@ -766,7 +817,6 @@ if enableCond07Plot == 1
             %# Store y data to runDataArray -------------------------------
             
             % Columns:
-            
             % [1] Run x: Raw data
             % [2] Run y: Raw data
             % [3] Run z: Raw data
@@ -789,8 +839,7 @@ if enableCond07Plot == 1
             minYValues(ms) = min(y);
             maxYValues(ms) = max(y);
             
-            %# Plot time vs. output ---------------------------------------
-            
+            %# Plot time vs. output ///////////////////////////////////////
             subplot(ms,3,graphLeft)
             
             % Linear fit through detrended data ---------------------------
@@ -813,7 +862,6 @@ if enableCond07Plot == 1
             %# Store polyfitArray data ------------------------------------
             
             % Columns:
-            
             % [1] Run number            (-)
             % [2] Condition             (-)
             % [3] Length Froude number  (-)
@@ -868,8 +916,11 @@ if enableCond07Plot == 1
             
             clearvars legendInfo;
             
-            %# Plot FFT ---------------------------------------------------
+            %# Font sizes and border --------------------------------------
 
+            set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);            
+            
+            %# Plot FFT ///////////////////////////////////////////////////
             subplot(ms,3,graphCenter)
             
             % Set x and y as time series objects --------------------------
@@ -966,6 +1017,20 @@ if enableCond07Plot == 1
             % Line - Colors and markers
             set(h(1),'Color',setColor{k},'Marker',setMarker{k},'MarkerSize',1,'LineStyle',setLine{k},'linewidth',1);
             
+            %# Axis limitations
+            minX  = 0;
+            maxX  = 10;
+            incrX = 1;
+            %minY  = 0;
+            %maxY  = 1;
+            %incrY = 0.1;
+            set(gca,'XLim',[minX maxX]);
+            set(gca,'XTick',minX:incrX:maxX);
+            %set(gca,'YLim',[minY maxY]);
+            %set(gca,'YTick',minY:incrY:maxY);
+            %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+            %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+            
             %# Legend
             hleg1 = legend(sprintf('Run %s',num2str(runnumber)));
             set(hleg1,'Location','NorthEast');
@@ -974,8 +1039,11 @@ if enableCond07Plot == 1
             
             clearvars legendInfo;
             
-            % Periodogram -------------------------------------------------
+            %# Font sizes and border --------------------------------------
+
+            set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);            
             
+            % Periodogram /////////////////////////////////////////////////
             subplot(ms,3,graphRight)
             
             % Maximum frequency
@@ -986,6 +1054,20 @@ if enableCond07Plot == 1
             h1 = plot(psdest);
             set(gca,'FontSize',10,'FontWeight','normal','linewidth',2);
             set(h1,'Color',setColor{k});
+            
+            %# Axis limitations
+            minX  = 0;
+            maxX  = 10;
+            incrX = 1;
+            %minY  = 0;
+            %maxY  = 1;
+            %incrY = 0.1;
+            set(gca,'XLim',[minX maxX]);
+            set(gca,'XTick',minX:incrX:maxX);
+            %set(gca,'YLim',[minY maxY]);
+            %set(gca,'YTick',minY:incrY:maxY);
+            %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+            %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));            
             
             % Write data to array -----------------------------------------
             
@@ -1020,6 +1102,10 @@ if enableCond07Plot == 1
             graphLeft   = graphLeft+3;
             graphCenter = graphCenter+3;
             graphRight  = graphRight+3;
+                       
+            %# Font sizes and border --------------------------------------
+
+            set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);            
             
         end
         
@@ -1055,12 +1141,12 @@ if enableCond07Plot == 1
             plotsavename = sprintf('_plots/%s/%s/Cond_%s_Run_%s_to_Run_%s_Fr_%s_Time_Series_Drag_FFT_Plot.%s', '_time_series_drag_plots', setFileFormat{k}, num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), setFileFormat{k});
             print(gcf, setSaveFormat{k}, plotsavename);
         end
-        %close;
+        close;
         
-        %# ----------------------------------------------------------------
-        %# Plot averaged data
-        %# ----------------------------------------------------------------
-        figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Repeated Runs Time Series Drag Data and FFT. Averaged samples of runs.');
+        %# ****************************************************************
+        %# 3.0 Plot averaged data
+        %# ****************************************************************
+        figurename = sprintf('Condition %s:: Run %s to %s, Fr=%s, %s', num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), 'Avg. Repeated Runs Time Series Drag and FFT.');
         fig = figure('Name',figurename,'NumberTitle','off');
         
         %# Paper size settings ------------------------------------------------
@@ -1136,7 +1222,7 @@ if enableCond07Plot == 1
         avgDA  = DA(:,1)/ms;
         avgDAD = DAD(:,1)/ms;
         
-        %# Plot time vs. output -------------------------------------------
+        %# Plot time vs. output ///////////////////////////////////////////
         subplot(3,1,1)
         
         % Set axis data
@@ -1224,7 +1310,11 @@ if enableCond07Plot == 1
         
         clearvars legendInfo;
         
-        %# Plot FFT -------------------------------------------------------
+        %# Font sizes and border ------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# Plot FFT ///////////////////////////////////////////////////////
         subplot(3,1,2)
         
         Fs = 200;               % Sampling frequency
@@ -1261,9 +1351,9 @@ if enableCond07Plot == 1
         % See: http://www.mathworks.com.au/help/matlab/ref/sortrows.html
         maxtabstbdnew = sortrows(maxtabstbdnew,-2);
         
-        %# ------------------------------------------------------------
-        %# START: Limit to two max. frequencies only ------------------
-        
+        %# ****************************************************************
+        %# START: Limit to two max. frequencies only
+        %# ----------------------------------------------------------------
         % If there are more than 2 identified frequencies limit output
         % to 2 frequencies only
         if mpdn > 2
@@ -1273,9 +1363,9 @@ if enableCond07Plot == 1
             end
             maxtabstbdnew = ts;
         end
-        
-        %# END: Limit to two max. frequencies only --------------------
-        %# ------------------------------------------------------------
+        %# ----------------------------------------------------------------        
+        %# END: Limit to two max. frequencies only
+        %# ****************************************************************
         
         % Recheck array sizes
         [mpdn,npdn] = size(maxtabstbdnew);
@@ -1293,6 +1383,20 @@ if enableCond07Plot == 1
         box on;
         %axis square;
         
+        %# Axis limitations
+        minX  = 0;
+        maxX  = 10;
+        incrX = 1;
+        %minY  = 0;
+        %maxY  = 1;
+        %incrY = 0.1;
+        set(gca,'XLim',[minX maxX]);
+        set(gca,'XTick',minX:incrX:maxX);
+        %set(gca,'YLim',[minY maxY]);
+        %set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+        
         %# Legend
         hleg1 = legend('Averaged samples (subtracted mean)');
         set(hleg1,'Location','NorthEast');
@@ -1301,8 +1405,11 @@ if enableCond07Plot == 1
         
         clearvars legendInfo;
         
-        % Periodogram -------------------------------------------------
+        %# Font sizes and border ------------------------------------------
         
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);        
+        
+        % Periodogram /////////////////////////////////////////////////////
         subplot(3,1,3)
         
         % Maximum frequency
@@ -1316,6 +1423,20 @@ if enableCond07Plot == 1
         title('Averaged samples: Periodogram Power Spectral Density Estimate')
         set(h1,'Color','b'); % setColor{ms+1}
         
+        %# Axis limitations
+        minX  = 0;
+        maxX  = 10;
+        incrX = 1;
+        %minY  = 0;
+        %maxY  = 1;
+        %incrY = 0.1;
+        set(gca,'XLim',[minX maxX]);
+        set(gca,'XTick',minX:incrX:maxX);
+        %set(gca,'YLim',[minY maxY]);
+        %set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));        
+        
         %# Legend
         hleg1 = legend('Averaged samples (subtracted mean)');
         set(hleg1,'Location','NorthEast');
@@ -1324,6 +1445,10 @@ if enableCond07Plot == 1
         
         clearvars legendInfo;
 
+        %# Font sizes and border ------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);        
+        
         %# ********************************************************************
         %# Save plot as PNG
         %# ********************************************************************
@@ -1356,7 +1481,7 @@ if enableCond07Plot == 1
             plotsavename = sprintf('_plots/%s/%s/Cond_%s_Run_%s_to_Run_%s_Fr_%s_Time_Series_Drag_FFT_Averaged_Plot.%s', '_time_series_drag_plots', setFileFormat{k}, num2str(RunCond), num2str(minRunNo), num2str(maxRunNo), num2str(FroudeNo), setFileFormat{k});
             print(gcf, setSaveFormat{k}, plotsavename);
         end
-        %close;        
+        close;        
         
         % ////////////////////////////////////////
         
@@ -1477,9 +1602,22 @@ if enableCond07Plot == 1
         plotsavename = sprintf('_plots/%s/%s/Cond_%s_FFT_Identified_Frequencies_Plot.%s', '_time_series_drag_plots', setFileFormat{k}, num2str(RunCond), setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
-    %close;
+    close;
 
 end % enableCond07Plot
+
+
+% /////////////////////////////////////////////////////////////////////////
+% START: Write results to CVS
+% -------------------------------------------------------------------------
+if exist('frequencyArray','var') == 1
+    M = frequencyArray;
+    csvwrite('frequencyArrayFFT.dat', M)                                     % Export matrix M to a file delimited by the comma character
+    dlmwrite('frequencyArrayFFT.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
+end
+% -------------------------------------------------------------------------
+% END: Write results to CVS
+% /////////////////////////////////////////////////////////////////////////
 
 
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1496,10 +1634,8 @@ break;
 %# ------------------------------------------------------------------------
 
 if enableCond08Plot == 1
-    
     sortedArray = arrayfun(@(x) cond8(cond8(:,11) == x, :), unique(cond8(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-    
 end
 
 
@@ -1508,10 +1644,8 @@ end
 %# ------------------------------------------------------------------------
 
 if enableCond09Plot == 1
-    
     sortedArray = arrayfun(@(x) cond9(cond9(:,11) == x, :), unique(cond9(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-    
 end
 
 
@@ -1520,10 +1654,8 @@ end
 %# ------------------------------------------------------------------------
 
 if enableCond10Plot == 1
-    
     sortedArray = arrayfun(@(x) cond10(cond10(:,11) == x, :), unique(cond10(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-    
 end
 
 
@@ -1532,10 +1664,8 @@ end
 %# ------------------------------------------------------------------------
 
 if enableCond11Plot == 1
-    
     sortedArray = arrayfun(@(x) cond11(cond11(:,11) == x, :), unique(cond11(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-    
 end
 
 %# ------------------------------------------------------------------------
@@ -1543,25 +1673,7 @@ end
 %# ------------------------------------------------------------------------
 
 if enableCond12Plot == 1
-    
     sortedArray = arrayfun(@(x) cond12(cond12(:,11) == x, :), unique(cond12(:,11)), 'uniformoutput', false);
     [ml,nl] = size(sortedArray);
-    
 end
 
-
-% /////////////////////////////////////////////////////////////////////
-% START: Write results to CVS
-% ---------------------------------------------------------------------
-
-if exist('frequencyArray','var') == 1
-    
-    M = frequencyArray;
-    csvwrite('frequencyArrayFFT.dat', M)                                     % Export matrix M to a file delimited by the comma character
-    dlmwrite('frequencyArrayFFT.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
-    
-end
-
-% ---------------------------------------------------------------------
-% END: Write results to CVS
-% /////////////////////////////////////////////////////////////////////

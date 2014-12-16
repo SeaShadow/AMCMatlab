@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 9, 2014
+%# Date       :  December 16, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -200,28 +200,29 @@ if exist('FullScaleRT_ITTC1978_2011.mat', 'file') == 2
     %[1]  Froude length number                              (-)
     %[2]  Model speed                                       (m/s)
     %[3]  MS Reynolds number                                (-)
-    %[4]  MS Total resistance (catamaran), RT               (N)
-    %[5]  MS Total resistance coeff., CT                    (-)
-    %[6]  GRIGSON:  MS Frictional resistance coeff., CF     (-)
-    %[7]  ITTC1957: MS Frictional resistance coeff., CF     (-)
-    %[8]  GRIGSON:  MS Residual resistance coeff., CR       (-)
-    %[9]  ITTC1957: MS Residual resistance coeff., CR       (-)
+    %[4]  MS Total resistance (catamaran), RTm              (N)
+    %[5]  MS Total resistance coeff., CTm                   (-)
+    %[6]  GRIGSON:  MS Frictional resistance coeff., CFm    (-)
+    %[7]  ITTC1957: MS Frictional resistance coeff., CFm    (-)
+    %[8]  GRIGSON:  MS Residual resistance coeff., CRm      (-)
+    %[9]  ITTC1957: MS Residual resistance coeff., CRm      (-)
     %[10] FS Ship speed                                     (m/s)
     %[11] FS Ship speed                                     (knots)
     %[12] FS Reynolds number                                (-)
     %[13] Roughness allowance, delta CF                     (-)
     %[14] Correlation coeff., Ca                            (-)
-    %[15] FS Air resistance coefficient                     (-)
-    %[16] GRIGSON:  FS Total resistance (catamaran), RT     (N)
-    %[17] ITTC1957: FS Total resistance (catamaran), RT     (N)
-    %[18] GRIGSON:  FS Total resistance coeff., CT          (-)
-    %[19] ITTC1957: FS Total resistance coeff., CT          (-)
-    %[20] GRIGSON:  FS Frictional resistance coeff., CF     (-)
-    %[21] ITTC1957: FS Frictional resistance coeff., CF     (-)
-    %[22] GRIGSON:  FS Residual resistance coeff., CR       (-)
-    %[23] ITTC1957: FS Residual resistance coeff., CR       (-)
-    %[24] GRIGSON:  FS Total resistance (catamaran), RT     (kN)
-    %[25] ITTC1957: FS Total resistance (catamaran), RT     (kN)
+    %[15] FS Air resistance coefficient, CAAs               (-)
+    %[16] GRIGSON:  FS Total resistance (catamaran), RTs    (N)
+    %[17] ITTC1957: FS Total resistance (catamaran), RTs    (N)
+    %[18] GRIGSON:  FS Total resistance coeff., CTs         (-)
+    %[19] ITTC1957: FS Total resistance coeff., CTs         (-)
+    %[20] GRIGSON:  FS Frictional resistance coeff., CFs    (-)
+    %[21] ITTC1957: FS Frictional resistance coeff., CFs    (-)
+    %[22] GRIGSON:  FS Residual resistance coeff., CRs      (-)
+    %[23] ITTC1957: FS Residual resistance coeff., CRs      (-)
+    %[24] GRIGSON:  FS Total resistance (catamaran), RTs    (kN)
+    %[25] ITTC1957: FS Total resistance (catamaran), RTs    (kN)
+    %[26] MS Total resistance (demihull), RTm               (N)
 else
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     disp('WARNING: Required full scale resistance data file (FullScaleRT_ITTC1978_2011.mat) does not exist!');

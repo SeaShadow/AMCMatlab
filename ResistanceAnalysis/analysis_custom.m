@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 27, 2014
+%# Date       :  December 16, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -213,6 +213,16 @@ if exist('full_resistance_data.dat', 'file') == 2
     %[46] LVDT (FWD): Standard deviation                                           (mm)
     %[47] LVDT (AFT): Standard deviation                                           (mm)
     %[48] DRAG: Standard deviation                                                 (g)
+    % ---------------------------------------------------------------------
+    % Additional values added: 04/08/2014
+    % ---------------------------------------------------------------------
+    %[49] Full Scale (CFs) Frictional Resistance Coefficient (Grigson)             (-)
+    % ---------------------------------------------------------------------
+    % Additional values added: 15/12/2014, ITTC 1978 (2011), 7.5-02-03-01.4
+    % ---------------------------------------------------------------------    
+    %[50] Roughness allowance, delta CFs                                           (-)
+    %[51] Correlation allowance, Ca                                                (-)
+    %[52] Air resistance coefficient in full scale, CAAs                           (-)    
     
     results = csvread('full_resistance_data.dat');
     
@@ -347,17 +357,17 @@ resultsAveragedArray = [
     avgcond13
     ];
 
-% /////////////////////////////////////////////////////////////////////
-% START: Write results to CVS
-% ---------------------------------------------------------------------
 
+% /////////////////////////////////////////////////////////////////////////
+% START: Write results to CVS
+% -------------------------------------------------------------------------
 M = resultsAveragedArray;
 csvwrite('resultsAveragedArray.dat', M)                                     % Export matrix M to a file delimited by the comma character
 dlmwrite('resultsAveragedArray.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
-
-% ---------------------------------------------------------------------
+% -------------------------------------------------------------------------
 % END: Write results to CVS
-% /////////////////////////////////////////////////////////////////////
+% /////////////////////////////////////////////////////////////////////////
+
 
 %# ************************************************************************
 %# START CONSTANTS AND PARTICULARS

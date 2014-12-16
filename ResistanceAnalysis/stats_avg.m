@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 12, 2014
+%# Date       :  December 15, 2014
 %#
 %# Function   :  Average data
 %#
@@ -67,22 +67,22 @@ A = arrayfun(@(x) RA(RA(:,11) == x, :), unique(RA(:,11)), 'uniformoutput', false
 %[7]  Model Averaged aft LVDT                                                  (m)
 %[8]  Model Averaged drag                                                      (g)
 %[9]  Model (Rtm) Total resistance                                             (N)
-%[10] Model (Ctm) Total resistance Coefficient                                 (-)
+%[10] Model (CTtm) Total resistance Coefficient                                 (-)
 %[11] Model Froude length number                                               (-)
 %[12] Model Heave                                                              (mm)
 %[13] Model Trim                                                               (Degrees)
 %[14] Equivalent full scale speed                                              (m/s)
 %[15] Equivalent full scale speed                                              (knots)
 %[16] Model (Rem) Reynolds Number                                              (-)
-%[17] Model (Cfm) Frictional Resistance Coefficient (ITTC'57)                  (-)
-%[18] Model (Cfm) Frictional Resistance Coefficient (Grigson)                  (-)
-%[19] Model (Crm) Residual Resistance Coefficient                              (-)
+%[17] Model (CFm) Frictional Resistance Coefficient (ITTC'57)                  (-)
+%[18] Model (CFm) Frictional Resistance Coefficient (Grigson)                  (-)
+%[19] Model (CRm) Residual Resistance Coefficient                              (-)
 %[20] Model (PEm) Model Effective Power                                        (W)
 %[21] Model (PBm) Model Brake Power (using 50% prop. efficiency estimate)      (W)
 %[22] Full Scale (Res) Reynolds Number                                         (-)
-%[23] Full Scale (Cfs) Frictional Resistance Coefficient (ITTC'57)             (-)
-%[24] Full Scale (Cts) Total resistance Coefficient                            (-)
-%[25] Full Scale (Rts) Total resistance (Rt)                                   (N)
+%[23] Full Scale (CFs) Frictional Resistance Coefficient (ITTC'57)             (-)
+%[24] Full Scale (CTs) Total resistance Coefficient                            (-)
+%[25] Full Scale (RTs) Total resistance (Rt)                                   (N)
 %[26] Full Scale (PEs) Model Effective Power                                   (W)
 %[27] Full Scale (PBs) Model Brake Power (using 50% prop. efficiency estimate) (W)
 %[28] Run condition                                                            (-)
@@ -117,6 +117,9 @@ A = arrayfun(@(x) RA(RA(:,11) == x, :), unique(RA(:,11)), 'uniformoutput', false
 
 % Added: 12/12/2014, Running trim
 %[55] Trim: Standard deviation                                                 (deg)
+
+% Added: 15/12/2014
+%[56] Full Scale (CFs) Frictional Resistance Coefficient (Grigson)             (-)
 
 for m=1:ma
     
@@ -186,4 +189,6 @@ for m=1:ma
     % Added: 12/12/2014, Running trim
     averagedArray(m,55) = std(A{m}(:,13),1);
     
+    % Added: 15/12/2014
+    averagedArray(m,56) = mean(A{m}(:,49));
 end

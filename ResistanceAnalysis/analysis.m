@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 27, 2014
+%# Date       :  December 16, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -201,6 +201,30 @@ saltwaterdensity    = 1025.0187;              % Salt water scale water density a
 distbetwposts       = 1150;                   % Distance between carriage posts               (mm)
 FStoMSratio         = 21.6;                   % Full scale to model scale ratio               (-)
 
+% Form factors and correlaction coefficient
+FormFactor = 1.18;                            % Form factor (1+k)
+
+% Correlation coefficients: No Ca (AMC), typical Ca (Bose 2008) and MARIN Ca
+CorrCoeff  = 0.00035;                                           % Ca value as used by MARIN for JHSV testing (USE AS DEFAULT)
+
+% Drag coefficient
+% See: Oura, T. & Ikeda, Y. 2007, 'Maneuverability Of A Wavepiercing High-Speed 
+%      Catamaran At Low Speed In Strong Wind', Proceedings of the The 
+%      2nd International Conference on Marine Research and Transportation 
+%      28/6/2007, Ischia, Naples, Italy.
+DragCoeff = 0.446;
+
+% Roughness of hull surface (ks), typical value
+RoughnessOfHullSurface = 150*10^(-6);
+
+% Air density at 20 °C and 101.325 kPa
+airDensity = 1.2041;
+
+% FULL SCALE: Demihull, projected area of the ship above the water line
+% to the transverse plane, AVS (m^2)
+% Established using Incat GA drawing and extracting transverse area then scaling to full scale size.
+FSProjectedArea = 341.5/2;
+
 %# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 %# CONDITION: 1,500 tonnes, level static trim, trim tab at 5 degrees
 %# ------------------------------------------------------------------------
@@ -325,8 +349,8 @@ endRun   = 249;     % Stop at run y
 %endRun   = 231;     % Stop at run y
 
 % Single runs
-%startRun = 63;    % Start at run x
-%endRun   = 63;    % Stop at run y
+%startRun = 81;    % Start at run x
+%endRun   = 86;    % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
@@ -1292,7 +1316,7 @@ for k=startRun:endRun
         end
         close;
         
-    end
+    end % enableHvsRtmTvsRtmPlot
     
     % ---------------------------------------------------------------------
     % END: Plotting heave vs. Rtm and trim vs. Rtm
@@ -1304,9 +1328,13 @@ for k=startRun:endRun
     %# ********************************************************************
     
     %# CONDITIONS ---------------------------------------------------------
-    disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+    if enableCommandWindowOutput == 1
+        disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+    end
     if any(RunNosCond1==k)
-        disp('Cond. 1 (Turb-studs): Bare-hull');
+        if enableCommandWindowOutput == 1
+            disp('Cond. 1 (Turb-studs): Bare-hull');
+        end
         testcond = 1;
         MSlwl    = MSlwl1500;
         MSwsa    = MSwsa1500;
@@ -1315,7 +1343,9 @@ for k=startRun:endRun
         FSwsa    = FSwsa1500;
         FSdraft  = FSdraft1500;
     elseif any(RunNosCond2==k)
-        disp('Cond. 2 (Turb-studs): 1st row');
+        if enableCommandWindowOutput == 1
+            disp('Cond. 2 (Turb-studs): 1st row');
+        end
         testcond = 2;
         MSlwl    = MSlwl1500;
         MSwsa    = MSwsa1500;
@@ -1324,7 +1354,9 @@ for k=startRun:endRun
         FSwsa    = FSwsa1500;
         FSdraft  = FSdraft1500;
     elseif any(RunNosCond3==k)
-        disp('Cond. 3 (Turb-studs): 1st and 2nd row');
+        if enableCommandWindowOutput == 1
+            disp('Cond. 3 (Turb-studs): 1st and 2nd row');
+        end
         testcond = 3;
         MSlwl    = MSlwl1500;
         MSwsa    = MSwsa1500;
@@ -1333,7 +1365,9 @@ for k=startRun:endRun
         FSwsa    = FSwsa1500;
         FSdraft  = FSdraft1500;
     elseif any(RunNosCond4==k)
-        disp('Cond. 4 (Trim-tab): 5 deg., level stat. trim');
+        if enableCommandWindowOutput == 1
+            disp('Cond. 4 (Trim-tab): 5 deg., level stat. trim');
+        end
         testcond = 4;
         MSlwl    = MSlwl1500;
         MSwsa    = MSwsa1500;
@@ -1342,7 +1376,9 @@ for k=startRun:endRun
         FSwsa    = FSwsa1500;
         FSdraft  = FSdraft1500;
     elseif any(RunNosCond5==k)
-        disp('Cond. 5 (Trim-tab): 0 deg., level stat. trim');
+        if enableCommandWindowOutput == 1
+            disp('Cond. 5 (Trim-tab): 0 deg., level stat. trim');
+        end
         testcond = 5;
         MSlwl    = MSlwl1500;
         MSwsa    = MSwsa1500;
@@ -1351,7 +1387,9 @@ for k=startRun:endRun
         FSwsa    = FSwsa1500;
         FSdraft  = FSdraft1500;
     elseif any(RunNosCond6==k)
-        disp('Cond. 6 (Trim-tab): 10 deg., level stat. trim');
+        if enableCommandWindowOutput == 1
+            disp('Cond. 6 (Trim-tab): 10 deg., level stat. trim');
+        end
         testcond = 6;
         MSlwl    = MSlwl1500;
         MSwsa    = MSwsa1500;
@@ -1360,7 +1398,9 @@ for k=startRun:endRun
         FSwsa    = FSwsa1500;
         FSdraft  = FSdraft1500;
     elseif any(RunNosCond7==k)
-        disp('Cond. 7 (Resistance): 1,500t, level');
+        if enableCommandWindowOutput == 1
+            disp('Cond. 7 (Resistance): 1,500t, level');
+        end
         testcond = 7;
         MSlwl    = MSlwl1500;
         MSwsa    = MSwsa1500;
@@ -1369,7 +1409,9 @@ for k=startRun:endRun
         FSwsa    = FSwsa1500;
         FSdraft  = FSdraft1500;
     elseif any(RunNosCond8==k)
-        disp('Cond. 8 (Resistance): 1,500t, -0.5 deg. bow');
+        if enableCommandWindowOutput == 1
+            disp('Cond. 8 (Resistance): 1,500t, -0.5 deg. bow');
+        end
         testcond = 8;
         MSlwl    = MSlwl1500bybow;
         MSwsa    = MSwsa1500bybow;
@@ -1378,7 +1420,9 @@ for k=startRun:endRun
         FSwsa    = FSwsa1500bybow;
         FSdraft  = FSdraft1500bybow;
     elseif any(RunNosCond9==k)
-        disp('Cond. 9 (Resistance): 1,500t, 0.5 deg. stern');
+        if enableCommandWindowOutput == 1
+            disp('Cond. 9 (Resistance): 1,500t, 0.5 deg. stern');
+        end
         testcond = 9;
         MSlwl    = MSlwl1500bystern;
         MSwsa    = MSwsa1500bystern;
@@ -1387,7 +1431,9 @@ for k=startRun:endRun
         FSwsa    = FSwsa1500bystern;
         FSdraft  = FSdraft1500bystern;
     elseif any(RunNosCond10==k)
-        disp('Cond. 10 (Resistance): 1,804t, level');
+        if enableCommandWindowOutput == 1
+            disp('Cond. 10 (Resistance): 1,804t, level');
+        end
         testcond = 10;
         MSlwl    = MSlwl1804;
         MSwsa    = MSwsa1804;
@@ -1396,7 +1442,9 @@ for k=startRun:endRun
         FSwsa    = FSwsa1804;
         FSdraft  = FSdraft1804;
     elseif any(RunNosCond11==k)
-        disp('Cond. 11 (Resistance): 1,804t, -0.5 deg. bow');
+        if enableCommandWindowOutput == 1
+            disp('Cond. 11 (Resistance): 1,804t, -0.5 deg. bow');
+        end
         testcond = 11;
         MSlwl    = MSlwl1804bybow;
         MSwsa    = MSwsa1804bybow;
@@ -1405,7 +1453,9 @@ for k=startRun:endRun
         FSwsa    = FSwsa1804bybow;
         FSdraft  = FSdraft1804bybow;
     elseif any(RunNosCond12==k)
-        disp('Cond. 12 (Resistance): 1,804t, 0.5 deg. stern');
+        if enableCommandWindowOutput == 1
+            disp('Cond. 12 (Resistance): 1,804t, 0.5 deg. stern');
+        end
         testcond = 12;
         MSlwl    = MSlwl1804bystern;
         MSwsa    = MSwsa1804bystern;
@@ -1414,7 +1464,9 @@ for k=startRun:endRun
         FSwsa    = FSwsa1804bystern;
         FSdraft  = FSdraft1804bystern;
     elseif any(RunNosCond13==k)
-        disp('Cond. 13 (Prohaska): 1,500t, deep transom');
+        if enableCommandWindowOutput == 1
+            disp('Cond. 13 (Prohaska): 1,500t, deep transom');
+        end
         testcond = 13;
         MSlwl    = MSlwl1500prohaska;
         MSwsa    = MSwsa1500prohaska;
@@ -1425,7 +1477,9 @@ for k=startRun:endRun
     else
         disp('Unspecified condition');
     end
-    disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+    if enableCommandWindowOutput == 1
+        disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+    end
     
     %# Results array columns:
     %[1]  Run No.                                                                  (-)
@@ -1437,7 +1491,7 @@ for k=startRun:endRun
     %[7]  Model Averaged aft LVDT                                                  (m)
     %[8]  Model Averaged drag                                                      (g)
     %[9]  Model (Rtm) Total resistance                                             (N)
-    %[10] Model (Ctm) Total resistance Coefficient                                 (-)
+    %[10] Model (CTm) Total resistance Coefficient                                 (-)
     %[11] Model Froude length number                                               (-)
     %[12] Model Heave                                                              (mm)
     %[13] Model Trim                                                               (Degrees)
@@ -1448,15 +1502,15 @@ for k=startRun:endRun
     % Additional values added: 10/09/2013
     % ---------------------------------------------------------------------
     %[16] Model (Rem) Reynolds Number                                              (-)
-    %[17] Model (Cfm) Frictional Resistance Coefficient (ITTC'57)                  (-)
-    %[18] Model (Cfm) Frictional Resistance Coefficient (Grigson)                  (-)
-    %[19] Model (Crm) Residual Resistance Coefficient                              (-)
+    %[17] Model (CFm) Frictional Resistance Coefficient (ITTC'57)                  (-)
+    %[18] Model (CFm) Frictional Resistance Coefficient (Grigson)                  (-)
+    %[19] Model (CRm) Residual Resistance Coefficient                              (-)
     %[20] Model (PEm) Model Effective Power                                        (W)
     %[21] Model (PBm) Model Brake Power (using 50% prop. efficiency estimate)      (W)
     %[22] Full Scale (Res) Reynolds Number                                         (-)
-    %[23] Full Scale (Cfs) Frictional Resistance Coefficient (ITTC'57)             (-)
-    %[24] Full Scale (Cts) Total resistance Coefficient                            (-)
-    %[25] Full Scale (Rts) Total resistance (Rt)                                   (N)
+    %[23] Full Scale (CFs) Frictional Resistance Coefficient (ITTC'57)             (-)
+    %[24] Full Scale (CTs) Total resistance Coefficient                            (-)
+    %[25] Full Scale (RTs) Total resistance (RT)                                   (N)
     %[26] Full Scale (PEs) Model Effective Power                                   (W)
     %[27] Full Scale (PBs) Model Brake Power (using 50% prop. efficiency estimate) (W)
     %[28] Run condition                                                            (-)
@@ -1492,7 +1546,14 @@ for k=startRun:endRun
     % ---------------------------------------------------------------------
     % Additional values added: 04/08/2014
     % ---------------------------------------------------------------------
-    %[49] Full Scale (Cfs) Frictional Resistance Coefficient (Grigson)              (-)
+    %[49] Full Scale (CFs) Frictional Resistance Coefficient (Grigson)              (-)
+    
+    % ---------------------------------------------------------------------
+    % Additional values added: 15/12/2014, ITTC 1978 (2011), 7.5-02-03-01.4
+    % ---------------------------------------------------------------------    
+    %[50] Roughness allowance, delta CFs                                            (-)
+    %[51] Correlation allowance, CA                                                 (-)
+    %[52] Air resistance coefficient in full scale, CAAs                            (-)
     
     % Write data to array -------------------------------------------------
     resultsArray(k, 1)  = k;                                                        % Run No.
@@ -1504,8 +1565,8 @@ for k=startRun:endRun
     resultsArray(k, 6)  = CH_1_LVDTFwd_Mean;                                        % Model Averaged forward LVDT (mm)
     resultsArray(k, 7)  = CH_2_LVDTAft_Mean;                                        % Model Averaged aft LVDT (mm)
     resultsArray(k, 8)  = CH_3_Drag_Mean;                                           % Model Averaged drag (g)
-    resultsArray(k, 9)  = (resultsArray(k, 8) / 1000) * gravconst;                  % Model Averaged drag (Rtm) (N)
-    resultsArray(k, 10) = resultsArray(k, 9) / (0.5*freshwaterdensity*MSwsa*resultsArray(k, 5)^2); % Model Averaged drag (Ctm) (-)
+    resultsArray(k, 9)  = (resultsArray(k, 8) / 1000) * gravconst;                  % Model Averaged drag (RTm) (N)
+    resultsArray(k, 10) = resultsArray(k, 9) / (0.5*freshwaterdensity*MSwsa*CH_0_Speed_Mean^2); % Model Averaged drag (CTm) (-)
     
     roundedspeed   = str2num(sprintf('%.2f',resultsArray(k, 5)));                   % Round averaged speed to two (2) decimals only
     modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl))); % Calculate Froude length number
@@ -1525,13 +1586,28 @@ for k=startRun:endRun
     else
         resultsArray(k, 18) = 10^(-9.57459+26.6084*(log10(log10(resultsArray(k, 16))))-30.8285*(log10(log10(resultsArray(k, 16))))^2+10.8914*(log10(log10(resultsArray(k, 16))))^3); % Model Frictional Resistance Coefficient (Grigson) (-)
     end
-    resultsArray(k, 19) = resultsArray(k, 10)-resultsArray(k, 17);           % Model (Crm) Residual Resistance Coefficient (-)
-    resultsArray(k, 20) = resultsArray(k, 5)*resultsArray(k, 9);             % Model (PEm) Model Effective Power                                   (W)
-    resultsArray(k, 21) = resultsArray(k, 20)/0.5;                           % Model (PBm) Model Brake Power (using 50% prop. efficiency estimate) (W)
-    resultsArray(k, 22) = (resultsArray(k, 14)*FSlwl)/FSKinVis;        % Full Scale (Res) Reynolds Number (-)
-    resultsArray(k, 23) = 0.075/(log10(resultsArray(k, 22))-2)^2;            % Full Scale (Cfs) Frictional Resistance Coefficient (ITTC'57) (-)
-    resultsArray(k, 24) = resultsArray(k, 19)+resultsArray(k, 23);           % Full Scale (Cts) Total resistance Coefficient (-)
-    resultsArray(k, 25) = 0.5*saltwaterdensity*(resultsArray(k, 14)^2)*FSwsa*resultsArray(k, 24); % Full Scale (Rts) Total resistance (Rt) (N)
+    resultsArray(k, 19) = resultsArray(k, 10)-FormFactor*resultsArray(k, 18); % Model (CRm) Residual Resistance Coefficient, CRm=CTm-(1+k)CFm, ITTC 1978 (2011), 7.5-02-03-01.4 (-)
+    resultsArray(k, 20) = resultsArray(k, 5)*resultsArray(k, 9);              % Model (PEm) Model Effective Power                                   (W)
+    resultsArray(k, 21) = resultsArray(k, 20)/0.5;                            % Model (PBm) Model Brake Power (using 50% prop. efficiency estimate) (W)
+    resultsArray(k, 22) = (resultsArray(k, 14)*FSlwl)/FSKinVis;               % Full Scale (Res) Reynolds Number (-)
+    resultsArray(k, 23) = 0.075/(log10(resultsArray(k, 22))-2)^2;             % Full Scale (CFs) Frictional Resistance Coefficient (ITTC'57) (-)
+    
+    % Full scale total resistance coefficient (CTs), ITTC 1978 (2011), 7.5-02-03-01.4
+    FSRoughnessAllowance = 0.044*((RoughnessOfHullSurface/FSlwl)^(1/3)-10*resultsArray(k, 22)^(-1/3))+0.000125;
+    FSCorrelelationCoeff = (5.68-0.6*log10(resultsArray(k, 22)))*10^(-3);
+    FSAirResistanceCoeff = DragCoeff*((airDensity*FSProjectedArea)/(saltwaterdensity*FSwsa));
+    FSReynoldsNumber = resultsArray(k, 22);
+    if FSReynoldsNumber < 10000000
+        FSFricResCoeff = 10^(2.98651-10.8843*(log10(log10(FSReynoldsNumber)))+5.15283*(log10(log10(FSReynoldsNumber)))^2); % Model Frictional Resistance Coefficient (Grigson) (-)
+    else
+        FSFricResCoeff = 10^(-9.57459+26.6084*(log10(log10(FSReynoldsNumber)))-30.8285*(log10(log10(FSReynoldsNumber)))^2+10.8914*(log10(log10(FSReynoldsNumber)))^3); % Model Frictional Resistance Coefficient (Grigson) (-)
+    end
+    % CRs = CRm
+    FSResidualResCoeff = resultsArray(k, 19);
+    resultsArray(k, 24) = FormFactor*FSFricResCoeff+FSRoughnessAllowance+FSCorrelelationCoeff+FSResidualResCoeff+FSAirResistanceCoeff;  % Full Scale (Cts) Total resistance Coefficient, ITTC 1978 (2011), 7.5-02-03-01.4 (-)
+    
+    FSTotResCoeff = resultsArray(k, 24);
+    resultsArray(k, 25) = 0.5*saltwaterdensity*(resultsArray(k, 14)^2)*FSwsa*FSTotResCoeff; % Full Scale (RTs) Total resistance (RT) (N)
     resultsArray(k, 26) = resultsArray(k, 14)*resultsArray(k, 25);           % Full Scale (PEs) Model Effective Power (W)
     resultsArray(k, 27) = resultsArray(k, 26)/0.5;                           % Full Scale (PBs) Model Brake Power (using 50% prop. efficiency estimate) (W)
     resultsArray(k, 28) = testcond;                                          % Run condition (-)
@@ -1569,16 +1645,21 @@ for k=startRun:endRun
     % Additional values added: 04/08/2014
     % ---------------------------------------------------------------------
     % Model Frictional Resistance Coefficient (Grigson) (-)
-    FSReynoldsNumber = resultsArray(k, 22);
-    if FSReynoldsNumber < 10000000
-        resultsArray(k, 49) = 10^(2.98651-10.8843*(log10(log10(FSReynoldsNumber)))+5.15283*(log10(log10(FSReynoldsNumber)))^2); % Model Frictional Resistance Coefficient (Grigson) (-)
-    else
-        resultsArray(k, 49) = 10^(-9.57459+26.6084*(log10(log10(FSReynoldsNumber)))-30.8285*(log10(log10(FSReynoldsNumber)))^2+10.8914*(log10(log10(FSReynoldsNumber)))^3); % Model Frictional Resistance Coefficient (Grigson) (-)
-    end
+    resultsArray(k, 49) = FSFricResCoeff;
+    % ---------------------------------------------------------------------
+    % Additional values added: 15/12/2014, ITTC 1978 (2011), 7.5-02-03-01.4
+    % ---------------------------------------------------------------------    
+    %[50] Roughness allowance, delta CFs                 (-)
+    %[51] Correlation allowance, CA                      (-)
+    %[52] Air resistance coefficient in full scale, CAAs (-)
+    resultsArray(k, 50) = FSRoughnessAllowance;
+    resultsArray(k, 51) = FSCorrelelationCoeff;
+    resultsArray(k, 52) = FSAirResistanceCoeff; 
     
+    % Command window output -----------------------------------------------
     if enableCommandWindowOutput == 1
         
-        %# Prepare strings for display ----------------------------------------
+        %# Prepare strings for display ------------------------------------
         if k > 99
             name = name(2:5);
         else
@@ -1593,9 +1674,9 @@ for k=startRun:endRun
         froudlengthnumber = sprintf('%s:: Froude length number (Fr): %s [-]', name, sprintf('%.2f',resultsArray(k, 11)));
         heave             = sprintf('%s:: Model Heave: %s [mm]', name, sprintf('%.2f',resultsArray(k, 12)));
         trim              = sprintf('%s:: Model Trim: %s [Degrees]', name, sprintf('%.2f',resultsArray(k, 13)));
-        % ---------------------------------------------------------------------
+        % -----------------------------------------------------------------
         % Additional values added: 10/09/2013
-        % ---------------------------------------------------------------------
+        % -----------------------------------------------------------------
         modelreynoldsno   = sprintf('%s:: Model Reynolds Number (Rem): %s [-]', name, sprintf('%.0f',resultsArray(k, 16)));
         modelcfmittc57    = sprintf('%s:: Model Frictional Resistance Coeff. (Cfm using ITTC 1957): %s [-]', name, sprintf('%.5f',resultsArray(k, 17)));
         modelcfmgrigson   = sprintf('%s:: Model Frictional Resistance Coeff. (Cfm using Grigson): %s [-]', name, sprintf('%.5f',resultsArray(k, 18)));
@@ -1612,7 +1693,7 @@ for k=startRun:endRun
         FSPEs             = sprintf('%s:: Full Scale Effective Power (PEs): %s [W] / %s [kW] / %s [mW]', name, sprintf('%.0f',resultsArray(k, 26)), sprintf('%.0f',resultsArray(k, 26)/1000), sprintf('%.2f',resultsArray(k, 26)/1000000));
         FSPBs             = sprintf('%s:: Full Scale Brake Power (PBs at an estimated 50 percent prop. efficiency): %s [W] / %s [kW] / %s [mW]', name, sprintf('%.0f',resultsArray(k, 27)), sprintf('%.0f',resultsArray(k, 27)/1000), sprintf('%.2f',resultsArray(k, 27)/1000000));
         
-        %# Display strings ----------------------------------------------------
+        %# Display strings ------------------------------------------------
         disp('>>> MODEL SCALE');
         disp(avgspeed);
         disp(avglvdtfdw);
@@ -1623,9 +1704,9 @@ for k=startRun:endRun
         disp(froudlengthnumber);
         disp(heave);
         disp(trim);
-        % ---------------------------------------------------------------------
+        % -----------------------------------------------------------------
         % Additional values added: 10/09/2013
-        % ---------------------------------------------------------------------
+        % -----------------------------------------------------------------
         disp(modelreynoldsno);
         disp(modelcfmittc57);
         disp(modelcfmgrigson);
@@ -1644,6 +1725,8 @@ for k=startRun:endRun
         disp(FSPBs);
         disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
         
+    else
+        disp(sprintf('Run %s (Condition %s): Succssfully processed...',num2str(k),num2str(testcond)));
     end % enableCommandWindowOutput
     
     %wtot = endRun - startRun;
@@ -1653,18 +1736,17 @@ end
 %# Close progress bar
 %close(w);
 
-% /////////////////////////////////////////////////////////////////////
+% /////////////////////////////////////////////////////////////////////////
 % START: Write results to CVS
-% ---------------------------------------------------------------------
-
+% -------------------------------------------------------------------------
 M  = resultsArray;
 M2 = M(any(M,2),:);                                                  % Remove zero rows
 csvwrite('resultsArray.dat', M2)                                     % Export matrix M to a file delimited by the comma character
 dlmwrite('resultsArray.txt', M2, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 disp('All done!');
-% ---------------------------------------------------------------------
+% -------------------------------------------------------------------------
 % END: Write results to CVS
-% /////////////////////////////////////////////////////////////////////
+% /////////////////////////////////////////////////////////////////////////
 
 % -------------------------------------------------------------------------
 % View profile
