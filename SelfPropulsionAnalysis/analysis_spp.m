@@ -892,8 +892,7 @@ end
 %[2]  Resistance (uncorrected)         (N)
 %[3]  Resistance (corrected for temp.) (N) -> See ITTC 7.5-02-03-01.4 (2008)
 [resistance] = calBHResistanceBasedOnFrTempCorr(Froude_Numbers,FormFactor,MSwsa,MSlwl);
-
-break;
+%break;
 
 %# ************************************************************************
 %# Self-Propulsion Points Based on:

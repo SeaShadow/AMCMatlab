@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 16, 2014
+%# Date       :  December 17, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -414,7 +414,8 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     startRun = 1;
     endRun   = 35;
     
-    figurename = sprintf('Plot 1: Turbulence Stimulator Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
+    %figurename = sprintf('Plot 1: Turbulence Stimulator Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
+    figurename = 'Plot 1: Turbulence Stimulator Investigation';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -1105,7 +1106,8 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     %# --------------------------------------------------------------------
     %# 2.1 Plot CTm (averaged + errrors) and trim
     %# --------------------------------------------------------------------
-    figurename = sprintf('Plot 2.1: Trim Tab Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
+    %figurename = sprintf('Plot 2.1: Trim Tab Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
+    figurename = 'Plot 2.1: Trim Tab Investigation';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -1298,7 +1300,8 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     %# --------------------------------------------------------------------
     %# 2.2 Plot Trim
     %# --------------------------------------------------------------------
-    figurename = sprintf('Plot 2.2: Trim Tab Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
+    %figurename = sprintf('Plot 2.2: Trim Tab Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
+    figurename = 'Plot 2.2: Trim Tab Investigation';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------

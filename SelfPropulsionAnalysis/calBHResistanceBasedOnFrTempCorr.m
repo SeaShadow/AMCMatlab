@@ -62,7 +62,7 @@ enableTowingForceFDPlot     = 1;    % Show towing force (FD)
 enableA4PaperSizePlot       = 0;    % Show plots scale to A4 size
 
 % Polynomial fitting plot
-enableFittingPlot           = 1;    % Show polynomial fitting plot
+enableFittingPlot           = 0;    % Show polynomial fitting plot
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
@@ -194,16 +194,28 @@ if enableFittingPlot == 1
     minX  = 0.1;
     maxX  = 0.5;
     incrX = 0.05;
-%     minY  = 0;
-%     maxY  = 1;
-%     incrY = 0.1;
+    minY  = 0;
+    maxY  = 1;
+    incrY = 0.1;
     set(gca,'XLim',[minX maxX]);
     set(gca,'XTick',minX:incrX:maxX);
-%     set(gca,'YLim',[minY maxY]);
-%     set(gca,'YTick',minY:incrY:maxY);
+    %set(gca,'YLim',[minY maxY]);
+    %set(gca,'YTick',minY:incrY:maxY);
     set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
-%     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
+    %# Legend
+    hleg1 = legend('Resistance data','Fit');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    legend boxoff;    
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
     %# ************************************************************************
     %# Save plot as PNG
     %# ************************************************************************

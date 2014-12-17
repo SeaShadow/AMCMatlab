@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 15, 2014
+%# Date       :  December 17, 2014
 %#
 %# Function   :  Average data
 %#

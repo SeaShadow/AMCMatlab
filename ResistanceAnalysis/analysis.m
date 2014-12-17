@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 16, 2014
+%# Date       :  December 17, 2014
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -1621,7 +1621,7 @@ for k=startRun:endRun
     resultsArray(k, 29) = min(sdata);                                           % SPEED: Minimum value (m/s)
     resultsArray(k, 30) = max(sdata);                                           % SPEED: Maximum value (m/s)
     resultsArray(k, 31) = mean(sdata);                                          % SPEED: Average value (m/s)
-    resultsArray(k, 32) = (max(sdata) - mean(sdata)) / max(sdata);              % SPEED: Percentage (max.-avg.) to max. value (exp. 3% (m/s)
+    resultsArray(k, 32) = (max(sdata) - mean(sdata)) / max(sdata);              % SPEED: Percentage (max.-avg.) to max. value (exp. 3% (m/s))
     resultsArray(k, 33) = min(tfwddata);                                        % LVDT (FWD): Minimum value (mm)
     resultsArray(k, 34) = max(tfwddata);                                        % LVDT (FWD): Maximum value (mm)
     resultsArray(k, 35) = mean(tfwddata);                                       % LVDT (FWD): Average value (mm)
