@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 20, 2014
+%# Date       :  December 18, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -741,10 +741,10 @@ y3 = A{3}(:,18);
 %# Plotting ---------------------------------------------------------------
 h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
 xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
-ylabel('{\bf Velocity ratio (-)}','FontSize',setGeneralFontSize);
-if enablePlotTitle == 1
-    title('{\bf Single Waterjet System}','FontSize',setGeneralFontSize);
-end
+ylabel('{\bf Thrust deduction, t (-)}','FontSize',setGeneralFontSize);
+%if enablePlotTitle == 1
+%    title('{\bf Single Waterjet System}','FontSize',setGeneralFontSize);
+%end
 grid on;
 box on;
 axis square;

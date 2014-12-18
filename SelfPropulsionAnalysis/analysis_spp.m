@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 16, 2014
+%# Date       :  December 18, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -238,6 +238,26 @@ BLPLFactorArray  = [6.672 6.672 6.672 6.672 6.672 6.672 6.672 6.672 6.672];
 
 % Boundary layer: Thickness (m)
 BLThicknessArray = [0.04546 0.04548 0.04519 0.04459 0.04369 0.04248 0.04097 0.03915 0.03702];
+
+% ITTC 1978 Related Values ------------------------------------------------
+
+% Drag coefficient
+% See: Oura, T. & Ikeda, Y. 2007, 'Maneuverability Of A Wavepiercing High-Speed 
+%      Catamaran At Low Speed In Strong Wind', Proceedings of the The 
+%      2nd International Conference on Marine Research and Transportation 
+%      28/6/2007, Ischia, Naples, Italy.
+DragCoeff = 0.446;
+
+% Roughness of hull surface (ks), typical value
+RoughnessOfHullSurface = 150*10^(-6);
+
+% Air density at 20 °C and 101.325 kPa
+airDensity = 1.2041;
+
+% FULL SCALE: Demihull, projected area of the ship above the water line
+% to the transverse plane, AVS (m^2)
+% Established using Incat GA drawing and extracting transverse area then scaling to full scale size.
+FSProjectedArea = 341.5/2;
 
 %# -------------------------------------------------------------------------
 %# Number of headerlines in DAT file
@@ -699,7 +719,7 @@ if exist('resultsArraySPP.dat', 'file') == 0
         if enableSept2014FRMValues == 1
             % PORT and STBD (September 2014 FRM test): Mass flow rate (Kg/s)
             PortMfr = -0.0421*PortKP^4+0.5718*PortKP^3-2.9517*PortKP^2+7.8517*PortKP-5.1976;
-            StbdMfr = -0.0946*StbdKP^4+1.1259*StbdKP^3-5.0067*StbdKP^2+11.0896*StbdKP-6.8705;
+            StbdMfr = -0.0942*StbdKP^4+1.1216*StbdKP^3-4.9878*StbdKP^2+11.0548*StbdKP-6.8484;
         else
             % PORT (June 2013 FRM test): Mass flow rate (Kg/s)
             if PortKP > 1.86
@@ -1015,7 +1035,7 @@ for k=1:ma
     StbdTQatSPP = spline(x,polyvStbdTQ,ThrustAtSPP);
     
     MSPortMFR = -0.0421*PortKPatSPP^4+0.5718*PortKPatSPP^3-2.9517*PortKPatSPP^2+7.8517*PortKPatSPP-5.1976;
-    MSStbdMFR = -0.0946*StbdKPatSPP^4+1.1259*StbdKPatSPP^3-5.0067*StbdKPatSPP^2+11.0896*StbdKPatSPP-6.8705;
+    MSStbdMFR = -0.0942*StbdKPatSPP^4+1.1216*StbdKPatSPP^3-4.9878*StbdKPatSPP^2+11.0548*StbdKPatSPP-6.8484;
     
     FR_at_SPP(k,1) = Froude_Numbers(k,1);
     FR_at_SPP(k,2) = PortKPatSPP;
@@ -1992,7 +2012,7 @@ for k=1:m
     else
         MSCF = 10^(-9.57459+26.6084*(log10(log10(MSReynoldsNo)))-30.8285*(log10(log10(MSReynoldsNo)))^2+10.8914*(log10(log10(MSReynoldsNo)))^3);
     end
-    MSCR         = MSCT-MSCF;
+    MSCR         = MSCT-(FormFactor*MSCF);
     MSThrustDed  = ThrustDedFracArray(k,4);
     
     % Full scale variables
@@ -2047,7 +2067,7 @@ for k=1:m
     % [9]  Frictional resistance coefficient, CFs            (-)
     % [10] Residual resistannce coefficient, CRs             (-)
     % [11] Total resistannce coefficient, CTs                (-)
-    % [12] Total resistance, RT                              (-)
+    % [12] Total resistance, RT (ITTC 1978, 2011)            (-)
     
     % Model Scale
     modelScaleDataArray(k,9)  = MSCF;
@@ -2056,12 +2076,16 @@ for k=1:m
     modelScaleDataArray(k,12) = MSRT;
     
     % Full Scale
+    FSRoughnessAllowance = 0.044*((RoughnessOfHullSurface/FSlwl)^(1/3)-10*FSReynoldsNo^(-1/3))+0.000125;
+    FSCorrelelationCoeff = (5.68-0.6*log10(FSReynoldsNo))*10^(-3);
+    FSAirResistanceCoeff = DragCoeff*((airDensity*FSProjectedArea)/(saltwaterdensity*FSwsa));    
     if FSReynoldsNo < 10000000
         FSCF = 10^(2.98651-10.8843*(log10(log10(FSReynoldsNo)))+5.15283*(log10(log10(FSReynoldsNo)))^2);
     else
         FSCF = 10^(-9.57459+26.6084*(log10(log10(FSReynoldsNo)))-30.8285*(log10(log10(FSReynoldsNo)))^2+10.8914*(log10(log10(FSReynoldsNo)))^3);
     end
-    FSCT = FSCF+FSCR;
+    %FSCT = FSCF+FSCR;
+    FSCT = FormFactor*FSCF+FSRoughnessAllowance+FSCorrelelationCoeff+FSCR+FSAirResistanceCoeff;
     FSRT = 0.5*saltwaterdensity*FSSpeed^2*FSwsa*FSCT;
     fullScaleDataArray(k,9)  = FSCF;
     fullScaleDataArray(k,10) = FSCR;
@@ -2077,7 +2101,7 @@ for k=1:m
     % Model Scale
     MSPEW  = MSRT*MSSpeed;
     MSPEkW = MSPEW/1000;
-    MSPEmW= MSPEkW/1000;
+    MSPEmW = MSPEkW/1000;
     modelScaleDataArray(k,13) = MSPEW;
     modelScaleDataArray(k,14) = MSPEkW;
     modelScaleDataArray(k,15) = MSPEmW;

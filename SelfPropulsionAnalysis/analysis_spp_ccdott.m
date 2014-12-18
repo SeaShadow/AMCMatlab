@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 16, 2014
+%# Date       :  December 18, 2014
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -238,6 +238,26 @@ BLPLFactorArray  = [6.672 6.672 6.672 6.672 6.672 6.672 6.672 6.672 6.672];
 
 % Boundary layer: Thickness (m)
 BLThicknessArray = [0.04546 0.04548 0.04519 0.04459 0.04369 0.04248 0.04097 0.03915 0.03702];
+
+% ITTC 1978 Related Values ------------------------------------------------
+
+% Drag coefficient
+% See: Oura, T. & Ikeda, Y. 2007, 'Maneuverability Of A Wavepiercing High-Speed 
+%      Catamaran At Low Speed In Strong Wind', Proceedings of the The 
+%      2nd International Conference on Marine Research and Transportation 
+%      28/6/2007, Ischia, Naples, Italy.
+DragCoeff = 0.446;
+
+% Roughness of hull surface (ks), typical value
+RoughnessOfHullSurface = 150*10^(-6);
+
+% Air density at 20 °C and 101.325 kPa
+airDensity = 1.2041;
+
+% FULL SCALE: Demihull, projected area of the ship above the water line
+% to the transverse plane, AVS (m^2)
+% Established using Incat GA drawing and extracting transverse area then scaling to full scale size.
+FSProjectedArea = 341.5/2;
 
 %# -------------------------------------------------------------------------
 %# Number of headerlines in DAT file
@@ -733,7 +753,7 @@ if exist('resultsArraySPP_CCDoTT.dat', 'file') == 0
         if enableSept2014FRMValues == 1
             % PORT and STBD (September 2014 FRM test): Mass flow rate (Kg/s)
             PortMfr = -0.0421*PortKP^4+0.5718*PortKP^3-2.9517*PortKP^2+7.8517*PortKP-5.1976;
-            StbdMfr = -0.0946*StbdKP^4+1.1259*StbdKP^3-5.0067*StbdKP^2+11.0896*StbdKP-6.8705;
+            StbdMfr = -0.0942*StbdKP^4+1.1216*StbdKP^3-4.9878*StbdKP^2+11.0548*StbdKP-6.8484;
         else
             % PORT (June 2013 FRM test): Mass flow rate (Kg/s)
             if PortKP > 1.86
@@ -937,6 +957,7 @@ F_at_TGZero         = [];   % Gross thrust = TG = p Q (vj - vi)
 FR_at_SPP           = [];   % Flow rates at self-propulsion point (SPP)
 thrustDedFracArray  = [];   % Thrust deduction array where TG = p Q (vj - vi)
 shaftSpeedConvArray = [];   % Shaft speed array where TG = p Q (vj - vi)
+resSPP              = [];   % Summary results of self-propulsion points
 for k=1:ma
     [mb,nb] = size(A{k});
     
@@ -1046,9 +1067,9 @@ for k=1:ma
     polyfStbdTQ = polyfit(x,yStbdTQ,1);
     polyvStbdTQ = polyval(polyfStbdTQ,x);
     StbdTQatSPP = spline(x,polyvStbdTQ,ThrustAtSPP);
-    
+
     MSPortMFR = -0.0421*PortKPatSPP^4+0.5718*PortKPatSPP^3-2.9517*PortKPatSPP^2+7.8517*PortKPatSPP-5.1976;
-    MSStbdMFR = -0.0946*StbdKPatSPP^4+1.1259*StbdKPatSPP^3-5.0067*StbdKPatSPP^2+11.0896*StbdKPatSPP-6.8705;
+    MSStbdMFR = -0.0942*StbdKPatSPP^4+1.1216*StbdKPatSPP^3-4.9878*StbdKPatSPP^2+11.0548*StbdKPatSPP-6.8484;
     
     FR_at_SPP(k,1) = Froude_Numbers(k,1);
     FR_at_SPP(k,2) = PortKPatSPP;
@@ -1059,24 +1080,126 @@ for k=1:ma
     FR_at_SPP(k,7) = MSStbdMFR/freshwaterdensity;    
     FR_at_SPP(k,8) = PortTQatSPP;
     FR_at_SPP(k,9) = StbdTQatSPP;
+    
+    
+    %# ********************************************************************
+    %# WRITE RESULTSARRAY (resSPP)
+    %# ********************************************************************    
+
+    if k == 4
+        PortThrustValues  = A{k}(3:6,40);
+        StbdThrustValues  = A{k}(3:6,41);
+        TotalThrustValues = A{k}(3:6,42);
+    else
+        PortThrustValues  = A{k}(:,40);
+        StbdThrustValues  = A{k}(:,41);
+        TotalThrustValues = A{k}(:,42);
+    end    
+   
+    % Determine percentage of thrust
+    [mpc,npc] = size(TotalThrustValues);
+    tempArray1 = [];
+    tempArray2 = [];
+    for kpc=1:mpc
+        tempArray1(kpc) = PortThrustValues(kpc)/TotalThrustValues(kpc);
+        tempArray2(kpc) = StbdThrustValues(kpc)/TotalThrustValues(kpc);
+    end
+    meanRatioPortWJSys = mean(tempArray1);
+    meanRatioStbdWJSys = mean(tempArray2);
+    
+    SPP_THRUST_PORT = meanRatioPortWJSys*ThrustAtSPP;    
+    SPP_THRUST_STBD = meanRatioStbdWJSys*ThrustAtSPP;
+
+    % resSPP columns:
+    
+    % FROUDE LENGTH NUMBER AND TOWING FORCE, FD
+    %[1]  Froude length number             (-)
+    %[2]  Towing Force, FD                 (N)
+    
+    % PORT WJ SYSTEM
+    %[3]  Shaft speed                      (RPM)
+    %[4]  Gross thrust                     (N)
+    %[5]  Torque                           (Nm)
+    %[6]  Kiel probe                       (V)
+    
+    % STARBOARD WJ SYSTEM
+    %[7]  Shaft speed                      (RPM)
+    %[8]  Gross thrust                     (N)
+    %[9]  Torque                           (Nm)
+    %[10] Kiel probe                       (V)
+    
+    % TOTAL GROSS THRUST
+    %[11] Gross thrust                     (N)    
+    
+    % MEAN PORT AND STARBOARD WJ SYSTEM
+    %[12] Shaft speed                      (RPM)
+    %[13] Gross thrust                     (N)
+    %[14] Torque                           (Nm)
+    %[15] Kiel probe                       (V)
+    
+    % AFT AND FWD LVDT, HEAVE AND TRIM
+    %[16] Aft LVDT                         (mm)
+    %[17] Fwd LVDT                         (mm)        
+    %[18] Heave                            (mm)
+    %[19] Running trim                     (deg)
+    
+    % FROUDE LENGTH NUMBER AND TOWING FORCE, FD
+    resSPP(k,1)  = A{k}(1,5);
+    resSPP(k,2)  = towForce;
+    
+    % PORT WJ SYSTEM
+    resSPP(k,3)  = MSPortShaftSpeed;
+    resSPP(k,4)  = SPP_THRUST_PORT;
+    resSPP(k,5)  = PortTQatSPP;
+    resSPP(k,6)  = PortKPatSPP;
+    
+    % STARBOARD WJ SYSTEM
+    resSPP(k,7)  = MSStbdShaftSpeed;
+    resSPP(k,8)  = SPP_THRUST_STBD;
+    resSPP(k,9)  = StbdTQatSPP;
+    resSPP(k,10) = StbdKPatSPP;
+    
+    % TOTAL GROSS THRUST
+    resSPP(k,11) = ThrustAtSPP;
+    
+    % MEAN PORT AND STARBOARD WJ SYSTEM
+    resSPP(k,12) = mean([MSPortShaftSpeed MSStbdShaftSpeed]);
+    resSPP(k,13) = mean([SPP_THRUST_PORT SPP_THRUST_STBD]);
+    resSPP(k,14) = mean([PortKPatSPP StbdKPatSPP]);
+    resSPP(k,15) = mean([PortTQatSPP StbdTQatSPP]);
+    
+    % AFT AND FWD LVDT, HEAVE AND TRIM
+    resSPP(k,16) = 0;
+    resSPP(k,17) = 0;
+    resSPP(k,18) = 0;
+    resSPP(k,19) = 0;
+    
 end
 
 
+
+
+
+
+
 %# ************************************************************************
-%# START Linear Plots
+%# START Linear Plots (CCFoTT Self-Propulsion Points)
 %# ************************************************************************
 
-resSPP_CCDoTT = [];
-%for klp=1:1
-for klp=1:ma
-    
-    %# Plotting speed -----------------------------------------------------
-    figurename = sprintf('Plot 0: Speed = %s, Fr = %s, Linear Plots for Self-Propulsion Points',num2str(klp),sprintf('%.2f',A{klp}(1,5)));
-    f = figure('Name',figurename,'NumberTitle','off');
-    
-    %# Paper size settings ------------------------------------------------
-    
-    %if enableA4PaperSizePlot == 1
+if exist('resSPP_CCDoTT.dat', 'file') == 0
+    resSPP_CCDoTT = [];
+    %for klp=1:1
+    for klp=1:ma % ma
+        
+        %# ********************************************************************
+        %# SELF-PROPULSION POINTS (COMB)
+        %# ********************************************************************
+        figurename = sprintf('Plot 0 (COMB): Speed = %s, Fr = %s, Linear Plots for Self-Propulsion Points (SPP)',num2str(klp),sprintf('%.2f',A{klp}(1,5)));
+        f = figure('Name',figurename,'NumberTitle','off');
+        
+        %# Paper size settings ------------------------------------------------
+        
+        %if enableA4PaperSizePlot == 1
         set(gcf, 'PaperSize', [19 19]);
         set(gcf, 'PaperPositionMode', 'manual');
         set(gcf, 'PaperPosition', [0 0 19 19]);
@@ -1085,517 +1208,1445 @@ for klp=1:ma
         set(gcf, 'PaperSize', [19 19]);
         set(gcf, 'PaperPositionMode', 'manual');
         set(gcf, 'PaperPosition', [0 0 19 19]);
-    %end
-    
-    % Fonts and colours ---------------------------------------------------
-    setGeneralFontName = 'Helvetica';
-    setGeneralFontSize = 14;
-    setBorderLineWidth = 2;
-    setLegendFontSize  = 12;
-    
-    %# Change default text fonts for plot title
-    set(0,'DefaultTextFontname',setGeneralFontName);
-    set(0,'DefaultTextFontSize',14);
-    
-    %# Box thickness, axes font size, etc. --------------------------------
-    set(gca,'TickDir','in',...
-        'FontSize',12,...
-        'LineWidth',2,...
-        'FontName',setGeneralFontName,...
-        'Clipping','off',...
-        'Color',[1 1 1],...
-        'LooseInset',get(gca,'TightInset'));
-    
-    %# Markes and colors --------------------------------------------------
-    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
-    % Colored curves
-    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
-    if enableBlackAndWhitePlot == 1
-        % Black and white curves
-        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
-    end
-    
-    %# Line, colors and markers
-    setMarkerSize       = 12;
-    setMarkerSize2      = 12;
-    setLineWidthMarker  = 2;
-    setLineWidth        = 2;
-    setLineWidth2       = 1;
-    setLineStyle        = '-';
-    setLineStyle2       = '-.';
-    
-    % Towing Force, FD
-    TowForceFD = TG_at_FDArray(klp, 3);
-    
-    %# Subplot ////////////////////////////////////////////////////////////
-    subplot(2,2,1)
-    
-    %# X and Y axis -------------------------------------------------------
-    
-    % Tow Force, FD
-    minx1 = 0;
-    maxx1 = 4000;
-    
-    x1 = [minx1 maxx1];
-    y1 = [TowForceFD TowForceFD];
-    
-    % Model Data
-    if klp == 4
-        x2 = A{klp}(3:6,11);
-        y2 = A{klp}(3:6,10);
-    else
-        x2 = A{klp}(:,11);
-        y2 = A{klp}(:,10);
-    end
-    
-    % Model data - Linear fit
-    [fitobject,gof,output] = fit(x2,y2,'poly1');
-    cvalues = coeffvalues(fitobject);
-    cnames  = coeffnames(fitobject);
-    output  = formula(fitobject);
-    
-    % Linear fit using defined points
-    minX = round(min(x2)-200);
-    maxX = round(max(x2)+200);
-    MMA  = minX:maxX;
-    [mi,ni] = size(MMA);
-    LFA  = [];
-    for ki=1:ni
-        LFA(ki,1) = MMA(ki);
-        LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
-    end
-    x4 = LFA(:,1);
-    y4 = LFA(:,2);
-    disp(sprintf('Speed %s (Shaft speed): Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
-    
-    % Find intersection of linear fit of model data and towing force, FD
-    [xout,yout] = intersections(x1,y1,x4,y4,1);
-    
-    SPP_RPM_CCDoTT = xout;
-    
-    x3 = SPP_RPM_CCDoTT;
-    y3 = TowForceFD;
-    
-    %# Plotting -----------------------------------------------------------
-    %h1 = plot(fitobject,'-k',x2,y2,'*');
-    h1 = plot(x2,y2,'*',x4,y4,'-');
-    legendInfo{1} = 'Model Data';
-    legendInfo{2} = 'Model Data - Linear fit';
-    hold on;
-    h2 = plot(x1,y1,'*',x3,y3,'x');
-    legendInfo{3} = 'Towing Force (F_{D})';
-    legendInfo{4} = 'Self-Propulsion Point (SPP)';
-    xlabel('{\bf Shaft speed (RPM)}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
-    title('{\bf Shaft Speed}','FontSize',setGeneralFontSize);
-    grid on;
-    box on;
-    axis square;
-    
-    %# Line, colors and markers
-    set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);    
-    set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
-    set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
-    set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    % %# Axis limitations
-    minX  = min(x2)-200;
-    maxX  = max(x2)+200;
-    %incrX = 100;
-    minY  = round(min(y2))-4;
-    maxY  = round(max(y2))+4;
-    %incrY = 2;
-    set(gca,'XLim',[minX maxX]);
-    %set(gca,'XTick',minX:incrX:maxX);
-    set(gca,'YLim',[minY maxY]);
-    %set(gca,'YTick',minY:incrY:maxY);
-    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
-	%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
-    
-    %# Legend
-    %hleg1 = legend('Towing Force (F_{D})','Model Data','Self-Propulsion Point (SPP)');
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','tex');
-    set(hleg1,'LineWidth',1);
-    set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;
-    
-    %# Font sizes and border ----------------------------------------------
-    
-    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-    
-    %# Subplot ////////////////////////////////////////////////////////////
-    subplot(2,2,2)
-    
-    %# X and Y axis -------------------------------------------------------
-    
-    % Tow Force, FD
-    minx1 = 0;
-    maxx1 = 30;
-    
-    x1 = [minx1 maxx1];
-    y1 = [TowForceFD TowForceFD];
-    
-    % Model Data
-    if klp == 4
-        x2 = A{klp}(3:6,42);
-        y2 = A{klp}(3:6,10);
-    else
-        x2 = A{klp}(:,42);
-        y2 = A{klp}(:,10);
-    end
-    
-    % Model data - Linear fit
-    [fitobject,gof,output] = fit(x2,y2,'poly1');
-    cvalues = coeffvalues(fitobject);
-    cnames  = coeffnames(fitobject);
-    output  = formula(fitobject);
-    
-    % Linear fit using defined points
-    minX = round(min(x2)-4);
-    maxX = round(max(x2)+4);
-    MMA  = minX:maxX;
-    [mi,ni] = size(MMA);
-    LFA  = [];
-    for ki=1:ni
-        LFA(ki,1) = MMA(ki);
-        LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
-    end
-    x4 = LFA(:,1);
-    y4 = LFA(:,2);
-    disp(sprintf('Speed %s (Gross thrust): Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
-    
-    % Find intersection of linear fit of model data and towing force, FD
-    [xout,yout] = intersections(x1,y1,x4,y4,1);
-    
-    SPP_THRUST_CCDoTT = xout;
-    
-    x3 = SPP_THRUST_CCDoTT;
-    y3 = TowForceFD;
-    
-    %# Plotting -----------------------------------------------------------
-    %h1 = plot(fitobject,'-k',x2,y2,'*');
-    h1 = plot(x2,y2,'*',x4,y4,'-');
-    legendInfo{1} = 'Model Data';
-    legendInfo{2} = 'Model Data - Linear fit';
-    hold on;
-    h2 = plot(x1,y1,'*',x3,y3,'x');
-    legendInfo{3} = 'Towing Force (F_{D})';
-    legendInfo{4} = 'Self-Propulsion Point (SPP)';
-    xlabel('{\bf Gross thrust (N)}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
-    title('{\bf Grosst Thrust}','FontSize',setGeneralFontSize);
-    grid on;
-    box on;
-    axis square;
-    
-    %# Line, colors and markers
-    set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);    
-    set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
-    set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
-    set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    % %# Axis limitations
-    minX  = min(x2)-2;
-    maxX  = max(x2)+2;
-    %incrX = 100;
-    minY  = round(min(y2))-4;
-    maxY  = round(max(y2))+4;
-    %incrY = 2;
-    set(gca,'XLim',[minX maxX]);
-    %set(gca,'XTick',minX:incrX:maxX);
-    set(gca,'YLim',[minY maxY]);
-    %set(gca,'YTick',minY:incrY:maxY);
-    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
-	%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
-    
-    %# Legend
-    %hleg1 = legend('Towing Force (F_{D})','Model Data','Self-Propulsion Point (SPP)');
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','tex');
-    set(hleg1,'LineWidth',1);
-    set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;
-    
-    %# Font sizes and border ----------------------------------------------
-    
-    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);    
-    
-    %# Subplot ////////////////////////////////////////////////////////////
-    subplot(2,2,3)
-    
-    %# X and Y axis -------------------------------------------------------
-    
-    % Tow Force, FD
-    minx1 = -2;
-    maxx1 = 2;
-    
-    x1 = [minx1 maxx1];
-    y1 = [TowForceFD TowForceFD];
-    
-    % Model Data
-    if klp == 4
-        x2 = A{klp}(3:6,15);
-        y2 = A{klp}(3:6,10);
-    else
-        x2 = A{klp}(:,15);
-        y2 = A{klp}(:,10);
-    end
-    
-    % Model data - Linear fit
-    [fitobject,gof,output] = fit(x2,y2,'poly1');
-    cvalues = coeffvalues(fitobject);
-    cnames  = coeffnames(fitobject);
-    output  = formula(fitobject);
-    
-    % Linear fit using defined points
-    minX = round(min(x2)-2);
-    maxX = round(max(x2)+2);
-    MMA  = minX:maxX;
-    [mi,ni] = size(MMA);
-    LFA  = [];
-    for ki=1:ni
-        LFA(ki,1) = MMA(ki);
-        LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
-    end
-    x4 = LFA(:,1);
-    y4 = LFA(:,2);
-    disp(sprintf('Speed %s (Torque): Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
-    
-    % Find intersection of linear fit of model data and towing force, FD
-    [xout,yout] = intersections(x1,y1,x4,y4,1);
-    
-    SPP_TORQUE_CCDoTT = xout;
-    
-    x3 = SPP_TORQUE_CCDoTT;
-    y3 = TowForceFD;
-    
-    %# Plotting -----------------------------------------------------------
-    %h1 = plot(fitobject,'-k',x2,y2,'*');
-    h1 = plot(x2,y2,'*',x4,y4,'-');
-    legendInfo{1} = 'Model Data';
-    legendInfo{2} = 'Model Data - Linear fit';
-    hold on;
-    h2 = plot(x1,y1,'*',x3,y3,'x');
-    legendInfo{3} = 'Towing Force (F_{D})';
-    legendInfo{4} = 'Self-Propulsion Point (SPP)';
-    xlabel('{\bf Torque (Nm)}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
-    title('{\bf Torque}','FontSize',setGeneralFontSize);
-    grid on;
-    box on;
-    axis square;
-    
-    %# Line, colors and markers
-    set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);    
-    set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
-    set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
-    set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    % %# Axis limitations
-    minX  = min(x2)-0.1;
-    maxX  = max(x2)+0.1;
-    %incrX = 100;
-    minY  = round(min(y2))-4;
-    maxY  = round(max(y2))+4;
-    %incrY = 2;
-    set(gca,'XLim',[minX maxX]);
-    %set(gca,'XTick',minX:incrX:maxX);
-    set(gca,'YLim',[minY maxY]);
-    %set(gca,'YTick',minY:incrY:maxY);
-    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
-	%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
-    
-    %# Legend
-    %hleg1 = legend('Towing Force (F_{D})','Model Data','Self-Propulsion Point (SPP)');
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','tex');
-    set(hleg1,'LineWidth',1);
-    set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;
-    
-    %# Font sizes and border ----------------------------------------------
-    
-    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);    
-    
-    %# Subplot ////////////////////////////////////////////////////////////
-    subplot(2,2,4)
-    
-    %# X and Y axis -------------------------------------------------------
-    
-    % Tow Force, FD
-    minx1 = 0;
-    maxx1 = 6;
-    
-    x1 = [minx1 maxx1];
-    y1 = [TowForceFD TowForceFD];
-    
-    % Model Data
-    if klp == 4
-        x2 = A{klp}(3:6,17);
-        y2 = A{klp}(3:6,10);
-    else
-        x2 = A{klp}(:,17);
-        y2 = A{klp}(:,10);
-    end
-    
-    % Model data - Linear fit
-    [fitobject,gof,output] = fit(x2,y2,'poly1');
-    cvalues = coeffvalues(fitobject);
-    cnames  = coeffnames(fitobject);
-    output  = formula(fitobject);
-    
-    % Linear fit using defined points
-    minX = round(min(x2)-2);
-    maxX = round(max(x2)+2);
-    MMA  = minX:maxX;
-    [mi,ni] = size(MMA);
-    LFA  = [];
-    for ki=1:ni
-        LFA(ki,1) = MMA(ki);
-        LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
-    end
-    x4 = LFA(:,1);
-    y4 = LFA(:,2);
-    disp(sprintf('Speed %s (Torque): Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
-    
-    % Find intersection of linear fit of model data and towing force, FD
-    [xout,yout] = intersections(x1,y1,x4,y4,1);
-    
-    SPP_KP_CCDoTT = xout;
-    
-    x3 = SPP_KP_CCDoTT;
-    y3 = TowForceFD;
-    
-    %# Plotting -----------------------------------------------------------
-    %h1 = plot(fitobject,'-k',x2,y2,'*');
-    h1 = plot(x2,y2,'*',x4,y4,'-');
-    legendInfo{1} = 'Model Data';
-    legendInfo{2} = 'Model Data - Linear fit';
-    hold on;
-    h2 = plot(x1,y1,'*',x3,y3,'x');
-    legendInfo{3} = 'Towing Force (F_{D})';
-    legendInfo{4} = 'Self-Propulsion Point (SPP)';
-    xlabel('{\bf Kiel probe (V)}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
-    title('{\bf Kiel probe}','FontSize',setGeneralFontSize);
-    grid on;
-    box on;
-    axis square;
-    
-    %# Line, colors and markers
-    set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);    
-    set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
-    set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
-    set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
-    
-    %# Set plot figure background to a defined color
-    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-    set(gcf,'Color',[1,1,1]);
-    
-    % %# Axis limitations
-    minX  = min(x2)-0.1;
-    maxX  = max(x2)+0.1;
-    %incrX = 100;
-    minY  = round(min(y2))-4;
-    maxY  = round(max(y2))+4;
-    %incrY = 2;
-    set(gca,'XLim',[minX maxX]);
-    %set(gca,'XTick',minX:incrX:maxX);
-    set(gca,'YLim',[minY maxY]);
-    %set(gca,'YTick',minY:incrY:maxY);
-    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
-	%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
-    
-    %# Legend
-    %hleg1 = legend('Towing Force (F_{D})','Model Data','Self-Propulsion Point (SPP)');
-    hleg1 = legend(legendInfo);
-    set(hleg1,'Location','SouthWest');
-    set(hleg1,'Interpreter','tex');
-    set(hleg1,'LineWidth',1);
-    set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;
-    
-    %# Font sizes and border ----------------------------------------------
-    
-    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);    
-    
-    %# ********************************************************************
-    %# Save plot as PNG
-    %# ********************************************************************
-    
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-    
-    %# Figure size printed on paper
-    %if enableA4PaperSizePlot == 1
+        %end
+        
+        % Fonts and colours ---------------------------------------------------
+        setGeneralFontName = 'Helvetica';
+        setGeneralFontSize = 14;
+        setBorderLineWidth = 2;
+        setLegendFontSize  = 12;
+        
+        %# Change default text fonts for plot title
+        set(0,'DefaultTextFontname',setGeneralFontName);
+        set(0,'DefaultTextFontSize',14);
+        
+        %# Box thickness, axes font size, etc. --------------------------------
+        set(gca,'TickDir','in',...
+            'FontSize',12,...
+            'LineWidth',2,...
+            'FontName',setGeneralFontName,...
+            'Clipping','off',...
+            'Color',[1 1 1],...
+            'LooseInset',get(gca,'TightInset'));
+        
+        %# Markes and colors --------------------------------------------------
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+        % Colored curves
+        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+        if enableBlackAndWhitePlot == 1
+            % Black and white curves
+            setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+        end
+        
+        %# Line, colors and markers
+        setMarkerSize       = 12;
+        setMarkerSize2      = 12;
+        setLineWidthMarker  = 2;
+        setLineWidth        = 2;
+        setLineWidth2       = 1;
+        setLineStyle        = '-';
+        setLineStyle2       = '-.';
+        
+        % Towing Force, FD
+        TowForceFD = TG_at_FDArray(klp, 3);
+        
+        %# Subplot ////////////////////////////////////////////////////////////
+        subplot(1,1,1)
+        
+        %# X and Y axis -------------------------------------------------------
+        
+        % Tow Force, FD
+        minx1 = 0;
+        maxx1 = 30;
+        
+        x1 = [minx1 maxx1];
+        y1 = [TowForceFD TowForceFD];
+        
+        % Model Data (omit runs at speed 4 due to bad results)
+        if klp == 4
+            x2 = A{klp}(3:6,42);
+            y2 = A{klp}(3:6,10);
+        else
+            x2 = A{klp}(:,42);
+            y2 = A{klp}(:,10);
+        end
+        
+        % Model data - Linear fit
+        [fitobject,gof,output] = fit(x2,y2,'poly1');
+        cvalues = coeffvalues(fitobject);
+        cnames  = coeffnames(fitobject);
+        output  = formula(fitobject);
+        
+        % Linear fit using defined points
+        minX = round(min(x2)-4);
+        maxX = round(max(x2)+4);
+        MMA  = minX:maxX;
+        [mi,ni] = size(MMA);
+        LFA  = [];
+        for ki=1:ni
+            LFA(ki,1) = MMA(ki);
+            LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
+        end
+        x4 = LFA(:,1);
+        y4 = LFA(:,2);
+        disp(sprintf('COMB: Speed %s (Gross thrust): Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
+        disp('-------------------------------------------------------------------------');
+        
+        % Find intersection of linear fit of model data and towing force, FD
+        [xout,yout] = intersections(x1,y1,x4,y4,1);
+        
+        SPP_THRUST_CCDoTT_TOTAL = xout;
+        
+        x3 = SPP_THRUST_CCDoTT_TOTAL;
+        y3 = TowForceFD;
+        
+        %# Plotting -----------------------------------------------------------
+        %h1 = plot(fitobject,'-k',x2,y2,'*');
+        h1 = plot(x2,y2,'*',x4,y4,'-');
+        legendInfo{1} = 'Model Data';
+        legendInfo{2} = 'Model Data - Linear fit';
+        hold on;
+        h2 = plot(x1,y1,'*',x3,y3,'x');
+        legendInfo{3} = 'Towing Force (F_{D})';
+        legendInfo{4} = 'Self-Propulsion Point (SPP)';
+        xlabel('{\bf Gross thrust (N)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
+        title('{\bf Grosst Thrust}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Line, colors and markers
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
+        set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        % %# Axis limitations
+        minX  = min(x2)-3;
+        maxX  = max(x2)+3;
+        %incrX = 100;
+        minY  = round(min(y2))-4;
+        maxY  = round(max(y2))+4;
+        %incrY = 2;
+        set(gca,'XLim',[minX maxX]);
+        %set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        %set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+        
+        %# Legend
+        %hleg1 = legend('Towing Force (F_{D})','Model Data','Self-Propulsion Point (SPP)');
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','SouthWest');
+        set(hleg1,'Interpreter','tex');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
+        %legend boxoff;
+        
+        %# Font sizes and border ----------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# ********************************************************************
+        %# Save plot as PNG
+        %# ********************************************************************
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        %if enableA4PaperSizePlot == 1
         set(gcf, 'PaperUnits','centimeters');
         set(gcf, 'PaperSize',[XPlot YPlot]);
         set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
         set(gcf, 'PaperOrientation','portrait');
-    %end
-    
-    %# Plot title ---------------------------------------------------------
-    %if enablePlotMainTitle == 1
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-    %end
-    
-    %# Save plots as PDF, PNG and EPS -------------------------------------
-    % Enable renderer for vector graphics output
-    set(gcf, 'renderer', 'painters');
-    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
-    setFileFormat = {'PDF' 'PNG' 'EPS'};
-    for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_0_Speed_No_%s_Linear_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, num2str(klp), setFileFormat{k});
-        print(gcf, setSaveFormat{k}, plotsavename);
+        %end
+        
+        %# Plot title ---------------------------------------------------------
+        %if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        %end
+        
+        %# Save plots as PDF, PNG and EPS -------------------------------------
+        % Enable renderer for vector graphics output
+        set(gcf, 'renderer', 'painters');
+        setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+        setFileFormat = {'PDF' 'PNG' 'EPS'};
+        for k=1:3
+            plotsavename = sprintf('_plots/%s/%s/SPP_Plot_0_COMB_Speed_No_%s_Linear_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, num2str(klp), setFileFormat{k});
+            print(gcf, setSaveFormat{k}, plotsavename);
+        end
+        close;
+        
+        
+        %# ********************************************************************
+        %# SELF-PROPULSION POINTS (PORT)
+        %# ********************************************************************
+        figurename = sprintf('Plot 0 (PORT): Speed = %s, Fr = %s, Linear Plots for Self-Propulsion Points (SPP)',num2str(klp),sprintf('%.2f',A{klp}(1,5)));
+        f = figure('Name',figurename,'NumberTitle','off');
+        
+        %# Paper size settings ------------------------------------------------
+        
+        %if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        %end
+        
+        % Fonts and colours ---------------------------------------------------
+        setGeneralFontName = 'Helvetica';
+        setGeneralFontSize = 14;
+        setBorderLineWidth = 2;
+        setLegendFontSize  = 12;
+        
+        %# Change default text fonts for plot title
+        set(0,'DefaultTextFontname',setGeneralFontName);
+        set(0,'DefaultTextFontSize',14);
+        
+        %# Box thickness, axes font size, etc. --------------------------------
+        set(gca,'TickDir','in',...
+            'FontSize',12,...
+            'LineWidth',2,...
+            'FontName',setGeneralFontName,...
+            'Clipping','off',...
+            'Color',[1 1 1],...
+            'LooseInset',get(gca,'TightInset'));
+        
+        %# Markes and colors --------------------------------------------------
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+        % Colored curves
+        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+        if enableBlackAndWhitePlot == 1
+            % Black and white curves
+            setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+        end
+        
+        %# Line, colors and markers
+        setMarkerSize       = 12;
+        setMarkerSize2      = 12;
+        setLineWidthMarker  = 2;
+        setLineWidth        = 2;
+        setLineWidth2       = 1;
+        setLineStyle        = '-';
+        setLineStyle2       = '-.';
+        
+        % Towing Force, FD
+        TowForceFD = TG_at_FDArray(klp, 3);
+        
+        %# Subplot ////////////////////////////////////////////////////////////
+        subplot(2,2,1)
+        
+        %# X and Y axis -------------------------------------------------------
+        
+        % Tow Force, FD
+        minx1 = 0;
+        maxx1 = 4000;
+        
+        x1 = [minx1 maxx1];
+        y1 = [TowForceFD TowForceFD];
+        
+        % Model Data (omit runs at speed 4 due to bad results)
+        if klp == 4
+            x2 = A{klp}(3:6,11);
+            y2 = A{klp}(3:6,10);
+        else
+            x2 = A{klp}(:,11);
+            y2 = A{klp}(:,10);
+        end
+        
+        % Model data - Linear fit
+        [fitobject,gof,output] = fit(x2,y2,'poly1');
+        cvalues = coeffvalues(fitobject);
+        cnames  = coeffnames(fitobject);
+        output  = formula(fitobject);
+        
+        % Linear fit using defined points
+        minX = round(min(x2)-300);
+        maxX = round(max(x2)+300);
+        MMA  = minX:maxX;
+        [mi,ni] = size(MMA);
+        LFA  = [];
+        for ki=1:ni
+            LFA(ki,1) = MMA(ki);
+            LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
+        end
+        x4 = LFA(:,1);
+        y4 = LFA(:,2);
+        disp(sprintf('PORT: Speed %s (Shaft speed): Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
+        
+        % Find intersection of linear fit of model data and towing force, FD
+        [xout,yout] = intersections(x1,y1,x4,y4,1);
+        
+        SPP_RPM_CCDoTT_PORT = xout;
+        
+        x3 = SPP_RPM_CCDoTT_PORT;
+        y3 = TowForceFD;
+        
+        %# Plotting -----------------------------------------------------------
+        %h1 = plot(fitobject,'-k',x2,y2,'*');
+        h1 = plot(x2,y2,'*',x4,y4,'-');
+        legendInfo{1} = 'Model Data';
+        legendInfo{2} = 'Model Data - Linear fit';
+        hold on;
+        h2 = plot(x1,y1,'*',x3,y3,'x');
+        legendInfo{3} = 'Towing Force (F_{D})';
+        legendInfo{4} = 'Self-Propulsion Point (SPP)';
+        xlabel('{\bf Shaft speed (RPM)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
+        title('{\bf Shaft Speed}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Line, colors and markers
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
+        set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        % %# Axis limitations
+        minX  = min(x2)-300;
+        maxX  = max(x2)+300;
+        %incrX = 100;
+        minY  = round(min(y2))-4;
+        maxY  = round(max(y2))+4;
+        %incrY = 2;
+        set(gca,'XLim',[minX maxX]);
+        %set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        %set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+        
+        %# Legend
+        %hleg1 = legend('Towing Force (F_{D})','Model Data','Self-Propulsion Point (SPP)');
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','SouthWest');
+        set(hleg1,'Interpreter','tex');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
+        %legend boxoff;
+        
+        %# Font sizes and border ----------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# Subplot ////////////////////////////////////////////////////////////
+        subplot(2,2,2)
+        
+        %# X and Y axis -------------------------------------------------------
+        
+        % Tow Force, FD
+        minx1 = 0;
+        maxx1 = 30;
+        
+        x1 = [minx1 maxx1];
+        y1 = [TowForceFD TowForceFD];
+        
+        % Model Data (omit runs at speed 4 due to bad results)
+        if klp == 4
+            x2    = A{klp}(3:6,42);
+            y2    = A{klp}(3:6,10);
+            WJSys = A{klp}(3:6,40);
+        else
+            x2    = A{klp}(:,42);
+            y2    = A{klp}(:,10);
+            WJSys = A{klp}(:,40);
+        end
+        
+        % Model data - Linear fit
+        [fitobject,gof,output] = fit(x2,y2,'poly1');
+        cvalues = coeffvalues(fitobject);
+        cnames  = coeffnames(fitobject);
+        output  = formula(fitobject);
+        
+        % Linear fit using defined points
+        minX = round(min(x2)-4);
+        maxX = round(max(x2)+4);
+        MMA  = minX:maxX;
+        [mi,ni] = size(MMA);
+        LFA  = [];
+        for ki=1:ni
+            LFA(ki,1) = MMA(ki);
+            LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
+        end
+        x4 = LFA(:,1);
+        y4 = LFA(:,2);
+        disp(sprintf('PORT: Speed %s (Gross thrust): Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
+        
+        % Find intersection of linear fit of model data and towing force, FD
+        [xout,yout] = intersections(x1,y1,x4,y4,1);
+        
+        SPP_THRUST_CCDoTT_PORT = xout;
+        
+        % Determine percentage of thrust
+        [mpc,npc] = size(x2);
+        tempArray = [];
+        for kpc=1:mpc
+            tempArray(kpc) = WJSys(kpc)/x2(kpc);
+        end
+        meanWJSys = mean(tempArray);
+        SPP_THRUST_CCDoTT_PORT = meanWJSys*SPP_THRUST_CCDoTT_PORT;
+        
+        x3 = SPP_THRUST_CCDoTT_PORT;
+        y3 = TowForceFD;
+        
+        %# Plotting -----------------------------------------------------------
+        %h1 = plot(fitobject,'-k',x2,y2,'*');
+        h1 = plot(x2,y2,'*',x4,y4,'-');
+        legendInfo{1} = 'Model Data';
+        legendInfo{2} = 'Model Data - Linear fit';
+        hold on;
+        h2 = plot(x1,y1,'*',x3,y3,'x');
+        legendInfo{3} = 'Towing Force (F_{D})';
+        legendInfo{4} = 'Self-Propulsion Point (SPP)';
+        xlabel('{\bf Gross thrust (N)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
+        title('{\bf Grosst Thrust}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Line, colors and markers
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
+        set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        % %# Axis limitations
+        minX  = min(x2)-3;
+        maxX  = max(x2)+3;
+        %incrX = 100;
+        minY  = round(min(y2))-4;
+        maxY  = round(max(y2))+4;
+        %incrY = 2;
+        set(gca,'XLim',[minX maxX]);
+        %set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        %set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+        
+        %# Legend
+        %hleg1 = legend('Towing Force (F_{D})','Model Data','Self-Propulsion Point (SPP)');
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','SouthWest');
+        set(hleg1,'Interpreter','tex');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
+        %legend boxoff;
+        
+        %# Font sizes and border ----------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# Subplot ////////////////////////////////////////////////////////////
+        subplot(2,2,3)
+        
+        %# X and Y axis -------------------------------------------------------
+        
+        % Tow Force, FD
+        minx1 = -2;
+        maxx1 = 2;
+        
+        x1 = [minx1 maxx1];
+        y1 = [TowForceFD TowForceFD];
+        
+        % Model Data (omit runs at speed 4 due to bad results)
+        if klp == 4
+            x2 = A{klp}(3:6,15);
+            y2 = A{klp}(3:6,10);
+        else
+            x2 = A{klp}(:,15);
+            y2 = A{klp}(:,10);
+        end
+        
+        % Model data - Linear fit
+        [fitobject,gof,output] = fit(x2,y2,'poly1');
+        cvalues = coeffvalues(fitobject);
+        cnames  = coeffnames(fitobject);
+        output  = formula(fitobject);
+        
+        % Linear fit using defined points
+        minX = round(min(x2)-2);
+        maxX = round(max(x2)+2);
+        MMA  = minX:maxX;
+        [mi,ni] = size(MMA);
+        LFA  = [];
+        for ki=1:ni
+            LFA(ki,1) = MMA(ki);
+            LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
+        end
+        x4 = LFA(:,1);
+        y4 = LFA(:,2);
+        disp(sprintf('PORT: Speed %s (Torque): Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
+        
+        % Find intersection of linear fit of model data and towing force, FD
+        [xout,yout] = intersections(x1,y1,x4,y4,1);
+        
+        SPP_TORQUE_CCDoTT_PORT = xout;
+        
+        x3 = SPP_TORQUE_CCDoTT_PORT;
+        y3 = TowForceFD;
+        
+        %# Plotting -----------------------------------------------------------
+        %h1 = plot(fitobject,'-k',x2,y2,'*');
+        h1 = plot(x2,y2,'*',x4,y4,'-');
+        legendInfo{1} = 'Model Data';
+        legendInfo{2} = 'Model Data - Linear fit';
+        hold on;
+        h2 = plot(x1,y1,'*',x3,y3,'x');
+        legendInfo{3} = 'Towing Force (F_{D})';
+        legendInfo{4} = 'Self-Propulsion Point (SPP)';
+        xlabel('{\bf Torque (Nm)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
+        title('{\bf Torque}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Line, colors and markers
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
+        set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        % %# Axis limitations
+        minX  = min(x2)-0.1;
+        maxX  = max(x2)+0.1;
+        %incrX = 100;
+        minY  = round(min(y2))-4;
+        maxY  = round(max(y2))+4;
+        %incrY = 2;
+        set(gca,'XLim',[minX maxX]);
+        %set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        %set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+        
+        %# Legend
+        %hleg1 = legend('Towing Force (F_{D})','Model Data','Self-Propulsion Point (SPP)');
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','SouthWest');
+        set(hleg1,'Interpreter','tex');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
+        %legend boxoff;
+        
+        %# Font sizes and border ----------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# Subplot ////////////////////////////////////////////////////////////
+        subplot(2,2,4)
+        
+        %# X and Y axis -------------------------------------------------------
+        
+        % Tow Force, FD
+        minx1 = 0;
+        maxx1 = 6;
+        
+        x1 = [minx1 maxx1];
+        y1 = [TowForceFD TowForceFD];
+        
+        % Model Data (omit runs at speed 4 due to bad results)
+        if klp == 4
+            x2 = A{klp}(3:6,17);
+            y2 = A{klp}(3:6,10);
+        else
+            x2 = A{klp}(:,17);
+            y2 = A{klp}(:,10);
+        end
+        
+        % Model data - Linear fit
+        [fitobject,gof,output] = fit(x2,y2,'poly1');
+        cvalues = coeffvalues(fitobject);
+        cnames  = coeffnames(fitobject);
+        output  = formula(fitobject);
+        
+        % Linear fit using defined points
+        minX = round(min(x2)-2);
+        maxX = round(max(x2)+2);
+        MMA  = minX:maxX;
+        [mi,ni] = size(MMA);
+        LFA  = [];
+        for ki=1:ni
+            LFA(ki,1) = MMA(ki);
+            LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
+        end
+        x4 = LFA(:,1);
+        y4 = LFA(:,2);
+        disp(sprintf('PORT: Speed %s (Torque): Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
+        disp('-------------------------------------------------------------------------');
+        
+        % Find intersection of linear fit of model data and towing force, FD
+        [xout,yout] = intersections(x1,y1,x4,y4,1);
+        
+        SPP_KP_CCDoTT_PORT = xout;
+        
+        x3 = SPP_KP_CCDoTT_PORT;
+        y3 = TowForceFD;
+        
+        %# Plotting -----------------------------------------------------------
+        %h1 = plot(fitobject,'-k',x2,y2,'*');
+        h1 = plot(x2,y2,'*',x4,y4,'-');
+        legendInfo{1} = 'Model Data';
+        legendInfo{2} = 'Model Data - Linear fit';
+        hold on;
+        h2 = plot(x1,y1,'*',x3,y3,'x');
+        legendInfo{3} = 'Towing Force (F_{D})';
+        legendInfo{4} = 'Self-Propulsion Point (SPP)';
+        xlabel('{\bf Kiel probe (V)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
+        title('{\bf Kiel probe}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Line, colors and markers
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
+        set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        % %# Axis limitations
+        minX  = min(x2)-0.2;
+        maxX  = max(x2)+0.2;
+        %incrX = 100;
+        minY  = round(min(y2))-4;
+        maxY  = round(max(y2))+4;
+        %incrY = 2;
+        set(gca,'XLim',[minX maxX]);
+        %set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        %set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+        
+        %# Legend
+        %hleg1 = legend('Towing Force (F_{D})','Model Data','Self-Propulsion Point (SPP)');
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','SouthWest');
+        set(hleg1,'Interpreter','tex');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
+        %legend boxoff;
+        
+        %# Font sizes and border ----------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# ********************************************************************
+        %# Save plot as PNG
+        %# ********************************************************************
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        %if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        %end
+        
+        %# Plot title ---------------------------------------------------------
+        %if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        %end
+        
+        %# Save plots as PDF, PNG and EPS -------------------------------------
+        % Enable renderer for vector graphics output
+        set(gcf, 'renderer', 'painters');
+        setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+        setFileFormat = {'PDF' 'PNG' 'EPS'};
+        for k=1:3
+            plotsavename = sprintf('_plots/%s/%s/SPP_Plot_0_PORT_Speed_No_%s_Linear_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, num2str(klp), setFileFormat{k});
+            print(gcf, setSaveFormat{k}, plotsavename);
+        end
+        close;
+        
+        
+        %# ********************************************************************
+        %# SELF-PROPULSION POINTS (STBD)
+        %# ********************************************************************
+        figurename = sprintf('Plot 0 (STBD): Speed = %s, Fr = %s, Linear Plots for Self-Propulsion Points (SPP)',num2str(klp),sprintf('%.2f',A{klp}(1,5)));
+        f = figure('Name',figurename,'NumberTitle','off');
+        
+        %# Paper size settings ------------------------------------------------
+        
+        %if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        %end
+        
+        % Fonts and colours ---------------------------------------------------
+        setGeneralFontName = 'Helvetica';
+        setGeneralFontSize = 14;
+        setBorderLineWidth = 2;
+        setLegendFontSize  = 12;
+        
+        %# Change default text fonts for plot title
+        set(0,'DefaultTextFontname',setGeneralFontName);
+        set(0,'DefaultTextFontSize',14);
+        
+        %# Box thickness, axes font size, etc. --------------------------------
+        set(gca,'TickDir','in',...
+            'FontSize',12,...
+            'LineWidth',2,...
+            'FontName',setGeneralFontName,...
+            'Clipping','off',...
+            'Color',[1 1 1],...
+            'LooseInset',get(gca,'TightInset'));
+        
+        %# Markes and colors --------------------------------------------------
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+        % Colored curves
+        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+        if enableBlackAndWhitePlot == 1
+            % Black and white curves
+            setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+        end
+        
+        %# Line, colors and markers
+        setMarkerSize       = 12;
+        setMarkerSize2      = 12;
+        setLineWidthMarker  = 2;
+        setLineWidth        = 2;
+        setLineWidth2       = 1;
+        setLineStyle        = '-';
+        setLineStyle2       = '-.';
+        
+        % Towing Force, FD
+        TowForceFD = TG_at_FDArray(klp, 3);
+        
+        %# Subplot ////////////////////////////////////////////////////////////
+        subplot(2,2,1)
+        
+        %# X and Y axis -------------------------------------------------------
+        
+        % Tow Force, FD
+        minx1 = 0;
+        maxx1 = 4000;
+        
+        x1 = [minx1 maxx1];
+        y1 = [TowForceFD TowForceFD];
+        
+        % Model Data (omit runs at speed 4 due to bad results)
+        if klp == 4
+            x2 = A{klp}(3:6,12);
+            y2 = A{klp}(3:6,10);
+        else
+            x2 = A{klp}(:,12);
+            y2 = A{klp}(:,10);
+        end
+        
+        % Model data - Linear fit
+        [fitobject,gof,output] = fit(x2,y2,'poly1');
+        cvalues = coeffvalues(fitobject);
+        cnames  = coeffnames(fitobject);
+        output  = formula(fitobject);
+        
+        % Linear fit using defined points
+        minX = round(min(x2)-300);
+        maxX = round(max(x2)+300);
+        MMA  = minX:maxX;
+        [mi,ni] = size(MMA);
+        LFA  = [];
+        for ki=1:ni
+            LFA(ki,1) = MMA(ki);
+            LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
+        end
+        x4 = LFA(:,1);
+        y4 = LFA(:,2);
+        disp(sprintf('STBD: Speed %s (Shaft speed): Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
+        
+        % Find intersection of linear fit of model data and towing force, FD
+        [xout,yout] = intersections(x1,y1,x4,y4,1);
+        
+        SPP_RPM_CCDoTT_STBD = xout;
+        
+        x3 = SPP_RPM_CCDoTT_STBD;
+        y3 = TowForceFD;
+        
+        %# Plotting -----------------------------------------------------------
+        %h1 = plot(fitobject,'-k',x2,y2,'*');
+        h1 = plot(x2,y2,'*',x4,y4,'-');
+        legendInfo{1} = 'Model Data';
+        legendInfo{2} = 'Model Data - Linear fit';
+        hold on;
+        h2 = plot(x1,y1,'*',x3,y3,'x');
+        legendInfo{3} = 'Towing Force (F_{D})';
+        legendInfo{4} = 'Self-Propulsion Point (SPP)';
+        xlabel('{\bf Shaft speed (RPM)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
+        title('{\bf Shaft Speed}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Line, colors and markers
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
+        set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        % %# Axis limitations
+        minX  = min(x2)-300;
+        maxX  = max(x2)+300;
+        %incrX = 100;
+        minY  = round(min(y2))-4;
+        maxY  = round(max(y2))+4;
+        %incrY = 2;
+        set(gca,'XLim',[minX maxX]);
+        %set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        %set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+        
+        %# Legend
+        %hleg1 = legend('Towing Force (F_{D})','Model Data','Self-Propulsion Point (SPP)');
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','SouthWest');
+        set(hleg1,'Interpreter','tex');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
+        %legend boxoff;
+        
+        %# Font sizes and border ----------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# Subplot ////////////////////////////////////////////////////////////
+        subplot(2,2,2)
+        
+        %# X and Y axis -------------------------------------------------------
+        
+        % Tow Force, FD
+        minx1 = 0;
+        maxx1 = 30;
+        
+        x1 = [minx1 maxx1];
+        y1 = [TowForceFD TowForceFD];
+        
+        % Model Data (omit runs at speed 4 due to bad results)
+        if klp == 4
+            x2    = A{klp}(3:6,42);
+            y2    = A{klp}(3:6,10);
+            WJSys = A{klp}(3:6,41);
+        else
+            x2    = A{klp}(:,42);
+            y2    = A{klp}(:,10);
+            WJSys = A{klp}(:,41);
+        end
+        
+        % Model data - Linear fit
+        [fitobject,gof,output] = fit(x2,y2,'poly1');
+        cvalues = coeffvalues(fitobject);
+        cnames  = coeffnames(fitobject);
+        output  = formula(fitobject);
+        
+        % Linear fit using defined points
+        minX = round(min(x2)-4);
+        maxX = round(max(x2)+4);
+        MMA  = minX:maxX;
+        [mi,ni] = size(MMA);
+        LFA  = [];
+        for ki=1:ni
+            LFA(ki,1) = MMA(ki);
+            LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
+        end
+        x4 = LFA(:,1);
+        y4 = LFA(:,2);
+        disp(sprintf('STBD: Speed %s (Gross thrust): Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
+        
+        % Find intersection of linear fit of model data and towing force, FD
+        [xout,yout] = intersections(x1,y1,x4,y4,1);
+        
+        SPP_THRUST_CCDoTT_STBD = xout;
+        
+        % Determine percentage of thrust
+        [mpc,npc] = size(x2);
+        tempArray = [];
+        for kpc=1:mpc
+            tempArray(kpc) = WJSys(kpc)/x2(kpc);
+        end
+        meanWJSys = mean(tempArray);
+        SPP_THRUST_CCDoTT_STBD = meanWJSys*SPP_THRUST_CCDoTT_STBD;
+        
+        x3 = SPP_THRUST_CCDoTT_STBD;
+        y3 = TowForceFD;
+        
+        %# Plotting -----------------------------------------------------------
+        %h1 = plot(fitobject,'-k',x2,y2,'*');
+        h1 = plot(x2,y2,'*',x4,y4,'-');
+        legendInfo{1} = 'Model Data';
+        legendInfo{2} = 'Model Data - Linear fit';
+        hold on;
+        h2 = plot(x1,y1,'*',x3,y3,'x');
+        legendInfo{3} = 'Towing Force (F_{D})';
+        legendInfo{4} = 'Self-Propulsion Point (SPP)';
+        xlabel('{\bf Gross thrust (N)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
+        title('{\bf Grosst Thrust}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Line, colors and markers
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
+        set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        % %# Axis limitations
+        minX  = min(x2)-3;
+        maxX  = max(x2)+3;
+        %incrX = 100;
+        minY  = round(min(y2))-4;
+        maxY  = round(max(y2))+4;
+        %incrY = 2;
+        set(gca,'XLim',[minX maxX]);
+        %set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        %set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+        
+        %# Legend
+        %hleg1 = legend('Towing Force (F_{D})','Model Data','Self-Propulsion Point (SPP)');
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','SouthWest');
+        set(hleg1,'Interpreter','tex');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
+        %legend boxoff;
+        
+        %# Font sizes and border ----------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# Subplot ////////////////////////////////////////////////////////////
+        subplot(2,2,3)
+        
+        %# X and Y axis -------------------------------------------------------
+        
+        % Tow Force, FD
+        minx1 = -2;
+        maxx1 = 2;
+        
+        x1 = [minx1 maxx1];
+        y1 = [TowForceFD TowForceFD];
+        
+        % Model Data (omit runs at speed 4 due to bad results)
+        if klp == 4
+            x2 = A{klp}(3:6,16);
+            y2 = A{klp}(3:6,10);
+        else
+            x2 = A{klp}(:,16);
+            y2 = A{klp}(:,10);
+        end
+        
+        % Model data - Linear fit
+        [fitobject,gof,output] = fit(x2,y2,'poly1');
+        cvalues = coeffvalues(fitobject);
+        cnames  = coeffnames(fitobject);
+        output  = formula(fitobject);
+        
+        % Linear fit using defined points
+        minX = round(min(x2)-2);
+        maxX = round(max(x2)+2);
+        MMA  = minX:maxX;
+        [mi,ni] = size(MMA);
+        LFA  = [];
+        for ki=1:ni
+            LFA(ki,1) = MMA(ki);
+            LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
+        end
+        x4 = LFA(:,1);
+        y4 = LFA(:,2);
+        disp(sprintf('STBD: Speed %s (Torque): Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
+        
+        % Find intersection of linear fit of model data and towing force, FD
+        [xout,yout] = intersections(x1,y1,x4,y4,1);
+        
+        SPP_TORQUE_CCDoTT_STBD = xout;
+        
+        x3 = SPP_TORQUE_CCDoTT_STBD;
+        y3 = TowForceFD;
+        
+        %# Plotting -----------------------------------------------------------
+        %h1 = plot(fitobject,'-k',x2,y2,'*');
+        h1 = plot(x2,y2,'*',x4,y4,'-');
+        legendInfo{1} = 'Model Data';
+        legendInfo{2} = 'Model Data - Linear fit';
+        hold on;
+        h2 = plot(x1,y1,'*',x3,y3,'x');
+        legendInfo{3} = 'Towing Force (F_{D})';
+        legendInfo{4} = 'Self-Propulsion Point (SPP)';
+        xlabel('{\bf Torque (Nm)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
+        title('{\bf Torque}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Line, colors and markers
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
+        set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        % %# Axis limitations
+        minX  = min(x2)-0.1;
+        maxX  = max(x2)+0.1;
+        %incrX = 100;
+        minY  = round(min(y2))-4;
+        maxY  = round(max(y2))+4;
+        %incrY = 2;
+        set(gca,'XLim',[minX maxX]);
+        %set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        %set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+        
+        %# Legend
+        %hleg1 = legend('Towing Force (F_{D})','Model Data','Self-Propulsion Point (SPP)');
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','SouthWest');
+        set(hleg1,'Interpreter','tex');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
+        %legend boxoff;
+        
+        %# Font sizes and border ----------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# Subplot ////////////////////////////////////////////////////////////
+        subplot(2,2,4)
+        
+        %# X and Y axis -------------------------------------------------------
+        
+        % Tow Force, FD
+        minx1 = 0;
+        maxx1 = 6;
+        
+        x1 = [minx1 maxx1];
+        y1 = [TowForceFD TowForceFD];
+        
+        % Model Data (omit runs at speed 4 due to bad results)
+        if klp == 4
+            x2 = A{klp}(3:6,18);
+            y2 = A{klp}(3:6,10);
+        else
+            x2 = A{klp}(:,18);
+            y2 = A{klp}(:,10);
+        end
+        
+        % Model data - Linear fit
+        [fitobject,gof,output] = fit(x2,y2,'poly1');
+        cvalues = coeffvalues(fitobject);
+        cnames  = coeffnames(fitobject);
+        output  = formula(fitobject);
+        
+        % Linear fit using defined points
+        minX = round(min(x2)-2);
+        maxX = round(max(x2)+2);
+        MMA  = minX:maxX;
+        [mi,ni] = size(MMA);
+        LFA  = [];
+        for ki=1:ni
+            LFA(ki,1) = MMA(ki);
+            LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
+        end
+        x4 = LFA(:,1);
+        y4 = LFA(:,2);
+        disp(sprintf('STBD: Speed %s (Torque): Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
+        disp('-------------------------------------------------------------------------');
+        
+        % Find intersection of linear fit of model data and towing force, FD
+        [xout,yout] = intersections(x1,y1,x4,y4,1);
+        
+        SPP_KP_CCDoTT_STBD = xout;
+        
+        x3 = SPP_KP_CCDoTT_STBD;
+        y3 = TowForceFD;
+        
+        %# Plotting -----------------------------------------------------------
+        %h1 = plot(fitobject,'-k',x2,y2,'*');
+        h1 = plot(x2,y2,'*',x4,y4,'-');
+        legendInfo{1} = 'Model Data';
+        legendInfo{2} = 'Model Data - Linear fit';
+        hold on;
+        h2 = plot(x1,y1,'*',x3,y3,'x');
+        legendInfo{3} = 'Towing Force (F_{D})';
+        legendInfo{4} = 'Self-Propulsion Point (SPP)';
+        xlabel('{\bf Kiel probe (V)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
+        title('{\bf Kiel probe}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Line, colors and markers
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
+        set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        % %# Axis limitations
+        minX  = min(x2)-0.2;
+        maxX  = max(x2)+0.2;
+        %incrX = 100;
+        minY  = round(min(y2))-4;
+        maxY  = round(max(y2))+4;
+        %incrY = 2;
+        set(gca,'XLim',[minX maxX]);
+        %set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        %set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+        
+        %# Legend
+        %hleg1 = legend('Towing Force (F_{D})','Model Data','Self-Propulsion Point (SPP)');
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','SouthWest');
+        set(hleg1,'Interpreter','tex');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
+        %legend boxoff;
+        
+        %# Font sizes and border ----------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# ********************************************************************
+        %# Save plot as PNG
+        %# ********************************************************************
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        %if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        %end
+        
+        %# Plot title ---------------------------------------------------------
+        %if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        %end
+        
+        %# Save plots as PDF, PNG and EPS -------------------------------------
+        % Enable renderer for vector graphics output
+        set(gcf, 'renderer', 'painters');
+        setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+        setFileFormat = {'PDF' 'PNG' 'EPS'};
+        for k=1:3
+            plotsavename = sprintf('_plots/%s/%s/SPP_Plot_0_STBD_Speed_No_%s_Linear_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, num2str(klp), setFileFormat{k});
+            print(gcf, setSaveFormat{k}, plotsavename);
+        end
+        close;
+        
+        
+        %# ********************************************************************
+        %# WRITE RESULTSARRAY (resSPP_CCDoTT)
+        %# ********************************************************************
+        
+        % resSPP_CCDoTT columns:
+        
+        % FROUDE LENGTH NUMBER AND TOWING FORCE, FD
+        %[1]  Froude length number             (-)
+        %[2]  Towing Force, FD                 (N)
+        
+        % PORT WJ SYSTEM
+        %[3]  Shaft speed                      (RPM)
+        %[4]  Gross thrust                     (N)
+        %[5]  Torque                           (Nm)
+        %[6]  Kiel probe                       (V)
+        
+        % STARBOARD WJ SYSTEM
+        %[7]  Shaft speed                      (RPM)
+        %[8]  Gross thrust                     (N)
+        %[9]  Torque                           (Nm)
+        %[10] Kiel probe                       (V)
+        
+        % TOTAL GROSS THRUST
+        %[11] Gross thrust                     (N)
+        
+        % MEAN PORT AND STARBOARD WJ SYSTEM
+        %[12] Shaft speed                      (RPM)
+        %[13] Gross thrust                     (N)
+        %[14] Torque                           (Nm)
+        %[15] Kiel probe                       (V)
+        
+        % AFT AND FWD LVDT, HEAVE AND TRIM
+        %[16] Aft LVDT                         (mm)
+        %[17] Fwd LVDT                         (mm)
+        %[18] Heave                            (mm)
+        %[19] Running trim                     (deg)
+        
+        % FROUDE LENGTH NUMBER AND TOWING FORCE, FD
+        resSPP_CCDoTT(klp,1)  = A{klp}(1,5);
+        resSPP_CCDoTT(klp,2)  = TowForceFD;
+        
+        % PORT WJ SYSTEM
+        resSPP_CCDoTT(klp,3)  = SPP_RPM_CCDoTT_PORT;
+        resSPP_CCDoTT(klp,4)  = SPP_THRUST_CCDoTT_PORT;
+        resSPP_CCDoTT(klp,5)  = SPP_TORQUE_CCDoTT_PORT;
+        resSPP_CCDoTT(klp,6)  = SPP_KP_CCDoTT_PORT;
+        
+        % STARBOARD WJ SYSTEM
+        resSPP_CCDoTT(klp,7)  = SPP_RPM_CCDoTT_STBD;
+        resSPP_CCDoTT(klp,8)  = SPP_THRUST_CCDoTT_STBD;
+        resSPP_CCDoTT(klp,9)  = SPP_TORQUE_CCDoTT_STBD;
+        resSPP_CCDoTT(klp,10) = SPP_KP_CCDoTT_STBD;
+        
+        % TOTAL GROSS THRUST
+        resSPP_CCDoTT(klp,11) = SPP_THRUST_CCDoTT_TOTAL;
+        
+        % MEAN PORT AND STARBOARD WJ SYSTEM
+        resSPP_CCDoTT(klp,12) = mean([SPP_RPM_CCDoTT_PORT SPP_RPM_CCDoTT_STBD]);
+        resSPP_CCDoTT(klp,13) = mean([SPP_THRUST_CCDoTT_PORT SPP_THRUST_CCDoTT_STBD]);
+        resSPP_CCDoTT(klp,14) = mean([SPP_TORQUE_CCDoTT_PORT SPP_TORQUE_CCDoTT_STBD]);
+        resSPP_CCDoTT(klp,15) = mean([SPP_KP_CCDoTT_PORT SPP_KP_CCDoTT_STBD]);
+        
+        % AFT AND FWD LVDT, HEAVE AND TRIM
+        resSPP_CCDoTT(klp,16) = 0;
+        resSPP_CCDoTT(klp,17) = 0;
+        resSPP_CCDoTT(klp,18) = 0;
+        resSPP_CCDoTT(klp,19) = 0;
+        
     end
-    %close;
-   
-    %# Write results to resSPP_CCDoTT -------------------------------------
+
+else
     
-    % resSPP_CCDoTT columns:
-    %[1] Froude length number             (-)
-    %[2] Shaft speed                      (RPM)
-    %[3] Gross thrust                     (N)
-    %[4] Torque                           (Nm)
-    %[5] Kiel probe                       (V)
-    %[6] Heave                            (mm)
-    %[7] Running trim                     (deg)
-    %[8] Towing Force, FD                 (N)
+    %# As we know that resultsArraySPP.dat exits, read it
+    resSPP_CCDoTT = csvread('resSPP_CCDoTT.dat');
     
-    resSPP_CCDoTT(klp,1) = A{klp}(1,5);
-    resSPP_CCDoTT(klp,2) = SPP_RPM_CCDoTT;
-    resSPP_CCDoTT(klp,3) = SPP_THRUST_CCDoTT;
-    resSPP_CCDoTT(klp,4) = SPP_TORQUE_CCDoTT;
-    resSPP_CCDoTT(klp,5) = SPP_KP_CCDoTT;
-    resSPP_CCDoTT(klp,6) = 0;
-    resSPP_CCDoTT(klp,7) = 0;
-    resSPP_CCDoTT(klp,8) = TowForceFD;
+    %# Remove zero rows
+    resSPP_CCDoTT(all(resSPP_CCDoTT==0,2),:)=[];
     
 end
 
-break;
+%# ************************************************************************
+%# START Write results to CVS
+%# ------------------------------------------------------------------------
+M = resSPP_CCDoTT;
+%M = M(any(M,2),:);                                                    % remove zero rows only in resultsArraySPP text file
+csvwrite('resSPP_CCDoTT.dat', M)                                       % Export matrix M to a file delimited by the comma character
+dlmwrite('resSPP_CCDoTT.txt', M, 'delimiter', '\t', 'precision', 4)    % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
+%# ------------------------------------------------------------------------
+%# END Write results to CVS
+%# ************************************************************************
+
+%break;
 %# ************************************************************************
 %# END Linear Plots
 %# ************************************************************************
+
+
+
+
+
+
+
+%# ************************************************************************
+%# OVERWRITES!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
+%# Self-Propulsion Points Based on:
+%#   CCDoTT (2007). "Waterjet Data"
+%# ************************************************************************
+TG_at_FDArray       = [];   % Gross thrust = TG = p Q (vj - vi)
+F_at_TGZero         = [];   % Gross thrust = TG = p Q (vj - vi)
+FR_at_SPP           = [];   % Flow rates at self-propulsion point (SPP)
+thrustDedFracArray  = [];   % Thrust deduction array where TG = p Q (vj - vi)
+shaftSpeedConvArray = [];   % Shaft speed array where TG = p Q (vj - vi)
+resSPP              = [];   % Summary results of self-propulsion points
+for k=1:ma
+    [mb,nb] = size(A{k});
+    
+    % Corrected resistance (RC) at current Froude length number -----------
+    correctedResistance = resistance(k,3);
+    
+    %# TG at FD -----------------------------------------------------------
+    y1       = A{k}(:,45);   % Gross thrust = TG = p Q vj        (N)
+    y2       = A{k}(:,42);   % Gross thrust = TG = p Q (vj - vi) (N)
+    
+    yPortTQ  = A{k}(:,15);   % PORT: Torque                      (N)
+    yStbdTQ  = A{k}(:,16);   % STBD: Torque                      (N)
+    
+    yPortKP  = A{k}(:,17);   % PORT: Kiel Probe                  (V)
+    yStbdKP  = A{k}(:,18);   % STBD: Kiel Probe                  (V)
+    
+    yPortSS  = A{k}(:,11);   % PORT: Shaft speed                 (PRM)
+    yStbdSS  = A{k}(:,12);   % STBD: Shaft speed                 (PRM)
+    
+    x        = A{k}(:,10);   % Bare hull resistance              (N)
+    towForce = A{k}(1,28);   % Towing force, FD                  (N)
+    xq       = 0;            % Intersection of x for TG at zero drag
+    
+    %# --------------------------------------------------------------------
+    %# Gross thrust = TG = p Q (vj - vi)
+    %# --------------------------------------------------------------------
+    polyf               = polyfit(x,y2,1);
+    polyv               = polyval(polyf,x);
+    ThrustAtZeroDrag    = spline(x,polyv,0);
+    ThrustAtSPP         = resSPP_CCDoTT(k,11);
+    TG_at_FDArray(k, 1) = ThrustAtZeroDrag;        % Gross thrust, TG   (x-axis)
+    TG_at_FDArray(k, 2) = 0;                       % Towing force, Drag (y-axis)
+    TG_at_FDArray(k, 3) = resSPP_CCDoTT(k,2);      % Towing force, FD
+    TG_at_FDArray(k, 4) = ThrustAtSPP;             % Thrust at self. propulsion point = TG at zero drag - FD
+    
+    % Towing force at zero gross thrust -----------------------------------
+    TowingForceAtZeroThrust = spline(polyv,x,0);
+    F_at_TGZero(k, 1) = 0;                         % Gross thrust, TG (x-axis)
+    F_at_TGZero(k, 2) = TowingForceAtZeroThrust;   % Towing force     (y-axis)
+    
+    % Thrust deduction fraction (t) ---------------------------------------
+    thrustDedFracArray(k, 1) = Froude_Numbers(k,1);
+    % t=(TM+FD-RC)/TM
+    thrustDedFracArray(k, 2) = (ThrustAtSPP+towForce-correctedResistance)/ThrustAtSPP;
+    % RCW=TG(1-t)+FD ==>> t=1-((RC-FD)/T)
+    thrustDedFracArray(k, 3) = 1-((correctedResistance-towForce)/ThrustAtSPP);
+    % t = ((FD-FatT=0)/TG@SPP)+1
+    thrustDedFracArray(k, 4) = ((towForce-TowingForceAtZeroThrust)/ThrustAtSPP)+1;
+    % t = 1-((FatT=0-FD)/TG@SPP)
+    thrustDedFracArray(k, 5) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);
+    
+    % Shaft speed at SPP --------------------------------------------------
+    %[1] Froude length number             (-)
+    %[2] PORT (MS): Shaft speed at SPP    (RPM)
+    %[3] PORT (MS): Shaft speed at SPP    (RPM)
+    %[4] PORT (FS): Shaft speed at SPP    (RPM)
+    %[5] PORT (FS): Shaft speed at SPP    (RPM)
+    
+    x = A{k}(:,42);     % Gross thrust = TG = p Q (vj - vi)    (N)
+    
+    % Port
+    MSPortShaftSpeed       = resSPP_CCDoTT(k,3);
+    
+    % Stbd
+    MSStbdShaftSpeed       = resSPP_CCDoTT(k,7);
+    
+    % Speed array - MS and FS
+    shaftSpeedConvArray(k, 1) = Froude_Numbers(k,1);
+    shaftSpeedConvArray(k, 2) = MSPortShaftSpeed;
+    shaftSpeedConvArray(k, 3) = MSStbdShaftSpeed;
+    shaftSpeedConvArray(k, 4) = MSPortShaftSpeed/sqrt(FStoMSratio);
+    shaftSpeedConvArray(k, 5) = MSStbdShaftSpeed/sqrt(FStoMSratio);
+    
+    % Flow Rate at SPP ----------------------------------------------------
+    %[1] Froude length number             (-)
+    %[2] PORT (MS): Kiel Probe            (V)
+    %[3] STBD (MS): Kiel Probe            (V)
+    %[4] PORT (MS): Mass flow rate        (RPM)
+    %[5] STBD (MS): Mass flow rate        (RPM)
+    %[6] PORT (MS): Volumetric flow rate  (RPM)
+    %[7] STBD (MS): Volumetric flow rate  (RPM)
+    %[8] PORT (MS): Torque                (Nm)
+    %[9] STBD (MS): Torque                (Nm)
+    
+    x = A{k}(:,42);     % Gross thrust = TG = p Q (vj - vi)    (N)
+    
+    % Port - Kiel Probe
+    PortKPatSPP = resSPP_CCDoTT(k,6);
+    
+    % Port - Torque
+    PortTQatSPP = resSPP_CCDoTT(k,5);
+    
+    % Stbd - Kiel Probe
+    StbdKPatSPP = resSPP_CCDoTT(k,10);
+    
+    % Stbd - Torque
+    StbdTQatSPP = resSPP_CCDoTT(k,9);
+    
+    MSPortMFR = -0.0421*PortKPatSPP^4+0.5718*PortKPatSPP^3-2.9517*PortKPatSPP^2+7.8517*PortKPatSPP-5.1976;
+    MSStbdMFR = -0.0942*StbdKPatSPP^4+1.1216*StbdKPatSPP^3-4.9878*StbdKPatSPP^2+11.0548*StbdKPatSPP-6.8484;
+
+    FR_at_SPP(k,1) = Froude_Numbers(k,1);
+    FR_at_SPP(k,2) = PortKPatSPP;
+    FR_at_SPP(k,3) = StbdKPatSPP;
+    FR_at_SPP(k,4) = MSPortMFR;
+    FR_at_SPP(k,5) = MSStbdMFR;
+    FR_at_SPP(k,6) = MSPortMFR/freshwaterdensity;
+    FR_at_SPP(k,7) = MSStbdMFR/freshwaterdensity;    
+    FR_at_SPP(k,8) = PortTQatSPP;
+    FR_at_SPP(k,9) = StbdTQatSPP;
+    
+end
+
+
+
+
+
 
 
 %# ************************************************************************
@@ -1809,7 +2860,7 @@ if enableAdjustedFitting == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for kl=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_1_MS_Thrust_at_F_0_vs_Slope_of_Linear_Fit_Plot.%s', 'SPP', setFileFormat{kl}, setFileFormat{kl});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_1_MS_Thrust_at_F_0_vs_Slope_of_Linear_Fit_Plot.%s', 'SPP_CCDoTT', setFileFormat{kl}, setFileFormat{kl});
         print(gcf, setSaveFormat{kl}, plotsavename);
     end
     close;
@@ -2107,7 +3158,7 @@ if ma == 9
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_2_MS_Thrust_vs_Towing_Force_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_2_MS_Thrust_vs_Towing_Force_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -2350,7 +3401,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_3_MS_Fr_vs_Thrust_Deduction_Fraction_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_3_MS_Fr_vs_Thrust_Deduction_Fraction_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -2520,7 +3571,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_4_MS_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_4_MS_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -2561,7 +3612,7 @@ for k=1:m
     else
         MSCF = 10^(-9.57459+26.6084*(log10(log10(MSReynoldsNo)))-30.8285*(log10(log10(MSReynoldsNo)))^2+10.8914*(log10(log10(MSReynoldsNo)))^3);
     end
-    MSCR         = MSCT-MSCF;
+    MSCR         = MSCT-(FormFactor*MSCF);
     MSThrustDed  = ThrustDedFracArray(k,4);
     
     % Full scale variables
@@ -2625,12 +3676,16 @@ for k=1:m
     modelScaleDataArray(k,12) = MSRT;
     
     % Full Scale
+    FSRoughnessAllowance = 0.044*((RoughnessOfHullSurface/FSlwl)^(1/3)-10*FSReynoldsNo^(-1/3))+0.000125;
+    FSCorrelelationCoeff = (5.68-0.6*log10(FSReynoldsNo))*10^(-3);
+    FSAirResistanceCoeff = DragCoeff*((airDensity*FSProjectedArea)/(saltwaterdensity*FSwsa));    
     if FSReynoldsNo < 10000000
         FSCF = 10^(2.98651-10.8843*(log10(log10(FSReynoldsNo)))+5.15283*(log10(log10(FSReynoldsNo)))^2);
     else
         FSCF = 10^(-9.57459+26.6084*(log10(log10(FSReynoldsNo)))-30.8285*(log10(log10(FSReynoldsNo)))^2+10.8914*(log10(log10(FSReynoldsNo)))^3);
     end
-    FSCT = FSCF+FSCR;
+    %FSCT = FSCF+FSCR;
+    FSCT = FormFactor*FSCF+FSRoughnessAllowance+FSCorrelelationCoeff+FSCR+FSAirResistanceCoeff;
     FSRT = 0.5*saltwaterdensity*FSSpeed^2*FSwsa*FSCT;
     fullScaleDataArray(k,9)  = FSCF;
     fullScaleDataArray(k,10) = FSCR;
@@ -2646,7 +3701,7 @@ for k=1:m
     % Model Scale
     MSPEW  = MSRT*MSSpeed;
     MSPEkW = MSPEW/1000;
-    MSPEmW= MSPEkW/1000;
+    MSPEmW = MSPEkW/1000;
     modelScaleDataArray(k,13) = MSPEW;
     modelScaleDataArray(k,14) = MSPEkW;
     modelScaleDataArray(k,15) = MSPEmW;
@@ -3289,7 +4344,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_5_FS_Overall_Propulsive_Efficiency_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_5_FS_Overall_Propulsive_Efficiency_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -3476,7 +4531,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_6_FS_Power_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_6_FS_Power_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -3634,7 +4689,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_7_FS_Speed_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_7_FS_Speed_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -3818,7 +4873,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_8_FS_Comparison_PD_to_Sea_Trials_Data_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_8_FS_Comparison_PD_to_Sea_Trials_Data_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -3975,7 +5030,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_9_FS_Comparison_Propulsive_Efficiency_Plot.%s', 'SPP', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_9_FS_Comparison_Propulsive_Efficiency_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
