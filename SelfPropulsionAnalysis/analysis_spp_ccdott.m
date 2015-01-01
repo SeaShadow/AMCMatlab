@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 18, 2014
+%# Date       :  January 1, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -238,6 +238,9 @@ BLPLFactorArray  = [6.672 6.672 6.672 6.672 6.672 6.672 6.672 6.672 6.672];
 
 % Boundary layer: Thickness (m)
 BLThicknessArray = [0.04546 0.04548 0.04519 0.04459 0.04369 0.04248 0.04097 0.03915 0.03702];
+
+% Installation efficiency (typical value)
+InstEff = 1;
 
 % ITTC 1978 Related Values ------------------------------------------------
 
@@ -1186,7 +1189,7 @@ end
 %# START Linear Plots (CCFoTT Self-Propulsion Points)
 %# ************************************************************************
 
-if exist('resSPP_CCDoTT.dat', 'file') == 0
+if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
     resSPP_CCDoTT = [];
     %for klp=1:1
     for klp=1:ma % ma
@@ -1257,7 +1260,7 @@ if exist('resSPP_CCDoTT.dat', 'file') == 0
         
         % Tow Force, FD
         minx1 = 0;
-        maxx1 = 30;
+        maxx1 = 40;
         
         x1 = [minx1 maxx1];
         y1 = [TowForceFD TowForceFD];
@@ -1563,11 +1566,11 @@ if exist('resSPP_CCDoTT.dat', 'file') == 0
         
         % Model Data (omit runs at speed 4 due to bad results)
         if klp == 4
-            x2    = A{klp}(3:6,42);
+            x2    = A{klp}(3:6,40);
             y2    = A{klp}(3:6,10);
             WJSys = A{klp}(3:6,40);
         else
-            x2    = A{klp}(:,42);
+            x2    = A{klp}(:,40);
             y2    = A{klp}(:,10);
             WJSys = A{klp}(:,40);
         end
@@ -1636,14 +1639,14 @@ if exist('resSPP_CCDoTT.dat', 'file') == 0
         set(gcf,'Color',[1,1,1]);
         
         % %# Axis limitations
-        minX  = min(x2)-3;
-        maxX  = max(x2)+3;
-        %incrX = 100;
+        minX  = round(min(x2)-3);
+        maxX  = round(max(x2)+3);
+        incrX = 1;
         minY  = round(min(y2))-4;
         maxY  = round(max(y2))+4;
         %incrY = 2;
         set(gca,'XLim',[minX maxX]);
-        %set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'XTick',minX:incrX:maxX);
         set(gca,'YLim',[minY maxY]);
         %set(gca,'YTick',minY:incrY:maxY);
         %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
@@ -1900,7 +1903,7 @@ if exist('resSPP_CCDoTT.dat', 'file') == 0
             print(gcf, setSaveFormat{k}, plotsavename);
         end
         close;
-        
+       
         
         %# ********************************************************************
         %# SELF-PROPULSION POINTS (STBD)
@@ -2077,11 +2080,11 @@ if exist('resSPP_CCDoTT.dat', 'file') == 0
         
         % Model Data (omit runs at speed 4 due to bad results)
         if klp == 4
-            x2    = A{klp}(3:6,42);
+            x2    = A{klp}(3:6,41);
             y2    = A{klp}(3:6,10);
             WJSys = A{klp}(3:6,41);
         else
-            x2    = A{klp}(:,42);
+            x2    = A{klp}(:,41);
             y2    = A{klp}(:,10);
             WJSys = A{klp}(:,41);
         end
@@ -2150,14 +2153,14 @@ if exist('resSPP_CCDoTT.dat', 'file') == 0
         set(gcf,'Color',[1,1,1]);
         
         % %# Axis limitations
-        minX  = min(x2)-3;
-        maxX  = max(x2)+3;
-        %incrX = 100;
+        minX  = round(min(x2)-3);
+        maxX  = round(max(x2)+3);
+        incrX = 1;
         minY  = round(min(y2))-4;
         maxY  = round(max(y2))+4;
         %incrY = 2;
         set(gca,'XLim',[minX maxX]);
-        %set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'XTick',minX:incrX:maxX);
         set(gca,'YLim',[minY maxY]);
         %set(gca,'YTick',minY:incrY:maxY);
         %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
@@ -2489,7 +2492,7 @@ if exist('resSPP_CCDoTT.dat', 'file') == 0
 else
     
     %# As we know that resultsArraySPP.dat exits, read it
-    resSPP_CCDoTT = csvread('resSPP_CCDoTT.dat');
+    resSPP_CCDoTT = csvread('resultsArraySPP_CCDoTT_SelfPropPointsData.dat');
     
     %# Remove zero rows
     resSPP_CCDoTT(all(resSPP_CCDoTT==0,2),:)=[];
@@ -2500,9 +2503,9 @@ end
 %# START Write results to CVS
 %# ------------------------------------------------------------------------
 M = resSPP_CCDoTT;
-%M = M(any(M,2),:);                                                    % remove zero rows only in resultsArraySPP text file
-csvwrite('resSPP_CCDoTT.dat', M)                                       % Export matrix M to a file delimited by the comma character
-dlmwrite('resSPP_CCDoTT.txt', M, 'delimiter', '\t', 'precision', 4)    % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
+%M = M(any(M,2),:);                                                     % remove zero rows only in resultsArraySPP text file
+csvwrite('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', M)            % Export matrix M to a file delimited by the comma character
+%dlmwrite('resultsArraySPP_CCDoTT_SelfPropPointsData.txt', M, 'delimiter', '\t', 'precision', 4)    % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 %# ------------------------------------------------------------------------
 %# END Write results to CVS
 %# ************************************************************************
@@ -3775,10 +3778,14 @@ for k=1:m
     % [24] STBD: Mass flow rate, pQJ                         (Kg/s)
     
     % Model Scale
-    modelScaleDataArray(k,22) = FR_at_SPP(k,6);
-    modelScaleDataArray(k,23) = FR_at_SPP(k,7);
-    modelScaleDataArray(k,24) = FR_at_SPP(k,4);
-    modelScaleDataArray(k,25) = FR_at_SPP(k,5);
+    MSPortVolFR = FR_at_SPP(k,6);
+    MSStbdVolFR = FR_at_SPP(k,7);
+    MSPortMasFR = FR_at_SPP(k,4);
+    MSStbdMasFR = FR_at_SPP(k,5);
+    modelScaleDataArray(k,22) = MSPortVolFR;
+    modelScaleDataArray(k,23) = MSStbdVolFR;
+    modelScaleDataArray(k,24) = MSPortMasFR;
+    modelScaleDataArray(k,25) = MSStbdMasFR;
     
     % Full Scale
     
@@ -4181,12 +4188,31 @@ for k=1:m
     modelScaleDataArray(k,71) = CorrCoeff;
     fullScaleDataArray(k,71)  = CorrCoeff;
     
-    % 17. Prop. Efficiency using nD=PE/PD or nD=(thrust V)/PPE  -----------
+    % 17. Prop. Efficiency using nD=(thrust V)/PPE ------------------------
     % Added: 02/12/2014
-   
+    
     % nD=(thrust V)/PPE
     modelScaleDataArray(k,72) = ((MSPortGrosThrust+MSStbdGrosThrust)*MSSpeed)/(MSPortPumpEffPower+MSStbdPumpEffPower);
     fullScaleDataArray(k,72)  = ((FSPortGrosThrust+FSStbdGrosThrust)*FSSpeed)/(FSPortPumpEffPower+FSStbdPumpEffPower);
+    
+    % 18. Prop. Efficiency based on Eqn. 10-28 in Bose (2008) -------------
+    % Added: 01/01/2015
+    % See Bose (2008), Eqn. 10-28
+    
+    MSNozzleEff = 1;
+    MSIntakeEff = 1;    
+    
+    FSNozzleEff = 1;
+    FSIntakeEff = 1;
+    
+    modelScaleDataArray(k,73) = (MSPortMasFR*(MSPortJetVel-MSSpeed*(1-MSWakeFraction))*MSSpeed*MSPortPumpEff*InstEff)/(0.5*MSPortMasFR*((MSPortJetVel^2/MSNozzleEff)-MSIntakeEff*MSSpeed^2*(1-MSWakeFraction)^2));
+    fullScaleDataArray(k,73)  = (FSPortMasFR*(FSPortJetVel-FSSpeed*(1-FSWakeFraction))*FSSpeed*FSPortPumpEff*InstEff)/(0.5*FSPortMasFR*((FSPortJetVel^2/FSNozzleEff)-FSIntakeEff*FSSpeed^2*(1-FSWakeFraction)^2));
+    
+    % If installation and nozzle efficiency are assumed as 100% -----------
+    % See Bose (2008), Eqn. 10-29
+    
+    modelScaleDataArray(k,74) = (2*MSPortPumpEff*((MSPortJetVel/MSSpeed)-1))/((MSPortJetVel/MSSpeed)^2-MSIntakeEff);
+    fullScaleDataArray(k,74)  = (2*FSPortPumpEff*((FSPortJetVel/FSSpeed)-1))/((FSPortJetVel/FSSpeed)^2-FSIntakeEff);
     
 end
 
