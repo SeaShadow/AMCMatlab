@@ -50,6 +50,12 @@ enableA4PaperSizePlot   = 0;    % Show plots scale to A4 size
 enableTextOnPlot        = 0;    % Show equation of fit text on plot
 enableAvgPortStbdPlot   = 0;    % Show averaged port and stbd curve
 
+% Show curve fitting
+enableCurveFittingPlot  = 1;    % Show curve fitting  
+
+% Show error plots based on standard deviation
+enableErrorBarPlot      = 0;    % Show error bars based on standard deviations
+
 % Check if Curve Fitting Toolbox is installed
 % See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
 v = ver;
@@ -549,20 +555,20 @@ end
 setMarkerSize      = 10;
 setLineWidth       = 1;
 setLineWidth1      = 2;
-setLineWidthMarker = 2;
+setLineWidthMarker = 1;
 
 setLineStyle       = '-';
 setLineStyle1      = '--';
-setLineStyle2      = '-.';
-setLineStyle3      = ':';
-setLineStyle4      = '--';
+setLineStyle2      = '--';
+setLineStyle3      = '-.';
+setLineStyle4      = '-.';
 
-%# Subplot #1 -------------------------------------------------------------
-subplot(1,1,1);
+%# Subplot ////////////////////////////////////////////////////////////////
+%subplot(1,1,1);
 
 % X and Y values ----------------------------------------------------------
 
-% Port (June 2013)
+% Port WJ system (June 2013)
 xPort13 = June13Port(:,4);
 yPort13 = June13Port(:,3);
 
@@ -570,11 +576,11 @@ yPort13 = June13Port(:,3);
 xStbd13 = June13Stbd(:,4);
 yStbd13 = June13Stbd(:,3);
 
-% Port (Sept. 2014)
+% Port WJ system (Sept. 2014)
 xPort14 = AvgPortArray(:,7);
 yPort14 = AvgPortArray(:,5);
 
-% Stbd (Sept. 2014)
+% Stbd WJ system (Sept. 2014)
 xStbd14 = AvgStbdArray(:,6);
 yStbd14 = AvgStbdArray(:,5);
 
@@ -605,7 +611,7 @@ end
 
 setPolyOrder = 4;
 
-% Port (June 2013)
+% Port WJ system (June 2013)
 x = xPort13;
 y = yPort13;
 
@@ -647,7 +653,7 @@ else
     Rsq2 = 1 - SSE/SST;         % Percent of error explained
 end
 
-% Port (Sept. 2014)
+% Port WJ system (Sept. 2014)
 x = xPort14;
 y = yPort14;
 
@@ -668,7 +674,7 @@ else
     Rsq3 = 1 - SSE/SST;         % Percent of error explained
 end
 
-% Stbd (Sept. 2014)
+% Stbd WJ system (Sept. 2014)
 x = xStbd14;
 y = yStbd14;
 
@@ -725,7 +731,7 @@ if enableCurveFittingToolboxPlot == 1
     setDec4 = '+%0.4f';
     setDec5 = '+%0.4f';
     
-    % Port (June 2013)
+    % Port WJ system (June 2013)
     cval = cvalues1;
     gofa = gof1;
     setDecimals1 = '%0.4f';
@@ -753,8 +759,8 @@ if enableCurveFittingToolboxPlot == 1
     p3   = sprintf(setDecimals3,cval(3));
     p4   = sprintf(setDecimals4,cval(4));
     p5   = sprintf(setDecimals5,cval(5));
-    gofa = sprintf('%0.3f',gofa.rsquare);
-    EoFEqn = sprintf('Port (June 2013): %sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
+    gofa = sprintf('%0.2f',gofa.rsquare);
+    EoFEqn = sprintf('Port WJ system (June 2013): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
     disp(EoFEqn);
     
     % Stbd (June 2013)
@@ -785,11 +791,11 @@ if enableCurveFittingToolboxPlot == 1
     p3   = sprintf(setDecimals3,cval(3));
     p4   = sprintf(setDecimals4,cval(4));
     p5   = sprintf(setDecimals5,cval(5));
-    gofa = sprintf('%0.3f',gofa.rsquare);
-    EoFEqn = sprintf('Stbd (June 2013): %sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
+    gofa = sprintf('%0.2f',gofa.rsquare);
+    EoFEqn = sprintf('Stbd WJ system (June 2013): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
     disp(EoFEqn);
     
-    % Port (Sept. 2014)
+    % Port WJ system (Sept. 2014)
     cval = cvalues3;
     gofa = gof3;
     setDecimals1 = '%0.4f';
@@ -817,11 +823,11 @@ if enableCurveFittingToolboxPlot == 1
     p3   = sprintf(setDecimals3,cval(3));
     p4   = sprintf(setDecimals4,cval(4));
     p5   = sprintf(setDecimals5,cval(5));
-    gofa = sprintf('%0.3f',gofa.rsquare);
-    EoFEqn = sprintf('Port (Sept. 2014): %sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
+    gofa = sprintf('%0.2f',gofa.rsquare);
+    EoFEqn = sprintf('Port WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
     disp(EoFEqn);
     
-    % Stbd (Sept. 2014)
+    % Stbd WJ system (Sept. 2014)
     cval = cvalues4;
     gofa = gof4;
     setDecimals1 = '%0.4f';
@@ -849,8 +855,8 @@ if enableCurveFittingToolboxPlot == 1
     p3   = sprintf(setDecimals3,cval(3));
     p4   = sprintf(setDecimals4,cval(4));
     p5   = sprintf(setDecimals5,cval(5));
-    gofa = sprintf('%0.3f',gofa.rsquare);
-    EoFEqn = sprintf('Stbd (Sept. 2014): %sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
+    gofa = sprintf('%0.2f',gofa.rsquare);
+    EoFEqn = sprintf('Stbd WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
     disp(EoFEqn);
     
     % Port and Stbd averaged (Sept. 2014)
@@ -882,15 +888,15 @@ if enableCurveFittingToolboxPlot == 1
         p3   = sprintf(setDecimals3,cval(3));
         p4   = sprintf(setDecimals4,cval(4));
         p5   = sprintf(setDecimals5,cval(5));
-        gofa = sprintf('%0.3f',gofa.rsquare);
-        EoFEqn = sprintf('Avg. Port/Stbd (Sept. 2014): %sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
+        gofa = sprintf('%0.2f',gofa.rsquare);
+        EoFEqn = sprintf('Avg. Port/Stbd WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
         disp(EoFEqn);
     end
 else
-    setPostDecimals = '+%0.4f';
-    setNeutDecimals = '%0.4f';
+    setPostDecimals = '+%0.2f';
+    setNeutDecimals = '%0.2f';
     
-    % Port (June 2013)
+    % Port WJ system (June 2013)
     fitEqn = pfPort13;
     if fitEqn(1) > 0
         var1 = sprintf(setPostDecimals,fitEqn(1));
@@ -918,8 +924,8 @@ else
         var5 = sprintf(setNeutDecimals,fitEqn(5));
     end
     % Equation of fit (poly4)
-    rSquared = sprintf('%0.3f',Rsq1);
-    EQoFit1  = sprintf('Port (June 2013): %sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+    rSquared = sprintf('%0.2f',Rsq1);
+    EQoFit1  = sprintf('Port WJ system (June 2013): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
     disp(EQoFit1);
     
     % Stbd (June 2013)
@@ -950,11 +956,11 @@ else
         var5 = sprintf(setNeutDecimals,fitEqn(5));
     end
     % Equation of fit (poly4)
-    rSquared = sprintf('%0.3f',Rsq2);
-    EQoFit2  = sprintf('Stbd (June 2013): %sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+    rSquared = sprintf('%0.2f',Rsq2);
+    EQoFit2  = sprintf('Stbd WJ system (June 2013): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
     disp(EQoFit2);
     
-    % Port (Sept. 2014)
+    % Port WJ system (Sept. 2014)
     fitEqn = pfPort14;
     if fitEqn(1) > 0
         var1 = sprintf(setPostDecimals,fitEqn(1));
@@ -982,11 +988,11 @@ else
         var5 = sprintf(setNeutDecimals,fitEqn(5));
     end
     % Equation of fit (poly4)
-    rSquared = sprintf('%0.3f',Rsq3);
-    EQoFit3  = sprintf('Port (Sept. 2014): %sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+    rSquared = sprintf('%0.2f',Rsq3);
+    EQoFit3  = sprintf('Port WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
     disp(EQoFit3);
     
-    % Stbd (Sept. 2014)
+    % Stbd WJ system (Sept. 2014)
     fitEqn = pfStbd14;
     if fitEqn(1) > 0
         var1 = sprintf(setPostDecimals,fitEqn(1));
@@ -1014,8 +1020,8 @@ else
         var5 = sprintf(setNeutDecimals,fitEqn(5));
     end
     % Equation of fit (poly4)
-    rSquared = sprintf('%0.3f',Rsq4);
-    EQoFit4  = sprintf('Stbd (Sept. 2014): %sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+    rSquared = sprintf('%0.2f',Rsq4);
+    EQoFit4  = sprintf('Stbd WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
     disp(EQoFit4);
     
     % Port and Stbd averaged (Sept. 2014)
@@ -1047,59 +1053,60 @@ else
             var5 = sprintf(setNeutDecimals,fitEqn(5));
         end
         % Equation of fit (poly4)
-        rSquared = sprintf('%0.3f',Rsq5);
-        EQoFit5  = sprintf('Avg. Port/Stbd (Sept. 2014): %sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+        rSquared = sprintf('%0.2f',Rsq5);
+        EQoFit5  = sprintf('Avg. Port/Stbd WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
         disp(EQoFit5);
     end
 end
 
 % Plotting ----------------------------------------------------------------
 if enableCurveFittingToolboxPlot == 1
-    % Port (June 2013)
+    
+    % Port WJ system (June 2013)
     h = plot(xPort13,yPort13,'*');
-    legendInfo{1} = 'Port (June 2013)';
+    legendInfo{1} = 'Port WJ system (June 2013)';
     set(h(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     hold on;
     % Fit
     h = plot(fitobject1,'-.');
-    legendInfo{2} = 'Port (June 2013) Fit';
+    legendInfo{2} = 'Port WJ system (June 2013) Fit';
     set(h(1),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
     hold on;
     
     % Stbd (June 2013)
     h = plot(xStbd13,yStbd13,'*');
-    legendInfo{3} = 'Stbd (June 2013)';
-    set(h(1),'Color',setColor{5},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    legendInfo{3} = 'Stbd WJ system (June 2013)';
+    set(h(1),'Color',setColor{5},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     hold on;
     % Fit
     h = plot(fitobject2,'-.');
-    legendInfo{4} = 'Stbd (June 2013) Fit';
+    legendInfo{4} = 'Stbd WJ system (June 2013) Fit';
     set(h(1),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
     hold on;
     
-    % Port (Sept. 2014)
+    % Port WJ system (Sept. 2014)
     h = plot(xPort14,yPort14,'*');
-    legendInfo{5} = 'Port (Sept. 2014)';
+    legendInfo{5} = 'Port WJ system (Sept. 2014)';
     set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     hold on;
     % Fit
     h = plot(fitobject3,'-.');
-    legendInfo{6} = 'Port (Sept. 2014) Fit';
+    legendInfo{6} = 'Port WJ system (Sept. 2014) Fit';
     set(h(1),'Color',setColor{10},'LineStyle',setLineStyle3,'linewidth',setLineWidth);
     hold on;
     
-    % Stbd (Sept. 2014)
+    % Stbd WJ system (Sept. 2014)
     h = plot(xStbd14,yStbd14,'*');
-    legendInfo{7} = 'Stbd (Sept. 2014)';
+    legendInfo{7} = 'Stbd WJ system (Sept. 2014)';
     set(h(1),'Color',setColor{3},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     hold on;
     % Fit
     h = plot(fitobject4,'-.');
-    legendInfo{8} = 'Stbd (Sept. 2014) Fit';
+    legendInfo{8} = 'Stbd WJ system (Sept. 2014) Fit';
     set(h(1),'Color',setColor{10},'LineStyle',setLineStyle4,'linewidth',setLineWidth);
     hold on;
     
-    % Averaged Port and Stbd (Sept. 2014)
+    % Averaged Port and Stbd WJ system (Sept. 2014)
     if enableAvgPortStbdPlot == 1
         h = plot(xPortStbdAvg14,yPortStbdAvg14,'*');
         legendInfo{9} = 'Averaged (Sept. 2014)';
@@ -1109,92 +1116,128 @@ if enableCurveFittingToolboxPlot == 1
         h = plot(fitobject5,'-');
         legendInfo{10} = 'Averaged (Sept. 2014) Fit';
         set(h(1),'Color',setColor{6},'LineStyle','--','LineWidth',setLineWidth);
-    end
+    end % enableAvgPortStbdPlot
     
-    % Error Bars: Port (Sept. 2014)
-    hold on;
-    delta = repeatedRunsDescStatArray(:,5);
-    h1    = errorbar(xPort14,yPort14,delta,'k');
-    set(h1,'marker','+');
-    set(h1,'linestyle','none');
-    hold on;
+    % Error bars
+    if enableErrorBarPlot == 1
+        % Error Bars: Port WJ system (Sept. 2014)
+        hold on;
+        delta = repeatedRunsDescStatArray(:,5);
+        h1    = errorbar(xPort14,yPort14,delta,'k');
+        set(h1,'marker','+');
+        set(h1,'linestyle','none');
+        hold on;
+        
+        % Error Stbd: Port WJ system (Sept. 2014)
+        hold on;
+        delta = repeatedRunsDescStatArray(:,20);
+        h1    = errorbar(xStbd14,yStbd14,delta,'k');
+        set(h1,'marker','+');
+        set(h1,'linestyle','none');
+    end % enableErrorBarPlot
     
-    % Error Stbd: Port (Sept. 2014)
-    hold on;
-    delta = repeatedRunsDescStatArray(:,20);
-    h1    = errorbar(xStbd14,yStbd14,delta,'k');
-    set(h1,'marker','+');
-    set(h1,'linestyle','none');
 else
-    % Port (June 2013)
+    
+    % Port WJ system (June 2013)
     h = plot(xPort13,yPort13,'*');
-    legendInfo{1} = 'Port (June 2013)';
+    legendInfo{1} = 'Port WJ system (June 2013)';
     set(h(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     hold on;
     % Fit
-    h = plot(xPort13,pvPort13,'-.');
-    legendInfo{2} = 'Port (June 2013) Fit';
-    set(h(1),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-    hold on;
+    if enableCurveFittingPlot == 1
+        h = plot(xPort13,pvPort13,'-.');
+        legendInfo{2} = 'Port WJ system (June 2013) Fit';
+        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        hold on;
+    end % enableCurveFittingPlot
     
     % Stbd (June 2013)
     h = plot(xStbd13,yStbd13,'*');
-    legendInfo{3} = 'Stbd (June 2013)';
-    set(h(1),'Color',setColor{5},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    if enableCurveFittingPlot == 1
+        legendInfo{3} = 'Stbd WJ system (June 2013)';
+    else
+        legendInfo{2} = 'Stbd WJ system (June 2013)';
+    end
+    set(h(1),'Color',setColor{5},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     hold on;
     % Fit
-    h = plot(xStbd13,pvStbd13,'-.');
-    legendInfo{4} = 'Stbd (June 2013) Fit';
-    set(h(1),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
-    hold on;
+    if enableCurveFittingPlot == 1
+        h = plot(xStbd13,pvStbd13,'-.');
+        legendInfo{4} = 'Stbd WJ system (June 2013) Fit';
+        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        hold on;
+    end % enableCurveFittingPlot
     
-    % Port (Sept. 2014)
+    % Port WJ system (Sept. 2014)
     h = plot(xPort14,yPort14,'*');
-    legendInfo{5} = 'Port (Sept. 2014)';
+    if enableCurveFittingPlot == 1
+        legendInfo{5} = 'Port WJ system (Sept. 2014)';
+    else
+        legendInfo{3} = 'Port WJ system (Sept. 2014)';
+    end
     set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     % Fit
-    hold on;
-    h = plot(xPort14,pvPort14,'-.');
-    legendInfo{6} = 'Port (Sept. 2014) Fit';
-    set(h(1),'Color',setColor{10},'LineStyle',setLineStyle3,'linewidth',setLineWidth);
+    if enableCurveFittingPlot == 1
+        hold on;
+        h = plot(xPort14,pvPort14,'-.');
+        legendInfo{6} = 'Port WJ system (Sept. 2014) Fit';
+        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle3,'linewidth',setLineWidth);
+    end % enableCurveFittingPlot
     
-    % Stbd (Sept. 2014)
+    % Stbd WJ system (Sept. 2014)
     h = plot(xStbd14,yStbd14,'*');
-    legendInfo{7} = 'Stbd (Sept. 2014)';
+    if enableCurveFittingPlot == 1
+        legendInfo{7} = 'Stbd WJ system (Sept. 2014)';
+    else
+        legendInfo{4} = 'Stbd WJ system (Sept. 2014)';
+    end
     set(h(1),'Color',setColor{3},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     % Fit
     hold on;
-    h = plot(xStbd14,pvStbd14,'-.');
-    legendInfo{8} = 'Stbd (Sept. 2014) Fit';
-    set(h(1),'Color',setColor{10},'LineStyle',setLineStyle4,'linewidth',setLineWidth);
+    if enableCurveFittingPlot == 1
+        h = plot(xStbd14,pvStbd14,'-.');
+        legendInfo{8} = 'Stbd WJ system (Sept. 2014) Fit';
+        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle4,'linewidth',setLineWidth);
+    end % enableCurveFittingPlot
     
-    % Averaged Port and Stbd (Sept. 2014)
+    % Averaged Port and Stbd WJ system (Sept. 2014)
     if enableAvgPortStbdPlot == 1
         h = plot(xPortStbdAvg14,yPortStbdAvg14,'*');
-        legendInfo{9} = 'Averaged (Sept. 2014)';
+        if enableCurveFittingPlot == 1
+            legendInfo{9} = 'Averaged (Sept. 2014)';
+        else
+            legendInfo{5} = 'Averaged (Sept. 2014)';
+        end
         set(h(1),'Color',setColor{6},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         % Fit
+        if enableCurveFittingPlot == 1
+            hold on;
+            h = plot(xPortStbdAvg14,pvPortStbd14,'-.');
+            legendInfo{10} = 'Averaged (Sept. 2014) Fit';
+            set(h(1),'Color',setColor{6},'LineStyle','--','LineWidth',setLineWidth);
+        end
+    end % enableAvgPortStbdPlot
+    
+    % Error bars
+    if enableErrorBarPlot == 1
+        % Error Bars: Port WJ system (Sept. 2014)
         hold on;
-        h = plot(xPortStbdAvg14,pvPortStbd14,'-.');
-        legendInfo{10} = 'Averaged (Sept. 2014) Fit';
-        set(h(1),'Color',setColor{6},'LineStyle','--','LineWidth',setLineWidth);
-    end
+        delta = repeatedRunsDescStatArray(:,5);
+        h1    = errorbar(xPort14,yPort14,delta,'k');
+        set(h1,'marker','+');
+        set(h1,'linestyle','none');
+        hold on;
+        
+        % Error Bars: Stbd WJ system (Sept. 2014)
+        hold on;
+        delta = repeatedRunsDescStatArray(:,20);
+        h1    = errorbar(xStbd14,yStbd14,delta,'k');
+        set(h1,'marker','+');
+        set(h1,'linestyle','none');
+    end % enableErrorBarPlot
     
-    % Error Bars: Port (Sept. 2014)
-    hold on;
-    delta = repeatedRunsDescStatArray(:,5);
-    h1    = errorbar(xPort14,yPort14,delta,'k');
-    set(h1,'marker','+');
-    set(h1,'linestyle','none');
-    hold on;
-    
-    % Error Bars: Stbd (Sept. 2014)
-    hold on;
-    delta = repeatedRunsDescStatArray(:,20);
-    h1    = errorbar(xStbd14,yStbd14,delta,'k');
-    set(h1,'marker','+');
-    set(h1,'linestyle','none');
 end % enableCurveFittingToolboxPlot
+
 if enablePlotTitle == 1
     title('{\bf Kiel Probe Output vs. Mass Flow Rate}','FontSize',setGeneralFontSize);
 end
@@ -1237,7 +1280,7 @@ set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 
 %# Legend -----------------------------------------------------------------
 
-%hleg1 = legend('Port (June 2013)','Fit','Starboard (June 2013)','Fit','Port (Sept. 2014)','Fit','Starboard (Sept. 2014)','Fit');
+%hleg1 = legend('Port WJ system (June 2013)','Fit','Starboard (June 2013)','Fit','Port WJ system (Sept. 2014)','Fit','Starboard (Sept. 2014)','Fit');
 % if enableCurveFittingToolboxPlot == 1
 %     hleg1 = legend(legendInfo);
 %     legendLoc = 'SouthEast';

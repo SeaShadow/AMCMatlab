@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 20, 2014
+%# Date       :  January 2, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -45,8 +45,8 @@ delete(allPlots);   % Close all plots
 % -------------------------------------------------------------------------
 
 % Plot titles, colours, etc.
-enablePlotMainTitle         = 1;    % Show plot title in saved file
-enablePlotTitle             = 1;    % Show plot title above plot
+enablePlotMainTitle         = 0;    % Show plot title in saved file
+enablePlotTitle             = 0;    % Show plot title above plot
 enableBlackAndWhitePlot     = 0;    % Show plot in black and white only
 
 % Scaled to A4 paper
@@ -119,8 +119,8 @@ cutSamplesFromEnd = 8000;
 startRun = 1;       % Start at run x
 endRun   = 67;      % Stop at run y
 
-startRun = 8;       % Start at run x
-endRun   = 8;       % Stop at run y
+startRun = 27;       % Start at run x
+endRun   = 27;       % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END File loop for runs, startRun to endRun
@@ -533,13 +533,15 @@ for k=startRun:endRun
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
     
     %# Legend
-    hleg1 = legend('Wave probe output','Trendline');
-    set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
-    %set(hleg1, 'Interpreter','tex');
-    set(hleg1,'LineWidth',1);
-    set(hleg1,'FontSize',setLegendFontSize);
-    %legend boxoff;
+%     %legendInfo{1} = 'Model Data';
+%     hleg1 = legend(h([1]),'Wave probe output');
+%     %hleg1 = legend('Wave probe output','Linear fit');
+%     set(hleg1,'Location','NorthWest');
+%     set(hleg1,'Interpreter','none');
+%     %set(hleg1, 'Interpreter','tex');
+%     set(hleg1,'LineWidth',1);
+%     set(hleg1,'FontSize',setLegendFontSize);
+%     %legend boxoff;
     
     %# Font sizes and border --------------------------------------------------
     
@@ -575,7 +577,7 @@ for k=startRun:endRun
         title('{\bf Kiel probe}','FontSize',setGeneralFontSize);
     end
     xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Kiel probe [V]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Kiel probe output [V]}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -613,19 +615,22 @@ for k=startRun:endRun
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
     
     %# Legend
-    if ismember(k,PortRunArray)
-        hleg1 = legend('PORT: Kiel probe output','PORT: Trendline');
-    elseif ismember(k,StbdRunArray)
-        hleg1 = legend('STBD: Kiel probe output','STBD: Trendline');
-    else
-        hleg1 = legend('STBD: Kiel probe output','STBD: Trendline','PORT: Kiel probe output','PORT: Trendline');
-    end    
-    set(hleg1,'Location','NorthEast');
-    set(hleg1,'Interpreter','none');
-    %set(hleg1, 'Interpreter','tex');
-    set(hleg1,'LineWidth',1);
-    set(hleg1,'FontSize',setLegendFontSize);
-    %legend boxoff;
+%     if ismember(k,PortRunArray)
+%         %hleg1 = legend('PORT: Kiel probe','PORT: Linear fit');
+%         leg1 = legend(h([1]),'Kiel probe');
+%     elseif ismember(k,StbdRunArray)
+%         %hleg1 = legend('STBD: Kiel probe','STBD: Linear fit');
+%         leg1 = legend(h([1]),'Kiel probe');
+%     else
+%         %hleg1 = legend('STBD: Kiel probe','STBD: Linear fit','PORT: Kiel probe output','PORT: Linear fit');
+%         leg1 = legend(h([1,2]),'Kiel probe (Port)','Kiel probe (Starboard)');
+%     end    
+%     set(hleg1,'Location','NorthWest');
+%     set(hleg1,'Interpreter','none');
+%     %set(hleg1, 'Interpreter','tex');
+%     set(hleg1,'LineWidth',1);
+%     set(hleg1,'FontSize',setLegendFontSize);
+%     %legend boxoff;
     
     %# Font sizes and border --------------------------------------------------
     

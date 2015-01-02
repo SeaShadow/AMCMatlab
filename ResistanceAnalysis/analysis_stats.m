@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 1, 2015
+%# Date       :  January 2, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -141,9 +141,9 @@ enableBlackAndWhitePlot = 1;    % Show plot in black and white only
 enableA4PaperSizePlot   = 0;    % Show plots scale to A4 size
 
 % Individual plots
-enableTurbStimPlot      = 1; % Turbulence stimulator investigation
-enableTrimTabPlot       = 1; % Trim tab investigation
-enableResistancePlot    = 0; % Resistance plots, Ctm, power, heave and trim
+enableTurbStimPlot      = 0; % Turbulence stimulator investigation
+enableTrimTabPlot       = 0; % Trim tab investigation
+enableResistancePlot    = 1; % Resistance plots, Ctm, power, heave and trim
 enableProhaskaPlot      = 0; % Prohaska plot, form factor at deep transom
 enableErrorPlot         = 0; % Error plots (% of max-avg to magnitude)
 enableMeanStdPlot       = 0; % Show Fr vs. mean of standard deviation
@@ -2950,7 +2950,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
         p1 = sprintf(setDecimals1,cvalues(1));
         p2 = sprintf(setDecimals2,cvalues(2));
         
-        slopeTextITTC = sprintf('\\bfITTC 1957: y = %s*x%s, R^{2}=%s',p1,p2,sprintf('%.3f',gof.rsquare));
+        slopeTextITTC = sprintf('\\bf ITTC 1957: \\rm y = %s*x%s, R^{2}=%s',p1,p2,sprintf('%.3f',gof.rsquare));
     else
         polyf1 = polyfit(x1,y1,1);
         polyv1 = polyval(polyf1,x1);
@@ -2973,7 +2973,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
             chooseSign = '-';
             interceptITTC = abs(interceptITTC);
         end
-        slopeTextITTC = sprintf('\\bfITTC 1957: y = %s*x%s%s, R^{2}=%s', sprintf('%.3f',slopeITTC), chooseSign, sprintf('%.3f',interceptITTC),sprintf('%.3f',rsq));
+        slopeTextITTC = sprintf('\\bf ITTC 1957: \\rm y = %s*x%s%s, R^{2}=%s', sprintf('%.3f',slopeITTC), chooseSign, sprintf('%.3f',interceptITTC),sprintf('%.3f',rsq));
     end
 
     %# Use CC1(1,2)
@@ -3007,7 +3007,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
         p1 = sprintf(setDecimals1,cvalues(1));
         p2 = sprintf(setDecimals2,cvalues(2));
         
-        slopeTextGrigson = sprintf('\\bfGrigson: y = %s*x%s, R^{2}=%s',p1,p2,sprintf('%.3f',gof.rsquare));
+        slopeTextGrigson = sprintf('\\bf Grigson: \\rm y = %s*x%s, R^{2}=%s',p1,p2,sprintf('%.3f',gof.rsquare));
     else
         polyf2 = polyfit(x2,y2,1);
         polyv2 = polyval(polyf2,x2);
@@ -3030,7 +3030,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
             chooseSign = '-';
             interceptGrigson = abs(interceptGrigson);
         end
-        slopeTextGrigson = sprintf('\\bfGrigson: y = %s*x%s%s, R^{2}=%s', sprintf('%.3f',slopeGrigson), chooseSign, sprintf('%.3f',interceptGrigson),sprintf('%.3f',rsq));
+        slopeTextGrigson = sprintf('\\bf Grigson: \\rm y = %s*x%s%s, R^{2}=%s', sprintf('%.3f',slopeGrigson), chooseSign, sprintf('%.3f',interceptGrigson),sprintf('%.3f',rsq));
     end
     
     %# Use CC2(1,2)
