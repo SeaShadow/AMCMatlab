@@ -1,22 +1,22 @@
 %# ------------------------------------------------------------------------
 %# function [resistance] = calBHResistanceBasedOnFr( input )
 %# ------------------------------------------------------------------------
-%# 
+%#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 15, 2014
-%# 
+%# Date       :  January 5, 2015
+%#
 %# Function   :  Resistance curve based on Froude Numbers (Fr)
-%# 
+%#
 %# Description:  Calculate resistance curve based on curve fit from
 %#               resistance test data using Froude Numer as input values.
-%# 
+%#
 %# Parameters :  rawData    = Raw measurement data
 %#
 %# Return     :  resistance  = (array)   Resistance curve
-%# 
-%# Examples of Usage: 
-%# 
-%#    >> rawData     = [ 5 6 7 8 9 10 11 12 13 14 ]; 
+%#
+%# Examples of Usage:
+%#
+%#    >> rawData     = [ 5 6 7 8 9 10 11 12 13 14 ];
 %#    >> [ans1]      = calBHResistanceBasedOnFr(Froude_Numbers)
 %#    ans1           = (array)
 %#
@@ -82,8 +82,8 @@ output  = formula(fitobject);
 [m,n] = size(Froude_Numbers);
 
 %# Results array columns:
-    %[1]  Froude length number (-)
-    %[2]  Resistance           (N)
+%[1]  Froude length number (-)
+%[2]  Resistance           (N)
 
 %# Results array ----------------------------------------------------------
 
@@ -93,7 +93,12 @@ for k=1:m
     ResultsArray(k,1) = FN;
     
     % Calculate resistance based on Equation of Fit of BH resistance data
-    P1 = cvalues(1); P2 = cvalues(2); P3 = cvalues(3); P4 = cvalues(4); P5 = cvalues(5); P6 = cvalues(6);
+    P1 = cvalues(1);
+    P2 = cvalues(2);
+    P3 = cvalues(3);
+    P4 = cvalues(4);
+    P5 = cvalues(5);
+    P6 = cvalues(6);
     ResistanceByFit = P1*FN^5+P2*FN^4+P3*FN^3+P4*FN^2+P5*FN+P6;
     
     %ResultsArray(k,2) = -7932.12*FN^5+13710.12*FN^4-9049.96*FN^3+2989.46*FN^2-386.61*FN+18.6;

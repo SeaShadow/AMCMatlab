@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 1, 2015
+%# Date       :  January 6, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -192,7 +192,7 @@ FSdraft         = MSdraft*FStoMSratio;           % Full scale draft             
 %# END CONSTANTS AND PARTICULARS
 %# ************************************************************************
 
-% Form factors and correlaction coefficient
+% Form factor (by slow speed Prohaska runs)
 FormFactor = 1.18;                            % Form factor (1+k)
 
 % Correlation coefficients: No Ca (AMC), typical Ca (Bose 2008) and MARIN Ca
@@ -245,9 +245,9 @@ InstEff = 1;
 % ITTC 1978 Related Values ------------------------------------------------
 
 % Drag coefficient
-% See: Oura, T. & Ikeda, Y. 2007, 'Maneuverability Of A Wavepiercing High-Speed 
-%      Catamaran At Low Speed In Strong Wind', Proceedings of the The 
-%      2nd International Conference on Marine Research and Transportation 
+% See: Oura, T. & Ikeda, Y. 2007, 'Maneuverability Of A Wavepiercing High-Speed
+%      Catamaran At Low Speed In Strong Wind', Proceedings of the The
+%      2nd International Conference on Marine Research and Transportation
 %      28/6/2007, Ischia, Naples, Italy.
 DragCoeff = 0.446;
 
@@ -1070,7 +1070,7 @@ for k=1:ma
     polyfStbdTQ = polyfit(x,yStbdTQ,1);
     polyvStbdTQ = polyval(polyfStbdTQ,x);
     StbdTQatSPP = spline(x,polyvStbdTQ,ThrustAtSPP);
-
+    
     MSPortMFR = -0.0421*PortKPatSPP^4+0.5718*PortKPatSPP^3-2.9517*PortKPatSPP^2+7.8517*PortKPatSPP-5.1976;
     MSStbdMFR = -0.0942*StbdKPatSPP^4+1.1216*StbdKPatSPP^3-4.9878*StbdKPatSPP^2+11.0548*StbdKPatSPP-6.8484;
     
@@ -1080,15 +1080,15 @@ for k=1:ma
     FR_at_SPP(k,4) = MSPortMFR;
     FR_at_SPP(k,5) = MSStbdMFR;
     FR_at_SPP(k,6) = MSPortMFR/freshwaterdensity;
-    FR_at_SPP(k,7) = MSStbdMFR/freshwaterdensity;    
+    FR_at_SPP(k,7) = MSStbdMFR/freshwaterdensity;
     FR_at_SPP(k,8) = PortTQatSPP;
     FR_at_SPP(k,9) = StbdTQatSPP;
     
     
     %# ********************************************************************
     %# WRITE RESULTSARRAY (resSPP)
-    %# ********************************************************************    
-
+    %# ********************************************************************
+    
     if k == 4
         PortThrustValues  = A{k}(3:6,40);
         StbdThrustValues  = A{k}(3:6,41);
@@ -1097,8 +1097,8 @@ for k=1:ma
         PortThrustValues  = A{k}(:,40);
         StbdThrustValues  = A{k}(:,41);
         TotalThrustValues = A{k}(:,42);
-    end    
-   
+    end
+    
     % Determine percentage of thrust
     [mpc,npc] = size(TotalThrustValues);
     tempArray1 = [];
@@ -1110,9 +1110,9 @@ for k=1:ma
     meanRatioPortWJSys = mean(tempArray1);
     meanRatioStbdWJSys = mean(tempArray2);
     
-    SPP_THRUST_PORT = meanRatioPortWJSys*ThrustAtSPP;    
+    SPP_THRUST_PORT = meanRatioPortWJSys*ThrustAtSPP;
     SPP_THRUST_STBD = meanRatioStbdWJSys*ThrustAtSPP;
-
+    
     % resSPP columns:
     
     % FROUDE LENGTH NUMBER AND TOWING FORCE, FD
@@ -1132,7 +1132,7 @@ for k=1:ma
     %[10] Kiel probe                       (V)
     
     % TOTAL GROSS THRUST
-    %[11] Gross thrust                     (N)    
+    %[11] Gross thrust                     (N)
     
     % MEAN PORT AND STARBOARD WJ SYSTEM
     %[12] Shaft speed                      (RPM)
@@ -1142,7 +1142,7 @@ for k=1:ma
     
     % AFT AND FWD LVDT, HEAVE AND TRIM
     %[16] Aft LVDT                         (mm)
-    %[17] Fwd LVDT                         (mm)        
+    %[17] Fwd LVDT                         (mm)
     %[18] Heave                            (mm)
     %[19] Running trim                     (deg)
     
@@ -1903,7 +1903,7 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
             print(gcf, setSaveFormat{k}, plotsavename);
         end
         close;
-       
+        
         
         %# ********************************************************************
         %# SELF-PROPULSION POINTS (STBD)
@@ -2488,7 +2488,7 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         resSPP_CCDoTT(klp,19) = 0;
         
     end
-
+    
 else
     
     %# As we know that resultsArraySPP.dat exits, read it
@@ -2585,6 +2585,8 @@ for k=1:ma
     thrustDedFracArray(k, 5) = 1-((TowingForceAtZeroThrust-towForce)/ThrustAtSPP);
     
     % Shaft speed at SPP --------------------------------------------------
+    
+    % shaftSpeedConvArray columns:
     %[1] Froude length number             (-)
     %[2] PORT (MS): Shaft speed at SPP    (RPM)
     %[3] PORT (MS): Shaft speed at SPP    (RPM)
@@ -2607,6 +2609,8 @@ for k=1:ma
     shaftSpeedConvArray(k, 5) = MSStbdShaftSpeed/sqrt(FStoMSratio);
     
     % Flow Rate at SPP ----------------------------------------------------
+    
+    % FR_at_SPP columns:
     %[1] Froude length number             (-)
     %[2] PORT (MS): Kiel Probe            (V)
     %[3] STBD (MS): Kiel Probe            (V)
@@ -2633,14 +2637,14 @@ for k=1:ma
     
     MSPortMFR = -0.0421*PortKPatSPP^4+0.5718*PortKPatSPP^3-2.9517*PortKPatSPP^2+7.8517*PortKPatSPP-5.1976;
     MSStbdMFR = -0.0942*StbdKPatSPP^4+1.1216*StbdKPatSPP^3-4.9878*StbdKPatSPP^2+11.0548*StbdKPatSPP-6.8484;
-
+    
     FR_at_SPP(k,1) = Froude_Numbers(k,1);
     FR_at_SPP(k,2) = PortKPatSPP;
     FR_at_SPP(k,3) = StbdKPatSPP;
     FR_at_SPP(k,4) = MSPortMFR;
     FR_at_SPP(k,5) = MSStbdMFR;
     FR_at_SPP(k,6) = MSPortMFR/freshwaterdensity;
-    FR_at_SPP(k,7) = MSStbdMFR/freshwaterdensity;    
+    FR_at_SPP(k,7) = MSStbdMFR/freshwaterdensity;
     FR_at_SPP(k,8) = PortTQatSPP;
     FR_at_SPP(k,9) = StbdTQatSPP;
     
@@ -2660,7 +2664,7 @@ if enableAdjustedFitting == 1
     if enableAdjustedCommandWindow == 1
         disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
         disp('!Adjusted T at F=0 and Slopes Values (Speeds 6, 8 and 9) !');
-        disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');     
+        disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     end
     
     %# ********************************************************************
@@ -2704,15 +2708,15 @@ if enableAdjustedFitting == 1
     
     %# ********************************************************************
     %# 3. Calculate new T at F=0 values and slopes (Speed 6 and 8)
-    %# ********************************************************************    
-
+    %# ********************************************************************
+    
     % Adjusted Force at Thrust=0 for Speeds 6, 8 and 9
     yInt6Adj = ((yInt7Prev-yInt5Prev)/2)+yInt5Prev;
     yInt8Adj = ((yInt9Prev-yInt7Prev)/2)+yInt7Prev;
     
     % Adjusted Slopes for Speeds 6, 8 and 9
     Slope6Adj = (-1*yInt6Adj)/TG_FD(6,1);
-    Slope8Adj = (-1*yInt8Adj)/TG_FD(8,1);    
+    Slope8Adj = (-1*yInt8Adj)/TG_FD(8,1);
     
     % Adjust/overwrite slopes in slopeInterceptArraym using adjusted slopes
     slopeInterceptArray(6,1) = Slope6Adj;
@@ -2867,12 +2871,12 @@ if enableAdjustedFitting == 1
         print(gcf, setSaveFormat{kl}, plotsavename);
     end
     close;
-
+    
     
     %# ********************************************************************
     %# 5. Adjusted values from measured points (Speed 9)
-    %# ********************************************************************    
-
+    %# ********************************************************************
+    
     Slope9Adj                = cvaluesTF0vsSlope(1)*TG_FD(9,1)+cvaluesTF0vsSlope(2);
     yInt9Adj                 = (Slope9Adj*TG_FD(9,1))*-1;
     slopeInterceptArray(9,1) = Slope9Adj;
@@ -2895,7 +2899,7 @@ if enableAdjustedFitting == 1
     
     %# ********************************************************************
     %# 7. Overwrite thrust deduction fraction values
-    %# ********************************************************************    
+    %# ********************************************************************
     
     % thrustDedFracArray Columns:
     % [1] Froude_Length Number
@@ -2986,7 +2990,7 @@ if ma == 9
     %# Note for future self: Next time use structures or arrays!!!!
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     disp('!Equation of fit (EoF) for towing force vs. thrust plot  !');
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');    
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     for k=1:ma
         
         % X and Y axis
@@ -2999,9 +3003,9 @@ if ma == 9
             % Record slopes
             slopesArrayB(k,1) = Froude_Numbers(k,1);
             slopesArrayB(k,2) = slopeInterceptArray(k,1);
-            slopesArrayB(k,3) = slopeInterceptArray(k,1)+1;       
+            slopesArrayB(k,3) = slopeInterceptArray(k,1)+1;
             setDec = '%.3f';
-            disp(sprintf('Speed %s (TG = p QJ (vj - vi)): Equation of fit = %sx%s',num2str(k),sprintf(setDec,slopeInterceptArray(k,1)),sprintf(setDec,slopeInterceptArray(k,2))));            
+            disp(sprintf('Speed %s (TG = p QJ (vj - vi)): Equation of fit = %sx%s',num2str(k),sprintf(setDec,slopeInterceptArray(k,1)),sprintf(setDec,slopeInterceptArray(k,2))));
             
             % Extend linear fit using equation of fit
             xx = [0:1:35];
@@ -3009,7 +3013,7 @@ if ma == 9
             yy = [];
             for kxx=1:nxx
                 yy(kxx) = slopeInterceptArray(k,1)*xx(kxx)+F_at_TGZero(k,2);
-                %disp(sprintf('Speed %s: EoF = %s*%s+%s',num2str(k),sprintf(setDec,slopeInterceptArray(k,1)),num2str(kxx),sprintf(setDec,F_at_TGZero(k,2))));            
+                %disp(sprintf('Speed %s: EoF = %s*%s+%s',num2str(k),sprintf(setDec,slopeInterceptArray(k,1)),num2str(kxx),sprintf(setDec,F_at_TGZero(k,2))));
             end
             eval(sprintf('xLF%d = xx;', k));
             eval(sprintf('yLF%d = yy;', k));
@@ -3032,14 +3036,14 @@ if ma == 9
             slopesArrayB(k,2) = P(1);
             slopesArrayB(k,3) = P(1)+1;
             disp(sprintf('Speed %s (TG = p QJ (vj - vi)): Equation of fit = %sx%s',num2str(k),sprintf('%0.3f',P(1)),sprintf(setDecimals,P(2))));
-
+            
             % Extend linear fit using equation of fit
             xx = 0:max(x)*1.1;
             yy = P(1)*xx+P(2);
             eval(sprintf('xLF%d = xx;', k));
             eval(sprintf('yLF%d = yy;', k));
         end % enableAdjustedFitting
-
+        
     end % loop
     
     %# Plotting
@@ -3165,11 +3169,11 @@ if ma == 9
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
-
+    
     % ---------------------------------------------------------------------
     % Display gross thrust at towing force, FD
     % ---------------------------------------------------------------------
-
+    
     %# Gross thrust = TG = p Q (vj - vi) ----------------------------------
     
     %TG_at_FDArray = TG_at_FDArray';
@@ -3584,10 +3588,6 @@ end
 %$ NOTE: Calculations for TG = p Q (vj - vi) method only!
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-% Extrapolate WJ Benchmark data for calculated shaft speeds (use MS RPM!!)
-[BMDataPort BMEoFPortPH BMEoFPortEff] = fcWJPump(shaftSpeedConvArray(:,2),'Port');
-[BMDataStbd BMEoFStbdPH BMEoFStbdEff] = fcWJPump(shaftSpeedConvArray(:,3),'Stbd');
-
 % Columns:
 % [1] Froude length number                              (-)
 % [2] TG at zero drag                                   (N)
@@ -3601,11 +3601,98 @@ ThrustDedFracArray = thrustDedFracArray;
 ForcesArray = TG_and_F_at_T0;
 [m,n] = size(ForcesArray);
 
+% Establish thrust coefficients and full scale shaft speeds
+ThrustCoeffArray = [];
+
+% ThrustCoeffArray columns:
+% [1]  Froude length number                              (-)
+% [2]  MS PORT Gross thrust, TGm                         (N)
+% [3]  MS STBD Gross thrust, TGm                         (N)
+% [4]  FS PORT Gross thrust, TGs                         (N)
+% [5]  FS STBD Gross thrust, TGs                         (N)
+% [6]  MS PORT Shaft speed, nm                           (RPM)
+% [7]  MS STBD Shaft speed, nm                           (RPM)
+% [8]  MS PORT Thrust coefficient, KTm                   (-)
+% [9]  MS STBD Thrust coefficient, KTm                   (-)
+% [10] FS PORT Shaft speed, ns                           (RPM)
+% [11] FS STBD Shaft speed, ns                           (RPM)
+% [12] MS PORT Thrust coefficient, KTs                   (-)
+% [13] MS STBD Thrust coefficient, KTs                   (-)
+
+for k=1:m
+
+    % Stbd to port ratio
+    if k == 4
+        ratioRow = 3;
+    else
+        ratioRow = 1;
+    end
+    
+    % Model Scale
+    PortStbdRatio    = A{k}(ratioRow,40)/A{k}(ratioRow,42);
+    MSPortGrosThrust = TG_at_FDArray(k,4)*PortStbdRatio;
+    PortStbdRatio    = A{k}(ratioRow,41)/A{k}(ratioRow,42);
+    MSStbdGrosThrust = TG_at_FDArray(k,4)*PortStbdRatio;
+
+    % Full Scale - Neglect run 70 and 71 (as faulty)
+    PortStbdRatio    = A{k}(ratioRow,40)/A{k}(ratioRow,42);
+    FSPortGrosThrust = (TG_at_FDArray(k,4)*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
+    PortStbdRatio    = A{k}(ratioRow,41)/A{k}(ratioRow,42);
+    FSStbdGrosThrust = (TG_at_FDArray(k,4)*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);    
+    
+    % Froude length number
+    ThrustCoeffArray(k,1)  = ForcesArray(k,1);
+    
+    % Model scale thrust
+    ThrustCoeffArray(k,2)  = MSPortGrosThrust
+    ThrustCoeffArray(k,3)  = MSStbdGrosThrust
+    
+    % Full scale thrust
+    ThrustCoeffArray(k,4)  = FSPortGrosThrust
+    ThrustCoeffArray(k,5)  = FSStbdGrosThrust
+    
+    % Model scale shaft speed
+    MSPortSS = shaftSpeedConvArray(k,2);
+    MSStbdSS = shaftSpeedConvArray(k,3);
+    
+    ThrustCoeffArray(k,6)  = MSPortSS;
+    ThrustCoeffArray(k,7)  = MSStbdSS;
+    
+    % Model scale thrust coefficient
+    MSPortThrustCoeff = MSPortGrosThrust/(freshwaterdensity*MS_ImpDia^4*(MSPortSS/60)^2);
+    MSStbdThrustCoeff = MSStbdGrosThrust/(freshwaterdensity*MS_ImpDia^4*(MSStbdSS/60)^2); 
+    
+    ThrustCoeffArray(k,8)  = MSPortThrustCoeff;
+    ThrustCoeffArray(k,9)  = MSStbdThrustCoeff;
+    
+    % Full scale shaft speed    
+    FSPortSS = sqrt(FSPortGrosThrust/(saltwaterdensity*FS_ImpDia^4*MSPortThrustCoeff));
+    FSStbdSS = sqrt(FSStbdGrosThrust/(saltwaterdensity*FS_ImpDia^4*MSStbdThrustCoeff));
+    
+    ThrustCoeffArray(k,10) = FSPortSS*60;
+    ThrustCoeffArray(k,11) = FSStbdSS*60;
+    
+    % Full scale thrust coefficient
+    FSPortThrustCoeff = FSPortGrosThrust/(saltwaterdensity*FS_ImpDia^4*FSPortSS^2);
+    FSStbdThrustCoeff = FSStbdGrosThrust/(saltwaterdensity*FS_ImpDia^4*FSStbdSS^2);
+    
+    ThrustCoeffArray(k,12) = FSPortThrustCoeff;
+    ThrustCoeffArray(k,13) = FSStbdThrustCoeff;
+    
+end
+
+% Extrapolate WJ Benchmark data for calculated shaft speeds (use MS RPM!!)
+[BMDataPort BMEoFPortPH BMEoFPortEff] = fcWJPump(shaftSpeedConvArray(:,2),'Port',ThrustCoeffArray(:,10));
+[BMDataStbd BMEoFStbdPH BMEoFStbdEff] = fcWJPump(shaftSpeedConvArray(:,3),'Stbd',ThrustCoeffArray(:,11));
+
+%# Loop through speeds
 fullScaleDataArray  = [];
 modelScaleDataArray = [];
 for k=1:m
     
-    % Model scale variables
+    %# --------------------------------------------------------------------
+    %# MODEL SCALE VARIABLES
+    %# --------------------------------------------------------------------
     MSSpeed      = mean(A{k}(:,6));           % Model scale speed (m/s)
     MSReynoldsNo = (MSSpeed*MSlwl)/MSKinVis;  % Full scale reynolds number (-)
     MSRT         = resistance(k,3);
@@ -3618,10 +3705,18 @@ for k=1:m
     MSCR         = MSCT-(FormFactor*MSCF);
     MSThrustDed  = ThrustDedFracArray(k,4);
     
-    % Full scale variables
+    % Thrust coefficient KTm=Tm/(pm Dm^4 nm^2)
+    MSThrustCoeff = 1;
+    
+    %# --------------------------------------------------------------------
+    %# FULL SCALE VARIABLES
+    %# --------------------------------------------------------------------
     FSSpeed      = MSSpeed*sqrt(FStoMSratio); % Full scale speed (m/s)
     FSReynoldsNo = (FSSpeed*FSlwl)/FSKinVis;  % Full scale reynolds number (-)
     FSCR         = MSCR;
+    
+    % Thrust coefficient KTs=Ts/(ps Ds^4 ns^2)
+    FSThrustCoeff = 1;
     
     % 1. Speed and reynolds number ----------------------------------------
     
@@ -3658,8 +3753,8 @@ for k=1:m
     modelScaleDataArray(k,8) = MSStbdSS/60;
     
     % Full Scale
-    FSPortSS = shaftSpeedConvArray(k,4);
-    FSStbdSS = shaftSpeedConvArray(k,5);
+    FSPortSS = ThrustCoeffArray(k,10);
+    FSStbdSS = ThrustCoeffArray(k,11);
     fullScaleDataArray(k,5) = FSPortSS;
     fullScaleDataArray(k,6) = FSStbdSS;
     fullScaleDataArray(k,7) = FSPortSS/60;
@@ -3681,7 +3776,7 @@ for k=1:m
     % Full Scale
     FSRoughnessAllowance = 0.044*((RoughnessOfHullSurface/FSlwl)^(1/3)-10*FSReynoldsNo^(-1/3))+0.000125;
     FSCorrelelationCoeff = (5.68-0.6*log10(FSReynoldsNo))*10^(-3);
-    FSAirResistanceCoeff = DragCoeff*((airDensity*FSProjectedArea)/(saltwaterdensity*FSwsa));    
+    FSAirResistanceCoeff = DragCoeff*((airDensity*FSProjectedArea)/(saltwaterdensity*FSwsa));
     if FSReynoldsNo < 10000000
         FSCF = 10^(2.98651-10.8843*(log10(log10(FSReynoldsNo)))+5.15283*(log10(log10(FSReynoldsNo)))^2);
     else
@@ -3746,7 +3841,7 @@ for k=1:m
     
     % [20] PORT: Gross thrust, TGs                           (N)
     % [21] STBD: Gross thrust, TGs                           (N)
-
+    
     % Stbd to port ratio
     if k == 4
         ratioRow = 3;
@@ -3758,9 +3853,9 @@ for k=1:m
     PortStbdRatio    = A{k}(ratioRow,40)/A{k}(ratioRow,42);
     MSPortGrosThrust = TG_at_FDArray(k,4)*PortStbdRatio;
     PortStbdRatio    = A{k}(ratioRow,41)/A{k}(ratioRow,42);
-    MSStbdGrosThrust = TG_at_FDArray(k,4)*PortStbdRatio;    
+    MSStbdGrosThrust = TG_at_FDArray(k,4)*PortStbdRatio;
     modelScaleDataArray(k,20) = MSPortGrosThrust;
-    modelScaleDataArray(k,21) = MSStbdGrosThrust;    
+    modelScaleDataArray(k,21) = MSStbdGrosThrust;
     
     % Full Scale - Neglect run 70 and 71 (as faulty)
     PortStbdRatio    = A{k}(ratioRow,40)/A{k}(ratioRow,42);
@@ -3864,7 +3959,7 @@ for k=1:m
     
     % Model Scale
     modelScaleDataArray(k,32) = MSPortVolFR/((MSPortSS/60)*MS_PumpDia^3);
-    modelScaleDataArray(k,33) = MSStbdVolFR/((MSStbdSS/60)*MS_PumpDia^3);    
+    modelScaleDataArray(k,33) = MSStbdVolFR/((MSStbdSS/60)*MS_PumpDia^3);
     
     % Full Scale
     fullScaleDataArray(k,32) = FSPortVolFR/((FSPortSS/60)*FS_PumpDia^3);
@@ -3956,7 +4051,7 @@ for k=1:m
     MSPortNozzleEff = 0.98;
     MSStbdNozzleEff = 0.98;
     MSPortIdealEff  = 2/(1+(MSPortJetVel/MSPortInlVel));
-    MSStbdIdealEff  = 2/(1+(MSStbdJetVel/MSStbdInlVel));    
+    MSStbdIdealEff  = 2/(1+(MSStbdJetVel/MSStbdInlVel));
     
     % Pump effective power, PPE
     if enablePPEEstPumpCurveHead == 1
@@ -3966,16 +4061,16 @@ for k=1:m
     else
         % Pump effective power, PPE using PPE = (E7/nn)-niE1 (Bose 2008)]
         MSPortPumpEffPower = (MSPortEFStat7/MSPortNozzleEff)-MSPortIdealEff*MSPortEFStat1;
-        MSStbdPumpEffPower = (MSStbdEFStat7/MSStbdNozzleEff)-MSStbdIdealEff*MSStbdEFStat1;        
+        MSStbdPumpEffPower = (MSStbdEFStat7/MSStbdNozzleEff)-MSStbdIdealEff*MSStbdEFStat1;
     end
     modelScaleDataArray(k,40) = MSPortPumpEffPower;
-    modelScaleDataArray(k,41) = MSStbdPumpEffPower;    
+    modelScaleDataArray(k,41) = MSStbdPumpEffPower;
     
     % Delivered power, PD
     MSPortDelPower = MSPortPumpEffPower/MSPortPumpEff;
     MSStbdDelPower = MSStbdPumpEffPower/MSStbdPumpEff;
     modelScaleDataArray(k,42) = MSPortDelPower;
-    modelScaleDataArray(k,43) = MSStbdDelPower;    
+    modelScaleDataArray(k,43) = MSStbdDelPower;
     
     % Brake power (assumed shaft loss 2% and gear box 2%), PB
     MSPortBrakePower = MSPortDelPower/0.98;
@@ -3986,8 +4081,8 @@ for k=1:m
     modelScaleDataArray(k,45) = MSStbdBrakePower;
     
     % Overall propulsive efficiency based on nD = PE/PD where PD = PPE/hpump
-    modelScaleDataArray(k,46) = MSPEW/(MSPortDelPower+MSStbdDelPower);    
-       
+    modelScaleDataArray(k,46) = MSPEW/(MSPortDelPower+MSStbdDelPower);
+    
     % Full Scale
     
     % Energy fluxes at stations 0, 1 and 7
@@ -4011,7 +4106,7 @@ for k=1:m
     else
         % Pump effective power, PPE using PPE = (E7/nn)-niE1 (Bose 2008)]
         FSPortPumpEffPower = (FSPortEFStat7/FSPortNozzleEff)-FSPortIdealEff*FSPortEFStat1;
-        FSStbdPumpEffPower = (FSStbdEFStat7/FSStbdNozzleEff)-FSStbdIdealEff*FSStbdEFStat1;        
+        FSStbdPumpEffPower = (FSStbdEFStat7/FSStbdNozzleEff)-FSStbdIdealEff*FSStbdEFStat1;
     end
     fullScaleDataArray(k,40) = FSPortPumpEffPower;
     fullScaleDataArray(k,41) = FSStbdPumpEffPower;
@@ -4054,7 +4149,7 @@ for k=1:m
     modelScaleDataArray(k,49) = MSPortJVR;
     modelScaleDataArray(k,50) = MSStbdJVR;
     modelScaleDataArray(k,51) = MSPortNVR;
-    modelScaleDataArray(k,52) = MSStbdNVR;  
+    modelScaleDataArray(k,52) = MSStbdNVR;
     
     % Full Scale
     FSPortIVR = FSPortInlVel/FSSpeed;
@@ -4153,7 +4248,7 @@ for k=1:m
     % Model Scale
     MSPortPDETemp = MSPortPJSE/MSPortJetSysEff;
     MSStbdPDETemp = MSStbdPJSE/MSStbdJetSysEff;
-    modelScaleDataArray(k,68) = MSPEW/(MSPortPDETemp+MSStbdPDETemp);    
+    modelScaleDataArray(k,68) = MSPEW/(MSPortPDETemp+MSStbdPDETemp);
     
     % Full Scale
     FSPortPDETemp = FSPortPJSE/FSPortJetSysEff;
@@ -4199,10 +4294,10 @@ for k=1:m
     % Added: 01/01/2015
     % See Bose (2008), Eqn. 10-28
     
-    MSNozzleEff = 1;
-    MSIntakeEff = 1;    
+    MSNozzleEff = 0.98;
+    MSIntakeEff = 1;
     
-    FSNozzleEff = 1;
+    FSNozzleEff = 0.98;
     FSIntakeEff = 1;
     
     modelScaleDataArray(k,73) = (MSPortMasFR*(MSPortJetVel-MSSpeed*(1-MSWakeFraction))*MSSpeed*MSPortPumpEff*InstEff)/(0.5*MSPortMasFR*((MSPortJetVel^2/MSNozzleEff)-MSIntakeEff*MSSpeed^2*(1-MSWakeFraction)^2));
@@ -4213,6 +4308,12 @@ for k=1:m
     
     modelScaleDataArray(k,74) = (2*MSPortPumpEff*((MSPortJetVel/MSSpeed)-1))/((MSPortJetVel/MSSpeed)^2-MSIntakeEff);
     fullScaleDataArray(k,74)  = (2*FSPortPumpEff*((FSPortJetVel/FSSpeed)-1))/((FSPortJetVel/FSSpeed)^2-FSIntakeEff);
+    
+    % 19. Thrust coefficients, KTm and KTs. For SPP KTm=KTs ---------------
+    % Added: 06/01/2015
+    
+    modelScaleDataArray(k,75) = ThrustCoeffArray(k,8);
+    fullScaleDataArray(k,75)  = ThrustCoeffArray(k,12);
     
 end
 
@@ -5063,6 +5164,165 @@ end
 
 
 %# ************************************************************************
+%# 10. Comparing model (KTm) and full scale (KTs) thrust coefficients
+%# ************************************************************************
+
+%# Plotting speed ---------------------------------------------------------
+figurename = 'Plot 10: Compare model and full scale thrust coefficients';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ------------------------------------------------
+
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
+
+% Fonts and colours ---------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 14;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 11;
+setLineWidthMarker = 2;
+setLineWidth       = 2;
+setLineStyle       = '-';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+subplot(1,1,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+% MS Port
+x1 = ThrustCoeffArray(:,1);
+y1 = ThrustCoeffArray(:,8);
+
+% MS Stbd
+x2 = ThrustCoeffArray(:,1);
+y2 = ThrustCoeffArray(:,9);
+
+% FS Port
+x3 = ThrustCoeffArray(:,1);
+y3 = ThrustCoeffArray(:,12);
+
+% FS Stbd
+x4 = ThrustCoeffArray(:,1);
+y4 = ThrustCoeffArray(:,13);
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*');
+xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Thrust coefficient, K_{T} (-)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+%     title('{\bf Thrust coefficient comparison)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(2),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(3),'Color',setColor{3},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+% %# Axis limitations
+minX  = 0.22;
+maxX  = 0.42;
+incrX = 0.02;
+minY  = 0;
+maxY  = 0.3;
+incrY = 0.05;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
+
+%# Legend
+hleg1 = legend('Model scale (Port)','Model scale (Stbd)','Full scale (Port)','Full scale (Stbd)');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title -------------------------------------------------------------
+%if enablePlotMainTitle == 1
+annotation('textbox', [0 0.9 1 0.1], ...
+    'String', strcat('{\bf ', figurename, '}'), ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center');
+%end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_10_MS_And_FS_Thrust_Coefficient_Comparison_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
 %# START Write results to CVS
 %# ------------------------------------------------------------------------
 
@@ -5073,7 +5333,7 @@ end
 %     disp('NOTE: fullScaleDataArray_CCDoTT.dat contained three (3) datasets and has been deleted!');
 %     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 % end
-% 
+%
 % % Add new sets when more than one set in file
 % if exist('fullScaleDataArray_CCDoTT.dat', 'file') == 2 && mfsr >= 9 && fullscaleresults(1,70) ~= CorrCoeff
 %    fullScaleDataArray = [fullscaleresults;fullScaleDataArray];

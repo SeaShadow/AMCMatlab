@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 1, 2015
+%# Date       :  January 6, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -192,7 +192,7 @@ FSdraft         = MSdraft*FStoMSratio;           % Full scale draft             
 %# END CONSTANTS AND PARTICULARS
 %# ************************************************************************
 
-% Form factors and correlaction coefficient
+% Form factor (by slow speed Prohaska runs)
 FormFactor = 1.18;                            % Form factor (1+k)
 
 % Correlation coefficients: No Ca (AMC), typical Ca (Bose 2008) and MARIN Ca
@@ -1981,10 +1981,6 @@ end
 %$ NOTE: Calculations for TG = p Q (vj - vi) method only!
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-% Extrapolate WJ Benchmark data for calculated shaft speeds (use MS RPM!!)
-[BMDataPort BMEoFPortPH BMEoFPortEff] = fcWJPump(shaftSpeedConvArray(:,2),'Port');
-[BMDataStbd BMEoFStbdPH BMEoFStbdEff] = fcWJPump(shaftSpeedConvArray(:,3),'Stbd');
-
 % Columns:
 % [1] Froude length number                              (-)
 % [2] TG at zero drag                                   (N)
@@ -1998,6 +1994,91 @@ ThrustDedFracArray = thrustDedFracArray;
 ForcesArray = TG_and_F_at_T0;
 [m,n] = size(ForcesArray);
 
+% Establish thrust coefficients and full scale shaft speeds
+ThrustCoeffArray = [];
+
+% ThrustCoeffArray columns:
+% [1]  Froude length number                              (-)
+% [2]  MS PORT Gross thrust, TGm                         (N)
+% [3]  MS STBD Gross thrust, TGm                         (N)
+% [4]  FS PORT Gross thrust, TGs                         (N)
+% [5]  FS STBD Gross thrust, TGs                         (N)
+% [6]  MS PORT Shaft speed, nm                           (RPM)
+% [7]  MS STBD Shaft speed, nm                           (RPM)
+% [8]  MS PORT Thrust coefficient, KTm                   (-)
+% [9]  MS STBD Thrust coefficient, KTm                   (-)
+% [10] FS PORT Shaft speed, ns                           (RPM)
+% [11] FS STBD Shaft speed, ns                           (RPM)
+% [12] MS PORT Thrust coefficient, KTs                   (-)
+% [13] MS STBD Thrust coefficient, KTs                   (-)
+
+for k=1:m
+
+    % Stbd to port ratio
+    if k == 4
+        ratioRow = 3;
+    else
+        ratioRow = 1;
+    end
+    
+    % Model Scale
+    PortStbdRatio    = A{k}(ratioRow,40)/A{k}(ratioRow,42);
+    MSPortGrosThrust = TG_at_FDArray(k,4)*PortStbdRatio;
+    PortStbdRatio    = A{k}(ratioRow,41)/A{k}(ratioRow,42);
+    MSStbdGrosThrust = TG_at_FDArray(k,4)*PortStbdRatio;
+
+    % Full Scale - Neglect run 70 and 71 (as faulty)
+    PortStbdRatio    = A{k}(ratioRow,40)/A{k}(ratioRow,42);
+    FSPortGrosThrust = (TG_at_FDArray(k,4)*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
+    PortStbdRatio    = A{k}(ratioRow,41)/A{k}(ratioRow,42);
+    FSStbdGrosThrust = (TG_at_FDArray(k,4)*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);    
+    
+    % Froude length number
+    ThrustCoeffArray(k,1)  = ForcesArray(k,1);
+    
+    % Model scale thrust
+    ThrustCoeffArray(k,2)  = MSPortGrosThrust
+    ThrustCoeffArray(k,3)  = MSStbdGrosThrust
+    
+    % Full scale thrust
+    ThrustCoeffArray(k,4)  = FSPortGrosThrust
+    ThrustCoeffArray(k,5)  = FSStbdGrosThrust
+    
+    % Model scale shaft speed
+    MSPortSS = shaftSpeedConvArray(k,2);
+    MSStbdSS = shaftSpeedConvArray(k,3);
+    
+    ThrustCoeffArray(k,6)  = MSPortSS;
+    ThrustCoeffArray(k,7)  = MSStbdSS;
+    
+    % Model scale thrust coefficient
+    MSPortThrustCoeff = MSPortGrosThrust/(freshwaterdensity*MS_ImpDia^4*(MSPortSS/60)^2);
+    MSStbdThrustCoeff = MSStbdGrosThrust/(freshwaterdensity*MS_ImpDia^4*(MSStbdSS/60)^2); 
+    
+    ThrustCoeffArray(k,8)  = MSPortThrustCoeff;
+    ThrustCoeffArray(k,9)  = MSStbdThrustCoeff;
+    
+    % Full scale shaft speed    
+    FSPortSS = sqrt(FSPortGrosThrust/(saltwaterdensity*FS_ImpDia^4*MSPortThrustCoeff));
+    FSStbdSS = sqrt(FSStbdGrosThrust/(saltwaterdensity*FS_ImpDia^4*MSStbdThrustCoeff));
+    
+    ThrustCoeffArray(k,10) = FSPortSS*60;
+    ThrustCoeffArray(k,11) = FSStbdSS*60;
+    
+    % Full scale thrust coefficient
+    FSPortThrustCoeff = FSPortGrosThrust/(saltwaterdensity*FS_ImpDia^4*FSPortSS^2);
+    FSStbdThrustCoeff = FSStbdGrosThrust/(saltwaterdensity*FS_ImpDia^4*FSStbdSS^2);
+    
+    ThrustCoeffArray(k,12) = FSPortThrustCoeff;
+    ThrustCoeffArray(k,13) = FSStbdThrustCoeff;
+    
+end
+
+% Extrapolate WJ Benchmark data for calculated shaft speeds (use MS RPM!!)
+[BMDataPort BMEoFPortPH BMEoFPortEff] = fcWJPump(shaftSpeedConvArray(:,2),'Port',ThrustCoeffArray(:,10));
+[BMDataStbd BMEoFStbdPH BMEoFStbdEff] = fcWJPump(shaftSpeedConvArray(:,3),'Stbd',ThrustCoeffArray(:,11));
+
+%# Loop through speeds
 fullScaleDataArray  = [];
 modelScaleDataArray = [];
 for k=1:m
@@ -2055,8 +2136,8 @@ for k=1:m
     modelScaleDataArray(k,8) = MSStbdSS/60;
     
     % Full Scale
-    FSPortSS = shaftSpeedConvArray(k,4);
-    FSStbdSS = shaftSpeedConvArray(k,5);
+    FSPortSS = ThrustCoeffArray(k,10);
+    FSStbdSS = ThrustCoeffArray(k,11);
     fullScaleDataArray(k,5) = FSPortSS;
     fullScaleDataArray(k,6) = FSStbdSS;
     fullScaleDataArray(k,7) = FSPortSS/60;

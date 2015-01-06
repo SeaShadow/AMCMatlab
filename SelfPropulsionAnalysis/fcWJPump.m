@@ -1,9 +1,9 @@
 %# ------------------------------------------------------------------------
-%# function function [BMData EoFPH EoEff] = fcWJPump(shaftSpeeds,PropSys)
+%# function function [BMData EoFPH EoEff] = fcWJPump(MSShaftSpeeds,PropSys)
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 17, 2014
+%# Date       :  January 6, 2015
 %#
 %# Function   :  Extrapolate WJ benchmark data
 %#
@@ -12,8 +12,9 @@
 %#
 %# Definition:   Port and ptarboard are defined as seen from stern of vessel.
 %#
-%# Parameters :  shaftSpeeds = (array)  Shaft speeds (RPM) in full scale
-%#               PropSys     = (string) Propulsion system
+%# Parameters :  MSShaftSpeeds = (array)  Shaft speeds (RPM) in model scale
+%#               PropSys       = (string) Propulsion system
+%#               FSShaftSpeeds = (array)  Shaft speeds (RPM) in full scale
 %#
 %# Return     :  Data     = (array) Extrapolated data
 %#               EqnOfFit = (array) Equation of fit (Curve Fitting Toolbox)
@@ -21,7 +22,7 @@
 %# Examples of Usage:
 %#
 %#    >> rawPortData = [ 370 380 390 400 410 420 430 440 ];
-%#    >> function [BMData EoFPH EoEff] = fcWJPump(shaftSpeeds,PropSys)
+%#    >> function [BMData EoFPH EoEff] = fcWJPump(MSShaftSpeeds,PropSys)
 %#    ans1 =
 %#           (array) Extrapolated bechmark data
 %#    ans2 =
@@ -31,7 +32,7 @@
 %#
 %# ------------------------------------------------------------------------
 
-function [BMData EoFPH EoEff] = fcWJPump(shaftSpeeds,PropSys)
+function [BMData EoFPH EoEff] = fcWJPump(MSShaftSpeeds,PropSys,FSShaftSpeeds)
 
 % *************************************************************************
 % START: PLOT SWITCHES: 1 = ENABLED
@@ -244,9 +245,11 @@ end
 %# START Extrapolate to other RPM values
 %# ------------------------------------------------------------------------
 
+[mssfs,nssfs] = size(FSShaftSpeeds');
+
 % Active shaft RPM list
-activeShaftRPMList = shaftSpeeds;
-[mac,nac] = size(activeShaftRPMList');
+activeShaftRPMList = MSShaftSpeeds;
+[mac,nac]     = size(activeShaftRPMList');
 
 % Array sizes
 [m,n]   = size(LJ120EPCData);
@@ -271,6 +274,9 @@ for k=1:nac
     MSShaftRPS   = MSShaftSpeed/60;
     
     % Full scale
+    if mssfs > 0
+        FSShaftSpeed = FSShaftSpeeds(k);
+    end
     FSShaftRPM   = FSShaftSpeed;
     FSShaftRPS   = FSShaftSpeed/60;
     

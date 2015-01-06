@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 1, 2015
+%# Date       :  January 5, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -133,8 +133,8 @@ cutSamplesFromEnd = 4000;
 startRun = 1;       % Start at run x
 endRun   = 67;      % Stop at run y
 
-startRun = 20;      % Start at run x
-endRun   = 21;      % Stop at run y
+%startRun = 20;      % Start at run x
+%endRun   = 21;      % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END File loop for runs, startRun to endRun
@@ -1073,7 +1073,9 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
     %# ************************************************************************
     
 else
+    
     statisticsArray = results;
+    
 end % exist('statisticsArrayAnalysis_copy.dat', 'file')
 
 %# ************************************************************************

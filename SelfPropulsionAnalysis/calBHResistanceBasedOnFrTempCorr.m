@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 16, 2014
+%# Date       :  January 6, 2015
 %#
 %# Function   :  Resistance curve based on Froude Numbers (Fr)
 %#
@@ -210,12 +210,12 @@ if enableFittingPlot == 1
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;    
+    legend boxoff;
     
     %# Font sizes and border --------------------------------------------------
     
     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
+    
     %# ************************************************************************
     %# Save plot as PNG
     %# ************************************************************************
@@ -269,6 +269,9 @@ RESDensity = 998.6897;
 SPTKinVisc = 0.0000010411;
 SPTDensity = 998.5048;
 
+% Form factor (by slow speed Prohaska runs)
+FormFactor = 1.18;      % Form factor (1+k)
+
 %# Array size -------------------------------------------------------------
 [m,n] = size(Froude_Numbers);
 
@@ -293,8 +296,13 @@ for k=1:m
     ResultsArray(k,1) = FN;
     
     % Calculate resistance based on Equation of Fit of BH resistance data
-    P1 = cvalues(1); P2 = cvalues(2); P3 = cvalues(3); P4 = cvalues(4); P5 = cvalues(5); P6 = cvalues(6);
-    ResistanceByFit   = P1*FN^5+P2*FN^4+P3*FN^3+P4*FN^2+P5*FN+P6;
+    P1 = cvalues(1);
+    P2 = cvalues(2);
+    P3 = cvalues(3);
+    P4 = cvalues(4);
+    P5 = cvalues(5);
+    P6 = cvalues(6);
+    ResistanceByFit = P1*FN^5+P2*FN^4+P3*FN^3+P4*FN^2+P5*FN+P6;
     
     %ResultsArray(k,2) = -7932.12*FN^5+13710.12*FN^4-9049.96*FN^3+2989.46*FN^2-386.61*FN+18.6;
     ResultsArray(k,2) = ResistanceByFit;
@@ -323,8 +331,8 @@ for k=1:m
         SPTCfm = 10^(-9.57459+26.6084*(log10(log10(MSReynoldsNo)))-30.8285*(log10(log10(MSReynoldsNo)))^2+10.8914*(log10(log10(MSReynoldsNo)))^3);
     end
     
-    % Residual resistance coeff., CR=CT-CF, from resistance test
-    Crm = RESCtm-RESCfm;
+    % Residual resistance coeff., CR=CT-(1+k)CF, from resistance test
+    Crm = RESCtm-(FormFactor*RESCfm);
     ResultsArray(k,3) = (Form_Factor*SPTCfm+Crm)/(Form_Factor*RESCfm+Crm)*ResistanceByFit;
     
 end
