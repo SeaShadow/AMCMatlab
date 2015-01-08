@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  November 4, 2014
+%# Date       :  January 8, 2015
 %#
 %# Function   :  Analyse inductive proximity sensor data
 %#

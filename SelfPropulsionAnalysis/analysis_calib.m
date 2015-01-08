@@ -2,8 +2,8 @@
 %# PST and DPT Calibration
 %# ------------------------------------------------------------------------
 %#
-%# Author     :  K. Zürcher (kzurcher@amc.edu.au)
-%# Date       :  December 10, 2013
+%# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+%# Date       :  January 8, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)

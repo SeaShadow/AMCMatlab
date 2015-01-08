@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 6, 2015
+%# Date       :  January 8, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -949,7 +949,6 @@ end
 %[2]  Resistance (uncorrected)         (N)
 %[3]  Resistance (corrected for temp.) (N) -> See ITTC 7.5-02-03-01.4 (2008)
 [resistance] = calBHResistanceBasedOnFrTempCorr(Froude_Numbers,FormFactor,MSwsa,MSlwl);
-
 
 %# ************************************************************************
 %# Self-Propulsion Points Based on:
@@ -3820,7 +3819,13 @@ for k=1:m
     % [19] Thrust deduction, 1-t                             (-)
     
     % Model Scale
-    MSWakeFraction = 1-((A{k}(1,36)+A{k}(1,37))/2);
+    
+    % Calculate inlet wake fraction based on power law
+    BLPLFactor     = BLPLFactorArray(k);
+    BLThickness    = BLThicknessArray(k);
+    QBL            = MSSpeed*WidthFactor*MS_PumpDia*BLThickness*(BLPLFactor/(BLPLFactor+1));
+    MSWakeFraction = 1-((BLPLFactor+1)/(BLPLFactor+2))*(FR_at_SPP(k,6)/QBL)^(1/(BLPLFactor+1));
+    
     modelScaleDataArray(k,16) = MSWakeFraction;
     modelScaleDataArray(k,17) = 1-MSWakeFraction;
     modelScaleDataArray(k,18) = MSThrustDed;
@@ -3832,12 +3837,13 @@ for k=1:m
     else
         FSWakeFraction = (MSWakeFraction*(FSCF/MSCF));
     end
+    % TODO: Check if ts is supposed to be tm!!!!!
     fullScaleDataArray(k,16) = FSWakeFraction;
     fullScaleDataArray(k,17) = 1-FSWakeFraction;
     fullScaleDataArray(k,18) = MSThrustDed;
     fullScaleDataArray(k,19) = 1-MSThrustDed;
     
-    % 6. Gross thrust, TG = TGm ?3 (?s/?m) --------------------------------
+    % 6. Gross thrust, TG = TGm lambda^3 (ps/pm) --------------------------
     
     % [20] PORT: Gross thrust, TGs                           (N)
     % [21] STBD: Gross thrust, TGs                           (N)

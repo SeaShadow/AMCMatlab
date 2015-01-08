@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 6, 2015
+%# Date       :  January 8, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -2203,7 +2203,13 @@ for k=1:m
     % [19] Thrust deduction, 1-t                             (-)
     
     % Model Scale
-    MSWakeFraction = 1-((A{k}(1,36)+A{k}(1,37))/2);
+    
+    % Calculate inlet wake fraction based on power law
+    BLPLFactor     = BLPLFactorArray(k);
+    BLThickness    = BLThicknessArray(k);
+    QBL            = MSSpeed*WidthFactor*MS_PumpDia*BLThickness*(BLPLFactor/(BLPLFactor+1));
+    MSWakeFraction = 1-((BLPLFactor+1)/(BLPLFactor+2))*(FR_at_SPP(k,6)/QBL)^(1/(BLPLFactor+1));
+    
     modelScaleDataArray(k,16) = MSWakeFraction;
     modelScaleDataArray(k,17) = 1-MSWakeFraction;
     modelScaleDataArray(k,18) = MSThrustDed;

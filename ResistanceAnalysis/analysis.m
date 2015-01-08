@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 1, 2015
+%# Date       :  January 8, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -112,6 +112,7 @@
 %#               09/09/2013 - Adjusted analysis file for resistance test data
 %#               14/01/2014 - Added conditions list and updated script
 %#               08/10/2014 - Adjusted plotting style for thesis plots
+%#               08/01/2015 - Added reduction if resistance due to TS
 %#               dd/mm/yyyy - ...
 %#
 %# ------------------------------------------------------------------------
@@ -208,9 +209,9 @@ FormFactor = 1.18;                            % Form factor (1+k)
 CorrCoeff  = 0.00035;                                           % Ca value as used by MARIN for JHSV testing (USE AS DEFAULT)
 
 % Drag coefficient
-% See: Oura, T. & Ikeda, Y. 2007, 'Maneuverability Of A Wavepiercing High-Speed 
-%      Catamaran At Low Speed In Strong Wind', Proceedings of the The 
-%      2nd International Conference on Marine Research and Transportation 
+% See: Oura, T. & Ikeda, Y. 2007, 'Maneuverability Of A Wavepiercing High-Speed
+%      Catamaran At Low Speed In Strong Wind', Proceedings of the The
+%      2nd International Conference on Marine Research and Transportation
 %      28/6/2007, Ischia, Naples, Italy.
 DragCoeff = 0.446;
 
@@ -349,8 +350,12 @@ endRun   = 249;     % Stop at run y
 %endRun   = 231;     % Stop at run y
 
 % Single runs
+%startRun = 63;    % Start at run x
+%endRun   = 63;    % Stop at run y
+
+% Single runs
 %startRun = 81;    % Start at run x
-%endRun   = 86;    % Stop at run y
+%endRun   = 81;    % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END FILE LOOP FOR RUNS startRun to endRun
@@ -782,12 +787,12 @@ for k=startRun:endRun
         setLineStyle       = '-.';
         set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-
+        
         %# Axis limitations
         xlim([round(x(1)) round(x(end))]);
         % Limit decimals in X and Y axis numbers
         set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
-        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));        
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
         
         %# Legend
         hleg1 = legend('Output (real units)','Trendline');
@@ -834,7 +839,7 @@ for k=startRun:endRun
         xlim([round(x(1)) round(x(end))]);
         % Limit decimals in X and Y axis numbers
         set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
-        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));        
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
         
         %# Legend
         hleg1 = legend('Output (real units)','Trendline');
@@ -876,7 +881,7 @@ for k=startRun:endRun
         setLineStyle       = '-.';
         set(h(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-
+        
         %# Axis limitations
         xlim([round(x(1)) round(x(end))]);
         % Limit decimals in X and Y axis numbers
@@ -888,9 +893,9 @@ for k=startRun:endRun
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
         set(hleg1,'LineWidth',1);
-        set(hleg1,'FontSize',setLegendFontSize);        
+        set(hleg1,'FontSize',setLegendFontSize);
         legend boxoff;
-
+        
         %# Font sizes and border --------------------------------------------------
         
         set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
@@ -928,14 +933,14 @@ for k=startRun:endRun
         xlim([round(x(1)) round(x(end))]);
         % Limit decimals in X and Y axis numbers
         set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
-        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));     
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
         
         %# Legend
         hleg1 = legend('Output (real units)','Trendline');
         set(hleg1,'Location','NorthEast');
         set(hleg1,'Interpreter','none');
         set(hleg1,'LineWidth',1);
-        set(hleg1,'FontSize',setLegendFontSize);        
+        set(hleg1,'FontSize',setLegendFontSize);
         legend boxoff;
         
         %# Font sizes and border --------------------------------------------------
@@ -1550,7 +1555,7 @@ for k=startRun:endRun
     
     % ---------------------------------------------------------------------
     % Additional values added: 15/12/2014, ITTC 1978 (2011), 7.5-02-03-01.4
-    % ---------------------------------------------------------------------    
+    % ---------------------------------------------------------------------
     %[50] Roughness allowance, delta CFs                                            (-)
     %[51] Correlation allowance, CA                                                 (-)
     %[52] Air resistance coefficient in full scale, CAAs                            (-)
@@ -1565,12 +1570,31 @@ for k=startRun:endRun
     resultsArray(k, 6)  = CH_1_LVDTFwd_Mean;                                        % Model Averaged forward LVDT (mm)
     resultsArray(k, 7)  = CH_2_LVDTAft_Mean;                                        % Model Averaged aft LVDT (mm)
     resultsArray(k, 8)  = CH_3_Drag_Mean;                                           % Model Averaged drag (g)
-    resultsArray(k, 9)  = (resultsArray(k, 8) / 1000) * gravconst;                  % Model Averaged drag (RTm) (N)
-    resultsArray(k, 10) = resultsArray(k, 9) / (0.5*freshwaterdensity*MSwsa*CH_0_Speed_Mean^2); % Model Averaged drag (CTm) (-)
     
-    roundedspeed   = str2num(sprintf('%.2f',resultsArray(k, 5)));                   % Round averaged speed to two (2) decimals only
-    modelfrrounded = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl))); % Calculate Froude length number
-    resultsArray(k, 11) = modelfrrounded;                                           % Froude length number (adjusted for Lwl change at different conditions) (-)
+    % Calculate Froude length number
+    roundedspeed = str2num(sprintf('%.2f',resultsArray(k, 5)));                     % Round averaged speed to two (2) decimals only
+    MSFrRounded  = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl)));   % Calculate Froude length number
+    
+    %# Resistance reduction due to turbulence stimulators -----------------
+    %# Needs subtraction in conditions 7, 8, 9, 10, 11, 12, and 13
+    %# Use equation of fit: y = 3.1638x-0.4031 where x = Fr and y = resistance of turbulence stimulators
+    if any(4:12==testcond)
+        %disp(sprintf('Run: %s, Condition: %s, Apply TS correction.',num2str(k),num2str(testcond)));
+        % Turbulence reduction based on EoF as shown in analysis_stats.m (seee Turb Stim Plot)
+        TSReduction = 3.1638*MSFrRounded-0.4031;
+        % Only apply TS correction if value > 0 (due to EoF)
+        if TSReduction > 0
+            FSResInNewton = ((resultsArray(k, 8) / 1000) * gravconst)-TSReduction;
+        else
+            FSResInNewton = (resultsArray(k, 8) / 1000) * gravconst;
+        end
+    else
+        %disp(sprintf('Run: %s, Condition: %s, DO NOT apply TS correction.',num2str(k),num2str(testcond)));
+        FSResInNewton = (resultsArray(k, 8) / 1000) * gravconst;
+    end % any(7:13==testcond)
+    resultsArray(k, 9)  = FSResInNewton;                                            % Model Averaged drag (RTm) (N)
+    resultsArray(k, 10) = resultsArray(k, 9) / (0.5*freshwaterdensity*MSwsa*CH_0_Speed_Mean^2); % Model Averaged drag (CTm) (-)
+    resultsArray(k, 11) = MSFrRounded;                                              % Froude length number (adjusted for Lwl change at different conditions) (-)
     
     resultsArray(k, 12) = (resultsArray(k, 6)+resultsArray(k, 7))/2;                % Model Heave (mm)
     resultsArray(k, 13) = atand((resultsArray(k, 6)-resultsArray(k, 7))/distbetwposts); % Model Trim (Degrees)
@@ -1648,13 +1672,13 @@ for k=startRun:endRun
     resultsArray(k, 49) = FSFricResCoeff;
     % ---------------------------------------------------------------------
     % Additional values added: 15/12/2014, ITTC 1978 (2011), 7.5-02-03-01.4
-    % ---------------------------------------------------------------------    
+    % ---------------------------------------------------------------------
     %[50] Roughness allowance, delta CFs                 (-)
     %[51] Correlation allowance, CA                      (-)
     %[52] Air resistance coefficient in full scale, CAAs (-)
     resultsArray(k, 50) = FSRoughnessAllowance;
     resultsArray(k, 51) = FSCorrelelationCoeff;
-    resultsArray(k, 52) = FSAirResistanceCoeff; 
+    resultsArray(k, 52) = FSAirResistanceCoeff;
     
     % Command window output -----------------------------------------------
     if enableCommandWindowOutput == 1

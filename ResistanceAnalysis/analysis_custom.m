@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 1, 2015
+%# Date       :  January 8, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -219,10 +219,10 @@ if exist('full_resistance_data.dat', 'file') == 2
     %[49] Full Scale (CFs) Frictional Resistance Coefficient (Grigson)             (-)
     % ---------------------------------------------------------------------
     % Additional values added: 15/12/2014, ITTC 1978 (2011), 7.5-02-03-01.4
-    % ---------------------------------------------------------------------    
+    % ---------------------------------------------------------------------
     %[50] Roughness allowance, delta CFs                                           (-)
     %[51] Correlation allowance, Ca                                                (-)
-    %[52] Air resistance coefficient in full scale, CAAs                           (-)    
+    %[52] Air resistance coefficient in full scale, CAAs                           (-)
     
     results = csvread('full_resistance_data.dat');
     
@@ -419,7 +419,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     % *********************************************************************
     % Fr vs. Rtm/(VDisp * Density * Gravitational constant)
     % *********************************************************************
-    figurename = sprintf('%s (Averaged):: 1,500 and 1,804 tonnes, level, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    %figurename = sprintf('%s (Averaged):: 1,500 and 1,804 tonnes', testName); % , num2str(startRun), num2str(endRun)
+    figurename = 'Averaged Non-Dimensional Resistance for 1,500 and 1,804 tonnes';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -437,9 +438,9 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Fonts and colours ---------------------------------------------------
     setGeneralFontName = 'Helvetica';
-    setGeneralFontSize = 14;
+    setGeneralFontSize = 16;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 9;
+    setLegendFontSize  = 14;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -447,14 +448,14 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     %# Box thickness, axes font size, etc. --------------------------------
     set(gca,'TickDir','in',...
-        'FontSize',12,...
+        'FontSize',16,...
         'LineWidth',2,...
         'FontName',setGeneralFontName,...
         'Clipping','off',...
         'Color',[1 1 1],...
         'LooseInset',get(gca,'TightInset'));
     
-    %# Markes and colors ------------------------------------------------------
+    %# Markes and colors --------------------------------------------------
     setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
     %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
     % Colored curves
@@ -464,7 +465,14 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
         setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
     end
     
-    % Model speed vs. non dim ----------------------------------------
+    %# Line, colors and markers
+    setMarkerSize           = 10;
+    setLineWidthMarker      = 1;
+    setLineWidthMarkerCond7 = 1;
+    setLineWidth            = 1;
+    setLineStyle            = '-.';
+    
+    % Model speed vs. non dim ---------------------------------------------
     subplot(1,2,1)
     
     if length(avgcond7) ~= 0
@@ -573,17 +581,13 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     % Plotting
     h = plot(x7,y7,'*',x8,y8,'*',x9,y9,'*',x10,y10,'*',x11,y11,'*',x12,y12,'*');
     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('$\frac{R_{tm}}{\nabla*\rho*g}$ [-]','Interpreter','LaTex','FontSize',setGeneralFontSize);
+    ylabel('$\frac{\bf{R_{Tm}}}{\bf{\nabla\;\rho\;g}}$ [-]','Interpreter','LaTex','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
     
     %# Line, colors and markers
-    setMarkerSize      = 8;
-    setLineWidthMarker = 1;
-    setLineWidth       = 1;
-    setLineStyle       = '-.';
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerCond7);
     setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
@@ -595,26 +599,34 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.1 0.5]);
-    set(gca,'XTick',[0.1:0.05:0.5]);
-    set(gca,'YLim',[0 0.08]);
-    set(gca,'YTick',[0:0.01:0.08]);
+    minX  = 0.08;
+    maxX  = 0.52;
+    incrX = 0.04;
+    minY  = 0;
+    maxY  = 0.08;
+    incrY = 0.01;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
     set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
+    %# Legend
+    %hleg1 = legend('1,500t (0 deg)','1,500t (-0.5 deg)','1,500t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)','1,804t (0.5 deg)');
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;
+    %legend boxoff;
     
-    %# Font sizes and border --------------------------------------------------
+    %# Font sizes and border ----------------------------------------------
     
     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
-    % Model speed vs. non dim ----------------------------------------
+    % Model speed vs. non dim ---------------------------------------------
     subplot(1,2,2)
     
     if length(avgcond7) ~= 0
@@ -723,17 +735,13 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     % Plotting
     h = plot(x7,y7,'*',x8,y8,'*',x9,y9,'*',x10,y10,'*',x11,y11,'*',x12,y12,'*');
     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('$\frac{R_{tm}}{\nabla*\rho*g}*\frac{1}{(F_{r})^{2}}$ [-]','Interpreter','LaTex','FontSize',setGeneralFontSize);
+    ylabel('$\frac{\bf{R_{Tm}}}{\bf{\nabla\;\rho\;g}}\;\frac{\bf{1}}{\bf{F_{r}^{2}}}$ [-]','Interpreter','LaTex','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
     
     %# Line, colors and markers
-    setMarkerSize      = 8;
-    setLineWidthMarker = 1;
-    setLineWidth       = 1;
-    setLineStyle       = '-.';
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerCond7);
     setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{setCurveNo},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
@@ -745,22 +753,29 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    set(gca,'XLim',[0.1 0.5]);
-    set(gca,'XTick',[0.1:0.05:0.5]);
-    set(gca,'YLim',[0.2 0.35]);
-    set(gca,'YTick',[0.2:0.03:0.35]);
+    minX  = 0.08;
+    maxX  = 0.52;
+    incrX = 0.04;
+    minY  = 0.2;
+    maxY  = 0.35;
+    incrY = 0.03;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
     set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
+    %hleg1 = legend('1,500t (0 deg)','1,500t (-0.5 deg)','1,500t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)','1,804t (0.5 deg)');
     hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
-    legend boxoff;
+    %legend boxoff;
     
-    %# Font sizes and border --------------------------------------------------
+    %# Font sizes and border ----------------------------------------------
     
     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
