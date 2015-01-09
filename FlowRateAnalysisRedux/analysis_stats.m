@@ -1,9 +1,9 @@
 %# ------------------------------------------------------------------------
-%# Flow Rate Analysis: Simple statistics
+%# Flow Rate Analysis: Mass Flow Rate vs. Kiel Probe Output
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 5, 2015
+%# Date       :  January 9, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)

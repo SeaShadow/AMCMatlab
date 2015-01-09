@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 8, 2015
+%# Date       :  January 9, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -3627,17 +3627,19 @@ for k=1:m
         ratioRow = 1;
     end
     
+    MSThrustAtSPP = TG_at_FDArray(k,4);
+    
     % Model Scale
     PortStbdRatio    = A{k}(ratioRow,40)/A{k}(ratioRow,42);
-    MSPortGrosThrust = TG_at_FDArray(k,4)*PortStbdRatio;
+    MSPortGrosThrust = MSThrustAtSPP*PortStbdRatio;
     PortStbdRatio    = A{k}(ratioRow,41)/A{k}(ratioRow,42);
-    MSStbdGrosThrust = TG_at_FDArray(k,4)*PortStbdRatio;
+    MSStbdGrosThrust = MSThrustAtSPP*PortStbdRatio;
 
     % Full Scale - Neglect run 70 and 71 (as faulty)
     PortStbdRatio    = A{k}(ratioRow,40)/A{k}(ratioRow,42);
-    FSPortGrosThrust = (TG_at_FDArray(k,4)*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
+    FSPortGrosThrust = (MSThrustAtSPP*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
     PortStbdRatio    = A{k}(ratioRow,41)/A{k}(ratioRow,42);
-    FSStbdGrosThrust = (TG_at_FDArray(k,4)*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);    
+    FSStbdGrosThrust = (MSThrustAtSPP*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);    
     
     % Froude length number
     ThrustCoeffArray(k,1)  = ForcesArray(k,1);
@@ -3855,19 +3857,21 @@ for k=1:m
         ratioRow = 1;
     end
     
+    MSThrustAtSPP = TG_at_FDArray(k,4);
+    
     % Model Scale
     PortStbdRatio    = A{k}(ratioRow,40)/A{k}(ratioRow,42);
-    MSPortGrosThrust = TG_at_FDArray(k,4)*PortStbdRatio;
+    MSPortGrosThrust = MSThrustAtSPP*PortStbdRatio;
     PortStbdRatio    = A{k}(ratioRow,41)/A{k}(ratioRow,42);
-    MSStbdGrosThrust = TG_at_FDArray(k,4)*PortStbdRatio;
+    MSStbdGrosThrust = MSThrustAtSPP*PortStbdRatio;
     modelScaleDataArray(k,20) = MSPortGrosThrust;
     modelScaleDataArray(k,21) = MSStbdGrosThrust;
     
     % Full Scale - Neglect run 70 and 71 (as faulty)
     PortStbdRatio    = A{k}(ratioRow,40)/A{k}(ratioRow,42);
-    FSPortGrosThrust = (TG_at_FDArray(k,4)*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
+    FSPortGrosThrust = (MSThrustAtSPP*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
     PortStbdRatio    = A{k}(ratioRow,41)/A{k}(ratioRow,42);
-    FSStbdGrosThrust = (TG_at_FDArray(k,4)*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
+    FSStbdGrosThrust = (MSThrustAtSPP*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
     fullScaleDataArray(k,20) = FSPortGrosThrust;
     fullScaleDataArray(k,21) = FSStbdGrosThrust;
     

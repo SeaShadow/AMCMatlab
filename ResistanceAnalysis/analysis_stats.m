@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 8, 2015
+%# Date       :  January 9, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -142,8 +142,8 @@ enableA4PaperSizePlot   = 0;    % Show plots scale to A4 size
 
 % Individual plots
 enableTurbStimPlot      = 0; % Turbulence stimulator investigation
-enableTrimTabPlot       = 1; % Trim tab investigation
-enableResistancePlot    = 0; % Resistance plots, Ctm, power, heave and trim
+enableTrimTabPlot       = 0; % Trim tab investigation
+enableResistancePlot    = 1; % Resistance plots, Ctm, power, heave and trim
 enableProhaskaPlot      = 0; % Prohaska plot, form factor at deep transom
 enableErrorPlot         = 0; % Error plots (% of max-avg to magnitude)
 enableMeanStdPlot       = 0; % Show Fr vs. mean of standard deviation
@@ -370,26 +370,15 @@ for j=1:ma
     end
 end
 
-%# *********************************************************************
+%# ************************************************************************
 %# Testname
-%# *********************************************************************
+%# ************************************************************************
 testName = 'Resistance Test Summary';
 
 
-%# *********************************************************************
+%# ************************************************************************
 %# Calculate averages for conditions
-%# *********************************************************************
-
-% NOTE: Averaging functions adds new columns which are:
-%[49] SPEED: Mean of standard deviation                                 (-)
-%[50] LVDT (FWD): Mean of standard deviation                            (-)
-%[51] LVDT (AFT): Mean of standard deviation                            (-)
-%[52] DRAG: Mean of standard deviation                                  (-)
-%[53] Number how many times run has been repeated                       (-)
-% Added: 11/12/2014
-%[54] CTm: Standard deviation                                           (-)
-% Added: 12/12/2014
-%[55] Trim: Standard deviation                                          (deg)
+%# ************************************************************************
 
 [avgcond1]  = stats_avg(1:15,results);
 [avgcond2]  = stats_avg(16:25,results);
@@ -404,7 +393,6 @@ testName = 'Resistance Test Summary';
 [avgcond11] = stats_avg(202:216,results);
 [avgcond12] = stats_avg(217:231,results);
 [avgcond13] = stats_avg(232:249,results);
-
 
 %# ************************************************************************
 %# 1.0 TURBULENCE STIMULATOR CONDITIONS
@@ -1326,7 +1314,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %# Axis limitations
     minX  = 0.1;
     maxX  = 0.5;
-    incrX = 0.1;
+    incrX = 0.05;
     minY  = 5;
     maxY  = 9;
     incrY = 0.5;
@@ -1334,7 +1322,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
     set(gca,'YTick',minY:incrY:maxY);
-    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
@@ -1486,7 +1474,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
 	%# Axis limitations
     minX  = 0.1;
     maxX  = 0.5;
-    incrX = 0.1;
+    incrX = 0.05;
     minY  = -15;
     maxY  = 5;
     incrY = 5;
@@ -1494,7 +1482,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
     set(gca,'YTick',minY:incrY:maxY);
-    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
@@ -1590,7 +1578,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
 	%# Axis limitations
     minX  = 0.1;
     maxX  = 0.5;
-    incrX = 0.1;
+    incrX = 0.05;
     minY  = -1;
     maxY  = 2;
     incrY = 0.5;
@@ -1598,7 +1586,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
     set(gca,'YTick',minY:incrY:maxY);
-    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
@@ -1802,7 +1790,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %# Axis limitations
     minX  = 0.1;
     maxX  = 0.5;
-    incrX = 0.1;
+    incrX = 0.05;
     minY  = 5;
     maxY  = 9;
     incrY = 0.5;
@@ -1810,7 +1798,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
     set(gca,'YTick',minY:incrY:maxY);
-    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
@@ -1968,7 +1956,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %# Axis limitations
     minX  = 0.1;
     maxX  = 0.5;
-    incrX = 0.1;
+    incrX = 0.05;
     minY  = -15;
     maxY  = 5;
     incrY = 5;
@@ -1976,7 +1964,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
     set(gca,'YTick',minY:incrY:maxY);
-    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
@@ -2075,7 +2063,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %# Axis limitations
     minX  = 0.1;
     maxX  = 0.5;
-    incrX = 0.1;
+    incrX = 0.05;
     minY  = -1;
     maxY  = 2;
     incrY = 0.5;
@@ -2083,7 +2071,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
     set(gca,'YTick',minY:incrY:maxY);
-    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
@@ -2267,7 +2255,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %# Axis limitations
     minX  = 0.1;
     maxX  = 0.5;
-    incrX = 0.1;
+    incrX = 0.05;
     minY  = 0;
     maxY  = 70;
     incrY = 10;
@@ -2275,7 +2263,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
     set(gca,'YTick',minY:incrY:maxY);
-    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
@@ -2363,7 +2351,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %# Axis limitations
     minX  = 0.1;
     maxX  = 0.5;
-    incrX = 0.1;
+    incrX = 0.05;
     minY  = 5;
     maxY  = 9;
     incrY = 0.5;
@@ -2371,7 +2359,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
     set(gca,'YTick',minY:incrY:maxY);
-    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
