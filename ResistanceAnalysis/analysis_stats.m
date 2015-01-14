@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 9, 2015
+%# Date       :  January 14, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -55,7 +55,11 @@
 %#
 %#               >>> TODO: Copy data from resultsArray.dat to full_resistance_data.dat
 %#
-%#               2 => analysis_stats.m    >> Resistance and error plots
+%#               2   => analysis_stats.m     >> Resistance and error plots
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
+%#               2.1 => analysis_avgrundat.m >> Averaged run data, summary
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
@@ -143,12 +147,14 @@ enableA4PaperSizePlot   = 0;    % Show plots scale to A4 size
 % Individual plots
 enableTurbStimPlot      = 0; % Turbulence stimulator investigation
 enableTrimTabPlot       = 0; % Trim tab investigation
-enableResistancePlot    = 1; % Resistance plots, Ctm, power, heave and trim
+enableResistancePlot    = 0; % Resistance plots, Ctm, power, heave and trim
 enableProhaskaPlot      = 0; % Prohaska plot, form factor at deep transom
 enableErrorPlot         = 0; % Error plots (% of max-avg to magnitude)
 enableMeanStdPlot       = 0; % Show Fr vs. mean of standard deviation
 enableStdPlot           = 0; % Show Fr vs. standard deviation
 enableRemVSCFmPlot      = 0; % Show Re vs. Cfm plot
+enableTSResDiffPlot     = 1; % Show difference in resistance with and without 
+                             % turbulence resistance in total model resistance
 
 % Check if Curve Fitting Toolbox is installed
 % See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
@@ -223,9 +229,9 @@ end
 %# ************************************************************************
 
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
+%# START DEFINE PLOT SIZE
+%# ------------------------------------------------------------------------
 %# Centimeters units
 XPlot = 42.0;                           %# A3 paper size
 YPlot = 29.7;                           %# A3 paper size
@@ -233,14 +239,14 @@ XPlotMargin = 1;                        %# left/right margins from page borders
 YPlotMargin = 1;                        %# bottom/top margins from page borders
 XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
 YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# END DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ------------------------------------------------------------------------
+%# END DEFINE PLOT SIZE
+%# ************************************************************************
 
 
-% *************************************************************************
+%# ************************************************************************
 %# RESULTS ARRAY COLUMNS
-% *************************************************************************
+%# ************************************************************************
 %[1]  Run No.                                                                  (-)
 %[2]  FS                                                                       (Hz)
 %[3]  No. of samples                                                           (-)
@@ -313,9 +319,10 @@ if exist('results','var') == 0
     break;
 end
 
+
 %# ************************************************************************
-%# START: PLOTTING AVERAGED DATA
-%# ************************************************************************
+%# START Averaging Repeated Run Data
+%# ------------------------------------------------------------------------
 
 cond1=[];cond2=[];cond3=[];cond4=[];cond5=[];cond6=[];cond7=[];cond8=[];cond9=[];cond10=[];cond11=[];cond12=[];cond13=[];
 
@@ -370,16 +377,10 @@ for j=1:ma
     end
 end
 
-%# ************************************************************************
 %# Testname
-%# ************************************************************************
 testName = 'Resistance Test Summary';
 
-
-%# ************************************************************************
 %# Calculate averages for conditions
-%# ************************************************************************
-
 [avgcond1]  = stats_avg(1:15,results);
 [avgcond2]  = stats_avg(16:25,results);
 [avgcond3]  = stats_avg(26:35,results);
@@ -393,6 +394,11 @@ testName = 'Resistance Test Summary';
 [avgcond11] = stats_avg(202:216,results);
 [avgcond12] = stats_avg(217:231,results);
 [avgcond13] = stats_avg(232:249,results);
+
+%# ------------------------------------------------------------------------
+%# END Averaging Repeated Run Data
+%# ************************************************************************
+
 
 %# ************************************************************************
 %# 1.0 TURBULENCE STIMULATOR CONDITIONS
@@ -1636,7 +1642,8 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     end
     %close;
     
-end
+end % enableResistancePlot
+
 
 % *************************************************************************
 % AVERAGED: 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
@@ -2121,7 +2128,8 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     end
     %close;
     
-end
+end % enableResistancePlot
+
 
 % *************************************************************************
 % REPEATS: 1,500 AND 1,804, Fr vs. Ctm and Fr vs. Crm
@@ -2505,7 +2513,8 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     end
     %close;
     
-end
+end % enableResistancePlot
+
 
 % *************************************************************************
 % 1,804 TONNES RESISTANCE CONDITIONS
@@ -2513,6 +2522,7 @@ end
 % if length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0
 %     disp('Conditions 10 to 12 available');
 % end
+
 
 % *************************************************************************
 % DEEP TRANSOM PROHASKA CONDITION
@@ -2828,7 +2838,8 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     end
     %close;
     
-end
+end % enableProhaskaPlot
+
 
 % *************************************************************************
 % ERRORS (REPEATS): 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
@@ -3364,6 +3375,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
 end % enableErrorPlot
 
+
 % *************************************************************************
 % ERRORS (AVERAGED): 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
 % *************************************************************************
@@ -3898,6 +3910,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
 end % enableErrorPlot
 
+
 % *************************************************************************
 % MEAN STANDARD DEVIATION: 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
 % *************************************************************************
@@ -4322,7 +4335,8 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     end
     %close;    
     
-end
+end % enableMeanStdPlot
+
 
 % *************************************************************************
 % STANDARD DEVIATION: 1,500 AND 1,804 TONNES RESISTANCE CONDITIONS
@@ -4802,7 +4816,8 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     end
     %close;    
     
-end
+end % enableStdPlot
+
 
 % *************************************************************************
 % REYNOLDS NUMBER VS FRICTIONAL RESISTANCE COEFFICIENT
@@ -5033,4 +5048,448 @@ if enableRemVSCFmPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || lengt
     end
     %close;    
     
-end
+end % enableRemVSCFmPlot
+
+
+% *************************************************************************
+% DIFFERENCE IN MODEL RESISTANCE WITH AND WITHOUT TURB. STIM. RESISTANCE
+% *************************************************************************
+if enableTSResDiffPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
+    
+    startRun = 81;
+    endRun   = 231;    
+    
+    %figurename = sprintf('Plot 11: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
+    figurename = 'Plot 12: RTm with and without Turbulence Stimulator Resistance (Single Demihull)';
+    f = figure('Name',figurename,'NumberTitle','off');
+
+	%# Paper size settings ------------------------------------------------
+    
+    %if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+    %end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 12;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'v';'o';'^';'s';'<';'d';'>';'p';'h'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end    
+    
+    %# Line, colors and markers
+    setMarkerSize      = 8;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-.';    
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////
+    subplot(2,3,1)
+    
+    %# X and Y axis -------------------------------------------------------    
+    
+    % Condition 7
+    x7wTS  = avgcond7(:,15);
+    y7wTS  = avgcond7(:,58);
+    
+    x7woTS = avgcond7(:,15);
+    y7woTS = avgcond7(:,9);
+    
+    % Plotting ------------------------------------------------------------
+    h = plot(x7wTS,y7wTS,'*',x7woTS,y7woTS,'*');
+%     if enablePlotTitle == 1
+%         title('{\bf Single Demihull Resistance}','FontSize',setGeneralFontSize);
+%     end
+    xlabel('{\bf Ship speed [knots]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance, R_{Tm} [N]}','FontSize',setGeneralFontSize);
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle,'linewidth',setLineWidth
+    set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    %set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Axis limitations
+    minX  = 5;
+    maxX  = 29;
+    incrX = 2;
+    minY  = 0;
+    maxY  = 48;
+    incrY = 4;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',[minX:incrX:maxX]);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',[minY:incrY:maxY]);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend('Cond. 7: With TS Resistance','Cond. 7: Without TS Resistance');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+	%# Font sizes and border ----------------------------------------------
+
+	set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);    
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////
+    subplot(2,3,2)
+    
+    %# X and Y axis -------------------------------------------------------    
+    
+    % Condition 7
+    x8wTS  = avgcond8(:,15);
+    y8wTS  = avgcond8(:,58);
+    
+    x8woTS = avgcond8(:,15);
+    y8woTS = avgcond8(:,9);
+    
+    % Plotting ------------------------------------------------------------
+    h = plot(x8wTS,y8wTS,'*',x8woTS,y8woTS,'*');
+%     if enablePlotTitle == 1
+%         title('{\bf Single Demihull Resistance}','FontSize',setGeneralFontSize);
+%     end
+    xlabel('{\bf Ship speed [knots]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance, R_{Tm} [N]}','FontSize',setGeneralFontSize);
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle,'linewidth',setLineWidth
+    set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    %set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Axis limitations
+    minX  = 5;
+    maxX  = 29;
+    incrX = 2;
+    minY  = 0;
+    maxY  = 48;
+    incrY = 4;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',[minX:incrX:maxX]);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',[minY:incrY:maxY]);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend('Cond. 8: With TS Resistance','Cond. 8: Without TS Resistance');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+	%# Font sizes and border ----------------------------------------------
+
+	set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);      
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////
+    subplot(2,3,3)
+    
+    %# X and Y axis -------------------------------------------------------    
+    
+    % Condition 7
+    x9wTS  = avgcond9(:,15);
+    y9wTS  = avgcond9(:,58);
+    
+    x9woTS = avgcond9(:,15);
+    y9woTS = avgcond9(:,9);
+    
+    % Plotting ------------------------------------------------------------
+    h = plot(x9wTS,y9wTS,'*',x9woTS,y9woTS,'*');
+%     if enablePlotTitle == 1
+%         title('{\bf Single Demihull Resistance}','FontSize',setGeneralFontSize);
+%     end
+    xlabel('{\bf Ship speed [knots]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance, R_{Tm} [N]}','FontSize',setGeneralFontSize);
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle,'linewidth',setLineWidth
+    set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    %set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Axis limitations
+    minX  = 5;
+    maxX  = 29;
+    incrX = 2;
+    minY  = 0;
+    maxY  = 48;
+    incrY = 4;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',[minX:incrX:maxX]);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',[minY:incrY:maxY]);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend('Cond. 9: With TS Resistance','Cond. 9: Without TS Resistance');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+	%# Font sizes and border ----------------------------------------------
+
+	set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);      
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////
+    subplot(2,3,4)
+    
+    %# X and Y axis -------------------------------------------------------    
+    
+    % Condition 7
+    x10wTS  = avgcond10(:,15);
+    y10wTS  = avgcond10(:,58);
+    
+    x10woTS = avgcond10(:,15);
+    y10woTS = avgcond10(:,9);
+    
+    % Plotting ------------------------------------------------------------
+    h = plot(x10wTS,y10wTS,'*',x10woTS,y10woTS,'*');
+%     if enablePlotTitle == 1
+%         title('{\bf Single Demihull Resistance}','FontSize',setGeneralFontSize);
+%     end
+    xlabel('{\bf Ship speed [knots]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance, R_{Tm} [N]}','FontSize',setGeneralFontSize);
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle,'linewidth',setLineWidth
+    set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    %set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Axis limitations
+    minX  = 5;
+    maxX  = 29;
+    incrX = 2;
+    minY  = 0;
+    maxY  = 48;
+    incrY = 4;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',[minX:incrX:maxX]);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',[minY:incrY:maxY]);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend('Cond. 10: With TS Resistance','Cond.10: Without TS Resistance');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+	%# Font sizes and border ----------------------------------------------
+
+	set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);    
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////
+    subplot(2,3,5)
+    
+    %# X and Y axis -------------------------------------------------------    
+    
+    % Condition 7
+    x11wTS  = avgcond11(:,15);
+    y11wTS  = avgcond11(:,58);
+    
+    x11woTS = avgcond11(:,15);
+    y11woTS = avgcond11(:,9);
+    
+    % Plotting ------------------------------------------------------------
+    h = plot(x11wTS,y11wTS,'*',x11woTS,y11woTS,'*');
+%     if enablePlotTitle == 1
+%         title('{\bf Single Demihull Resistance}','FontSize',setGeneralFontSize);
+%     end
+    xlabel('{\bf Ship speed [knots]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance, R_{Tm} [N]}','FontSize',setGeneralFontSize);
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle,'linewidth',setLineWidth
+    set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    %set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Axis limitations
+    minX  = 5;
+    maxX  = 29;
+    incrX = 2;
+    minY  = 0;
+    maxY  = 48;
+    incrY = 4;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',[minX:incrX:maxX]);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',[minY:incrY:maxY]);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend('Cond. 11: With TS Resistance','Cond.11: Without TS Resistance');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+	%# Font sizes and border ----------------------------------------------
+
+	set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);     
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////
+    subplot(2,3,5)
+    
+    %# X and Y axis -------------------------------------------------------    
+    
+    % Condition 7
+    x12wTS  = avgcond12(:,15);
+    y12wTS  = avgcond12(:,58);
+    
+    x12woTS = avgcond12(:,15);
+    y12woTS = avgcond12(:,9);
+    
+    % Plotting ------------------------------------------------------------
+    h = plot(x12wTS,y12wTS,'*',x12woTS,y12woTS,'*');
+%     if enablePlotTitle == 1
+%         title('{\bf Single Demihull Resistance}','FontSize',setGeneralFontSize);
+%     end
+    xlabel('{\bf Ship speed [knots]}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance, R_{Tm} [N]}','FontSize',setGeneralFontSize);
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle,'linewidth',setLineWidth
+    set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    %set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Axis limitations
+    minX  = 5;
+    maxX  = 29;
+    incrX = 2;
+    minY  = 0;
+    maxY  = 48;
+    incrY = 4;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',[minX:incrX:maxX]);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',[minY:incrY:maxY]);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend('Cond. 12: With TS Resistance','Cond.12: Without TS Resistance');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+	%# Font sizes and border ----------------------------------------------
+
+	set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);        
+    
+	%# ********************************************************************
+    %# Save plot as PNG
+    %# ********************************************************************
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+    %if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+    %end
+    
+    %# Plot title ---------------------------------------------------------
+    if enablePlotMainTitle == 1
+       annotation('textbox', [0 0.9 1 0.1], ...
+           'String', strcat('{\bf ', figurename, '}'), ...
+           'EdgeColor', 'none', ...
+           'HorizontalAlignment', 'center');
+    end
+    
+    %# Save plots as PDF, PNG and EPS -------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Plot_12_Run_%s_to_Run_%s_Compare_RTm_with_and_without_Turb_Stim_Resistance_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end    
+    %close;      
+    
+end % enableTSResDiffPlot

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 9, 2015
+%# Date       :  January 14, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -55,7 +55,11 @@
 %#
 %#               >>> TODO: Copy data from resultsArray.dat to full_resistance_data.dat
 %#
-%#               2 => analysis_stats.m    >> Resistance and error plots
+%#               2   => analysis_stats.m     >> Resistance and error plots
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
+%#               2.1 => analysis_avgrundat.m >> Averaged run data, summary
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
@@ -145,9 +149,9 @@ enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
 %# ************************************************************************
 
 
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# START DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ************************************************************************
+%# START DEFINE PLOT SIZE
+%# ------------------------------------------------------------------------
 %# Centimeters units
 XPlot = 42.0;                           %# A3 paper size
 YPlot = 29.7;                           %# A3 paper size
@@ -155,9 +159,9 @@ XPlotMargin = 1;                        %# left/right margins from page borders
 YPlotMargin = 1;                        %# bottom/top margins from page borders
 XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
 YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# END DEFINE PLOT SIZE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%# ------------------------------------------------------------------------
+%# END DEFINE PLOT SIZE
+%# ************************************************************************
 
 
 %# -------------------------------------------------------------------------
@@ -243,9 +247,9 @@ if exist('results','var') == 0
     break;
 end
 
-% *************************************************************************
-% START: PLOTTING AVERAGED DATA
-% *************************************************************************
+%# ************************************************************************
+%# START Averaging Repeated Run Data
+%# ------------------------------------------------------------------------
 
 cond1=[];cond2=[];cond3=[];cond4=[];cond5=[];cond6=[];cond7=[];cond8=[];cond9=[];cond10=[];cond11=[];cond12=[];cond13=[];
 
@@ -300,15 +304,10 @@ for j=1:ma
     end
 end
 
-%# *********************************************************************
 %# Testname
-%# *********************************************************************
-testName = 'Custom Plots';
+testName = 'Averaged Repeated Runs Data Plots';
 
-%# *********************************************************************
 %# Min & Max Values
-%# *********************************************************************
-
 [minmaxcond1]  = stats_minmax(cond1);
 [minmaxcond2]  = stats_minmax(cond2);
 [minmaxcond3]  = stats_minmax(cond3);
@@ -323,9 +322,7 @@ testName = 'Custom Plots';
 [minmaxcond12] = stats_minmax(cond12);
 [minmaxcond13] = stats_minmax(cond13);
 
-%# *********************************************************************
 %# Calculate averages for conditions
-%# *********************************************************************
 [avgcond1]  = stats_avg(1:15,results);
 [avgcond2]  = stats_avg(16:25,results);
 [avgcond3]  = stats_avg(26:35,results);
@@ -357,16 +354,20 @@ resultsAveragedArray = [
     avgcond13
     ];
 
+%# ------------------------------------------------------------------------
+%# END Averaging Repeated Run Data
+%# ************************************************************************
 
-% /////////////////////////////////////////////////////////////////////////
-% START: Write results to CVS
-% -------------------------------------------------------------------------
+
+%# ************************************************************************
+%# START Write results to CVS
+%# ------------------------------------------------------------------------
 M = resultsAveragedArray;
 csvwrite('resultsAveragedArray.dat', M)                                     % Export matrix M to a file delimited by the comma character
 dlmwrite('resultsAveragedArray.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
-% -------------------------------------------------------------------------
-% END: Write results to CVS
-% /////////////////////////////////////////////////////////////////////////
+%# ------------------------------------------------------------------------
+%# END Write results to CVS
+%# ************************************************************************
 
 
 %# ************************************************************************

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 9, 2015
+%# Date       :  January 14, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -1118,20 +1118,20 @@ for k=1:ma
     %[1]  Froude length number             (-)
     %[2]  Towing Force, FD                 (N)
     
-    % PORT WJ SYSTEM
+    % PORT WJ SYSTEM (SPP VALUES)
     %[3]  Shaft speed                      (RPM)
     %[4]  Gross thrust                     (N)
     %[5]  Torque                           (Nm)
     %[6]  Kiel probe                       (V)
     
-    % STARBOARD WJ SYSTEM
+    % STARBOARD WJ SYSTEM (SPP VALUES)
     %[7]  Shaft speed                      (RPM)
     %[8]  Gross thrust                     (N)
     %[9]  Torque                           (Nm)
     %[10] Kiel probe                       (V)
     
     % TOTAL GROSS THRUST
-    %[11] Gross thrust                     (N)
+    %[11] Gross thrust at SPP, T@SPP       (N)
     
     % MEAN PORT AND STARBOARD WJ SYSTEM
     %[12] Shaft speed                      (RPM)
@@ -1144,7 +1144,7 @@ for k=1:ma
     %[17] Fwd LVDT                         (mm)
     %[18] Heave                            (mm)
     %[19] Running trim                     (deg)
-    
+        
     % FROUDE LENGTH NUMBER AND TOWING FORCE, FD
     resSPP(k,1)  = A{k}(1,5);
     resSPP(k,2)  = towForce;
@@ -1175,13 +1175,8 @@ for k=1:ma
     resSPP(k,17) = 0;
     resSPP(k,18) = 0;
     resSPP(k,19) = 0;
-    
+
 end
-
-
-
-
-
 
 
 %# ************************************************************************
@@ -2428,20 +2423,20 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         %[1]  Froude length number             (-)
         %[2]  Towing Force, FD                 (N)
         
-        % PORT WJ SYSTEM
+        % PORT WJ SYSTEM (AT SPP)
         %[3]  Shaft speed                      (RPM)
         %[4]  Gross thrust                     (N)
         %[5]  Torque                           (Nm)
         %[6]  Kiel probe                       (V)
         
-        % STARBOARD WJ SYSTEM
+        % STARBOARD WJ SYSTEM (AT SPP)
         %[7]  Shaft speed                      (RPM)
         %[8]  Gross thrust                     (N)
         %[9]  Torque                           (Nm)
         %[10] Kiel probe                       (V)
         
         % TOTAL GROSS THRUST
-        %[11] Gross thrust                     (N)
+        %[11] Gross thrust at SPP, T@SPP       (N)
         
         % MEAN PORT AND STARBOARD WJ SYSTEM
         %[12] Shaft speed                      (RPM)
@@ -2454,6 +2449,11 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         %[17] Fwd LVDT                         (mm)
         %[18] Heave                            (mm)
         %[19] Running trim                     (deg)
+        
+        % THRUST AT ZERO FORCE AND FORCE AT ZERO THRUST
+        %[20] Thrust at zero force, TF=0       (N)
+        %[21] Force at zero thrust, FT=0       (N)
+        %[22] Corrected BH resistance, RC      (N)
         
         % FROUDE LENGTH NUMBER AND TOWING FORCE, FD
         resSPP_CCDoTT(klp,1)  = A{klp}(1,5);
@@ -2486,6 +2486,10 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         resSPP_CCDoTT(klp,18) = 0;
         resSPP_CCDoTT(klp,19) = 0;
         
+        % THRUST AT ZERO FORCE AND FORCE AT ZERO THRUST        
+        resSPP_CCDoTT(klp,20) = 0;
+        resSPP_CCDoTT(klp,21) = 0;
+        
     end
     
 else
@@ -2515,14 +2519,9 @@ csvwrite('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', M)            % Export
 %# ************************************************************************
 
 
-
-
-
-
-
 %# ************************************************************************
-%# OVERWRITES!!!!!!!!!!!!!!!!!!!!!!!!!
-%# ************************************************************************
+%# START OVERWRITES
+%# ------------------------------------------------------------------------
 %# Self-Propulsion Points Based on:
 %#   CCDoTT (2007). "Waterjet Data"
 %# ************************************************************************
@@ -2647,12 +2646,15 @@ for k=1:ma
     FR_at_SPP(k,8) = PortTQatSPP;
     FR_at_SPP(k,9) = StbdTQatSPP;
     
+    % Add thrust at zero drag, force at zero thrust and resistance to resSPP_CCDoTT
+    resSPP_CCDoTT(k,20) = ThrustAtZeroDrag;
+    resSPP_CCDoTT(k,21) = TowingForceAtZeroThrust;
+    resSPP_CCDoTT(k,22) = resistance(k,3);
+    
 end
-
-
-
-
-
+%# ------------------------------------------------------------------------
+%# END OVERWRITES
+%# ************************************************************************
 
 
 %# ************************************************************************
@@ -2907,12 +2909,17 @@ if enableAdjustedFitting == 1
     % [4] t = ((FD-FatT=0)/TG@SPP)+1
     % [5] t = 1-((FatT=0-FD)/TG@SPP)
     for ktd=1:mftg
+        % t=(TM+FD-RC)/TM
+        thrustDedFracArray(k, 2) = (TG_at_FDArray(ktd, 4)+TG_at_FDArray(ktd, 3)-resistance(ktd,3))/TG_at_FDArray(ktd, 4);
+        
+        % RCW=TG(1-t)+FD ==>> t=1-((RC-FD)/T)
+        thrustDedFracArray(k, 3) = 1-((resistance(ktd,3)-TG_at_FDArray(ktd, 3))/TG_at_FDArray(ktd, 4));
+        
         % t = ((FD-FatT=0)/TG@SPP)+1
         thrustDedFracArray(ktd, 4) = ((TG_at_FDArray(ktd, 3)-F_at_TGZero(ktd, 2))/TG_at_FDArray(ktd, 4))+1;
-        %disp(sprintf('Speed %s: t1 = ((%s-%s)/%s)+1',num2str(ktd),num2str(TG_at_FDArray(ktd, 3)),num2str(F_at_TGZero(ktd, 2)),num2str(TG_at_FDArray(ktd, 4))));
+        
         % t = 1-((FatT=0-FD)/TG@SPP)
         thrustDedFracArray(ktd, 5) = 1-((F_at_TGZero(ktd, 2)-TG_at_FDArray(ktd, 3))/TG_at_FDArray(ktd, 4));
-        %disp(sprintf('Speed %s: t2 = ((%s-%s)/%s)+1',num2str(ktd),num2str(F_at_TGZero(ktd, 2)),num2str(TG_at_FDArray(ktd, 3)),num2str(TG_at_FDArray(ktd, 4))));
     end % loop
     
 end % enableAdjustedFitting
@@ -3645,12 +3652,12 @@ for k=1:m
     ThrustCoeffArray(k,1)  = ForcesArray(k,1);
     
     % Model scale thrust
-    ThrustCoeffArray(k,2)  = MSPortGrosThrust
-    ThrustCoeffArray(k,3)  = MSStbdGrosThrust
+    ThrustCoeffArray(k,2)  = MSPortGrosThrust;
+    ThrustCoeffArray(k,3)  = MSStbdGrosThrust;
     
     % Full scale thrust
-    ThrustCoeffArray(k,4)  = FSPortGrosThrust
-    ThrustCoeffArray(k,5)  = FSStbdGrosThrust
+    ThrustCoeffArray(k,4)  = FSPortGrosThrust;
+    ThrustCoeffArray(k,5)  = FSStbdGrosThrust;
     
     % Model scale shaft speed
     MSPortSS = shaftSpeedConvArray(k,2);
@@ -5366,3 +5373,4 @@ dlmwrite('fullScaleDataArray_CCDoTT.txt', M, 'delimiter', '\t', 'precision', 4) 
 if enableProfiler == 1
     profile viewer
 end
+

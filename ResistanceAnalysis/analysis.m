@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 9, 2015
+%# Date       :  January 14, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -42,7 +42,8 @@
 %# Description    :  Turbulence studs investigation, trim tab optimisation and
 %#                   standard resistance test using a single catamaran demihull.
 %#                   Form factor estimation has been carried out using prohaska
-%#                   method as described by ITTC 7.2-02-02-01.
+%#                   method as described by ITTC 7.2-02-02-01. Remove turbulence
+%#                   stimulator resistance from model scale resistance.
 %#
 %# ITTC Guidelines:  7.5-02-02-01
 %#                   7.5-02-02-02
@@ -55,7 +56,11 @@
 %#
 %#               >>> TODO: Copy data from resultsArray.dat to full_resistance_data.dat
 %#
-%#               2 => analysis_stats.m    >> Resistance and error plots
+%#               2   => analysis_stats.m     >> Resistance and error plots
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
+%#               2.1 => analysis_avgrundat.m >> Averaged run data, summary
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
@@ -420,7 +425,6 @@ RunNosCond13 = 232:249; % Cond. 13 (Prohaska): 1,500t, deep transom
 %# ************************************************************************
 %# START DEFINE PLOT SIZE
 %# ------------------------------------------------------------------------
-
 %# Centimeters units
 XPlot = 42.0;                           %# A3 paper size
 YPlot = 29.7;                           %# A3 paper size
@@ -428,7 +432,6 @@ XPlotMargin = 1;                        %# left/right margins from page borders
 YPlotMargin = 1;                        %# bottom/top margins from page borders
 XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
 YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
-
 %# ------------------------------------------------------------------------
 %# END DEFINE PLOT SIZE
 %# ************************************************************************
@@ -1560,7 +1563,15 @@ for k=startRun:endRun
     %[51] Correlation allowance, CA                                                 (-)
     %[52] Air resistance coefficient in full scale, CAAs                            (-)
     
-    % Write data to array -------------------------------------------------
+    % ---------------------------------------------------------------------
+    % Additional values added: 14/01/2015, RTm without turb. stim. corr.
+    % ---------------------------------------------------------------------    
+    %[53] Model Scale Total Resistance includes TS Resistance, RTm                  (N)
+    
+    
+    %# --------------------------------------------------------------------
+    %# Write data to array
+    %# --------------------------------------------------------------------
     resultsArray(k, 1)  = k;                                                        % Run No.
     resultsArray(k, 2)  = round(length(timeData) / timeData(end));                  % FS (Hz)
     resultsArray(k, 3)  = length(timeData);                                         % Number of samples
@@ -1575,24 +1586,31 @@ for k=startRun:endRun
     roundedspeed = str2num(sprintf('%.2f',resultsArray(k, 5)));                     % Round averaged speed to two (2) decimals only
     MSFrRounded  = str2num(sprintf('%.2f',roundedspeed / sqrt(gravconst*MSlwl)));   % Calculate Froude length number
     
-    %# Resistance reduction due to turbulence stimulators -----------------
-    %# Needs subtraction in conditions 7, 8, 9, 10, 11, 12, and 13
+    %# --------------------------------------------------------------------
+    %# Resistance reduction due to turbulence stimulators
+    %# --------------------------------------------------------------------
+    %# Only needs subtraction in conditions 7, 8, 9, 10, 11, 12, and 13
     %# Use equation of fit: y = 3.1638x-0.4031 where x = Fr and y = resistance of turbulence stimulators
+    %# --------------------------------------------------------------------
+    %# Note: Equation of fit is linear fit based on two points only as
+    %#       turbulence stimulator tests included only two speeds!!!
+    %# --------------------------------------------------------------------
+    MSRTInNewton = (resultsArray(k, 8)/1000)*gravconst;
     if any(4:12==testcond)
         %disp(sprintf('Run: %s, Condition: %s, Apply TS correction.',num2str(k),num2str(testcond)));
         % Turbulence reduction based on EoF as shown in analysis_stats.m (seee Turb Stim Plot)
         TSReduction = 3.1638*MSFrRounded-0.4031;
         % Only apply TS correction if value > 0 (due to EoF)
         if TSReduction > 0
-            FSResInNewton = ((resultsArray(k, 8) / 1000) * gravconst)-TSReduction;
+            MSRTInNewton = MSRTInNewton-TSReduction;
         else
-            FSResInNewton = (resultsArray(k, 8) / 1000) * gravconst;
+            MSRTInNewton = MSRTInNewton;
         end
     else
         %disp(sprintf('Run: %s, Condition: %s, DO NOT apply TS correction.',num2str(k),num2str(testcond)));
-        FSResInNewton = (resultsArray(k, 8) / 1000) * gravconst;
+        MSRTInNewton = MSRTInNewton;
     end % any(7:13==testcond)
-    resultsArray(k, 9)  = FSResInNewton;                                            % Model Averaged drag (RTm) (N)
+    resultsArray(k, 9)  = MSRTInNewton;                                            % Model Averaged drag (RTm) (N)
     resultsArray(k, 10) = resultsArray(k, 9) / (0.5*freshwaterdensity*MSwsa*CH_0_Speed_Mean^2); % Model Averaged drag (CTm) (-)
     resultsArray(k, 11) = MSFrRounded;                                              % Froude length number (adjusted for Lwl change at different conditions) (-)
     
@@ -1679,6 +1697,12 @@ for k=startRun:endRun
     resultsArray(k, 50) = FSRoughnessAllowance;
     resultsArray(k, 51) = FSCorrelelationCoeff;
     resultsArray(k, 52) = FSAirResistanceCoeff;
+    
+    % ---------------------------------------------------------------------
+    % Additional values added: 14/01/2015, RTm without turb. stim. corr.
+    % ---------------------------------------------------------------------  
+    resultsArray(k, 53) = (resultsArray(k, 8)/1000)*gravconst;
+    
     
     % Command window output -----------------------------------------------
     if enableCommandWindowOutput == 1
@@ -1771,6 +1795,18 @@ disp('All done!');
 % -------------------------------------------------------------------------
 % END: Write results to CVS
 % /////////////////////////////////////////////////////////////////////////
+
+
+% Save as MAT file example
+%x = [1 2 3 4 5];
+%save('..\..\..\2013 November - Self-Propulsion Test\_Run files\_Matlab analysis\test.mat','x')
+
+%if exist('..\..\..\2013 November - Self-Propulsion Test\_Run files\_Matlab analysis\test.mat', 'file') == 2
+%	disp('File exists');
+%else
+%	disp('File does not exist');
+%end
+
 
 % -------------------------------------------------------------------------
 % View profile

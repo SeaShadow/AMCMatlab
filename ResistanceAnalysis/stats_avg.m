@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 9, 2015
+%# Date       :  January 14, 2015
 %#
 %# Function   :  Averaged repeated run data
 %#
@@ -211,7 +211,7 @@ A = arrayfun(@(x) RA(RA(:,11) == x, :), unique(RA(:,11)), 'uniformoutput', false
 %[6]  Model Averaged fwd LVDT                                                  (m)
 %[7]  Model Averaged aft LVDT                                                  (m)
 %[8]  Model Averaged drag                                                      (grams)
-%[9]  Model (Rtm) Total resistance                                             (N)
+%[9]  Model (RTm) Total resistance with Turb. Stim. Resistance subtracted      (N)
 %[10] Model (CTtm) Total resistance Coefficient                                (-)
 %[11] Model Froude length number                                               (-)
 %[12] Model Heave                                                              (mm)
@@ -268,6 +268,9 @@ A = arrayfun(@(x) RA(RA(:,11) == x, :), unique(RA(:,11)), 'uniformoutput', false
 
 % Added: 09/01/2015
 %[57] Full Scale (CRs) Residual Resistance Coefficient                         (-)
+
+% Added: 14/01/2015
+%[58] Model Scale (RTm) Total resistance with Turb. Stim. Resistance included  (N)
 
 for m=1:ma
     
@@ -531,7 +534,7 @@ for m=1:ma
     
     %# Model scale resistance and resistance coefficient ------------------
     
-    %[9]  Model (Rtm) Total resistance                                             (N)    
+    %[9]  Model (RTm) Total resistance with Turb. Stim. Resistance subtracted      (N)
     averagedArray(m,9)  = MSRT;
     
     %[10] Model (CTtm) Total resistance Coefficient                                (-)
@@ -728,6 +731,10 @@ for m=1:ma
     
     % Added: 09/01/2015
     %[57] Full Scale (CRs) Residual Resistance Coefficient                         (-)
-    averagedArray(m,56) = FSCR;
+    averagedArray(m,57) = FSCR;
+    
+    % Added: 014/01/2015
+    %[58] Model Scale (RTm) Total resistance with Turb. Stim. Resistance included  (N)
+    averagedArray(m,58) = mean(A{m}(:,53));
     
 end
