@@ -3,11 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-<<<<<<< HEAD
 %# Date       :  January 14, 2015
-=======
-%# Date       :  January 13, 2015
->>>>>>> 6877e27e71059214669e57d7ed7bc337daa8c35f
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -5338,6 +5334,161 @@ setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
     plotsavename = sprintf('_plots/%s/%s/SPP_Plot_10_MS_And_FS_Thrust_Coefficient_Comparison_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 11. Compare Tamura corrected resistance with full scale thrust
+%# ************************************************************************
+
+%# Plotting speed ---------------------------------------------------------
+figurename = 'Plot 11: Compare Tamura corrected resistance with full scale thrust';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ------------------------------------------------
+
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
+
+% Fonts and colours ---------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 14;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 11;
+setLineWidthMarker = 2;
+setLineWidth       = 2;
+setLineStyle       = '-';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+subplot(1,1,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+% 1
+x1 = [1 2];
+y1 = [1 2];
+
+% 2
+x2 = [2 3];
+y2 = [2 3];
+
+% 3
+x3 = [3 4];
+y3 = [3 4];
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
+xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Total resistance and thrust (kN)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+%     title('{\bf Resistance and thrust comparison)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(2),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(3),'Color',setColor{3},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%set(h(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+% %# Axis limitations
+% minX  = 0.22;
+% maxX  = 0.42;
+% incrX = 0.02;
+% minY  = 0;
+% maxY  = 0.3;
+% incrY = 0.05;
+% set(gca,'XLim',[minX maxX]);
+% set(gca,'XTick',minX:incrX:maxX);
+% set(gca,'YLim',[minY maxY]);
+% set(gca,'YTick',minY:incrY:maxY);
+% set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+% set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
+
+%# Legend
+hleg1 = legend('1','2','3');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title -------------------------------------------------------------
+%if enablePlotMainTitle == 1
+annotation('textbox', [0 0.9 1 0.1], ...
+    'String', strcat('{\bf ', figurename, '}'), ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center');
+%end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_11_FS_Resistance_vs_Extrapolated_Thrust_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
