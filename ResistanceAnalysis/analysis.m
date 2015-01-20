@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 14, 2015
+%# Date       :  January 20, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -60,49 +60,49 @@
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
-%#               2.1 => analysis_avgrundat.m >> Averaged run data, summary
-%#                    |
-%#                    |__> BASE DATA:     "full_resistance_data.dat"
-%#
-%#               3 => analysis_heave.m    >> Heave investigation related plots
-%#                    |
-%#                    |__> BASE DATA:     "full_resistance_data.dat"
-%#
-%#               4 => analysis_lvdts.m    >> Fr vs. fwd, aft and heave plots
-%#                    |
-%#                    |__> BASE DATA:     "full_resistance_data.dat"
-%#
-%#               5 => analysis_custom.m   >> Fr vs. Rtm/(VolDisp*p*g)*(1/Fr^2)
+%#               3 => analysis_custom.m   >> Fr vs. Rtm/(VolDisp*p*g)*(1/Fr^2)
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#                    |__> RESULTS:       "resultsAveragedArray.dat" and "*.txt"
 %#
-%#               6 => analysis_ts.m       >> Time series data for cond 7-12
+%#               4 => analysis_avgrundat.m >> Averaged run data, summary
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
-%#               7 => analysis_ua.m       >> Resistance uncertainty analysis
+%#               5 => analysis_heave.m    >> Heave investigation related plots
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
-%#               8 => analysis_sene.m     >> Calibration errors
+%#               6 => analysis_lvdts.m    >> Fr vs. fwd, aft and heave plots
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
+%#               7 => analysis_ts.m       >> Time series data for cond 7-12
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
+%#               8 => analysis_ua.m       >> Resistance uncertainty analysis
+%#                    |
+%#                    |__> BASE DATA:     "full_resistance_data.dat"
+%#
+%#               9 => analysis_sene.m     >> Calibration errors
 %#                    |
 %#                    |__> BASE DATA:     1. Read .cal data files
 %#                                        2. "resultsArraySensorError.dat"
 %#
-%#               9 => analysis_ts_drag.m  >> Time series data for cond 7-12
+%#               10 => analysis_ts_drag.m  >> Time series data for cond 7-12
 %#                    |                   >> DRAG ONLY!!!
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
-%#               10 => analysis_ts_drag_fft.m  >> Time series data for cond 7-12
+%#               11 => analysis_ts_drag_fft.m  >> Time series data for cond 7-12
 %#                    |                        >> DRAG ONLY!!!
 %#                    |
 %#                    |__> BASE DATA:     "full_resistance_data.dat"
 %#
 %#               >>> TODO: Copy data from frequencyArrayFFT.dat to fft_frequency_data.dat
 %#
-%#               11 => analysis_ts_dp.m  >> Time series data for cond 7-12
+%#               12 => analysis_ts_dp.m  >> Time series data for cond 7-12
 %#                    |
 %#                    |__> BASE DATA:     DAQ run files
 %#
