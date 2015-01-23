@@ -3,7 +3,11 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
+<<<<<<< HEAD
 %# Date       :  January 21, 2015
+=======
+%# Date       :  January 19, 2015
+>>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -149,7 +153,7 @@ enableTurbStimPlot      = 0; % Turbulence stimulator investigation
 enableTrimTabPlot       = 0; % Trim tab investigation
 enableResistancePlot    = 1; % Resistance plots, Ctm, power, heave and trim
 enableProhaskaPlot      = 0; % Prohaska plot, form factor at deep transom
-enableErrorPlot         = 0; % Error plots (% of max-avg to magnitude)
+enableErrorPlot         = 1; % Error plots (% of max-avg to magnitude)
 enableMeanStdPlot       = 0; % Show Fr vs. mean of standard deviation
 enableStdPlot           = 0; % Show Fr vs. standard deviation
 enableRemVSCFmPlot      = 0; % Show Re vs. Cfm plot
@@ -1794,9 +1798,15 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
     % Plotting
     h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');
+<<<<<<< HEAD
 %     if enablePlotTitle == 1
 %         title('{\bf Total resitance coefficient, C_{Tm}}','FontSize',setGeneralFontSize);
 %     end
+=======
+    if enablePlotTitle == 1
+        title('{\bf Total resitance coefficient, C_{Tm}}','FontSize',setGeneralFontSize);
+    end
+>>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
     ylabel('{\bf Total resistance coeff., C_{Tm}*1000 [-]}','FontSize',setGeneralFontSize);
     grid on;
@@ -1899,9 +1909,15 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
     % Plotting
     h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');
+<<<<<<< HEAD
 %     if enablePlotTitle == 1
 %         title('{\bf Full Scale Effective power, P_{Es}}','FontSize',setGeneralFontSize);
 %     end
+=======
+    if enablePlotTitle == 1
+        title('{\bf Full Scale Effective power, P_{Es}}','FontSize',setGeneralFontSize);
+    end
+>>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
     xlabel('{\bf Full scale speed [knots]}','FontSize',setGeneralFontSize);
     ylabel('{\bf Effective power [MW]}','FontSize',setGeneralFontSize);
     grid on;
@@ -2072,9 +2088,15 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
     % Plotting
     h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');
+<<<<<<< HEAD
 %     if enablePlotTitle == 1
 %         title('{\bf Heave}','FontSize',setGeneralFontSize);
 %     end
+=======
+    if enablePlotTitle == 1
+        title('{\bf Heave}','FontSize',setGeneralFontSize);
+    end
+>>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
     ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
     grid on;
@@ -2183,9 +2205,15 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
     % Plotting
     h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');
+<<<<<<< HEAD
 %     if enablePlotTitle == 1
 %         title('{\bf Running trim}','FontSize',setGeneralFontSize);
 %     end
+=======
+    if enablePlotTitle == 1
+        title('{\bf Running trim}','FontSize',setGeneralFontSize);
+    end
+>>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
     xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
     ylabel('{\bf Running trim [deg]}','FontSize',setGeneralFontSize);
     grid on;
