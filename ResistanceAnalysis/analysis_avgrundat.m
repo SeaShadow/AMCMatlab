@@ -6,11 +6,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-<<<<<<< HEAD
 %# Date       :  January 22, 2015
-=======
-%# Date       :  January 20, 2015
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -144,11 +140,7 @@ delete(allPlots);   % Close all plots
 
 % Plot titles, colours, etc.
 enablePlotMainTitle       = 1;    % Show plot title in saved file
-<<<<<<< HEAD
 enablePlotTitle           = 0;    % Show plot title above plot
-=======
-enablePlotTitle           = 1;    % Show plot title above plot
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 enableBlackAndWhitePlot   = 1;    % Show plot in black and white only
 
 % Scaled to A4 paper
@@ -1125,11 +1117,7 @@ if enableBlackAndWhitePlot == 1
 end
 
 %# Line, colors and markers
-<<<<<<< HEAD
 setMarkerSize      = 8;
-=======
-setMarkerSize      = 11;
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 setLineWidthMarker = 2;
 setLineWidth       = 2;
 setLineStyle       = '-';
@@ -1158,27 +1146,17 @@ x4 = RACorrectedScott(1:17,11);
 y4 = RACorrectedScott(1:17,24);
 
 %# Plotting ---------------------------------------------------------------
-<<<<<<< HEAD
 h = plot(x1,y1,'*-',x2,y2,'*-',x3,y3,'*-',x4,y4,'*-');
 xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Total resistance, R_{T} (kN)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
     title('{\bf Blockage and depth corrections}','FontSize',setGeneralFontSize);
-=======
-%h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*');
-h = plot(x1,y1,'-',x2,y2,'-',x3,y3,'-',x4,y4,'-');
-xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
-ylabel('{\bf Total resistance, R_{T} (kN)}','FontSize',setGeneralFontSize);
-if enablePlotTitle == 1
-    title('{\bf Resistance comparison}','FontSize',setGeneralFontSize);
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 end
 grid on;
 box on;
 axis square;
 
 %# Line, colors and markers
-<<<<<<< HEAD
 %set(h(1),'Color',setColor{1},'Marker','none','LineStyle','-','linewidth',setLineWidth);
 %set(h(2),'Color',setColor{2},'Marker','none','LineStyle','--','linewidth',setLineWidth);
 %set(h(3),'Color',setColor{3},'Marker','none','LineStyle','-.','linewidth',setLineWidth);
@@ -1191,16 +1169,6 @@ set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'L
 set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','--','linewidth',setLineWidth);
 set(h(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.','linewidth',setLineWidth);
 set(h(4),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',':','linewidth',setLineWidth);
-=======
-set(h(1),'Color',setColor{1},'Marker','none','LineStyle','-','linewidth',setLineWidth);
-set(h(2),'Color',setColor{2},'Marker','none','LineStyle','--','linewidth',setLineWidth);
-set(h(3),'Color',setColor{3},'Marker','none','LineStyle','-.','linewidth',setLineWidth);
-set(h(4),'Color',setColor{4},'Marker','none','LineStyle',':','linewidth',setLineWidth);
-% set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% set(h(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% set(h(4),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -1221,11 +1189,7 @@ set(gca,'YTick',minY:incrY:maxY);
 % set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
 
 %# Legend
-<<<<<<< HEAD
 hleg1 = legend('R_{TBH}','Tamura','Schuster','Scott');
-=======
-hleg1 = legend('ITTC 1978','Tamura','Schuster','Scott');
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
@@ -1267,11 +1231,7 @@ x3 = differencesArray(1:17,2);
 y3 = differencesArray(1:17,5);
 
 %# Plotting ---------------------------------------------------------------
-<<<<<<< HEAD
 h = plot(x1,y1,'*-',x2,y2,'*-',x3,y3,'*-');
-=======
-h = plot(x1,y1,'-',x2,y2,'-',x3,y3,'-');
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Difference (%)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
@@ -1282,18 +1242,12 @@ box on;
 axis square;
 
 %# Line, colors and markers
-<<<<<<< HEAD
 %set(h(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
 %set(h(2),'Color',setColor{2},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
 %set(h(3),'Color',setColor{3},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
 set(h(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','--','linewidth',setLineWidth);
 set(h(2),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.','linewidth',setLineWidth);
 set(h(3),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',':','linewidth',setLineWidth);
-=======
-set(h(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(2),'Color',setColor{2},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-set(h(3),'Color',setColor{3},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -1314,11 +1268,7 @@ set(gca,'YTick',minY:incrY:maxY);
 % set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
 
 %# Legend
-<<<<<<< HEAD
 hleg1 = legend('R_{TBH} to Tamura','R_{TBH} to Schuster','R_{TBH} to Scott');
-=======
-hleg1 = legend('ITTC 1978 to Tamura','ITTC 1978 to Schuster','ITTC 1978 to Scott');
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
@@ -1427,11 +1377,6 @@ subplot(1,2,1)
 x1 = RAUncorrected(:,1);
 y1 = RAUncorrected(:,8);
 
-<<<<<<< HEAD
-=======
-y1
-
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 % Corrected using Tamura
 x2 = RACorrectedTamura(:,1);
 y2 = RACorrectedTamura(:,8);
@@ -1445,12 +1390,7 @@ x4 = RACorrectedScott(1:17,1);
 y4 = RACorrectedScott(1:17,8);
 
 %# Plotting ---------------------------------------------------------------
-<<<<<<< HEAD
 h = plot(x1,y1,'*-',x2,y2,'*-',x3,y3,'*-',x4,y4,'*-');
-=======
-%h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*');
-h = plot(x1,y1,'-',x2,y2,'-',x3,y3,'-',x4,y4,'-');
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Residual resistance coefficient, C_{R} (-)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
@@ -1461,7 +1401,6 @@ box on;
 axis square;
 
 %# Line, colors and markers
-<<<<<<< HEAD
 %set(h(1),'Color',setColor{1},'Marker','none','LineStyle','-','linewidth',setLineWidth);
 %set(h(2),'Color',setColor{2},'Marker','none','LineStyle','--','linewidth',setLineWidth);
 %set(h(3),'Color',setColor{3},'Marker','none','LineStyle','-.','linewidth',setLineWidth);
@@ -1474,16 +1413,6 @@ set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'L
 set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','--','linewidth',setLineWidth);
 set(h(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.','linewidth',setLineWidth);
 set(h(4),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',':','linewidth',setLineWidth);
-=======
-set(h(1),'Color',setColor{1},'Marker','none','LineStyle','-','linewidth',setLineWidth);
-set(h(2),'Color',setColor{2},'Marker','none','LineStyle','--','linewidth',setLineWidth);
-set(h(3),'Color',setColor{3},'Marker','none','LineStyle','-.','linewidth',setLineWidth);
-set(h(4),'Color',setColor{4},'Marker','none','LineStyle',':','linewidth',setLineWidth);
-% set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% set(h(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% set(h(4),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -1504,11 +1433,7 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.4f'));
 
 %# Legend
-<<<<<<< HEAD
 hleg1 = legend('R_{TBH}','Tamura','Schuster','Scott');
-=======
-hleg1 = legend('ITTC 1978','Tamura','Schuster','Scott');
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
@@ -1538,12 +1463,7 @@ x3 = RRArray(1:17,1);
 y3 = RRArray(1:17,14);
 
 %# Plotting ---------------------------------------------------------------
-<<<<<<< HEAD
 h = plot(x1,y1,'*-',x2,y2,'*-',x3,y3,'*-');
-=======
-%h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
-h = plot(x1,y1,'-',x2,y2,'-',x3,y3,'-');
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
 ylabel('{\bf (CR(shallow)-CR(deep)) / CR(deep) (-)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
@@ -1554,7 +1474,6 @@ box on;
 axis square;
 
 %# Line, colors and markers
-<<<<<<< HEAD
 %set(h(1),'Color',setColor{1},'Marker','none','LineStyle','-','linewidth',setLineWidth);
 %set(h(2),'Color',setColor{2},'Marker','none','LineStyle','--','linewidth',setLineWidth);
 %set(h(3),'Color',setColor{3},'Marker','none','LineStyle','-.','linewidth',setLineWidth);
@@ -1564,14 +1483,6 @@ axis square;
 set(h(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','--','linewidth',setLineWidth);
 set(h(2),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.','linewidth',setLineWidth);
 set(h(3),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',':','linewidth',setLineWidth);
-=======
-set(h(1),'Color',setColor{1},'Marker','none','LineStyle','-','linewidth',setLineWidth);
-set(h(2),'Color',setColor{2},'Marker','none','LineStyle','--','linewidth',setLineWidth);
-set(h(3),'Color',setColor{3},'Marker','none','LineStyle','-.','linewidth',setLineWidth);
-% set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% set(h(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html

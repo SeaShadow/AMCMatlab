@@ -3,11 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-<<<<<<< HEAD
-%# Date       :  January 21, 2015
-=======
-%# Date       :  January 20, 2015
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
+%# Date       :  January 26, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -42,6 +38,9 @@
 %#                                    ==> Creates resultsArrayBL.dat
 %#
 %#               => analysis_spp.m    Self-propulsion points
+%#                                    ==> Creates resultsArraySPP.dat
+%#
+%#               => analysis_spp_ccdott.m Self-propulsion points by CCDoTT
 %#                                    ==> Creates resultsArraySPP_CCDoTT.dat
 %#
 %#               => analysis_spt.m    Self-propulsion test
@@ -54,7 +53,7 @@
 %#                                    ==> Creates resultsArrayTS.dat
 %#
 %#               => analysis_fscomp.m  Full Scale Results Comparison
-%#                                     ==> Uses fullScaleDataArray_CCDoTT.dat
+%#                                     ==> Uses fullScaleDataArray.dat
 %#                                     ==> Uses SeaTrials1500TonnesCorrPower
 %#
 %# ------------------------------------------------------------------------

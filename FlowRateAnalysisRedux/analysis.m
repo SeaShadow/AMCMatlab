@@ -3,11 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-<<<<<<< HEAD
 %# Date       :  January 21, 2015
-=======
-%# Date       :  January 20, 2015
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)

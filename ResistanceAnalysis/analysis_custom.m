@@ -3,11 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-<<<<<<< HEAD
 %# Date       :  January 21, 2015
-=======
-%# Date       :  January 20, 2015
->>>>>>> 9f43f0ae8bde5504c730f5ccd2b64d78c8dabbcc
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
