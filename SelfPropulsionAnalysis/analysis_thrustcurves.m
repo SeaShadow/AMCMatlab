@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 26, 2015
+%# Date       :  January 27, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -90,13 +90,13 @@ delete(allPlots);   % Close all plots
 % Plot titles, colours, etc.
 enablePlotMainTitle         = 1;    % Show plot title in saved file
 enablePlotTitle             = 1;    % Show plot title above plot
-enableBlackAndWhitePlot     = 0;    % Show plot in black and white only
+enableBlackAndWhitePlot     = 1;    % Show plot in black and white only
 
 % Scaled to A4 paper
 enableA4PaperSizePlot       = 1;    % Show plots scale to A4 size
 
 % Command window output
-enableAdjustedCommandWindow = 0;    % Show command window output
+enableAdjustedCommandWindow = 1;    % Show command window output
 
 % Check if Curve Fitting Toolbox is installed
 % See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
@@ -351,6 +351,15 @@ WSPSpeed        = fullscaleresults(:,3);
 %# Set Variables: Associate thrust curve data with % MCR
 %# ************************************************************************
 
+EoFTCArray = [];
+%# EoFTCArray columns:
+% [1]  % MCR            (%)
+% [2]  P1 parameter     (-)
+% [3]  P2 parameter     (-)
+% [4]  P3 parameter     (-)
+% [5]  P4 parameter     (-)
+% [6]  Root squared     (-)
+
 Pct5MCR   = TCDataArray(1:28,:);
 Pct10MCR  = TCDataArray(29:65,:);
 Pct15MCR  = TCDataArray(66:106,:);
@@ -375,7 +384,15 @@ SS1       = TCDataArray(601:626,:);
 
 % Equations of fit (EoF) --------------------------------------------------
 
-[fitobject1,gof1,output1]    = fit(Pct5MCR(:,3),Pct5MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    disp('*****************************************************************');
+    disp('1. Thrust Cruves Equations of Fit (EoF)');
+    disp('*****************************************************************');
+end
+
+%# 5% *********************************************************************
+
+[fitobject1,gof1,output1]    = fit(Pct5MCR(:,3),Pct5MCR(:,4),'poly3');
 cvalues5                     = coeffvalues(fitobject1);
 
 if enableAdjustedCommandWindow == 1
@@ -385,7 +402,6 @@ if enableAdjustedCommandWindow == 1
     setDecimals2 = '+%0.4f';
     setDecimals3 = '+%0.4f';
     setDecimals4 = '+%0.4f';
-    setDecimals5 = '+%0.4f';
     if cval(1) < 0
         setDecimals1 = '%0.4f';
     end
@@ -398,35 +414,237 @@ if enableAdjustedCommandWindow == 1
     if cval(4) < 0
         setDecimals4 = '%0.4f';
     end
-    if cval(5) < 0
-        setDecimals5 = '%0.4f';
-    end
-    p1   = sprintf(setDecimals1,cval(1));
-    p2   = sprintf(setDecimals2,cval(2));
-    p3   = sprintf(setDecimals3,cval(3));
-    p4   = sprintf(setDecimals4,cval(4));
-    p5   = sprintf(setDecimals5,cval(5));
-    gofrs = sprintf('%0.2f',gof.rsquare);
-    EoFEqn = sprintf('5 Percent Curve: y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofrs);
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('5 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
     disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 1;
+    EoFTCArray(setRow,1) = 5;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
 end
 
-[fitobject2,gof2,output2]    = fit(Pct10MCR(:,3),Pct10MCR(:,4),'poly4');
+%# 10% ********************************************************************
+
+[fitobject2,gof2,output2]    = fit(Pct10MCR(:,3),Pct10MCR(:,4),'poly3');
 cvalues10                    = coeffvalues(fitobject2);
 
-[fitobject3,gof3,output3]    = fit(Pct15MCR(:,3),Pct15MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues10;
+    gof  = gof2;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('10 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 2;
+    EoFTCArray(setRow,1) = 10;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 15% ********************************************************************
+
+[fitobject3,gof3,output3]    = fit(Pct15MCR(:,3),Pct15MCR(:,4),'poly3');
 cvalues15                    = coeffvalues(fitobject3);
 
-[fitobject4,gof4,output4]    = fit(Pct20MCR(:,3),Pct20MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues15;
+    gof  = gof3;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('15 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 3;
+    EoFTCArray(setRow,1) = 15;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 20% ********************************************************************
+
+[fitobject4,gof4,output4]    = fit(Pct20MCR(:,3),Pct20MCR(:,4),'poly3');
 cvalues20                    = coeffvalues(fitobject4);
 
-[fitobject5,gof5,output5]    = fit(Pct25MCR(:,3),Pct25MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues20;
+    gof  = gof4;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('20 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 4;
+    EoFTCArray(setRow,1) = 20;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 25% ********************************************************************
+
+[fitobject5,gof5,output5]    = fit(Pct25MCR(:,3),Pct25MCR(:,4),'poly3');
 cvalues25                    = coeffvalues(fitobject5);
 
-[fitobject6,gof6,output6]    = fit(Pct30MCR(:,3),Pct30MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues25;
+    gof  = gof5;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('25 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 5;
+    EoFTCArray(setRow,1) = 25;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 30% ********************************************************************
+
+[fitobject6,gof6,output6]    = fit(Pct30MCR(:,3),Pct30MCR(:,4),'poly3');
 cvalues30                    = coeffvalues(fitobject6);
 
-[fitobject7,gof7,output7]    = fit(Pct35MCR(:,3),Pct35MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues30;
+    gof  = gof6;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('30 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 6;
+    EoFTCArray(setRow,1) = 30;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 35% ********************************************************************
+
+[fitobject7,gof7,output7]    = fit(Pct35MCR(:,3),Pct35MCR(:,4),'poly3');
 cvalues35                    = coeffvalues(fitobject7);
 
 if enableAdjustedCommandWindow == 1
@@ -436,7 +654,6 @@ if enableAdjustedCommandWindow == 1
     setDecimals2 = '+%0.4f';
     setDecimals3 = '+%0.4f';
     setDecimals4 = '+%0.4f';
-    setDecimals5 = '+%0.4f';
     if cval(1) < 0
         setDecimals1 = '%0.4f';
     end
@@ -449,20 +666,27 @@ if enableAdjustedCommandWindow == 1
     if cval(4) < 0
         setDecimals4 = '%0.4f';
     end
-    if cval(5) < 0
-        setDecimals5 = '%0.4f';
-    end
-    p1   = sprintf(setDecimals1,cval(1));
-    p2   = sprintf(setDecimals2,cval(2));
-    p3   = sprintf(setDecimals3,cval(3));
-    p4   = sprintf(setDecimals4,cval(4));
-    p5   = sprintf(setDecimals5,cval(5));
-    gofrs = sprintf('%0.2f',gof.rsquare);
-    EoFEqn = sprintf('35 Percent Curve: y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofrs);
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('35 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
     disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 7;
+    EoFTCArray(setRow,1) = 35;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
 end
 
-[fitobject8,gof8,output8]    = fit(Pct40MCR(:,3),Pct40MCR(:,4),'poly4');
+%# 40% ********************************************************************
+
+[fitobject8,gof8,output8]    = fit(Pct40MCR(:,3),Pct40MCR(:,4),'poly3');
 cvalues40                    = coeffvalues(fitobject8);
 
 if enableAdjustedCommandWindow == 1
@@ -472,7 +696,6 @@ if enableAdjustedCommandWindow == 1
     setDecimals2 = '+%0.4f';
     setDecimals3 = '+%0.4f';
     setDecimals4 = '+%0.4f';
-    setDecimals5 = '+%0.4f';
     if cval(1) < 0
         setDecimals1 = '%0.4f';
     end
@@ -485,56 +708,529 @@ if enableAdjustedCommandWindow == 1
     if cval(4) < 0
         setDecimals4 = '%0.4f';
     end
-    if cval(5) < 0
-        setDecimals5 = '%0.4f';
-    end
-    p1   = sprintf(setDecimals1,cval(1));
-    p2   = sprintf(setDecimals2,cval(2));
-    p3   = sprintf(setDecimals3,cval(3));
-    p4   = sprintf(setDecimals4,cval(4));
-    p5   = sprintf(setDecimals5,cval(5));
-    gofrs = sprintf('%0.2f',gof.rsquare);
-    EoFEqn = sprintf('40 Percent Curve: y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofrs);
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('40 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
     disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 8;
+    EoFTCArray(setRow,1) = 40;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
 end
 
-[fitobject9,gof9,output9]    = fit(Pct45MCR(:,3),Pct45MCR(:,4),'poly4');
+%# 45% ********************************************************************
+
+[fitobject9,gof9,output9]    = fit(Pct45MCR(:,3),Pct45MCR(:,4),'poly3');
 cvalues45                    = coeffvalues(fitobject9);
 
-[fitobject10,gof10,output10] = fit(Pct50MCR(:,3),Pct50MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues45;
+    gof  = gof9;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('45 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 9;
+    EoFTCArray(setRow,1) = 45;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 50% ********************************************************************
+
+[fitobject10,gof10,output10] = fit(Pct50MCR(:,3),Pct50MCR(:,4),'poly3');
 cvalues50                    = coeffvalues(fitobject10);
 
-[fitobject11,gof11,output11] = fit(Pct55MCR(:,3),Pct55MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues50;
+    gof  = gof10;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('50 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 10;
+    EoFTCArray(setRow,1) = 50;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 55% ********************************************************************
+
+[fitobject11,gof11,output11] = fit(Pct55MCR(:,3),Pct55MCR(:,4),'poly3');
 cvalues55                    = coeffvalues(fitobject11);
 
-[fitobject12,gof12,output12] = fit(Pct60MCR(:,3),Pct60MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues55;
+    gof  = gof11;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('55 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 11;
+    EoFTCArray(setRow,1) = 55;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 60% ********************************************************************
+
+[fitobject12,gof12,output12] = fit(Pct60MCR(:,3),Pct60MCR(:,4),'poly3');
 cvalues60                    = coeffvalues(fitobject12);
 
-[fitobject13,gof13,output13] = fit(Pct65MCR(:,3),Pct65MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues60;
+    gof  = gof12;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('60 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 12;
+    EoFTCArray(setRow,1) = 60;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 65% ********************************************************************
+
+[fitobject13,gof13,output13] = fit(Pct65MCR(:,3),Pct65MCR(:,4),'poly3');
 cvalues65                    = coeffvalues(fitobject13);
 
-[fitobject14,gof14,output14] = fit(Pct70MCR(:,3),Pct70MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues65;
+    gof  = gof13;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('65 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 13;
+    EoFTCArray(setRow,1) = 65;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 70% ********************************************************************
+
+[fitobject14,gof14,output14] = fit(Pct70MCR(:,3),Pct70MCR(:,4),'poly3');
 cvalues70                    = coeffvalues(fitobject14);
 
-[fitobject15,gof15,output15] = fit(Pct75MCR(:,3),Pct75MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues70;
+    gof  = gof14;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('70 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 14;
+    EoFTCArray(setRow,1) = 70;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 75% ********************************************************************
+
+[fitobject15,gof15,output15] = fit(Pct75MCR(:,3),Pct75MCR(:,4),'poly3');
 cvalues75                    = coeffvalues(fitobject15);
 
-[fitobject16,gof16,output16] = fit(Pct80MCR(:,3),Pct80MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues75;
+    gof  = gof15;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('75 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 15;
+    EoFTCArray(setRow,1) = 75;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 80% ********************************************************************
+
+[fitobject16,gof16,output16] = fit(Pct80MCR(:,3),Pct80MCR(:,4),'poly3');
 cvalues80                    = coeffvalues(fitobject16);
 
-[fitobject17,gof17,output17] = fit(Pct85MCR(:,3),Pct85MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues80;
+    gof  = gof16;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('80 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 16;
+    EoFTCArray(setRow,1) = 80;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 85% ********************************************************************
+
+[fitobject17,gof17,output17] = fit(Pct85MCR(:,3),Pct85MCR(:,4),'poly3');
 cvalues85                    = coeffvalues(fitobject17);
 
-[fitobject18,gof18,output18] = fit(Pct90MCR(:,3),Pct90MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues85;
+    gof  = gof17;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('85 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 17;
+    EoFTCArray(setRow,1) = 85;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 90% ********************************************************************
+
+[fitobject18,gof18,output18] = fit(Pct90MCR(:,3),Pct90MCR(:,4),'poly3');
 cvalues90                    = coeffvalues(fitobject18);
 
-[fitobject19,gof19,output19] = fit(Pct95MCR(:,3),Pct95MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues90;
+    gof  = gof18;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('90 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 18;
+    EoFTCArray(setRow,1) = 90;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 95% ********************************************************************
+
+[fitobject19,gof19,output19] = fit(Pct95MCR(:,3),Pct95MCR(:,4),'poly3');
 cvalues95                    = coeffvalues(fitobject19);
 
-[fitobject20,gof20,output20] = fit(Pct100MCR(:,3),Pct100MCR(:,4),'poly4');
+if enableAdjustedCommandWindow == 1
+    cval = cvalues95;
+    gof  = gof19;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('95 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 19;
+    EoFTCArray(setRow,1) = 95;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+%# 100% *******************************************************************
+
+[fitobject20,gof20,output20] = fit(Pct100MCR(:,3),Pct100MCR(:,4),'poly3');
 cvalues100                   = coeffvalues(fitobject20);
 
-% Root square values
+if enableAdjustedCommandWindow == 1
+    cval = cvalues100;
+    gof  = gof20;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1     = sprintf(setDecimals1,cval(1));
+    p2     = sprintf(setDecimals2,cval(2));
+    p3     = sprintf(setDecimals3,cval(3));
+    p4     = sprintf(setDecimals4,cval(4));
+    gofrs  = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('100 Percent Curve: y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    disp(EoFEqn);
+    
+    % Write to EoF array
+    setRow = 20;
+    EoFTCArray(setRow,1) = 100;
+    EoFTCArray(setRow,2) = cval(1);
+    EoFTCArray(setRow,3) = cval(2);
+    EoFTCArray(setRow,4) = cval(3);
+    EoFTCArray(setRow,5) = cval(4);
+    EoFTCArray(setRow,6) = gof.rsquare;
+end
+
+% Root square values ******************************************************
 RSArray(1)  = gof1.rsquare;
 RSArray(2)  = gof2.rsquare;
 RSArray(3)  = gof3.rsquare;
@@ -563,7 +1259,13 @@ RSArray = RSArray';
 
 %# 1. Polynomial fit for corrected sea trials power -----------------------
 
-% Total catamaran (knots and MW)
+if enableAdjustedCommandWindow == 1
+    disp('*****************************************************************');
+    disp('2. Corrected Sea Trials Power Equations of Fit (EoF)');
+    disp('*****************************************************************');
+end
+
+% Total catamaran (knots and MW) ******************************************
 xTotCat = STCorrPowerArrray(:,1);
 yTotCat = STCorrPowerArrray(:,2);
 [fitobjectTotCat,gofTotCat,outputTotCat] = fit(xTotCat,yTotCat,'poly5');
@@ -602,11 +1304,11 @@ if enableAdjustedCommandWindow == 1
     p5   = sprintf(setDecimals5,cval(5));
     p6   = sprintf(setDecimals6,cval(6));
     gofrs = sprintf('%0.2f',gofTotCat.rsquare);
-    EoFEqn = sprintf('Corrected ST power, EoF for total catamaran: y=%sx^5%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,p6,gofrs);
+    EoFEqn = sprintf('Total catamaran: y=%sx^5%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,p6,gofrs);
     disp(EoFEqn);
 end
 
-% Single demihull (knots and MW)
+% Single demihull (knots and MW) ******************************************
 xSingDH = STCorrPowerArrray(:,1);
 ySingDH = STCorrPowerArrray(:,5);
 [fitobjectSingDH,gofSingDH,outputSingDH] = fit(xSingDH,ySingDH,'poly5');
@@ -645,11 +1347,11 @@ if enableAdjustedCommandWindow == 1
     p5   = sprintf(setDecimals5,cval(5));
     p6   = sprintf(setDecimals6,cval(6));
     gofrs = sprintf('%0.2f',gofTotCat.rsquare);
-    EoFEqn = sprintf('Corrected ST power, EoF for single demihull: y=%sx^5%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,p6,gofrs);
+    EoFEqn = sprintf('Single demihull: y=%sx^5%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,p6,gofrs);
     disp(EoFEqn);
 end
 
-% Single waterjet (knots and MW)
+% Single waterjet (knots and MW) ******************************************
 xSingWJ = STCorrPowerArrray(:,1);
 ySingWJ = STCorrPowerArrray(:,8);
 [fitobjectSingWJ,gofSingWJ,outputSingWJ] = fit(xSingWJ,ySingWJ,'poly5');
@@ -688,7 +1390,7 @@ if enableAdjustedCommandWindow == 1
     p5   = sprintf(setDecimals5,cval(5));
     p6   = sprintf(setDecimals6,cval(6));
     gofrs = sprintf('%0.2f',gofTotCat.rsquare);
-    EoFEqn = sprintf('Corrected ST power, EoF for single waterjet: y=%sx^5%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,p6,gofrs);
+    EoFEqn = sprintf('Single waterjet: y=%sx^5%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,p6,gofrs);
     disp(EoFEqn);
 end
 
@@ -723,13 +1425,10 @@ for k=1:mfs
     CalcMCRAArray(k,6) = EoF;
     CalcMCRAArray(k,7) = EoF/(SingWJ100PerMCR/1000);
 end
-clearvars EoF
 
 %# 3. Interpol. thrust curve data for % MCR values (see CalcMCRAArray) ----
 
-IPolSpeeds = 5:1:45;
-[mips,nips] = size(IPolSpeeds);
-
+%# Create empty arrays
 IntPolS1 = [];
 IntPolS2 = [];
 IntPolS3 = [];
@@ -741,11 +1440,35 @@ IntPolS8 = [];
 IntPolS9 = [];
 
 IntPolThrust = [];
+%# IntPolThrust columns:
+% [1]  Ship speed           (%)
+% [2]  Thrust, single WJ    (kN)
+
+EoFTCInterpolArray = [];
+%# EoFTCInterpolArray columns:
+% [1]  % MCR                (%)
+% [2]  P1 parameter         (-)
+% [3]  P2 parameter         (-)
+% [4]  P3 parameter         (-)
+% [5]  P4 parameter         (-)
+% [6]  Root squared         (-)
 
 % Loop through speeds
+if enableAdjustedCommandWindow == 1
+    disp('*****************************************************************');
+    disp('3. Calculation MCR Interpolation Ranges');
+    disp('*****************************************************************');
+end
 for k=1:mfs
+    
+    % Start with empty array each iteration!!!!
+    IntPol   = [];
+    
+    % Determine which interpolation range is required
     if CalcMCRAArray(k,3) > 0.05 && CalcMCRAArray(k,3) < 0.1
-        disp(sprintf('Speed %s: 5 > MCR < 10, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 5%% > MCR < 10%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.05;
         maxMCR      = 0.10;
         minEoF      = cvalues5;
@@ -753,7 +1476,9 @@ for k=1:mfs
         minMCRArray = Pct5MCR;
         maxMCRArray = Pct10MCR;
     elseif CalcMCRAArray(k,3) > 0.1 && CalcMCRAArray(k,3) < 0.15
-        disp(sprintf('Speed %s: 10 > MCR < 15, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 10%% > MCR < 15%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.1;
         maxMCR      = 0.15;
         minEoF      = cvalues10;
@@ -761,7 +1486,9 @@ for k=1:mfs
         minMCRArray = Pct10MCR;
         maxMCRArray = Pct15MCR;
     elseif CalcMCRAArray(k,3) > 0.15 && CalcMCRAArray(k,3) < 0.20
-        disp(sprintf('Speed %s: 15 > MCR < 20, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 15%% > MCR < 20%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.15;
         maxMCR      = 0.20;
         minEoF      = cvalues15;
@@ -769,7 +1496,9 @@ for k=1:mfs
         minMCRArray = Pct15MCR;
         maxMCRArray = Pct20MCR;
     elseif CalcMCRAArray(k,3) > 0.2 && CalcMCRAArray(k,3) < 0.25
-        disp(sprintf('Speed %s: 20 > MCR < 25, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 20%% > MCR < 25%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.2;
         maxMCR      = 0.25;
         minEoF      = cvalues20;
@@ -777,7 +1506,9 @@ for k=1:mfs
         minMCRArray = Pct20MCR;
         maxMCRArray = Pct25MCR;
     elseif CalcMCRAArray(k,3) > 0.25 && CalcMCRAArray(k,3) < 0.30
-        disp(sprintf('Speed %s: 25 > MCR < 30, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 25%% > MCR < 30%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.25;
         maxMCR      = 0.3;
         minEoF      = cvalues25;
@@ -785,7 +1516,9 @@ for k=1:mfs
         minMCRArray = Pct25MCR;
         maxMCRArray = Pct30MCR;
     elseif CalcMCRAArray(k,3) > 0.3 && CalcMCRAArray(k,3) < 0.35
-        disp(sprintf('Speed %s: 30 > MCR < 35, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 30%% > MCR < 35%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.3;
         maxMCR      = 0.35;
         minEoF      = cvalues30;
@@ -793,7 +1526,9 @@ for k=1:mfs
         minMCRArray = Pct30MCR;
         maxMCRArray = Pct35MCR;
     elseif CalcMCRAArray(k,3) > 0.35 && CalcMCRAArray(k,3) < 0.40
-        disp(sprintf('Speed %s: 35 > MCR < 40, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 35%% > MCR < 40%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.35;
         maxMCR      = 0.40;
         minEoF      = cvalues35;
@@ -801,7 +1536,9 @@ for k=1:mfs
         minMCRArray = Pct35MCR;
         maxMCRArray = Pct40MCR;
     elseif CalcMCRAArray(k,3) > 0.4 && CalcMCRAArray(k,3) < 0.45
-        disp(sprintf('Speed %s: 40 > MCR < 45, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 40%% > MCR < 45%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.4;
         maxMCR      = 0.45;
         minEoF      = cvalues40;
@@ -809,7 +1546,9 @@ for k=1:mfs
         minMCRArray = Pct40MCR;
         maxMCRArray = Pct45MCR;
     elseif CalcMCRAArray(k,3) > 0.45 && CalcMCRAArray(k,3) < 0.5
-        disp(sprintf('Speed %s: 45 > MCR < 50, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 45%% > MCR < 50%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.45;
         maxMCR      = 0.5;
         minEoF      = cvalues45;
@@ -817,7 +1556,9 @@ for k=1:mfs
         minMCRArray = Pct45MCR;
         maxMCRArray = Pct50MCR;
     elseif CalcMCRAArray(k,3) > 0.5 && CalcMCRAArray(k,3) < 0.55
-        disp(sprintf('Speed %s: 50 > MCR < 55, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 50%% > MCR < 55%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.5;
         maxMCR      = 0.55;
         minEoF      = cvalues50;
@@ -825,7 +1566,9 @@ for k=1:mfs
         minMCRArray = Pct50MCR;
         maxMCRArray = Pct55MCR;
     elseif CalcMCRAArray(k,3) > 0.55 && CalcMCRAArray(k,3) < 0.6
-        disp(sprintf('Speed %s: 55 > MCR < 60, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 55%% > MCR < 60%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.55;
         maxMCR      = 0.60;
         minEoF      = cvalues55;
@@ -833,7 +1576,9 @@ for k=1:mfs
         minMCRArray = Pct55MCR;
         maxMCRArray = Pct60MCR;
     elseif CalcMCRAArray(k,3) > 0.6 && CalcMCRAArray(k,3) < 0.65
-        disp(sprintf('Speed %s: 60 > MCR < 65, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 60%% > MCR < 65%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.6;
         maxMCR      = 0.65;
         minEoF      = cvalues60;
@@ -841,7 +1586,9 @@ for k=1:mfs
         minMCRArray = Pct60MCR;
         maxMCRArray = Pct65MCR;
     elseif CalcMCRAArray(k,3) > 0.65 && CalcMCRAArray(k,3) < 0.70
-        disp(sprintf('Speed %s: 65 > MCR < 70, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 65%% > MCR < 70%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.65;
         maxMCR      = 0.70;
         minEoF      = cvalues65;
@@ -849,7 +1596,9 @@ for k=1:mfs
         minMCRArray = Pct65MCR;
         maxMCRArray = Pct7-MCR;
     elseif CalcMCRAArray(k,3) > 0.7 && CalcMCRAArray(k,3) < 0.75
-        disp(sprintf('Speed %s: 70 > MCR < 75, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 70%% > MCR < 75%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.7;
         maxMCR      = 0.75;
         minEoF      = cvalues70;
@@ -857,7 +1606,9 @@ for k=1:mfs
         minMCRArray = Pct70MCR;
         maxMCRArray = Pct75MCR;
     elseif CalcMCRAArray(k,3) > 0.75 && CalcMCRAArray(k,3) < 0.8
-        disp(sprintf('Speed %s: 75 > MCR < 80, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 75%% > MCR < 80%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.75;
         maxMCR      = 0.80;
         minEoF      = cvalues75;
@@ -865,7 +1616,9 @@ for k=1:mfs
         minMCRArray = Pct75MCR;
         maxMCRArray = Pct80MCR;
     elseif CalcMCRAArray(k,3) > 0.8 && CalcMCRAArray(k,3) < 0.85
-        disp(sprintf('Speed %s: 80 > MCR < 85, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 80%% > MCR < 85%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.8;
         maxMCR      = 0.85;
         minEoF      = cvalues80;
@@ -873,7 +1626,9 @@ for k=1:mfs
         minMCRArray = Pct80MCR;
         maxMCRArray = Pct85MCR;
     elseif CalcMCRAArray(k,3) > 0.85 && CalcMCRAArray(k,3) < 0.9
-        disp(sprintf('Speed %s: 85 > MCR < 90, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 85%% > MCR < 90%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.85;
         maxMCR      = 0.90;
         minEoF      = cvalues85;
@@ -881,7 +1636,9 @@ for k=1:mfs
         minMCRArray = Pct85MCR;
         maxMCRArray = Pct90MCR;
     elseif CalcMCRAArray(k,3) > 0.90 && CalcMCRAArray(k,3) < 0.95
-        disp(sprintf('Speed %s: 90 > MCR < 95, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 90%% > MCR < 95%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.9;
         maxMCR      = 0.95;
         minEoF      = cvalues90;
@@ -889,7 +1646,9 @@ for k=1:mfs
         minMCRArray = Pct90MCR;
         maxMCRArray = Pct95MCR;
     elseif CalcMCRAArray(k,3) > 0.95 && CalcMCRAArray(k,3) < 1
-        disp(sprintf('Speed %s: 95 > MCR < 100, Act. MCR = %s',num2str(k),num2str(CalcMCRAArray(k,3)*100)));
+        if enableAdjustedCommandWindow == 1
+            disp(sprintf('Speed %s (%s knots): 95%% > MCR < 100%%, MCR using Sea Trials Power = %s%%',num2str(k),sprintf('%0.1f',WSPSpeed(k)),sprintf('%0.1f',CalcMCRAArray(k,3)*100)));
+        end
         minMCR      = 0.95;
         maxMCR      = 1;
         minEoF      = cvalues95;
@@ -897,413 +1656,100 @@ for k=1:mfs
         minMCRArray = Pct95MCR;
         maxMCRArray = Pct100MCR;
     end
+        
+    % Min
+    min1 = min(round(minMCRArray(:,3)));
+    min2 = min(round(maxMCRArray(:,3)));
+    % Max
+    max1 = max(round(minMCRArray(:,3)));
+    max2 = max(round(maxMCRArray(:,3)));
     
+    if min1 < min2
+        minSpeed = min1;
+    elseif min1 > min2
+        minSpeed = min1;
+    elseif min1 == min2
+        minSpeed = min1;
+    end
+    
+    if max1 < max2
+        maxSpeed = max1;
+    elseif max1 > max2
+        maxSpeed = max2;
+    elseif max1 == max2
+        maxSpeed = max1;
+    end
+
+    for ks=minSpeed:1:maxSpeed
+        EoFRes1 = minEoF(1)*ks^3+minEoF(2)*ks^2+minEoF(3)*ks+minEoF(4);
+        EoFRes2 = maxEoF(1)*ks^3+maxEoF(2)*ks^2+maxEoF(3)*ks+maxEoF(4);
+        IntPol(ks,1) = ks;
+        IntPol(ks,2) = EoFRes1;
+        IntPol(ks,3) = EoFRes2;
+        IntPol(ks,4) = ((CalcMCRAArray(k,3)-minMCR)/(maxMCR-minMCR))*(EoFRes2-EoFRes1)+EoFRes1;
+        if k == 2
+            disp(sprintf('Min MCR = %s, Max MCR = %s, Int. MCR = %s // Speed = %s, Min = %s, Max = %s, Interpol = %s',num2str(minMCR),num2str(maxMCR),num2str(CalcMCRAArray(k,3)),num2str(ks),num2str(EoFRes1),num2str(EoFRes2),num2str(IntPol(ks,4))));
+        end
+    end
+    
+    % Remove zero rows
+    IntPol(all(IntPol==0,2),:)=[];
+    
+    % Equation of fit
+    [fitobjectEoFMCR,gofEoFMCR,outputEoFMCR] = fit(IntPol(:,1),IntPol(:,4),'poly3');
+    cvaluesEoFMCR                            = coeffvalues(fitobjectEoFMCR);
+    
+    % Thrust at correct % MCR values
+    EoFAtMCR = cvaluesEoFMCR(1)*WSPSpeed(k)^3+cvaluesEoFMCR(2)*WSPSpeed(k)^2+cvaluesEoFMCR(3)*WSPSpeed(k)+cvaluesEoFMCR(4);
+    IntPolThrust(k,1) = WSPSpeed(k);
+    IntPolThrust(k,2) = EoFAtMCR;
+    IntPolThrust(k,3) = CalcMCRAArray(k,3);
+    
+    % Write to EoF array
+    EoFTCInterpolArray(k,1) = EoFAtMCR;
+    EoFTCInterpolArray(k,2) = cvaluesEoFMCR(1);
+    EoFTCInterpolArray(k,3) = cvaluesEoFMCR(2);
+    EoFTCInterpolArray(k,4) = cvaluesEoFMCR(3);
+    EoFTCInterpolArray(k,5) = cvaluesEoFMCR(4);
+    EoFTCInterpolArray(k,6) = gofEoFMCR.rsquare;
+    
+    % Write to individual array
     if k == 1
-        % Min
-        min1 = min(round(minMCRArray(:,3)));
-        min2 = min(round(maxMCRArray(:,3)));
-        % Max
-        max1 = max(round(minMCRArray(:,3)));
-        max2 = max(round(maxMCRArray(:,3)));
-        
-        if min1 < min2
-            minSpeed = 1;
-        elseif min1 > min2
-            minSpeed = min1;
-        elseif min1 == min2
-            minSpeed = min1;
-        end
-        
-        if max1 < max2
-            maxSpeed = max1;
-        elseif max1 > max2
-            maxSpeed = max2;
-        elseif max1 == max2
-            maxSpeed = max1;
-        end
-        
-        for ks=minSpeed:1:maxSpeed
-            EoFRes1 = minEoF(1)*ks^4+minEoF(2)*ks^3+minEoF(3)*ks^2+minEoF(4)*ks+minEoF(5);
-            EoFRes2 = maxEoF(1)*ks^4+maxEoF(2)*ks^3+maxEoF(3)*ks^2+maxEoF(4)*ks+maxEoF(5);
-            IntPolS1(ks,1) = ks;
-            IntPolS1(ks,2) = EoFRes1;
-            IntPolS1(ks,3) = EoFRes2;
-            IntPolS1(ks,4) = ((CalcMCRAArray(k,3)-minMCR)/(maxMCR-minMCR))*(EoFRes2-EoFRes1)+EoFRes1;
-        end
-        
-        % Remove zero rows
-        IntPolS1(all(IntPolS1==0,2),:)=[];
-        
-        % Equation of fit
-        [fitobjectEoFMCR1,gofEoFMCR1,outputEoFMCR1] = fit(IntPolS1(:,1),IntPolS1(:,4),'poly3');
-        cvaluesEoFMCR1                              = coeffvalues(fitobjectEoFMCR1);
-        
-        % Thrust at correct % MCR values
-        EoFAtMCR = cvaluesEoFMCR1(1)*WSPSpeed(mfs)^3+cvaluesEoFMCR1(2)*WSPSpeed(mfs)^2+cvaluesEoFMCR1(3)*WSPSpeed(mfs)+cvaluesEoFMCR1(4);
-        IntPolThrust(k,1) = WSPSpeed(k);
-        IntPolThrust(k,2) = EoFAtMCR;
+        IntPolS1 = IntPol;
     elseif k == 2
-        % Min
-        min1 = min(round(minMCRArray(:,3)));
-        min2 = min(round(maxMCRArray(:,3)));
-        % Max
-        max1 = max(round(minMCRArray(:,3)));
-        max2 = max(round(maxMCRArray(:,3)));
-        
-        if min1 < min2
-            minSpeed = 1;
-        elseif min1 > min2
-            minSpeed = min1;
-        elseif min1 == min2
-            minSpeed = min1;
-        end
-        
-        if max1 < max2
-            maxSpeed = max1;
-        elseif max1 > max2
-            maxSpeed = max2;
-        elseif max1 == max2
-            maxSpeed = max1;
-        end
-        
-        for ks=minSpeed:1:maxSpeed
-            EoFRes1 = minEoF(1)*ks^4+minEoF(2)*ks^3+minEoF(3)*ks^2+minEoF(4)*ks+minEoF(5);
-            EoFRes2 = maxEoF(1)*ks^4+maxEoF(2)*ks^3+maxEoF(3)*ks^2+maxEoF(4)*ks+maxEoF(5);
-            IntPolS2(ks,1) = ks;
-            IntPolS2(ks,2) = EoFRes1;
-            IntPolS2(ks,3) = EoFRes2;
-            IntPolS2(ks,4) = ((CalcMCRAArray(k,3)-minMCR)/(maxMCR-minMCR))*(EoFRes2-EoFRes1)+EoFRes1;
-        end
-        
-        % Remove zero rows
-        IntPolS2(all(IntPolS2==0,2),:)=[];
-        
-        % Equation of fit
-        [fitobjectEoFMCR2,gofEoFMCR2,outputEoFMCR2] = fit(IntPolS2(:,1),IntPolS2(:,4),'poly3');
-        cvaluesEoFMCR2                              = coeffvalues(fitobjectEoFMCR2);
-        
-        % Thrust at correct % MCR values
-        EoFAtMCR = cvaluesEoFMCR2(1)*WSPSpeed(mfs)^3+cvaluesEoFMCR2(2)*WSPSpeed(mfs)^2+cvaluesEoFMCR2(3)*WSPSpeed(mfs)+cvaluesEoFMCR2(4);
-        IntPolThrust(k,1) = WSPSpeed(k);
-        IntPolThrust(k,2) = EoFAtMCR;        
+        IntPolS2 = IntPol;
     elseif k == 3
-        % Min
-        min1 = min(round(minMCRArray(:,3)));
-        min2 = min(round(maxMCRArray(:,3)));
-        % Max
-        max1 = max(round(minMCRArray(:,3)));
-        max2 = max(round(maxMCRArray(:,3)));
-        
-        if min1 < min2
-            minSpeed = 1;
-        elseif min1 > min2
-            minSpeed = min1;
-        elseif min1 == min2
-            minSpeed = min1;
-        end
-        
-        if max1 < max2
-            maxSpeed = max1;
-        elseif max1 > max2
-            maxSpeed = max2;
-        elseif max1 == max2
-            maxSpeed = max1;
-        end
-        
-        for ks=minSpeed:1:maxSpeed
-            EoFRes1 = minEoF(1)*ks^4+minEoF(2)*ks^3+minEoF(3)*ks^2+minEoF(4)*ks+minEoF(5);
-            EoFRes2 = maxEoF(1)*ks^4+maxEoF(2)*ks^3+maxEoF(3)*ks^2+maxEoF(4)*ks+maxEoF(5);
-            IntPolS3(ks,1) = ks;
-            IntPolS3(ks,2) = EoFRes1;
-            IntPolS3(ks,3) = EoFRes2;
-            IntPolS3(ks,4) = ((CalcMCRAArray(k,3)-minMCR)/(maxMCR-minMCR))*(EoFRes2-EoFRes1)+EoFRes1;
-        end
-        
-        % Remove zero rows
-        IntPolS3(all(IntPolS3==0,2),:)=[];
-        
-        % Equation of fit
-        [fitobjectEoFMCR3,gofEoFMCR3,outputEoFMCR3] = fit(IntPolS3(:,1),IntPolS3(:,4),'poly3');
-        cvaluesEoFMCR3                              = coeffvalues(fitobjectEoFMCR3);
-        
-        % Thrust at correct % MCR values
-        EoFAtMCR = cvaluesEoFMCR3(1)*WSPSpeed(mfs)^3+cvaluesEoFMCR3(2)*WSPSpeed(mfs)^2+cvaluesEoFMCR3(3)*WSPSpeed(mfs)+cvaluesEoFMCR3(4);
-        IntPolThrust(k,1) = WSPSpeed(k);
-        IntPolThrust(k,2) = EoFAtMCR;          
+        IntPolS3 = IntPol;
     elseif k == 4
-        % Min
-        min1 = min(round(minMCRArray(:,3)));
-        min2 = min(round(maxMCRArray(:,3)));
-        % Max
-        max1 = max(round(minMCRArray(:,3)));
-        max2 = max(round(maxMCRArray(:,3)));
-        
-        if min1 < min2
-            minSpeed = 1;
-        elseif min1 > min2
-            minSpeed = min1;
-        elseif min1 == min2
-            minSpeed = min1;
-        end
-        
-        if max1 < max2
-            maxSpeed = max1;
-        elseif max1 > max2
-            maxSpeed = max2;
-        elseif max1 == max2
-            maxSpeed = max1;
-        end
-        
-        for ks=minSpeed:1:maxSpeed
-            EoFRes1 = minEoF(1)*ks^4+minEoF(2)*ks^3+minEoF(3)*ks^2+minEoF(4)*ks+minEoF(5);
-            EoFRes2 = maxEoF(1)*ks^4+maxEoF(2)*ks^3+maxEoF(3)*ks^2+maxEoF(4)*ks+maxEoF(5);
-            IntPolS4(ks,1) = ks;
-            IntPolS4(ks,2) = EoFRes1;
-            IntPolS4(ks,3) = EoFRes2;
-            IntPolS4(ks,4) = ((CalcMCRAArray(k,3)-minMCR)/(maxMCR-minMCR))*(EoFRes2-EoFRes1)+EoFRes1;
-        end
-        
-        % Remove zero rows
-        IntPolS4(all(IntPolS4==0,2),:)=[];
-        
-        % Equation of fit
-        [fitobjectEoFMCR4,gofEoFMCR4,outputEoFMCR4] = fit(IntPolS4(:,1),IntPolS4(:,4),'poly3');
-        cvaluesEoFMCR4                              = coeffvalues(fitobjectEoFMCR4);
-        
-        % Thrust at correct % MCR values
-        EoFAtMCR = cvaluesEoFMCR4(1)*WSPSpeed(mfs)^3+cvaluesEoFMCR4(2)*WSPSpeed(mfs)^2+cvaluesEoFMCR4(3)*WSPSpeed(mfs)+cvaluesEoFMCR4(4);
-        IntPolThrust(k,1) = WSPSpeed(k);
-        IntPolThrust(k,2) = EoFAtMCR;            
+        IntPolS4 = IntPol;
     elseif k == 5
-        % Min
-        min1 = min(round(minMCRArray(:,3)));
-        min2 = min(round(maxMCRArray(:,3)));
-        % Max
-        max1 = max(round(minMCRArray(:,3)));
-        max2 = max(round(maxMCRArray(:,3)));
-        
-        if min1 < min2
-            minSpeed = 1;
-        elseif min1 > min2
-            minSpeed = min1;
-        elseif min1 == min2
-            minSpeed = min1;
-        end
-        
-        if max1 < max2
-            maxSpeed = max1;
-        elseif max1 > max2
-            maxSpeed = max2;
-        elseif max1 == max2
-            maxSpeed = max1;
-        end
-        
-        for ks=minSpeed:1:maxSpeed
-            EoFRes1 = minEoF(1)*ks^4+minEoF(2)*ks^3+minEoF(3)*ks^2+minEoF(4)*ks+minEoF(5);
-            EoFRes2 = maxEoF(1)*ks^4+maxEoF(2)*ks^3+maxEoF(3)*ks^2+maxEoF(4)*ks+maxEoF(5);
-            IntPolS5(ks,1) = ks;
-            IntPolS5(ks,2) = EoFRes1;
-            IntPolS5(ks,3) = EoFRes2;
-            IntPolS5(ks,4) = ((CalcMCRAArray(k,3)-minMCR)/(maxMCR-minMCR))*(EoFRes2-EoFRes1)+EoFRes1;
-        end
-        
-        % Remove zero rows
-        IntPolS5(all(IntPolS5==0,2),:)=[];
-        
-        % Equation of fit
-        [fitobjectEoFMCR5,gofEoFMCR5,outputEoFMCR5] = fit(IntPolS5(:,1),IntPolS5(:,4),'poly3');
-        cvaluesEoFMCR5                              = coeffvalues(fitobjectEoFMCR5);
-        
-        % Thrust at correct % MCR values
-        EoFAtMCR = cvaluesEoFMCR5(1)*WSPSpeed(mfs)^3+cvaluesEoFMCR5(2)*WSPSpeed(mfs)^2+cvaluesEoFMCR5(3)*WSPSpeed(mfs)+cvaluesEoFMCR5(4);
-        IntPolThrust(k,1) = WSPSpeed(k);
-        IntPolThrust(k,2) = EoFAtMCR;          
+        IntPolS5 = IntPol;
     elseif k == 6
-        % Min
-        min1 = min(round(minMCRArray(:,3)));
-        min2 = min(round(maxMCRArray(:,3)));
-        % Max
-        max1 = max(round(minMCRArray(:,3)));
-        max2 = max(round(maxMCRArray(:,3)));
-        
-        if min1 < min2
-            minSpeed = 1;
-        elseif min1 > min2
-            minSpeed = min1;
-        elseif min1 == min2
-            minSpeed = min1;
-        end
-        
-        if max1 < max2
-            maxSpeed = max1;
-        elseif max1 > max2
-            maxSpeed = max2;
-        elseif max1 == max2
-            maxSpeed = max1;
-        end
-        
-        for ks=minSpeed:1:maxSpeed
-            EoFRes1 = minEoF(1)*ks^4+minEoF(2)*ks^3+minEoF(3)*ks^2+minEoF(4)*ks+minEoF(5);
-            EoFRes2 = maxEoF(1)*ks^4+maxEoF(2)*ks^3+maxEoF(3)*ks^2+maxEoF(4)*ks+maxEoF(5);
-            IntPolS6(ks,1) = ks;
-            IntPolS6(ks,2) = EoFRes1;
-            IntPolS6(ks,3) = EoFRes2;
-            IntPolS6(ks,4) = ((CalcMCRAArray(k,3)-minMCR)/(maxMCR-minMCR))*(EoFRes2-EoFRes1)+EoFRes1;
-        end
-        
-        % Remove zero rows
-        IntPolS6(all(IntPolS6==0,2),:)=[];
-        
-        % Equation of fit
-        [fitobjectEoFMCR6,gofEoFMCR6,outputEoFMCR6] = fit(IntPolS6(:,1),IntPolS6(:,4),'poly3');
-        cvaluesEoFMCR6                              = coeffvalues(fitobjectEoFMCR6);
-        
-        % Thrust at correct % MCR values
-        EoFAtMCR = cvaluesEoFMCR6(1)*WSPSpeed(mfs)^3+cvaluesEoFMCR6(2)*WSPSpeed(mfs)^2+cvaluesEoFMCR6(3)*WSPSpeed(mfs)+cvaluesEoFMCR6(4);
-        IntPolThrust(k,1) = WSPSpeed(k);
-        IntPolThrust(k,2) = EoFAtMCR;            
+        IntPolS6 = IntPol;
     elseif k == 7
-        % Min
-        min1 = min(round(minMCRArray(:,3)));
-        min2 = min(round(maxMCRArray(:,3)));
-        % Max
-        max1 = max(round(minMCRArray(:,3)));
-        max2 = max(round(maxMCRArray(:,3)));
-        
-        if min1 < min2
-            minSpeed = 1;
-        elseif min1 > min2
-            minSpeed = min1;
-        elseif min1 == min2
-            minSpeed = min1;
-        end
-        
-        if max1 < max2
-            maxSpeed = max1;
-        elseif max1 > max2
-            maxSpeed = max2;
-        elseif max1 == max2
-            maxSpeed = max1;
-        end
-        
-        for ks=minSpeed:1:maxSpeed
-            EoFRes1 = minEoF(1)*ks^4+minEoF(2)*ks^3+minEoF(3)*ks^2+minEoF(4)*ks+minEoF(5);
-            EoFRes2 = maxEoF(1)*ks^4+maxEoF(2)*ks^3+maxEoF(3)*ks^2+maxEoF(4)*ks+maxEoF(5);
-            IntPolS7(ks,1) = ks;
-            IntPolS7(ks,2) = EoFRes1;
-            IntPolS7(ks,3) = EoFRes2;
-            IntPolS7(ks,4) = ((CalcMCRAArray(k,3)-minMCR)/(maxMCR-minMCR))*(EoFRes2-EoFRes1)+EoFRes1;
-        end
-        
-        % Remove zero rows
-        IntPolS7(all(IntPolS7==0,2),:)=[];
-        
-        % Equation of fit
-        [fitobjectEoFMCR7,gofEoFMCR7,outputEoFMCR7] = fit(IntPolS7(:,1),IntPolS7(:,4),'poly3');
-        cvaluesEoFMCR7                              = coeffvalues(fitobjectEoFMCR7);
-        
-        % Thrust at correct % MCR values
-        EoFAtMCR = cvaluesEoFMCR7(1)*WSPSpeed(mfs)^3+cvaluesEoFMCR7(2)*WSPSpeed(mfs)^2+cvaluesEoFMCR7(3)*WSPSpeed(mfs)+cvaluesEoFMCR7(4);
-        IntPolThrust(k,1) = WSPSpeed(k);
-        IntPolThrust(k,2) = EoFAtMCR;            
+        IntPolS7 = IntPol;
     elseif k == 8
-        % Min
-        min1 = min(round(minMCRArray(:,3)));
-        min2 = min(round(maxMCRArray(:,3)));
-        % Max
-        max1 = max(round(minMCRArray(:,3)));
-        max2 = max(round(maxMCRArray(:,3)));
-        
-        if min1 < min2
-            minSpeed = 1;
-        elseif min1 > min2
-            minSpeed = min1;
-        elseif min1 == min2
-            minSpeed = min1;
-        end
-        
-        if max1 < max2
-            maxSpeed = max1;
-        elseif max1 > max2
-            maxSpeed = max2;
-        elseif max1 == max2
-            maxSpeed = max1;
-        end
-        
-        for ks=minSpeed:1:maxSpeed
-            EoFRes1 = minEoF(1)*ks^4+minEoF(2)*ks^3+minEoF(3)*ks^2+minEoF(4)*ks+minEoF(5);
-            EoFRes2 = maxEoF(1)*ks^4+maxEoF(2)*ks^3+maxEoF(3)*ks^2+maxEoF(4)*ks+maxEoF(5);
-            IntPolS8(ks,1) = ks;
-            IntPolS8(ks,2) = EoFRes1;
-            IntPolS8(ks,3) = EoFRes2;
-            IntPolS8(ks,4) = ((CalcMCRAArray(k,3)-minMCR)/(maxMCR-minMCR))*(EoFRes2-EoFRes1)+EoFRes1;
-        end
-        
-        % Remove zero rows
-        IntPolS8(all(IntPolS8==0,2),:)=[];
-        
-        % Equation of fit
-        [fitobjectEoFMCR8,gofEoFMCR8,outputEoFMCR8] = fit(IntPolS8(:,1),IntPolS8(:,4),'poly3');
-        cvaluesEoFMCR8                              = coeffvalues(fitobjectEoFMCR8);
-        
-        % Thrust at correct % MCR values
-        EoFAtMCR = cvaluesEoFMCR8(1)*WSPSpeed(mfs)^3+cvaluesEoFMCR8(2)*WSPSpeed(mfs)^2+cvaluesEoFMCR8(3)*WSPSpeed(mfs)+cvaluesEoFMCR8(4);
-        IntPolThrust(k,1) = WSPSpeed(k);
-        IntPolThrust(k,2) = EoFAtMCR;           
+        IntPolS8 = IntPol;
     elseif k == 9
-        % Min
-        min1 = min(round(minMCRArray(:,3)));
-        min2 = min(round(maxMCRArray(:,3)));
-        % Max
-        max1 = max(round(minMCRArray(:,3)));
-        max2 = max(round(maxMCRArray(:,3)));
-        
-        if min1 < min2
-            minSpeed = 1;
-        elseif min1 > min2
-            minSpeed = min1;
-        elseif min1 == min2
-            minSpeed = min1;
-        end
-        
-        if max1 < max2
-            maxSpeed = max1;
-        elseif max1 > max2
-            maxSpeed = max2;
-        elseif max1 == max2
-            maxSpeed = max1;
-        end
-        
-        for ks=minSpeed:1:maxSpeed
-            EoFRes1 = minEoF(1)*ks^4+minEoF(2)*ks^3+minEoF(3)*ks^2+minEoF(4)*ks+minEoF(5);
-            EoFRes2 = maxEoF(1)*ks^4+maxEoF(2)*ks^3+maxEoF(3)*ks^2+maxEoF(4)*ks+maxEoF(5);
-            IntPolS9(ks,1) = ks;
-            IntPolS9(ks,2) = EoFRes1;
-            IntPolS9(ks,3) = EoFRes2;
-            IntPolS9(ks,4) = ((CalcMCRAArray(k,3)-minMCR)/(maxMCR-minMCR))*(EoFRes2-EoFRes1)+EoFRes1;
-        end
-        
-        % Remove zero rows
-        IntPolS9(all(IntPolS9==0,2),:)=[];
-        
-        % Equation of fit
-        [fitobjectEoFMCR9,gofEoFMCR9,outputEoFMCR9] = fit(IntPolS9(:,1),IntPolS9(:,4),'poly3');
-        cvaluesEoFMCR9                              = coeffvalues(fitobjectEoFMCR9);
-        
-        % Thrust at correct % MCR values
-        EoFAtMCR = cvaluesEoFMCR9(1)*WSPSpeed(mfs)^3+cvaluesEoFMCR9(2)*WSPSpeed(mfs)^2+cvaluesEoFMCR9(3)*WSPSpeed(mfs)+cvaluesEoFMCR9(4);
-        IntPolThrust(k,1) = WSPSpeed(k);
-        IntPolThrust(k,2) = EoFAtMCR;          
-    end % k == 1
+        IntPolS9 = IntPol;
+    end    
     
-end
+end % k=1:mfs
+
 
 %# ************************************************************************
-%# Plot 1: Thrust curves and estimated thrust
+%# Plot 1: Thrust  Curve for LJ120E Waterjet Unit (Caterpillar Engines)
+%#                 100% MCR = 7200kW, transmission losses = 2%
 %# ************************************************************************
+
+% Create set of colours (function: distinguishable_colors.m)
+% See: http://www.mathworks.com/matlabcentral/fileexchange/29702-generate-maximally-perceptually-distinct-colors?s_eid=PSM_4913
+minc = 1;
+maxc = 200;
+c = distinguishable_colors(maxc,'w');
 
 %# Plotting speed ---------------------------------------------------------
-figurename = 'Plot 1: Thrust curves and estimated thrust';
+figurename = 'Plot 1: Thrust  Curve for LJ120E Waterjet Unit (Caterpillar Engines) 100% MCR = 7200kW, transmission losses = 2%';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ------------------------------------------------
@@ -1342,15 +1788,23 @@ set(gca,'TickDir','in',...
 setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
 % Colored curves
 setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+% Create 20 random colors based on distinguishable_colors.m
+setColor2 = {};
+for kt=1:20
+    rnr = randi([minc, maxc]);
+    setColor2{kt,1} = [c(rnr,1) c(rnr,2) c(rnr,3)];
+end
 if enableBlackAndWhitePlot == 1
     % Black and white curves
     setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    setColor2 = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
 end
 
 %# Line, colors and markers
-setMarkerSize      = 11;
-setLineWidthMarker = 1;
-setLineWidth       = 2;
+setMarkerSize      = 12;
+setLineWidthMarker = 2;
+setLineWidth       = 1;
+setLineWidthThin   = 1;
 setLineStyle       = '-';
 setLineStyle1      = '--';
 setLineStyle2      = '-.';
@@ -1361,87 +1815,87 @@ subplot(1,1,1)
 
 %# X and Y axis -----------------------------------------------------------
 
-%# 1 **********************************************************************
+%# 5% **********************************************************************
 x1  = Pct5MCR(:,3);
 y1  = Pct5MCR(:,4);
 
-%# 2 **********************************************************************
+%# 10% ********************************************************************
 x2  = Pct10MCR(:,3);
 y2  = Pct10MCR(:,4);
 
-%# 3 **********************************************************************
+%# 15% ********************************************************************
 x3  = Pct15MCR(:,3);
 y3  = Pct15MCR(:,4);
 
-%# 4 **********************************************************************
+%# 20% ********************************************************************
 x4  = Pct20MCR(:,3);
 y4  = Pct20MCR(:,4);
 
-%# 5 **********************************************************************
+%# 25% ********************************************************************
 x5  = Pct25MCR(:,3);
 y5  = Pct25MCR(:,4);
 
-%# 6 **********************************************************************
+%# 30% ********************************************************************
 x6  = Pct30MCR(:,3);
 y6  = Pct30MCR(:,4);
 
-%# 7 **********************************************************************
+%# 35% ********************************************************************
 x7  = Pct35MCR(:,3);
 y7  = Pct35MCR(:,4);
 
-%# 8 **********************************************************************
+%# 40% ********************************************************************
 x8  = Pct40MCR(:,3);
 y8  = Pct40MCR(:,4);
 
-%# 9 **********************************************************************
+%# 45% ********************************************************************
 x9  = Pct45MCR(:,3);
 y9  = Pct45MCR(:,4);
 
-%# 10 *********************************************************************
+%# 50% ********************************************************************
 x10 = Pct50MCR(:,3);
 y10 = Pct50MCR(:,4);
 
-%# 11 *********************************************************************
+%# 55% ********************************************************************
 x11 = Pct55MCR(:,3);
 y11 = Pct55MCR(:,4);
 
-%# 12 *********************************************************************
+%# 60% ********************************************************************
 x12 = Pct60MCR(:,3);
 y12 = Pct60MCR(:,4);
 
-%# 13 *********************************************************************
+%# 65% ********************************************************************
 x13 = Pct65MCR(:,3);
 y13 = Pct65MCR(:,4);
 
-%# 14 *********************************************************************
+%# 70% ********************************************************************
 x14 = Pct70MCR(:,3);
 y14 = Pct70MCR(:,4);
 
-%# 15 *********************************************************************
+%# 75% ********************************************************************
 x15 = Pct75MCR(:,3);
 y15 = Pct75MCR(:,4);
 
-%# 16 *********************************************************************
+%# 80% ********************************************************************
 x16 = Pct80MCR(:,3);
 y16 = Pct80MCR(:,4);
 
-%# 17 *********************************************************************
+%# 85% ********************************************************************
 x17 = Pct85MCR(:,3);
 y17 = Pct85MCR(:,4);
 
-%# 18 *********************************************************************
+%# 90% ********************************************************************
 x18 = Pct90MCR(:,3);
 y18 = Pct90MCR(:,4);
 
-%# 19 *********************************************************************
+%# 95% ********************************************************************
 x19 = Pct95MCR(:,3);
 y19 = Pct95MCR(:,4);
 
-%# 20 *********************************************************************
+%# 100% *******************************************************************
 x20 = Pct100MCR(:,3);
 y20 = Pct100MCR(:,4);
 
-%# 21 *********************************************************************
+%# S/S1=1 *****************************************************************
 x21 = SS1(:,3);
 y21 = SS1(:,4);
 
@@ -1462,7 +1916,7 @@ xEFS     = fullscaleresults(:,3);
 yEFSPort = PortInkNArray;
 yEFSStbd = StbdInkNArray;
 
-%# Thrust at power measured at sea trials ***************************
+%# Thrust at power measured at sea trials *********************************
 
 xST = IntPolThrust(:,1);
 yST = IntPolThrust(:,2);
@@ -1491,15 +1945,23 @@ legendInfo{18} = '20% MCR';
 legendInfo{19} = '15% MCR';
 legendInfo{20} = '10% MCR';
 legendInfo{21} = '5% MCR';
+%# Port thrust ------------------------------------------------------------
 hold on;
 h1 = plot(xEFS,yEFSPort,'*k');
-legendInfo{22} = 'Extr. Port Thrust';
+legendInfo{22} = 'Extrapolated Port Thrust';
+%# Stbd thrust ------------------------------------------------------------
 hold on;
 h2 = plot(xEFS,yEFSStbd,'xk');
-legendInfo{23} = 'Extr. Stbd Thrust';
+legendInfo{23} = 'Extrapolated Stbd Thrust';
+%# Thrust based on sea trials power ---------------------------------------
 hold on;
 h3 = plot(xST,yST,'xk');
-legendInfo{24} = 'Using sea trials power';
+%# Show MCR lines for % MCR based on sea trials data ----------------------
+hold on;
+h4 = plot(IntPolS1(:,1),IntPolS1(:,4),'-',IntPolS2(:,1),IntPolS2(:,4),'-',IntPolS3(:,1),IntPolS3(:,4),...
+    '-',IntPolS4(:,1),IntPolS4(:,4),'-',IntPolS5(:,1),IntPolS5(:,4),'-',IntPolS6(:,1),IntPolS6(:,4),'-',...
+    IntPolS7(:,1),IntPolS7(:,4),'-',IntPolS8(:,1),IntPolS8(:,4),'-',IntPolS9(:,1),IntPolS9(:,4),'-');
+legendInfo{24} = 'Sea trials power based thrust';
 xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Thrust (kN)}','FontSize',setGeneralFontSize);
 % if enablePlotTitle == 1
@@ -1510,39 +1972,88 @@ box on;
 %axis square;
 
 %# Line, colors and markers
-set(h(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(3),'Color',setColor{9},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(4),'Color',setColor{8},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(5),'Color',setColor{7},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(6),'Color',setColor{6},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(7),'Color',setColor{5},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(8),'Color',setColor{4},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(9),'Color',setColor{3},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(10),'Color',setColor{2},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(11),'Color',setColor{1},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(12),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(13),'Color',setColor{9},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(14),'Color',setColor{8},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(15),'Color',setColor{7},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(16),'Color',setColor{6},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(17),'Color',setColor{5},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(18),'Color',setColor{4},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(19),'Color',setColor{3},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(20),'Color',setColor{2},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(21),'Color',setColor{1},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(1),'Color',setColor2{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(2),'Color',setColor2{1},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(3),'Color',setColor2{2},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(4),'Color',setColor2{3},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(5),'Color',setColor2{4},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(6),'Color',setColor2{5},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(7),'Color',setColor2{6},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(8),'Color',setColor2{7},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(9),'Color',setColor2{8},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(10),'Color',setColor2{9},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(11),'Color',setColor2{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(12),'Color',setColor2{11},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(13),'Color',setColor2{12},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(14),'Color',setColor2{13},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(15),'Color',setColor2{14},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(16),'Color',setColor2{15},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(17),'Color',setColor2{16},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(18),'Color',setColor2{17},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(19),'Color',setColor2{18},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(20),'Color',setColor2{19},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(21),'Color',setColor2{20},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+
 % Extrapolated full scale thrust
 set(h1(1),'Color',setColor{10},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h2(1),'Color',setColor{10},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% Uisng sea trials power
-set(h3(1),'Color',setColor{10},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 
-%set(h(3),'Color',setColor{3},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-%set(h(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+% Thrust based on sea trials power
+set(h3(1),'Color',setColor{10},'Marker',setMarker{3},'MarkerSize',setMarkerSize+2,'LineWidth',setLineWidthMarker);
+
+%# Show MCR lines for % MCR based on sea trials data
+set(h4(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h4(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h4(3),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h4(4),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h4(5),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h4(6),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h4(7),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h4(8),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h4(9),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
 set(gcf,'Color',[1,1,1]);
+
+%# Annotations
+% Text on plot
+text(max(x21)-1,max(y21)+6,'S/S1=1','FontSize',12,'color','k','FontWeight','bold');
+text(24.5,max(yST),'Thrust using sea trials shaft power','FontSize',12,'color','k','FontWeight','bold');
+text(24.5,max(yEFSPort),'Extrapolated PORT thrust','FontSize',12,'color','k','FontWeight','bold');
+text(24.5,max(yEFSStbd),'Extrapolated STBD thrust','FontSize',12,'color','k','FontWeight','bold');
+% MCR values
+rightAxisText = 45.2;
+text(max(Pct5MCR(:,3)),5,'5% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(max(Pct10MCR(:,3)),5,'10% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct15MCR(:,4)),'15% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct20MCR(:,4)),'20% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct25MCR(:,4)),'25% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct30MCR(:,4)),'30% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct35MCR(:,4)),'35% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct40MCR(:,4)),'40% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct45MCR(:,4)),'45% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct50MCR(:,4)),'50% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct55MCR(:,4)),'55% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct60MCR(:,4)),'60% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct65MCR(:,4)),'65% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct70MCR(:,4)),'70% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct75MCR(:,4)),'75% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct80MCR(:,4)),'80% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct85MCR(:,4)),'85% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct90MCR(:,4)),'90% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct95MCR(:,4)),'95% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct100MCR(:,4)),'100% MCR','FontSize',12,'color','k','FontWeight','bold');
+% MCR values based on sea trials power
+text(5.5,max(IntPolS1(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrust(1,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS2(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrust(2,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS3(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrust(3,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS4(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrust(4,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS5(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrust(5,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS6(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrust(6,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS7(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrust(7,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS8(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrust(8,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS9(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrust(9,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
 
 % %# Axis limitations
 minX  = 5;
@@ -1559,14 +2070,14 @@ set(gca,'YTick',minY:incrY:maxY);
 % set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
 
 %# Legend
-%hleg1 = legend('5%','10%','15%','20%','25%','30%','35%','40%','45%','50%','55%','60%','65%','70%','75%','80%','85%','90%','95%','100%','S/S1');
-hleg1 = legend(legendInfo);
-set(hleg1,'Location','SouthEast');
-%set(hleg1,'Interpreter','none');
-set(hleg1, 'Interpreter','tex');
-set(hleg1,'LineWidth',1);
-set(hleg1,'FontSize',setLegendFontSize);
-%legend boxoff;
+% %hleg1 = legend('5%','10%','15%','20%','25%','30%','35%','40%','45%','50%','55%','60%','65%','70%','75%','80%','85%','90%','95%','100%','S/S1');
+% hleg1 = legend(legendInfo);
+% set(hleg1,'Location','SouthEast');
+% %set(hleg1,'Interpreter','none');
+% set(hleg1, 'Interpreter','tex');
+% set(hleg1,'LineWidth',1);
+% set(hleg1,'FontSize',setLegendFontSize);
+% %legend boxoff;
 
 %# Font sizes and border --------------------------------------------------
 
@@ -1601,7 +2112,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_11_FS_Resistance_vs_Extrapolated_Thrust_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Plot_1_Thrust_Curve_Showing_ST_Thrust_And_Extrapolated_Thrust_Plot.%s', 'Thrust_Curves', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
