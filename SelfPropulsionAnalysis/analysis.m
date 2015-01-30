@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  December 15, 2014
+%# Date       :  January 29, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -373,13 +373,13 @@ end
 
 
 % /////////////////////////////////////////////////////////////////////
-% START: Write results to CVS
+% START Write results to DAT or TXT file
 % ---------------------------------------------------------------------
 M = resultsArray;
 csvwrite('resultsArray.dat', M)                                     % Export matrix M to a file delimited by the comma character
 dlmwrite('resultsArray.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 % ---------------------------------------------------------------------
-% END: Write results to CVS
+% END Write results to DAT or TXT file
 % /////////////////////////////////////////////////////////////////////
 
 

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 27, 2015
+%# Date       :  January 30, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -859,17 +859,15 @@ if exist('resultsArraySPP.dat', 'file') == 0
     %close(w);
     
     % /////////////////////////////////////////////////////////////////////
-    % START: Write results to DAT and TXT
+    % START Write results to DAT or TXT file
     % ---------------------------------------------------------------------
-    
     resultsArraySPP = resultsArraySPP(any(resultsArraySPP,2),:);           % Remove zero rows
     M = resultsArraySPP;
     %M = M(any(M,2),:);                                                    % remove zero rows only in resultsArraySPP text file
     csvwrite('resultsArraySPP.dat', M)                                     % Export matrix M to a file delimited by the comma character
     %dlmwrite('resultsArraySPP.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
-    
     % ---------------------------------------------------------------------
-    % END: Write results to DAT and TXT
+    % END Write results to DAT or TXT file
     % /////////////////////////////////////////////////////////////////////
     
 else

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 27, 2015
+%# Date       :  January 30, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -365,6 +365,137 @@ end
 %# END Sea Trials Data (variable name is SeaTrialsCorrectedPower by default)
 %# ************************************************************************
 
+
+%# ************************************************************************
+%# START Full Scale Resistance Results (Based on ITTC (2011) 7.5-02-03-01.4
+%#       >> Default variable name: FullScaleRT_ITTC1978_2011_Schuster_TempCorr
+%# ------------------------------------------------------------------------
+if exist('FullScaleRT_ITTC1978_2011_Schuster_TempCorr.mat', 'file') == 2
+    % Load file into shaftSpeedList variable
+    load('FullScaleRT_ITTC1978_2011_Schuster_TempCorr.mat');
+    %# Results array columns:
+    %[1]  Froude length number                              (-)
+    %[2]  Model speed                                       (m/s)
+    %[3]  MS Reynolds number                                (-)
+    %[4]  MS Total resistance (catamaran), RTm              (N)
+    %[5]  MS Total resistance coeff., CTm                   (-)
+    %[6]  GRIGSON:  MS Frictional resistance coeff., CFm    (-)
+    %[7]  ITTC1957: MS Frictional resistance coeff., CFm    (-)
+    %[8]  GRIGSON:  MS Residual resistance coeff., CRm      (-)
+    %[9]  ITTC1957: MS Residual resistance coeff., CRm      (-)
+    %[10] FS Ship speed                                     (m/s)
+    %[11] FS Ship speed                                     (knots)
+    %[12] FS Reynolds number                                (-)
+    %[13] Roughness allowance, delta CF                     (-)
+    %[14] Correlation coeff., Ca                            (-)
+    %[15] FS Air resistance coefficient, CAAs               (-)
+    %[16] GRIGSON:  FS Total resistance (catamaran), RTs    (N)
+    %[17] ITTC1957: FS Total resistance (catamaran), RTs    (N)
+    %[18] GRIGSON:  FS Total resistance coeff., CTs         (-)
+    %[19] ITTC1957: FS Total resistance coeff., CTs         (-)
+    %[20] GRIGSON:  FS Frictional resistance coeff., CFs    (-)
+    %[21] ITTC1957: FS Frictional resistance coeff., CFs    (-)
+    %[22] GRIGSON:  FS Residual resistance coeff., CRs      (-)
+    %[23] ITTC1957: FS Residual resistance coeff., CRs      (-)
+    %[24] GRIGSON:  FS Total resistance (catamaran), RTs    (kN)
+    %[25] ITTC1957: FS Total resistance (catamaran), RTs    (kN)
+    %[26] MS Total resistance (demihull), RTm               (N)
+    ResResults = FullScaleRT_ITTC1978_2011_Schuster_TempCorr;
+    clearvars FullScaleRT_ITTC1978_2011_Schuster_TempCorr
+end
+%# ------------------------------------------------------------------------
+%# END Full Scale Resistance Results (Based on ITTC (2011) 7.5-02-03-01.4
+%# ************************************************************************
+
+
+%# ************************************************************************
+%# START Kiel probe vs. mass flow rate
+%# ------------------------------------------------------------------------
+SetMFRvsKPDataFilePath = '..\..\..\2014 August - Flow rate measuements REDUX\_Run files\_Matlab analysis\SummaryMFRSept2014Array.dat';
+if exist(SetMFRvsKPDataFilePath, 'file') == 2
+    % Load file into shaftSpeedList variable
+    load(SetMFRvsKPDataFilePath);
+    
+    [fitobjectP,gofP,outputP]  = fit(SummaryMFRSept2014Array(:,2),SummaryMFRSept2014Array(:,3),'poly4');
+    cvaluesMFRvsKPSept2014Port = coeffvalues(fitobjectP);
+    
+    % Check Equation of Fit
+%     if enableAdjustedCommandWindow == 1
+%         cval = cvaluesMFRvsKPSept2014Port;
+%         setDecimals1 = '%0.4f';
+%         setDecimals2 = '+%0.4f';
+%         setDecimals3 = '+%0.4f';
+%         setDecimals4 = '+%0.4f';
+%         setDecimals5 = '+%0.4f';
+%         if cval(1) < 0
+%             setDecimals1 = '%0.4f';
+%         end
+%         if cval(2) < 0
+%             setDecimals2 = '%0.4f';
+%         end
+%         if cval(3) < 0
+%             setDecimals3 = '%0.4f';
+%         end
+%         if cval(4) < 0
+%             setDecimals4 = '%0.4f';
+%         end
+%         if cval(5) < 0
+%             setDecimals5 = '%0.4f';
+%         end
+%         p1   = sprintf(setDecimals1,cval(1));
+%         p2   = sprintf(setDecimals2,cval(2));
+%         p3   = sprintf(setDecimals3,cval(3));
+%         p4   = sprintf(setDecimals4,cval(4));
+%         p5   = sprintf(setDecimals5,cval(5));
+%         gofrs = sprintf('%0.2f',gofP.rsquare);
+%         EoFEqn = sprintf('>> PORT Equation of Fit (EoF): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofrs);
+%         disp(EoFEqn);
+%     end
+    
+    [fitobjectS,gofS,outputS]  = fit(SummaryMFRSept2014Array(:,4),SummaryMFRSept2014Array(:,5),'poly4');
+    cvaluesMFRvsKPSept2014Stbd = coeffvalues(fitobjectS);
+    
+    % Check Equation of Fit
+%     if enableAdjustedCommandWindow == 1
+%         cval = cvaluesMFRvsKPSept2014Stbd;
+%         setDecimals1 = '%0.4f';
+%         setDecimals2 = '+%0.4f';
+%         setDecimals3 = '+%0.4f';
+%         setDecimals4 = '+%0.4f';
+%         setDecimals5 = '+%0.4f';
+%         if cval(1) < 0
+%             setDecimals1 = '%0.4f';
+%         end
+%         if cval(2) < 0
+%             setDecimals2 = '%0.4f';
+%         end
+%         if cval(3) < 0
+%             setDecimals3 = '%0.4f';
+%         end
+%         if cval(4) < 0
+%             setDecimals4 = '%0.4f';
+%         end
+%         if cval(5) < 0
+%             setDecimals5 = '%0.4f';
+%         end
+%         p1   = sprintf(setDecimals1,cval(1));
+%         p2   = sprintf(setDecimals2,cval(2));
+%         p3   = sprintf(setDecimals3,cval(3));
+%         p4   = sprintf(setDecimals4,cval(4));
+%         p5   = sprintf(setDecimals5,cval(5));
+%         gofrs = sprintf('%0.2f',gofP.rsquare);
+%         EoFEqn = sprintf('>> STBD Equation of Fit (EoF): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofrs);
+%         disp(EoFEqn);
+%     end    
+    
+else
+    %disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    %disp('WARNING: Required data file for thrust data (SummaryMFRSept2014Array.dat) does not exist!');
+    %disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+end
+%# ------------------------------------------------------------------------
+%# END Kiel probe vs. mass flow rate
+%# ************************************************************************
 
 %# ////////////////////////////////////////////////////////////////////////
 %# START REPEAT RUN NUMBERS
@@ -754,12 +885,22 @@ if exist('resultsArraySPP_CCDoTT.dat', 'file') == 0
         % Kiel probes
         PortKP = resultsArraySPP(k, 17);                                                % PORT: Kiel probe (V)
         StbdKP = resultsArraySPP(k, 18);                                                % STBD: Kiel probe (V)
-        
+
         %# START Handle mass flow rate ------------------------------------
         if enableSept2014FRMValues == 1
-            % PORT and STBD (September 2014 FRM test): Mass flow rate (Kg/s)
-            PortMfr = -0.0421*PortKP^4+0.5718*PortKP^3-2.9517*PortKP^2+7.8517*PortKP-5.1976;
-            StbdMfr = -0.0942*StbdKP^4+1.1216*StbdKP^3-4.9878*StbdKP^2+11.0548*StbdKP-6.8484;
+            % If results from flow rate measurement test have been saved in
+            % SummaryMFRSept2014Array.dat use automatic fitting otherwise
+            % use older established result set
+            if exist(SetMFRvsKPDataFilePath, 'file') == 2
+                EoFPort = cvaluesMFRvsKPSept2014Port;
+                EoFStbd = cvaluesMFRvsKPSept2014Stbd;
+                PortMfr = EoFPort(1)*PortKP^4+EoFPort(2)*PortKP^3+EoFPort(3)*PortKP^2+EoFPort(4)*PortKP+EoFPort(5);
+                StbdMfr = EoFStbd(1)*StbdKP^4+EoFStbd(2)*StbdKP^3+EoFStbd(3)*StbdKP^2+EoFStbd(4)*StbdKP+EoFStbd(5);
+            else
+                % PORT and STBD (September 2014 FRM test): Mass flow rate (Kg/s)
+                PortMfr = -0.0421*PortKP^4+0.5718*PortKP^3-2.9517*PortKP^2+7.8517*PortKP-5.1976;
+                StbdMfr = -0.0942*StbdKP^4+1.1216*StbdKP^3-4.9878*StbdKP^2+11.0548*StbdKP-6.8484;
+            end            
         else
             % PORT (June 2013 FRM test): Mass flow rate (Kg/s)
             if PortKP > 1.86
@@ -814,7 +955,6 @@ if exist('resultsArraySPP_CCDoTT.dat', 'file') == 0
         end
         
         if any(k==RunsForSpeed1) || any(k==RunsForSpeed2) || any(k==RunsForSpeed3) || any(k==RunsForSpeed4) || any(k==RunsForSpeed5) || any(k==RunsForSpeed6) || any(k==RunsForSpeed7) || any(k==RunsForSpeed8) || any(k==RunsForSpeed9)
-            %disp(sprintf('Speed: %s',num2str(setSpeed)));
             BLPLFactor  = BLPLFactorArray(setSpeed);
             BLThickness = BLThicknessArray(setSpeed);
             QBL         = CH_0_Speed_Mean*WidthFactor*MS_PumpDia*BLThickness*(BLPLFactor/(BLPLFactor+1));
@@ -896,17 +1036,15 @@ if exist('resultsArraySPP_CCDoTT.dat', 'file') == 0
     %close(w);
     
     % /////////////////////////////////////////////////////////////////////
-    % START: Write results to DAT and TXT
+    % START Write results to DAT or TXT file
     % ---------------------------------------------------------------------
-    
     resultsArraySPP = resultsArraySPP(any(resultsArraySPP,2),:);                    % Remove zero rows
     M = resultsArraySPP;
     %M = M(any(M,2),:);                                                             % remove zero rows only in resultsArraySPP text file
     csvwrite('resultsArraySPP_CCDoTT.dat', M)                                       % Export matrix M to a file delimited by the comma character
     %dlmwrite('resultsArraySPP_CCDoTT.txt', M, 'delimiter', '\t', 'precision', 4)   % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
-    
     % ---------------------------------------------------------------------
-    % END: Write results to DAT and TXT
+    % END Write results to DAT or TXT file
     % /////////////////////////////////////////////////////////////////////
     
 else
@@ -2506,14 +2644,14 @@ else
 end
 
 %# ************************************************************************
-%# START Write results to CVS
+%# START Write results to DAT or TXT file
 %# ------------------------------------------------------------------------
 M = resSPP_CCDoTT;
 %M = M(any(M,2),:);                                                     % remove zero rows only in resultsArraySPP text file
 csvwrite('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', M)            % Export matrix M to a file delimited by the comma character
 %dlmwrite('resultsArraySPP_CCDoTT_SelfPropPointsData.txt', M, 'delimiter', '\t', 'precision', 4)    % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 %# ------------------------------------------------------------------------
-%# END Write results to CVS
+%# END Write results to DAT or TXT file
 %# ************************************************************************
 
 %break;
@@ -3337,8 +3475,63 @@ ty4 = thrustDedFracArray(:,4);
 tx5 = thrustDedFracArray(:,1);
 ty5 = thrustDedFracArray(:,5);
 
+% Calculate full scale thrust deduction based on t=(T-RT)/T ---------------
+
+% Resistance fitting
+[fitobject,gof,output] = fit(ResResults(:,1),ResResults(:,16),'poly5');
+cvalues                = coeffvalues(fitobject);
+
+% Froude length numbers
+FRArray     = thrustDedFracArray(:,1);
+[mres,nres] = size(FRArray);
+
+% tempThrustDedArray columns:
+%[1] Froude length number                       (-)
+%[2] Total catamaran: Full scale resistance     (N)
+%[3] Total catamaran: Total thrust              (N)
+%[4] Thrust deduction fraction, t               (-)
+%[5] Thrust deduction fraction, (1-t)           (-)
+for kres=1:mres
+    % Stbd to port ratio
+    if kres == 4
+        ratioRow = 3;
+    else
+        ratioRow = 1;
+    end
+    
+    % Model scale thrust at SPP
+    MSThrustAtSPP = TG_at_FDArray(kres,4);
+    
+    % Model Scale - Split to Port and Stbd values
+    PortStbdRatio    = A{kres}(ratioRow,40)/A{kres}(ratioRow,42);
+    MSPortGrosThrust = MSThrustAtSPP*PortStbdRatio;
+    PortStbdRatio    = A{kres}(ratioRow,41)/A{kres}(ratioRow,42);
+    MSStbdGrosThrust = MSThrustAtSPP*PortStbdRatio;
+    
+    % Full Scale - Split to Port and Stbd values
+    % NOTE: Neglect run 70 and 71 (as faulty)
+    PortStbdRatio    = A{kres}(ratioRow,40)/A{kres}(ratioRow,42);
+    FSPortGrosThrust = (MSThrustAtSPP*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
+    PortStbdRatio    = A{kres}(ratioRow,41)/A{kres}(ratioRow,42);
+    FSStbdGrosThrust = (MSThrustAtSPP*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
+    
+    TempFittedResistance = cvalues(1)*FRArray(kres,1)^5+cvalues(2)*FRArray(kres,1)^4+cvalues(3)*FRArray(kres,1)^3+cvalues(4)*FRArray(kres,1)^2+cvalues(5)*FRArray(kres,1)+cvalues(6);
+    TempTotalCatThrust   = (FSPortGrosThrust+FSStbdGrosThrust)*2;
+    TempThrustDedFrac    = (TempTotalCatThrust-TempFittedResistance)/TempTotalCatThrust;
+    
+    tempThrustDedArray(kres,1) = FRArray(kres,1);
+    tempThrustDedArray(kres,2) = TempFittedResistance;
+    tempThrustDedArray(kres,3) = TempTotalCatThrust;
+    tempThrustDedArray(kres,4) = TempThrustDedFrac;
+    tempThrustDedArray(kres,5) = 1-TempThrustDedFrac;
+end
+
+% Full scale: t=(T-RT)/T
+xt = tempThrustDedArray(:,1);
+yt = tempThrustDedArray(:,4);
+
 %# Plotting
-h1 = plot(tx1,ty1,'x',tx2,ty2,'o',tx3,ty3,'+',tx4,ty4,'s',tx5,ty5,'*',mx1,my1,mx2,my2);
+h = plot(tx1,ty1,'x',tx2,ty2,'o',tx3,ty3,'+',tx4,ty4,'s',tx5,ty5,'*',xt,yt,'*',mx1,my1,'-',mx2,my2,'-');
 if enablePlotTitle == 1
     title('{\bf Gross thrust defined as T_{G} = p Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
 end
@@ -3355,14 +3548,23 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
 set(gcf,'Color',[1,1,1]);
 
+%# Annotations
+% Text on plot
+text(0.55,-0.75,'Legend:','FontSize',12,'color','k','FontWeight','bold');
+text(0.55,-0.85,'MS = Model scale','FontSize',12,'color','k','FontWeight','normal');
+text(0.55,-0.95,'FS = Full scale','FontSize',12,'color','k','FontWeight','normal');
+
 %# Line, colors and markers
-set(h1(1),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-set(h1(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize);
-set(h1(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize);
-set(h1(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize);
-set(h1(5),'Color',setColor{5},'Marker',setMarker{7},'MarkerSize',setMarkerSize);
-set(h1(6),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-set(h1(7),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+set(h(1),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize); %,'LineWidth',setLineWidthMarker
+set(h(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize);
+set(h(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize);
+set(h(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize);
+set(h(5),'Color',setColor{5},'Marker',setMarker{7},'MarkerSize',setMarkerSize);
+% Full scale: t=(T-RT)/T
+set(h(6),'Color',setColor{6},'Marker',setMarker{1},'MarkerSize',setMarkerSize);
+% MARIN data
+set(h(7),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+set(h(8),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
 
 %# Axis limitations
 minX  = 0.14;
@@ -3379,9 +3581,9 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 
 %# Legend
-hleg1 = legend('98m t by slope','98m t=(TM+FD-RC)/TM','98m using RCW=TG(1-t)+FD','98m F=TM(t-1)+FatT=0 (Øyan 2012)','98m FM=FatT=0-TM(1-t) (Bose 2008)','112m MARIN JHSV Cond. T5','112m MARIN JHSV Cond. T4');
+hleg1 = legend('98m (MS) t by slope','98m (MS) t=(T_{M}+F_{D}-R_{C})/T_{M}','98m (MS) using R_{CW}=T_{G}(1-t)+F+{D}','98m (MS) F=T_{M}(t-1)+F_{at T=0} (Øyan 2012)','98m (MS) F_{M}=F_{at T=0}-T_{M}(1-t) (Bose 2008)','98m (FS) t=(T-R_{T})/T','112m MARIN JHSV Cond. T5','112m MARIN JHSV Cond. T4');
 set(hleg1,'Location','NorthEast');
-set(hleg1,'Interpreter','none');
+set(hleg1,'Interpreter','Tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
@@ -5188,7 +5390,7 @@ end
 %# ************************************************************************
 
 %# Plotting speed ---------------------------------------------------------
-figurename = 'Plot 10: Thrust identity (CT)';
+figurename = 'Plot 10: Thrust identity (C_{T})';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ------------------------------------------------
@@ -5343,162 +5545,196 @@ end
 
 
 %# ************************************************************************
-%# 11. Compare Tamura corrected resistance with full scale thrust
+%# 11. Thrust-drag equilibrium
 %# ************************************************************************
 
-% %# Plotting speed ---------------------------------------------------------
-% figurename = 'Plot 11: Compare Tamura corrected resistance with full scale thrust';
-% f = figure('Name',figurename,'NumberTitle','off');
-% 
-% %# Paper size settings ------------------------------------------------
-% 
-% if enableA4PaperSizePlot == 1
-%     set(gcf, 'PaperSize', [19 19]);
-%     set(gcf, 'PaperPositionMode', 'manual');
-%     set(gcf, 'PaperPosition', [0 0 19 19]);
-%     
-%     set(gcf, 'PaperUnits', 'centimeters');
-%     set(gcf, 'PaperSize', [19 19]);
-%     set(gcf, 'PaperPositionMode', 'manual');
-%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%# Plotting speed ---------------------------------------------------------
+figurename = 'Plot 11: Thrust-drag equilibrium';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 12;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 10;
+setLineWidthMarker = 2;
+setLineWidth       = 2;
+setLineWidthThin   = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+subplot(1,1,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+% Total resistance, RT
+x1 = ResResults(:,11);
+y1 = ResResults(:,24);
+
+% Extrapolated thrust: total catamaran = (port thrust + stbd thrust) * 2
+x2  = fullScaleDataArray(:,3); 
+y2p = fullScaleDataArray(:,20);
+y2s = fullScaleDataArray(:,21);
+
+[m2,n2] = size(x2);
+y2t = [];
+for k2=1:m2
+    y2t(k2) = (y2p(k2)+y2s(k2))*2;
+end
+y2t = y2t';
+
+%# Divide thrust data by 1000 for kN
+Raw_Data = num2cell(y2t);
+Raw_Data = cellfun(@(y) y/1000, Raw_Data, 'UniformOutput', false);
+y2t = cell2mat(Raw_Data);
+
+% Thrust based on sea trials shaft power (see IntPolThrustArray in analysis_thrustcurves.m)
+
+%# ************************************************************************
+%# START Interpolated thrust results (thrust curves + sea trials power)
+%# ------------------------------------------------------------------------
+if exist('IntPolThrustArray.dat', 'file') == 2
+    %# Results array columns:
+    IntPolThrustArray = csvread('IntPolThrustArray.dat');
+    [mfsr,nfsr] = size(IntPolThrustArray);
+    %# Remove zero rows
+    IntPolThrustArray(all(IntPolThrustArray==0,2),:)=[];
+    x3 = IntPolThrustArray(:,1);
+    y3 = IntPolThrustArray(:,5);    
+else
+    % Example set of data
+    x3 = [14.10 15.35 16.52 17.66 18.83 20.08 21.26 22.40 23.65];
+    y3 = [243.94 274.44 305.69 337.89 373.26 413.68 453.09 491.89 535.19];
+end
+%# ------------------------------------------------------------------------
+%# START Interpolated thrust results (thrust curves + sea trials power)
+%# ************************************************************************
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'-',x2,y2t,'*-',x3,y3,'*-');
+xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Resistance and thrust (kN)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+%     title('{\bf Resistance and thrust comparison)}','FontSize',setGeneralFontSize);
 % end
-% 
-% % Fonts and colours ---------------------------------------------------
-% setGeneralFontName = 'Helvetica';
-% setGeneralFontSize = 14;
-% setBorderLineWidth = 2;
-% setLegendFontSize  = 14;
-% 
-% %# Change default text fonts for plot title
-% set(0,'DefaultTextFontname',setGeneralFontName);
-% set(0,'DefaultTextFontSize',14);
-% 
-% %# Box thickness, axes font size, etc. ------------------------------------
-% set(gca,'TickDir','in',...
-%     'FontSize',12,...
-%     'LineWidth',2,...
-%     'FontName',setGeneralFontName,...
-%     'Clipping','off',...
-%     'Color',[1 1 1],...
-%     'LooseInset',get(gca,'TightInset'));
-% 
-% %# Markes and colors ------------------------------------------------------
-% setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
-% % Colored curves
-% setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
-% if enableBlackAndWhitePlot == 1
-%     % Black and white curves
-%     setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
-% end
-% 
-% %# Line, colors and markers
-% setMarkerSize      = 11;
-% setLineWidthMarker = 2;
-% setLineWidth       = 2;
-% setLineStyle       = '-';
-% 
-% %# SUBPLOT ////////////////////////////////////////////////////////////////
-% subplot(1,1,1)
-% 
-% %# X and Y axis -----------------------------------------------------------
-% 
-% % 1
-% x1 = [1 2];
-% y1 = [1 2];
-% 
-% % 2
-% x2 = [2 3];
-% y2 = [2 3];
-% 
-% % 3
-% x3 = [3 4];
-% y3 = [3 4];
-% 
-% %# Plotting ---------------------------------------------------------------
-% h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
-% xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
-% ylabel('{\bf Total resistance and thrust (kN)}','FontSize',setGeneralFontSize);
-% % if enablePlotTitle == 1
-% %     title('{\bf Resistance and thrust comparison)}','FontSize',setGeneralFontSize);
-% % end
-% grid on;
-% box on;
-% axis square;
-% 
-% %# Line, colors and markers
-% set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% set(h(2),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% set(h(3),'Color',setColor{3},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% %set(h(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-% 
-% %# Set plot figure background to a defined color
-% %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-% set(gcf,'Color',[1,1,1]);
-% 
-% % %# Axis limitations
-% % minX  = 0.22;
-% % maxX  = 0.42;
-% % incrX = 0.02;
-% % minY  = 0;
-% % maxY  = 0.3;
-% % incrY = 0.05;
-% % set(gca,'XLim',[minX maxX]);
-% % set(gca,'XTick',minX:incrX:maxX);
-% % set(gca,'YLim',[minY maxY]);
-% % set(gca,'YTick',minY:incrY:maxY);
-% % set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
-% % set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
-% 
-% %# Legend
-% hleg1 = legend('1','2','3');
-% set(hleg1,'Location','NorthWest');
-% %set(hleg1,'Interpreter','none');
-% set(hleg1, 'Interpreter','tex');
-% set(hleg1,'LineWidth',1);
-% set(hleg1,'FontSize',setLegendFontSize);
-% %legend boxoff;
-% 
-% %# Font sizes and border --------------------------------------------------
-% 
-% set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-% 
-% %# ************************************************************************
-% %# Save plot as PNG
-% %# ************************************************************************
-% 
-% %# Figure size on screen (50% scaled, but same aspect ratio)
-% set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-% 
-% %# Figure size printed on paper
-% if enableA4PaperSizePlot == 1
-%     set(gcf, 'PaperUnits','centimeters');
-%     set(gcf, 'PaperSize',[XPlot YPlot]);
-%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-%     set(gcf, 'PaperOrientation','portrait');
-% end
-% 
-% %# Plot title -------------------------------------------------------------
-% %if enablePlotMainTitle == 1
-% annotation('textbox', [0 0.9 1 0.1], ...
-%     'String', strcat('{\bf ', figurename, '}'), ...
-%     'EdgeColor', 'none', ...
-%     'HorizontalAlignment', 'center');
-% %end
-% 
-% %# Save plots as PDF, PNG and EPS -----------------------------------------
-% % Enable renderer for vector graphics output
-% set(gcf, 'renderer', 'painters');
-% setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
-% setFileFormat = {'PDF' 'PNG' 'EPS'};
-% for k=1:3
-%     plotsavename = sprintf('_plots/%s/%s/SPP_Plot_11_FS_Resistance_vs_Extrapolated_Thrust_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
-%     print(gcf, setSaveFormat{k}, plotsavename);
-% end
-% %close;
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h(2),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+set(h(3),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+% %# Axis limitations
+minX  = 13;
+maxX  = 25;
+incrX = 1;
+minY  = 0;
+maxY  = 800;
+incrY = 100;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+% set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+% set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
+
+%# Legend
+hleg1 = legend('Resistance from model test, R_{TBH}','Thrust from model test, T_{Gs}','Thrust using sea trials power & thrust curves, T_{Gs, ST}');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title -------------------------------------------------------------
+%if enablePlotMainTitle == 1
+annotation('textbox', [0 0.9 1 0.1], ...
+    'String', strcat('{\bf ', figurename, '}'), ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center');
+%end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_11_FS_Resistance_vs_Extrapolated_Thrust_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
 
 
 %# ************************************************************************
-%# START Write results to CVS
+%# START Write results to DAT or TXT file
 %# ------------------------------------------------------------------------
 
 % %# Add when creating fullScaleDataArraySets.dat only!!!!
@@ -5521,7 +5757,7 @@ csvwrite('fullScaleDataArray_CCDoTT.dat', M)                                    
 dlmwrite('fullScaleDataArray_CCDoTT.txt', M, 'delimiter', '\t', 'precision', 4)     % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 
 %# ------------------------------------------------------------------------
-%# END Write results to CVS
+%# END Write results to DAT or TXT file
 %# ************************************************************************
 
 
