@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 21, 2015
+%# Date       :  January 29, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -1785,7 +1785,7 @@ end
 %close(w);
 
 % /////////////////////////////////////////////////////////////////////////
-% START: Write results to CVS
+% START Write results to DAT or TXT file
 % -------------------------------------------------------------------------
 M  = resultsArray;
 M2 = M(any(M,2),:);                                                  % Remove zero rows
@@ -1793,7 +1793,7 @@ csvwrite('resultsArray.dat', M2)                                     % Export ma
 dlmwrite('resultsArray.txt', M2, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 disp('All done!');
 % -------------------------------------------------------------------------
-% END: Write results to CVS
+% END Write results to DAT or TXT file
 % /////////////////////////////////////////////////////////////////////////
 
 

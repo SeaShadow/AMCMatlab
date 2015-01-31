@@ -1,9 +1,9 @@
 %# ------------------------------------------------------------------------
-%# Flow Rate Analysis: Mass Flow Rate vs. Kiel Probe Output
+%# Flow Rate Analysis: Mass flow rate vs. Kiel Probe Output
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 21, 2015
+%# Date       :  January 29, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -117,7 +117,7 @@ if exist('resultsArray_copy.dat', 'file') == 2
     %[16] Mass flow rate (1s only)                                  (Kg/s)
     %[17] Mass flow rate (mean, 1s intervals)                       (Kg/s)
     %[18] Mass flow rate (overall, Q/t)                             (Kg/s)
-    %[19] Diff. mass flow rate (mean, 1s intervals)/(overall, Q/t)  (%)
+    %[19] Diff. Mass flow rate (mean, 1s intervals)/(overall, Q/t)  (%)
     results = csvread('resultsArray_copy.dat');
     %# Remove zero rows
     results(all(results==0,2),:)=[];
@@ -237,7 +237,7 @@ end
 %[2]  Prop. system                          (1 = Port, 2 = Stbd)
 %[3]  Measured shaft Speed STBD             (RPM)
 %[4]  Measured shaft Speed PORT             (RPM)
-%[5]  Mass Flow rate                        (Kg/s)
+%[5]  Mass flow rate                        (Kg/s)
 %[6]  Kiel probe STBD                       (V)
 %[7]  Kiel probe PORT                       (V)
 %[8]  Thrust STBD                           (N)
@@ -248,12 +248,12 @@ end
 %[13] Flow coefficient                      (-)
 %[14] Jet velocity                          (m/s)
 %# Values added: 10/09/2014
-%[15] Mass Flow rate (1s only)              (Kg/s)
+%[15] Mass flow rate (1s only)              (Kg/s)
 %[16] Mass flow rate (mean, 1s intervals)   (Kg/s)
 %[17] Mass flow rate (overall, Q/t)         (Kg/s)
 
 %# PORT (averaged repeated runs) ------------------------------------------
-AvgPortArray      = [];
+AvgPortArray = [];
 AvgPortArray = [AvgPortArray;stats_avg(1,800,results(8,:))];
 AvgPortArray = [AvgPortArray;stats_avg(1,1000,results(9:11,:))];
 AvgPortArray = [AvgPortArray;stats_avg(1,1200,results([12 16],:))];
@@ -286,6 +286,38 @@ AvgStbdArray = [AvgStbdArray;stats_avg(2,3000,results(61:63,:))];
 AvgStbdArray = [AvgStbdArray;stats_avg(2,3200,results(64,:))];
 AvgStbdArray = [AvgStbdArray;stats_avg(2,3400,results(65:67,:))];
 
+%# Write to summary array to save as file ---------------------------------
+
+[mp,np] = size(AvgPortArray);
+[ms,ns] = size(AvgStbdArray);
+
+%# Summary array
+SummaryMFRSept2014Array = [];
+% SummaryMFRSept2014Array colums
+%[1] Set shaft speed            (RPM)
+%[2] PORT: Kiel probe           (V)
+%[3] PORT: Mass flow rate       (Kg/s)
+%[4] STBD: Kiel probe           (V)
+%[5] STBD: Mass flow rate       (Kg/s)
+for ks=1:mp
+    SummaryMFRSept2014Array(ks,1) = AvgStbdArray(ks,1);
+    SummaryMFRSept2014Array(ks,2) = AvgPortArray(ks,7);
+    SummaryMFRSept2014Array(ks,3) = AvgPortArray(ks,5);
+    SummaryMFRSept2014Array(ks,4) = AvgStbdArray(ks,6);
+    SummaryMFRSept2014Array(ks,5) = AvgStbdArray(ks,5);
+end
+
+% /////////////////////////////////////////////////////////////////////////
+% START Write results to DAT or TXT file
+% -------------------------------------------------------------------------
+M  = SummaryMFRSept2014Array;
+M2 = M(any(M,2),:);                                                             % Remove zero rows
+csvwrite('SummaryMFRSept2014Array.dat', M2)                                     % Export matrix M to a file delimited by the comma character
+%dlmwrite('SummaryMFRSept2014Array.txt', M2, 'delimiter', '\t', 'precision', 4) % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
+% -------------------------------------------------------------------------
+% END Write results to DAT or TXT file
+% /////////////////////////////////////////////////////////////////////////
+
 %# Averaged mean runs -----------------------------------------------------
 stbdAvgPortArray = [];
 
@@ -305,7 +337,7 @@ end
 %# Columns:
 %[1]  Set shaft speed                       (RPM)
 %[2]  Measured shaft Speed                  (RPM)
-%[3]  Mass Flow rate                        (Kg/s)
+%[3]  Mass flow rate                        (Kg/s)
 %[4]  Kiel probe                            (V)
 %[5]  Torque                                (Nm)
 %[6]  Volumetric flow rate                  (m^3/s)
@@ -333,7 +365,7 @@ repeatedRunsDescStatArray = [];
 
 %# repeatedRunsDescStatArray columns:
 
-%# PORT: MASS FLOW RATE ///////////////////////////////////////////////////
+%# PORT: Mass flow rate ///////////////////////////////////////////////////
 
 % MFR (1s only) 
 %[1]  Min                                   (Kg/s)
@@ -356,7 +388,7 @@ repeatedRunsDescStatArray = [];
 %[14] Variance                              (Kg/s)
 %[15] Standard deviation                    (-)
 
-%# STBD: MASS FLOW RATE ///////////////////////////////////////////////////
+%# STBD: Mass flow rate ///////////////////////////////////////////////////
 
 % MFR (1s only) 
 %[16] Min                                   (Kg/s)
@@ -431,7 +463,7 @@ sortedByRPMStbdArray     = sortedByRPMStbdArray';
 
 % Loop
 for k=1:14
-    %# PORT: MASS FLOW RATE ///////////////////////////////////////////////
+    %# PORT: Mass flow rate ///////////////////////////////////////////////
     
     % MFR (1s only)
     dataset = sortedByRPMPortArray{k}(:,16);
@@ -457,7 +489,7 @@ for k=1:14
     repeatedRunsDescStatArray(k, 14) = var(dataset,1);
     repeatedRunsDescStatArray(k, 15) = std(dataset,1);
     
-    %# STBD: MASS FLOW RATE ///////////////////////////////////////////////
+    %# STBD: Mass flow rate ///////////////////////////////////////////////
     
     % MFR (1s only)
     dataset = sortedByRPMStbdArray{k}(:,16);
@@ -502,11 +534,11 @@ end
 
 
 %# ************************************************************************
-%# 3. Plot kiel probe voltage against mass flow rate
+%# 3. Plot kiel probe voltage against Mass flow rate
 %# ************************************************************************
 
 %# Plotting gross thrust vs. towing force
-figurename = 'Flow Rate Measurement Test: Kiel Probe Voltage vs. Mass Flow Rate';
+figurename = 'Flow Rate Measurement Test: Kiel Probe Voltage vs. Mass flow rate';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ------------------------------------------------
@@ -597,8 +629,8 @@ EqnOfFitKP    = [1:0.2:4.4];
 
 %# Columns:
 %[1]  Kiel probe output             (V)
-%[2]  Stbd mass flow rate           (Kg/s}
-%[3]  Port mass flow rate           (Kg/s}
+%[2]  Stbd Mass flow rate           (Kg/s}
+%[3]  Port Mass flow rate           (Kg/s}
 
 for kj=1:neof
     KPValue = EqnOfFitKP(kj);
@@ -1238,8 +1270,12 @@ else
     
 end % enableCurveFittingToolboxPlot
 
+% Cross check SummaryMFRSept2014Array data
+%hold on;
+%hx = plot(SummaryMFRSept2014Array(:,2),SummaryMFRSept2014Array(:,3),'-r',SummaryMFRSept2014Array(:,4),SummaryMFRSept2014Array(:,5),'-b');
+
 if enablePlotTitle == 1
-    title('{\bf Kiel Probe Output vs. Mass Flow Rate}','FontSize',setGeneralFontSize);
+    title('{\bf Kiel Probe Output vs. Mass flow rate}','FontSize',setGeneralFontSize);
 end
 xlabel('{\bf Kiel probe output (V)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Mass flow rate (Kg/s)}','FontSize',setGeneralFontSize);

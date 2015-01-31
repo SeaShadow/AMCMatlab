@@ -1,9 +1,9 @@
 %# ------------------------------------------------------------------------
-%# Self-Propulsion: Test Analysis (SPP) - Using CCoTT () for SPP
+%# Self-Propulsion: Test Analysis (SPP) - Using CCoTT method for SPP
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 30, 2015
+%# Date       :  January 31, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -5728,6 +5728,233 @@ setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
     plotsavename = sprintf('_plots/%s/%s/SPP_Plot_11_FS_Resistance_vs_Extrapolated_Thrust_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 12. Ship speed, jet and inlet velocity and mass flow rate
+%# ************************************************************************
+
+%# Plotting speed ---------------------------------------------------------
+figurename = 'Plot 12: Ship speed, jet and inlet velocity and mass flow rate';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+%if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+%end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 14;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 10;
+setLineWidthMarker = 2;
+setLineWidth       = 2;
+setLineWidthThin   = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+subplot(1,2,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+% Ship speed
+x1 = modelScaleDataArray(:,3);
+y1 = modelScaleDataArray(:,24);
+
+% PORT: Jet velocity
+x2 = modelScaleDataArray(:,3);
+y2 = modelScaleDataArray(:,26);
+
+% STBD: Jet velocity
+x3 = modelScaleDataArray(:,3);
+y3 = modelScaleDataArray(:,27);
+
+% PORT: Inlet velocity
+x4 = modelScaleDataArray(:,3);
+y4 = modelScaleDataArray(:,28);
+
+% STBD: Inlet velocity
+x5 = modelScaleDataArray(:,3);
+y5 = modelScaleDataArray(:,29);
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'-',x2,y2,'*-',x3,y3,'*-',x4,y4,'*-',x5,y5,'*-');
+xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Ship speed, jet and inlet velocity (m/s)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+%     title('{\bf Velocities)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidthThin);
+set(h(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+set(h(3),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+set(h(5),'Color',setColor{5},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+% %# Axis limitations
+minX  = 13;
+maxX  = 25;
+incrX = 1;
+minY  = 0;
+maxY  = 6;
+incrY = 0.5;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+% set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+hleg1 = legend('Ship speed','Port jet velocity, V_{J}','Stbd jet velocity, V_{J}','Port inlet velocity, V_{I}','Stbd inlet velocity, V_{I}');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+subplot(1,2,2)
+
+%# X and Y axis -----------------------------------------------------------
+
+% PORT: Jet velocity
+x1 = modelScaleDataArray(:,3);
+y1 = modelScaleDataArray(:,24);
+
+% STBD: Jet velocity
+x2 = modelScaleDataArray(:,3);
+y2 = modelScaleDataArray(:,25);
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'*-',x2,y2,'*-');
+xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Mass  flow rate (Kg/s)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+%     title('{\bf Velocities)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+% %# Axis limitations
+minX  = 13;
+maxX  = 25;
+incrX = 1;
+minY  = 0;
+maxY  = 5;
+incrY = 0.5;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+% set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+hleg1 = legend('Port mass flow rate, \rho Q_{J}','Stbd mass flow rate, \rho Q_{J}');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+%if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+%end
+
+%# Plot title -------------------------------------------------------------
+%if enablePlotMainTitle == 1
+annotation('textbox', [0 0.9 1 0.1], ...
+    'String', strcat('{\bf ', figurename, '}'), ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center');
+%end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_12_Ship_Speed_Jet_Inlet_Velocity_Mass_Flow_Rate_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;

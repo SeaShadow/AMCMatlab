@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 21, 2015
+%# Date       :  January 29, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -1060,7 +1060,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
     end
     
     %# ************************************************************************
-    %# START Write results to CVS
+    %# START Write results to DAT or TXT file
     %# ------------------------------------------------------------------------
     M = resultsArray;
     csvwrite('resultsArray.dat', M)                                     % Export matrix M to a file delimited by the comma character
@@ -1069,7 +1069,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
     csvwrite('slopesArray.dat', M)                                      % Export matrix M to a file delimited by the comma character
     dlmwrite('slopesArray.txt', M, 'delimiter', '\t', 'precision', 4)   % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
     %# ------------------------------------------------------------------------
-    %# END Write results to CVS
+    %# END Write results to DAT or TXT file
     %# ************************************************************************
     
 else
@@ -1079,14 +1079,14 @@ else
 end % exist('statisticsArrayAnalysis_copy.dat', 'file')
 
 %# ************************************************************************
-%# START Write results to CVS
+%# START Write results to DAT or TXT file
 %# ------------------------------------------------------------------------
 statisticsArray = statisticsArray(any(statisticsArray,2),:);           % Remove zero rows
 M = statisticsArray;
 csvwrite('statisticsArrayAnalysis.dat', M)                                     % Export matrix M to a file delimited by the comma character
 dlmwrite('statisticsArrayAnalysis.txt', M, 'delimiter', '\t', 'precision', 4)  % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
 %# ------------------------------------------------------------------------
-%# END Write results to CVS
+%# END Write results to DAT or TXT file
 %# ************************************************************************
 
 
