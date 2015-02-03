@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 31, 2015
+%# Date       :  February 3, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -345,7 +345,7 @@ else
     %break;
 end
 %# ------------------------------------------------------------------------
-%# START Full scale results
+%# END Full scale results
 %# ************************************************************************
 
 
@@ -402,6 +402,10 @@ if exist('FullScaleRT_ITTC1978_2011_Schuster_TempCorr.mat', 'file') == 2
     %[26] MS Total resistance (demihull), RTm               (N)
     ResResults = FullScaleRT_ITTC1978_2011_Schuster_TempCorr;
     clearvars FullScaleRT_ITTC1978_2011_Schuster_TempCorr
+else
+    %disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    %disp('WARNING: Required data file for resistance data (FullScaleRT_ITTC1978_2011_Schuster_TempCorr.mat) does not exist!');
+    %disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 end
 %# ------------------------------------------------------------------------
 %# END Full Scale Resistance Results (Based on ITTC (2011) 7.5-02-03-01.4
@@ -420,73 +424,73 @@ if exist(SetMFRvsKPDataFilePath, 'file') == 2
     cvaluesMFRvsKPSept2014Port = coeffvalues(fitobjectP);
     
     % Check Equation of Fit
-%     if enableAdjustedCommandWindow == 1
-%         cval = cvaluesMFRvsKPSept2014Port;
-%         setDecimals1 = '%0.4f';
-%         setDecimals2 = '+%0.4f';
-%         setDecimals3 = '+%0.4f';
-%         setDecimals4 = '+%0.4f';
-%         setDecimals5 = '+%0.4f';
-%         if cval(1) < 0
-%             setDecimals1 = '%0.4f';
-%         end
-%         if cval(2) < 0
-%             setDecimals2 = '%0.4f';
-%         end
-%         if cval(3) < 0
-%             setDecimals3 = '%0.4f';
-%         end
-%         if cval(4) < 0
-%             setDecimals4 = '%0.4f';
-%         end
-%         if cval(5) < 0
-%             setDecimals5 = '%0.4f';
-%         end
-%         p1   = sprintf(setDecimals1,cval(1));
-%         p2   = sprintf(setDecimals2,cval(2));
-%         p3   = sprintf(setDecimals3,cval(3));
-%         p4   = sprintf(setDecimals4,cval(4));
-%         p5   = sprintf(setDecimals5,cval(5));
-%         gofrs = sprintf('%0.2f',gofP.rsquare);
-%         EoFEqn = sprintf('>> PORT Equation of Fit (EoF): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofrs);
-%         disp(EoFEqn);
-%     end
+    %     if enableAdjustedCommandWindow == 1
+    %         cval = cvaluesMFRvsKPSept2014Port;
+    %         setDecimals1 = '%0.4f';
+    %         setDecimals2 = '+%0.4f';
+    %         setDecimals3 = '+%0.4f';
+    %         setDecimals4 = '+%0.4f';
+    %         setDecimals5 = '+%0.4f';
+    %         if cval(1) < 0
+    %             setDecimals1 = '%0.4f';
+    %         end
+    %         if cval(2) < 0
+    %             setDecimals2 = '%0.4f';
+    %         end
+    %         if cval(3) < 0
+    %             setDecimals3 = '%0.4f';
+    %         end
+    %         if cval(4) < 0
+    %             setDecimals4 = '%0.4f';
+    %         end
+    %         if cval(5) < 0
+    %             setDecimals5 = '%0.4f';
+    %         end
+    %         p1   = sprintf(setDecimals1,cval(1));
+    %         p2   = sprintf(setDecimals2,cval(2));
+    %         p3   = sprintf(setDecimals3,cval(3));
+    %         p4   = sprintf(setDecimals4,cval(4));
+    %         p5   = sprintf(setDecimals5,cval(5));
+    %         gofrs = sprintf('%0.2f',gofP.rsquare);
+    %         EoFEqn = sprintf('>> PORT Equation of Fit (EoF): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofrs);
+    %         disp(EoFEqn);
+    %     end
     
     [fitobjectS,gofS,outputS]  = fit(SummaryMFRSept2014Array(:,4),SummaryMFRSept2014Array(:,5),'poly4');
     cvaluesMFRvsKPSept2014Stbd = coeffvalues(fitobjectS);
     
     % Check Equation of Fit
-%     if enableAdjustedCommandWindow == 1
-%         cval = cvaluesMFRvsKPSept2014Stbd;
-%         setDecimals1 = '%0.4f';
-%         setDecimals2 = '+%0.4f';
-%         setDecimals3 = '+%0.4f';
-%         setDecimals4 = '+%0.4f';
-%         setDecimals5 = '+%0.4f';
-%         if cval(1) < 0
-%             setDecimals1 = '%0.4f';
-%         end
-%         if cval(2) < 0
-%             setDecimals2 = '%0.4f';
-%         end
-%         if cval(3) < 0
-%             setDecimals3 = '%0.4f';
-%         end
-%         if cval(4) < 0
-%             setDecimals4 = '%0.4f';
-%         end
-%         if cval(5) < 0
-%             setDecimals5 = '%0.4f';
-%         end
-%         p1   = sprintf(setDecimals1,cval(1));
-%         p2   = sprintf(setDecimals2,cval(2));
-%         p3   = sprintf(setDecimals3,cval(3));
-%         p4   = sprintf(setDecimals4,cval(4));
-%         p5   = sprintf(setDecimals5,cval(5));
-%         gofrs = sprintf('%0.2f',gofP.rsquare);
-%         EoFEqn = sprintf('>> STBD Equation of Fit (EoF): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofrs);
-%         disp(EoFEqn);
-%     end    
+    %     if enableAdjustedCommandWindow == 1
+    %         cval = cvaluesMFRvsKPSept2014Stbd;
+    %         setDecimals1 = '%0.4f';
+    %         setDecimals2 = '+%0.4f';
+    %         setDecimals3 = '+%0.4f';
+    %         setDecimals4 = '+%0.4f';
+    %         setDecimals5 = '+%0.4f';
+    %         if cval(1) < 0
+    %             setDecimals1 = '%0.4f';
+    %         end
+    %         if cval(2) < 0
+    %             setDecimals2 = '%0.4f';
+    %         end
+    %         if cval(3) < 0
+    %             setDecimals3 = '%0.4f';
+    %         end
+    %         if cval(4) < 0
+    %             setDecimals4 = '%0.4f';
+    %         end
+    %         if cval(5) < 0
+    %             setDecimals5 = '%0.4f';
+    %         end
+    %         p1   = sprintf(setDecimals1,cval(1));
+    %         p2   = sprintf(setDecimals2,cval(2));
+    %         p3   = sprintf(setDecimals3,cval(3));
+    %         p4   = sprintf(setDecimals4,cval(4));
+    %         p5   = sprintf(setDecimals5,cval(5));
+    %         gofrs = sprintf('%0.2f',gofP.rsquare);
+    %         EoFEqn = sprintf('>> STBD Equation of Fit (EoF): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofrs);
+    %         disp(EoFEqn);
+    %     end
     
 else
     %disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
@@ -496,6 +500,79 @@ end
 %# ------------------------------------------------------------------------
 %# END Kiel probe vs. mass flow rate
 %# ************************************************************************
+
+
+%# ************************************************************************
+%# START Averaged resistance data (created by analysis_custom.m)
+%# ------------------------------------------------------------------------
+SetAvgResistanceFilePath = '..\..\..\2013 August - Resistance test\_Run files\_Matlab analysis\resultsAveragedArray.dat';
+if exist(SetAvgResistanceFilePath, 'file') == 2
+    %# Results array columns:
+    % See 4. Extrapolation to full scale for column descriptions
+    resultsAveragedArray = csvread(SetAvgResistanceFilePath);
+    [mfsr,nfsr] = size(resultsAveragedArray);
+    %# Remove zero rows
+    resultsAveragedArray(all(resultsAveragedArray==0,2),:)=[];
+    
+    R = resultsAveragedArray;   % Results array
+    R(all(R==0,2),:) = [];      % Remove Zero rows from array
+    [m,n] = size(R);            % Array dimensions
+    
+    % Split results array based on column 28 (test condition)
+    ARes = arrayfun(@(x) R(R(:,28) == x, :), unique(R(:,28)), 'uniformoutput', false);
+    [ma,na] = size(ARes);       % Array dimensions
+    
+    for j=1:ma
+        if ARes{j}(1,28) == 1
+            avgcond1 = ARes{j};
+        end
+        if ARes{j}(1,28) == 2
+            avgcond2 = ARes{j};
+        end
+        if ARes{j}(1,28) == 3
+            avgcond3 = ARes{j};
+        end
+        if ARes{j}(1,28) == 4
+            avgcond4 = ARes{j};
+        end
+        if ARes{j}(1,28) == 5
+            avgcond5 = ARes{j};
+        end
+        if ARes{j}(1,28) == 6
+            avgcond6 = ARes{j};
+        end
+        if ARes{j}(1,28) == 7
+            avgcond7 = ARes{j};
+        end
+        if ARes{j}(1,28) == 8
+            avgcond8 = ARes{j};
+        end
+        if ARes{j}(1,28) == 9
+            avgcond9 = ARes{j};
+        end
+        if ARes{j}(1,28) == 10
+            avgcond10 = ARes{j};
+        end
+        if ARes{j}(1,28) == 11
+            avgcond11 = ARes{j};
+        end
+        if ARes{j}(1,28) == 12
+            avgcond12 = ARes{j};
+        end
+        if ARes{j}(1,28) == 13
+            avgcond13 = ARes{j};
+        end
+    end % j=1:ma
+else
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('WARNING: File resultsAveragedArray.dat does not exist!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    %break;
+end
+%# ------------------------------------------------------------------------
+%# END START Averaged resistance data (created by analysis_custom.m)
+%# ************************************************************************
+
 
 %# ////////////////////////////////////////////////////////////////////////
 %# START REPEAT RUN NUMBERS
@@ -885,7 +962,7 @@ if exist('resultsArraySPP_CCDoTT.dat', 'file') == 0
         % Kiel probes
         PortKP = resultsArraySPP(k, 17);                                                % PORT: Kiel probe (V)
         StbdKP = resultsArraySPP(k, 18);                                                % STBD: Kiel probe (V)
-
+        
         %# START Handle mass flow rate ------------------------------------
         if enableSept2014FRMValues == 1
             % If results from flow rate measurement test have been saved in
@@ -900,7 +977,7 @@ if exist('resultsArraySPP_CCDoTT.dat', 'file') == 0
                 % PORT and STBD (September 2014 FRM test): Mass flow rate (Kg/s)
                 PortMfr = -0.0421*PortKP^4+0.5718*PortKP^3-2.9517*PortKP^2+7.8517*PortKP-5.1976;
                 StbdMfr = -0.0942*StbdKP^4+1.1216*StbdKP^3-4.9878*StbdKP^2+11.0548*StbdKP-6.8484;
-            end            
+            end
         else
             % PORT (June 2013 FRM test): Mass flow rate (Kg/s)
             if PortKP > 1.86
@@ -1285,7 +1362,7 @@ for k=1:ma
     %[17] Fwd LVDT                         (mm)
     %[18] Heave                            (mm)
     %[19] Running trim                     (deg)
-        
+    
     % FROUDE LENGTH NUMBER AND TOWING FORCE, FD
     resSPP(k,1)  = A{k}(1,5);
     resSPP(k,2)  = towForce;
@@ -1316,7 +1393,7 @@ for k=1:ma
     resSPP(k,17) = 0;
     resSPP(k,18) = 0;
     resSPP(k,19) = 0;
-
+    
 end
 
 
@@ -1449,7 +1526,7 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         legendInfo{4} = 'Self-Propulsion Point (SPP)';
         xlabel('{\bf Gross thrust (N)}','FontSize',setGeneralFontSize);
         ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
-        title('{\bf Grosst Thrust}','FontSize',setGeneralFontSize);
+        title('{\bf Gross Thrust}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
@@ -1758,7 +1835,7 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         legendInfo{4} = 'Self-Propulsion Point (SPP)';
         xlabel('{\bf Gross thrust (N)}','FontSize',setGeneralFontSize);
         ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
-        title('{\bf Grosst Thrust}','FontSize',setGeneralFontSize);
+        title('{\bf Gross Thrust}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
@@ -2272,7 +2349,7 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         legendInfo{4} = 'Self-Propulsion Point (SPP)';
         xlabel('{\bf Gross thrust (N)}','FontSize',setGeneralFontSize);
         ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
-        title('{\bf Grosst Thrust}','FontSize',setGeneralFontSize);
+        title('{\bf Gross Thrust}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
@@ -2555,6 +2632,324 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         
         
         %# ********************************************************************
+        %# SELF-PROPULSION POINTS (HEAVE AND TRIM)
+        %# ********************************************************************
+        figurename = sprintf('Plot 0 (Heave and Trim): Speed = %s, Fr = %s, Linear Plots for Self-Propulsion Points (SPP)',num2str(klp),sprintf('%.2f',A{klp}(1,5)));
+        f = figure('Name',figurename,'NumberTitle','off');
+        
+        %# Paper size settings ------------------------------------------------
+        
+        %if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        %end
+        
+        % Fonts and colours ---------------------------------------------------
+        setGeneralFontName = 'Helvetica';
+        setGeneralFontSize = 14;
+        setBorderLineWidth = 2;
+        setLegendFontSize  = 12;
+        
+        %# Change default text fonts for plot title
+        set(0,'DefaultTextFontname',setGeneralFontName);
+        set(0,'DefaultTextFontSize',14);
+        
+        %# Box thickness, axes font size, etc. --------------------------------
+        set(gca,'TickDir','in',...
+            'FontSize',12,...
+            'LineWidth',2,...
+            'FontName',setGeneralFontName,...
+            'Clipping','off',...
+            'Color',[1 1 1],...
+            'LooseInset',get(gca,'TightInset'));
+        
+        %# Markes and colors --------------------------------------------------
+        setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+        % Colored curves
+        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+        if enableBlackAndWhitePlot == 1
+            % Black and white curves
+            setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+        end
+        
+        %# Line, colors and markers
+        setMarkerSize       = 12;
+        setMarkerSize2      = 12;
+        setLineWidthMarker  = 2;
+        setLineWidth        = 2;
+        setLineWidth2       = 1;
+        setLineStyle        = '-';
+        setLineStyle2       = '-.';
+        
+        % Towing Force, FD
+        TowForceFD = TG_at_FDArray(klp, 3);
+        
+        %# SUBPLOT ////////////////////////////////////////////////////////////
+        subplot(1,2,1)
+        
+        %# X and Y axis -------------------------------------------------------
+        
+        % Tow Force, FD
+        minx1 = -13;
+        maxx1 = 5;
+        
+        x1 = [minx1 maxx1];
+        %y1 = [TowForceFD TowForceFD];
+        y1 = [0 0];
+        
+        % Model Data (omit runs at speed 4 due to bad results)
+        if klp == 4
+            x2    = A{klp}(3:6,7);
+            y2    = A{klp}(3:6,10);
+            WJSys = A{klp}(3:6,7);
+        else
+            x2    = A{klp}(:,7);
+            y2    = A{klp}(:,10);
+            WJSys = A{klp}(:,7);
+        end
+        
+        % Model data - Linear fit
+        [fitobject,gof,output] = fit(x2,y2,'poly1');
+        cvalues = coeffvalues(fitobject);
+        cnames  = coeffnames(fitobject);
+        output  = formula(fitobject);
+        
+        % Linear fit using defined points
+        minX = round(min(x2)-4);
+        maxX = round(max(x2)+4);
+        MMA  = minX:maxX;
+        [mi,ni] = size(MMA);
+        LFA  = [];
+        for ki=1:ni
+            LFA(ki,1) = MMA(ki);
+            LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
+        end
+        x4 = LFA(:,1);
+        y4 = LFA(:,2);
+        disp(sprintf('Fwd LVDT: Speed %s: Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
+        
+        % Find intersection of linear fit of model data and towing force, FD
+        [xout,yout] = intersections(x1,y1,x4,y4,1);
+        
+        SPP_FWD_LVDT = xout;
+        
+        % Determine percentage of thrust
+        [mpc,npc] = size(x2);
+        tempArray = [];
+        for kpc=1:mpc
+            tempArray(kpc) = WJSys(kpc)/x2(kpc);
+        end
+        meanWJSys = mean(tempArray);
+        SPP_FWD_LVDT = meanWJSys*SPP_FWD_LVDT;
+        
+        x3 = SPP_FWD_LVDT;
+        y3 = yout;
+        
+        %# Plotting -----------------------------------------------------------
+        h1 = plot(x2,y2,'*',x4,y4,'-');
+        legendInfo{1} = 'Model Data';
+        legendInfo{2} = 'Model Data - Linear fit';
+        hold on;
+        h2 = plot(x1,y1,'*',x3,y3,'x');
+        legendInfo{3} = 'Towing Force (F_{D})';
+        legendInfo{4} = 'Self-Propulsion Point (SPP)';
+        xlabel('{\bf Fwd LVDT (mm)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
+        title('{\bf Fwd LVDT}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Line, colors and markers
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
+        set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        % %# Axis limitations
+        minX  = round(min(x2)-3);
+        maxX  = round(max(x2)+3);
+        incrX = 1;
+        minY  = round(min(y2))-4;
+        maxY  = round(max(y2))+4;
+        %incrY = 2;
+        set(gca,'XLim',[minX maxX]);
+        set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        %set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','SouthWest');
+        set(hleg1,'Interpreter','tex');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
+        %legend boxoff;
+        
+        %# Font sizes and border ----------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# SUBPLOT ////////////////////////////////////////////////////////////
+        subplot(1,2,2)
+        
+        %# X and Y axis -------------------------------------------------------
+        
+        % Tow Force, FD
+        minx1 = -13;
+        maxx1 = 5;
+        
+        x1 = [minx1 maxx1];
+        %y1 = [TowForceFD TowForceFD];
+        y1 = [0 0];
+        
+        % Model Data (omit runs at speed 4 due to bad results)
+        if klp == 4
+            x2    = A{klp}(3:6,8);
+            y2    = A{klp}(3:6,10);
+            WJSys = A{klp}(3:6,8);
+        else
+            x2    = A{klp}(:,8);
+            y2    = A{klp}(:,10);
+            WJSys = A{klp}(:,8);
+        end
+        
+        % Model data - Linear fit
+        [fitobject,gof,output] = fit(x2,y2,'poly1');
+        cvalues = coeffvalues(fitobject);
+        cnames  = coeffnames(fitobject);
+        output  = formula(fitobject);
+        
+        % Linear fit using defined points
+        minX = round(min(x2)-4);
+        maxX = round(max(x2)+4);
+        MMA  = minX:maxX;
+        [mi,ni] = size(MMA);
+        LFA  = [];
+        for ki=1:ni
+            LFA(ki,1) = MMA(ki);
+            LFA(ki,2) = cvalues(1)*MMA(ki)+cvalues(2);
+        end
+        x4 = LFA(:,1);
+        y4 = LFA(:,2);
+        disp(sprintf('Aft LVDT: Speed %s: Eqn. of fit, y = %sx+%s, R^2=%s',num2str(klp),sprintf('%.3f',cvalues(1)),sprintf('%.3f',cvalues(2)),sprintf('%.2f',gof.rsquare)));
+        
+        % Find intersection of linear fit of model data and towing force, FD
+        [xout,yout] = intersections(x1,y1,x4,y4,1);
+        
+        SPP_AFT_LVDT = xout;
+        
+        % Determine percentage of thrust
+        [mpc,npc] = size(x2);
+        tempArray = [];
+        for kpc=1:mpc
+            tempArray(kpc) = WJSys(kpc)/x2(kpc);
+        end
+        meanWJSys = mean(tempArray);
+        SPP_AFT_LVDT = meanWJSys*SPP_AFT_LVDT;
+        
+        x3 = SPP_AFT_LVDT;
+        y3 = yout;
+        
+        %# Plotting -----------------------------------------------------------
+        h1 = plot(x2,y2,'*',x4,y4,'-');
+        legendInfo{1} = 'Model Data';
+        legendInfo{2} = 'Model Data - Linear fit';
+        hold on;
+        h2 = plot(x1,y1,'*',x3,y3,'x');
+        legendInfo{3} = 'Towing Force (F_{D})';
+        legendInfo{4} = 'Self-Propulsion Point (SPP)';
+        xlabel('{\bf Aft LVDT (mm)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
+        title('{\bf Aft LVDT}','FontSize',setGeneralFontSize);
+        grid on;
+        box on;
+        axis square;
+        
+        %# Line, colors and markers
+        set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth2);
+        set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h2(2),'Color',setColor{1},'Marker',setMarker{6},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+        
+        %# Set plot figure background to a defined color
+        %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+        set(gcf,'Color',[1,1,1]);
+        
+        % %# Axis limitations
+        minX  = round(min(x2)-3);
+        maxX  = round(max(x2)+3);
+        incrX = 1;
+        minY  = round(min(y2))-4;
+        maxY  = round(max(y2))+4;
+        %incrY = 2;
+        set(gca,'XLim',[minX maxX]);
+        set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        %set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+        
+        %# Legend
+        hleg1 = legend(legendInfo);
+        set(hleg1,'Location','SouthWest');
+        set(hleg1,'Interpreter','tex');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
+        %legend boxoff;
+        
+        %# Font sizes and border ----------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# ********************************************************************
+        %# Save plot as PNG
+        %# ********************************************************************
+        
+        %# Figure size on screen (50% scaled, but same aspect ratio)
+        set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+        
+        %# Figure size printed on paper
+        %if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+        %end
+        
+        %# Plot title ---------------------------------------------------------
+        %if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+        %end
+        
+        %# Save plots as PDF, PNG and EPS -------------------------------------
+        % Enable renderer for vector graphics output
+        set(gcf, 'renderer', 'painters');
+        setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+        setFileFormat = {'PDF' 'PNG' 'EPS'};
+        for k=1:3
+            plotsavename = sprintf('_plots/%s/%s/SPP_Plot_0_Heave_Trim_Speed_No_%s_Linear_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, num2str(klp), setFileFormat{k});
+            print(gcf, setSaveFormat{k}, plotsavename);
+        end
+        %close;
+        
+        
+        %# ********************************************************************
         %# WRITE RESULTSARRAY (resSPP_CCDoTT)
         %# ********************************************************************
         
@@ -2622,16 +3017,17 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         resSPP_CCDoTT(klp,15) = mean([SPP_KP_CCDoTT_PORT SPP_KP_CCDoTT_STBD]);
         
         % AFT AND FWD LVDT, HEAVE AND TRIM
-        resSPP_CCDoTT(klp,16) = 0;
-        resSPP_CCDoTT(klp,17) = 0;
-        resSPP_CCDoTT(klp,18) = 0;
-        resSPP_CCDoTT(klp,19) = 0;
+        resSPP_CCDoTT(klp,16) = SPP_FWD_LVDT;
+        resSPP_CCDoTT(klp,17) = SPP_AFT_LVDT;
+        resSPP_CCDoTT(klp,18) = (SPP_FWD_LVDT+SPP_AFT_LVDT)/2;
+        resSPP_CCDoTT(klp,19) = atand((SPP_FWD_LVDT-SPP_AFT_LVDT)/distbetwposts);
         
-        % THRUST AT ZERO FORCE AND FORCE AT ZERO THRUST        
+        % THRUST AT ZERO FORCE AND FORCE AT ZERO THRUST
         resSPP_CCDoTT(klp,20) = 0;
         resSPP_CCDoTT(klp,21) = 0;
+        resSPP_CCDoTT(klp,22) = 0;
         
-    end
+    end % klp=1:ma
     
 else
     
@@ -2641,7 +3037,7 @@ else
     %# Remove zero rows
     resSPP_CCDoTT(all(resSPP_CCDoTT==0,2),:)=[];
     
-end
+end % exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
 
 %# ************************************************************************
 %# START Write results to DAT or TXT file
@@ -2654,9 +3050,8 @@ csvwrite('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', M)            % Export
 %# END Write results to DAT or TXT file
 %# ************************************************************************
 
-%break;
 %# ************************************************************************
-%# END Linear Plots
+%# END  Linear Plots (CCFoTT Self-Propulsion Points)
 %# ************************************************************************
 
 
@@ -3831,7 +4226,7 @@ ThrustCoeffArray = [];
 % [13] MS STBD Thrust coefficient, KTs                   (-)
 
 for k=1:m
-
+    
     % Stbd to port ratio
     if k == 4
         ratioRow = 3;
@@ -3846,12 +4241,12 @@ for k=1:m
     MSPortGrosThrust = MSThrustAtSPP*PortStbdRatio;
     PortStbdRatio    = A{k}(ratioRow,41)/A{k}(ratioRow,42);
     MSStbdGrosThrust = MSThrustAtSPP*PortStbdRatio;
-
+    
     % Full Scale - Neglect run 70 and 71 (as faulty)
     PortStbdRatio    = A{k}(ratioRow,40)/A{k}(ratioRow,42);
     FSPortGrosThrust = (MSThrustAtSPP*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
     PortStbdRatio    = A{k}(ratioRow,41)/A{k}(ratioRow,42);
-    FSStbdGrosThrust = (MSThrustAtSPP*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);    
+    FSStbdGrosThrust = (MSThrustAtSPP*PortStbdRatio)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity);
     
     % Froude length number
     ThrustCoeffArray(k,1)  = ForcesArray(k,1);
@@ -3873,12 +4268,12 @@ for k=1:m
     
     % Model scale thrust coefficient
     MSPortThrustCoeff = MSPortGrosThrust/(freshwaterdensity*MS_ImpDia^4*(MSPortSS/60)^2);
-    MSStbdThrustCoeff = MSStbdGrosThrust/(freshwaterdensity*MS_ImpDia^4*(MSStbdSS/60)^2); 
+    MSStbdThrustCoeff = MSStbdGrosThrust/(freshwaterdensity*MS_ImpDia^4*(MSStbdSS/60)^2);
     
     ThrustCoeffArray(k,8)  = MSPortThrustCoeff;
     ThrustCoeffArray(k,9)  = MSStbdThrustCoeff;
     
-    % Full scale shaft speed    
+    % Full scale shaft speed
     FSPortSS = sqrt(FSPortGrosThrust/(saltwaterdensity*FS_ImpDia^4*MSPortThrustCoeff));
     FSStbdSS = sqrt(FSStbdGrosThrust/(saltwaterdensity*FS_ImpDia^4*MSStbdThrustCoeff));
     
@@ -4536,6 +4931,12 @@ for k=1:m
     
     modelScaleDataArray(k,75) = ThrustCoeffArray(k,8);
     fullScaleDataArray(k,75)  = ThrustCoeffArray(k,12);
+    
+    % 20. Pump head H35 based on delivered power PD (Koushan 1998) --------
+    % Added: 02/02/2015
+    
+    modelScaleDataArray(k,76) = (MSPortDelPower*InstEff*MSPortPumpEff)/(freshwaterdensity*gravconst*MSPortVolFR);
+    fullScaleDataArray(k,76)  = (FSPortDelPower*InstEff*FSPortPumpEff)/(saltwaterdensity*gravconst*FSPortVolFR);
     
 end
 
@@ -5613,7 +6014,7 @@ x1 = ResResults(:,11);
 y1 = ResResults(:,24);
 
 % Extrapolated thrust: total catamaran = (port thrust + stbd thrust) * 2
-x2  = fullScaleDataArray(:,3); 
+x2  = fullScaleDataArray(:,3);
 y2p = fullScaleDataArray(:,20);
 y2s = fullScaleDataArray(:,21);
 
@@ -5641,7 +6042,7 @@ if exist('IntPolThrustArray.dat', 'file') == 2
     %# Remove zero rows
     IntPolThrustArray(all(IntPolThrustArray==0,2),:)=[];
     x3 = IntPolThrustArray(:,1);
-    y3 = IntPolThrustArray(:,5);    
+    y3 = IntPolThrustArray(:,5);
 else
     % Example set of data
     x3 = [14.10 15.35 16.52 17.66 18.83 20.08 21.26 22.40 23.65];
@@ -5744,14 +6145,14 @@ f = figure('Name',figurename,'NumberTitle','off');
 %# Paper size settings ----------------------------------------------------
 
 %if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-    
-    set(gcf, 'PaperUnits', 'centimeters');
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
+set(gcf, 'PaperSize', [19 19]);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperPosition', [0 0 19 19]);
+
+set(gcf, 'PaperUnits', 'centimeters');
+set(gcf, 'PaperSize', [19 19]);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperPosition', [0 0 19 19]);
 %end
 
 % Fonts and colours -------------------------------------------------------
@@ -5934,10 +6335,10 @@ set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
 
 %# Figure size printed on paper
 %if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
 %end
 
 %# Plot title -------------------------------------------------------------
@@ -5958,6 +6359,233 @@ for k=1:3
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
+
+
+%# ************************************************************************
+%# 13. Heave and running trim comparison plot (Resistace and SP test)
+%# ************************************************************************
+
+if exist(SetAvgResistanceFilePath, 'file') == 2
+    %# Plotting speed ---------------------------------------------------------
+    figurename = 'Plot 13: Heave and running trim comparison plot (Resistace and SP test)';
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ----------------------------------------------------
+    
+    %if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    %end
+    
+    % Fonts and colours -------------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 14;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. ------------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
+    
+    %# Line, colors and markers
+    setMarkerSize      = 10;
+    setLineWidthMarker = 2;
+    setLineWidth       = 2;
+    setLineWidthThin   = 1;
+    setLineStyle       = '-';
+    setLineStyle1      = '--';
+    setLineStyle2      = '-.';
+    setLineStyle3      = ':';
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////////
+    subplot(1,2,1)
+    
+    %# X and Y axis -----------------------------------------------------------
+    
+    % Resistance test
+    x1 = avgcond7(:,15);
+    y1 = avgcond7(:,12);
+    
+    % Self-propulsion test
+    x2 = modelScaleDataArray(:,3);
+    y2 = resSPP_CCDoTT(:,18);
+    
+    %# Plotting ---------------------------------------------------------------
+    h = plot(x1,y1,'*-',x2,y2,'*-');
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave (mm)}','FontSize',setGeneralFontSize);
+    % if enablePlotTitle == 1
+    %     title('{\bf Velocities)}','FontSize',setGeneralFontSize);
+    % end
+    grid on;
+    box on;
+    axis square;
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Annotations
+    % Text on plot
+    text(13.5,-8.5,'Legend:','FontSize',12,'color','k','FontWeight','bold');
+    text(13.5,-9,'RES = Resistance test','FontSize',12,'color','k','FontWeight','normal');
+    text(13.5,-9.5,'SPT = Self-propulsion test','FontSize',12,'color','k','FontWeight','normal');
+    
+    % %# Axis limitations
+    minX  = 13;
+    maxX  = 25;
+    incrX = 1;
+    minY  = -10;
+    maxY  = 2;
+    incrY = 1;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    % set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    % set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend('Heave (RES, Cond. 7)','Heave (SPT)');
+    set(hleg1,'Location','NorthWest');
+    %set(hleg1,'Interpreter','none');
+    set(hleg1, 'Interpreter','tex');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////////
+    subplot(1,2,2)
+    
+    %# X and Y axis -----------------------------------------------------------
+    
+    % Resistance test
+    x1 = avgcond7(:,15);
+    y1 = avgcond7(:,13);
+    
+    % Self-propulsion test
+    x2 = modelScaleDataArray(:,3);
+    y2 = resSPP_CCDoTT(:,19);
+    
+    %# Plotting ---------------------------------------------------------------
+    h = plot(x1,y1,'*-',x2,y2,'*-');
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Running trim (deg.)}','FontSize',setGeneralFontSize);
+    % if enablePlotTitle == 1
+    %     title('{\bf Velocities)}','FontSize',setGeneralFontSize);
+    % end
+    grid on;
+    box on;
+    axis square;
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Annotations
+    % Text on plot
+    text(13.5,-0.06,'Legend:','FontSize',12,'color','k','FontWeight','bold');
+    text(13.5,-0.11,'RES = Resistance test','FontSize',12,'color','k','FontWeight','normal');
+    text(13.5,-0.16,'SPT = Self-propulsion test','FontSize',12,'color','k','FontWeight','normal');
+    
+    % %# Axis limitations
+    minX  = 13;
+    maxX  = 25;
+    incrX = 1;
+    minY  = -0.2;
+    maxY  = 0.8;
+    incrY = 0.1;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    % set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend('Running trim (RES, Cond. 7)','Running trim (SPT)');
+    set(hleg1,'Location','NorthWest');
+    %set(hleg1,'Interpreter','none');
+    set(hleg1, 'Interpreter','tex');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# ************************************************************************
+    %# Save plot as PNG
+    %# ************************************************************************
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+    %if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+    %end
+    
+    %# Plot title -------------------------------------------------------------
+    %if enablePlotMainTitle == 1
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');
+    %end
+    
+    %# Save plots as PDF, PNG and EPS -----------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_13_Heave_And_Running_Trim_Comparison_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;
+    
+end % exist(SetAvgResistanceFilePath, 'file')
 
 
 %# ************************************************************************
