@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 3, 2015
+%# Date       :  February 5, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -94,7 +94,7 @@ enablePlotTitle           = 0;    % Show plot title above plot
 enableTextOnPlot          = 0;    % Show text on plot
 enableBlackAndWhitePlot   = 1;    % Show plot in black and white
 enableEqnOfFitPlot        = 0;    % Show equations of fit
-enableCommandWindowOutput = 0;    % Show command windown ouput
+enableCommandWindowOutput = 1;    % Show command windown ouput
 
 % Averaged run data and BL depth marker
 enableAveragedRunsPlot1   = 1;    % Show averaged runs in plot 1 (Y vs. speed)
@@ -106,7 +106,7 @@ enableMARINBLData         = 1;    % Show MARIN 112m BL data (cond. T1)
 enableAMCLJ120EBLData     = 0;    % Show AMC LJ120E BL data (Brandner 2007)
 
 % Scaled to A4 paper
-enableA4PaperSizePlot     = 0;    % Show plots scale to A4 size
+enableA4PaperSizePlot     = 1;    % Show plots scale to A4 size
 
 %# ------------------------------------------------------------------------
 %# END: PLOT SWITCHES
@@ -232,8 +232,8 @@ else
     mkdir(fPath);
 end
 
-%# TS directory -----------------------------------------------------------
-setDirName = '_plots/TS';
+%# Bounday_Layer_TS directory ---------------------------------------------
+setDirName = '_plots/Bounday_Layer_TS';
 
 fPath = setDirName;
 if isequal(exist(fPath, 'dir'),7)
@@ -609,8 +609,24 @@ else
         % Real unit values (m/s) based on PST calibration curve
         x1 = CH_19_PSTInboard_Mean;
         x2 = CH_20_PSTOutboard_Mean;
-        resultsArrayBlm(k, 11) = -0.0328*x1^4+0.2521*x1^3-0.7873*x1^2+1.7721*x1+0.4389;
-        resultsArrayBlm(k, 12) = -0.0328*x2^4+0.2521*x2^3-0.7873*x2^2+1.7721*x2+0.4389;
+        
+        % Start Curve fitting based on EoF --------------------------------
+        
+        % Old values (Excel based)
+        %InbVTSFittingE = -0.0328*x1^4+0.2521*x1^3-0.7873*x1^2+1.7721*x1+0.4389;
+        %OubVTSFittingE = -0.0328*x2^4+0.2521*x2^3-0.7873*x2^2+1.7721*x2+0.4389;
+        
+        % New values (Matlab based)
+        InbVTSFittingM = -0.0305*x1^4+0.2396*x1^3-0.7659*x1^2+1.7608*x1+0.4403;
+        OubVTSFittingM = -0.0305*x2^4+0.2396*x2^3-0.7659*x2^2+1.7608*x2+0.4403;
+        
+        %disp(sprintf('INBOARD:  Old: %s m/s, New: %s m/s', num2str(InbVTSFittingE), num2str(InbVTSFittingM)));
+        %disp(sprintf('OUTBOARD: Old: %s m/s, New: %s m/s', num2str(OubVTSFittingE), num2str(OubVTSFittingM)));
+        
+        % End Curve fitting based on EoF ----------------------------------
+        
+        resultsArrayBlm(k, 11) = InbVTSFittingM;
+        resultsArrayBlm(k, 12) = OubVTSFittingM;
         
         % u/U0 ratio
         resultsArrayBlm(k, 13) = resultsArrayBlm(k, 11)/roundedspeed;
@@ -990,7 +1006,7 @@ else
             setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
             setFileFormat = {'PDF' 'PNG' 'EPS'};
             for kl=1:3
-                plotsavename = sprintf('_plots/%s/%s/Run_%s_CH_19-20_Bounday_Layer.%s', 'TS', setFileFormat{kl}, num2str(k), setFileFormat{kl});
+                plotsavename = sprintf('_plots/%s/%s/Run_%s_CH_19-20_Bounday_Layer.%s', 'Bounday_Layer_TS', setFileFormat{kl}, num2str(k), setFileFormat{kl});
                 print(gcf, setSaveFormat{kl}, plotsavename);
             end
             close;
@@ -1068,6 +1084,9 @@ if enableAveragedRunsPlot1 == 1 || enableAveragedRunsPlot2 == 1
     %[14] OUTBOARD: log10(V/Vm)                     (-)
     %[15] OUTBOARD: Log(y)                          (-)
     
+    %[16] AVERAGED: log10(V/Vm)                     (-)
+    %[17] AVERAGED: Log(y)                          (-)
+    
     SpeedFr30Avg = [];
     SpeedFr35Avg = [];
     SpeedFr40Avg = [];
@@ -1099,6 +1118,8 @@ if enableAveragedRunsPlot1 == 1 || enableAveragedRunsPlot2 == 1
         SpeedFr30Avg(k, 13) = log10(distHull);
         SpeedFr30Avg(k, 14) = log10(OuBSpeed/shipSpeed);
         SpeedFr30Avg(k, 15) = log10(distHull);
+        SpeedFr30Avg(k, 16) = log10(avgSpeed/shipSpeed);
+        SpeedFr30Avg(k, 17) = log10(distHull);
     end
     
     %# Fr=0.35 ----------------------------------------------------------------
@@ -1128,6 +1149,8 @@ if enableAveragedRunsPlot1 == 1 || enableAveragedRunsPlot2 == 1
         SpeedFr35Avg(k, 13) = log10(distHull);
         SpeedFr35Avg(k, 14) = log10(OuBSpeed/shipSpeed);
         SpeedFr35Avg(k, 15) = log10(distHull);
+        SpeedFr35Avg(k, 16) = log10(avgSpeed/shipSpeed);
+        SpeedFr35Avg(k, 17) = log10(distHull);
     end
     
     %# Fr=0.40 ----------------------------------------------------------------
@@ -1157,16 +1180,663 @@ if enableAveragedRunsPlot1 == 1 || enableAveragedRunsPlot2 == 1
         SpeedFr40Avg(k, 13) = log10(distHull);
         SpeedFr40Avg(k, 14) = log10(OuBSpeed/shipSpeed);
         SpeedFr40Avg(k, 15) = log10(distHull);
+        SpeedFr40Avg(k, 16) = log10(avgSpeed/shipSpeed);
+        SpeedFr40Avg(k, 17) = log10(distHull);
     end
     
 end % enableAveragedRunsPlot1 == 1 || enableAveragedRunsPlot2 == 1
 
 
 %# ************************************************************************
-%# 1. Plot distance from hull vs. speed
+%# 1. Log10(y) vs. log10(V/Vm)
 %# ************************************************************************
 
-figurename = sprintf('Plot 1: %s:: Distance from Hull vs. Speed', testName);
+slopeInterceptArray = [];
+
+figurename = sprintf('Plot 1: %s:: Log10(y) vs. log10(V/Vm)', testName);
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+%if enableA4PaperSizePlot == 1
+set(gcf, 'PaperSize', [19 19]);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperPosition', [0 0 19 19]);
+
+set(gcf, 'PaperUnits', 'centimeters');
+set(gcf, 'PaperSize', [19 19]);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperPosition', [0 0 19 19]);
+%end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 12;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',10,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'<';'^';'x';'>'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+setLineStyle  = {'-';'--';'-.';':';'-';'--';'-.';':';'-';'--'};
+
+%# Line, colors and markers
+setMarkerSize      = 10;
+setLineWidthMarker = 1;
+setLineWidth       = 2;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+% SUBPLOT /////////////////////////////////////////////////////////////////
+subplot(2,2,1)
+
+% X and Y values ----------------------------------------------------------
+
+% Axis data:
+%    Subscript i = inboard and
+%    Subscript o = outboard
+
+%# Fr=0.30 ----------------------------------------------------------------
+x1  = SpeedFr30Avg(1:5,12);
+y1  = SpeedFr30Avg(1:5,13);
+
+[fitobject1,gof1,output1] = fit(x1,y1,'poly1');
+cvalues1                  = coeffvalues(fitobject1);
+
+if enableCommandWindowOutput == 1
+    cval = cvalues1;
+    gof  = gof1;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    p1      = sprintf(setDecimals1,cval(1));
+    p2      = sprintf(setDecimals2,cval(2));
+    gofrs   = sprintf('%0.2f',gof.rsquare);
+    EoFEqn1 = sprintf('Fr=0.30 (Inboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    disp(EoFEqn1);
+end
+
+% Write to array
+slopeInterceptArray(1,1) = 0.30;
+slopeInterceptArray(1,2) = cvalues1(1);
+slopeInterceptArray(1,3) = cvalues1(2);
+
+%# Fr=0.35 ----------------------------------------------------------------
+x2  = SpeedFr35Avg(1:5,12);
+y2  = SpeedFr35Avg(1:5,13);
+
+[fitobject2,gof2,output2] = fit(x2,y2,'poly1');
+cvalues2                  = coeffvalues(fitobject2);
+
+if enableCommandWindowOutput == 1
+    cval = cvalues2;
+    gof  = gof2;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    p1      = sprintf(setDecimals1,cval(1));
+    p2      = sprintf(setDecimals2,cval(2));
+    gofrs   = sprintf('%0.2f',gof.rsquare);
+    EoFEqn2 = sprintf('Fr=0.35 (Inboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    disp(EoFEqn2);
+end
+
+% Write to array
+slopeInterceptArray(2,1) = 0.35;
+slopeInterceptArray(2,2) = cvalues2(1);
+slopeInterceptArray(2,3) = cvalues2(2);
+
+%# Fr=0.40 ----------------------------------------------------------------
+x3  = SpeedFr40Avg(1:5,12);
+y3  = SpeedFr40Avg(1:5,13);
+
+[fitobject3,gof3,output3] = fit(x3,y3,'poly1');
+cvalues3                  = coeffvalues(fitobject3);
+
+if enableCommandWindowOutput == 1
+    cval = cvalues3;
+    gof  = gof3;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    p1      = sprintf(setDecimals1,cval(1));
+    p2      = sprintf(setDecimals2,cval(2));
+    gofrs   = sprintf('%0.2f',gof.rsquare);
+    EoFEqn3 = sprintf('Fr=0.40 (Inboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    disp(EoFEqn3);
+end
+
+% Write to array
+slopeInterceptArray(3,1) = 0.30;
+slopeInterceptArray(3,2) = cvalues3(1);
+slopeInterceptArray(3,3) = cvalues3(2);
+
+% Plotting ----------------------------------------------------------------
+%# Fr=0.30
+h1 = plot(fitobject1,'-',x1,y1,'*');
+legendInfo{1}  = 'Fr=0.30';
+legendInfo{2}  = 'Fr=0.30 Linear fit';
+set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle1,'linewidth',setLineWidth);
+%# Fr=0.35
+hold on;
+h2 = plot(fitobject2,'-',x2,y2,'*');
+legendInfo{3}  = 'Fr=0.35';
+legendInfo{4}  = 'Fr=0.35 Linear fit';
+set(h2(1),'Color',setColor{1},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h2(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+%# Fr=0.40
+hold on;
+h3 = plot(fitobject3,'-',x3,y3,'*');
+legendInfo{5}  = 'Fr=0.40';
+legendInfo{6}  = 'Fr=0.40 Linear fit';
+set(h3(1),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h3(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle3,'linewidth',setLineWidth);
+%if enablePlotTitle == 1
+title('{\bf Inboard}','FontSize',setGeneralFontSize);
+%end
+xlabel('{\bf log10(V/Vm) [-]}','FontSize',setGeneralFontSize);
+ylabel('{\bf log10(y) [-]}','FontSize',setGeneralFontSize);
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+% setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
+% setSpeed=2;set(h2(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+% setSpeed=3;set(h3(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+
+%# Set plot figure background to a defined color --------------------------
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Annotations
+text(-0.2,0.15,EoFEqn1,'FontSize',12,'color','k','FontWeight','normal');
+text(-0.2,0.05,EoFEqn2,'FontSize',12,'color','k','FontWeight','normal');
+text(-0.2,-0.05,EoFEqn3,'FontSize',12,'color','k','FontWeight','normal');
+
+% Axis limitations
+minX  = -0.2;
+maxX  = 0.05;
+incrX = 0.05;
+minY  = 0.4;
+maxY  = 2;
+incrY = 0.2;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+%hleg1 = legend('Fr=0.30','Fr=0.35','Fr=0.40');
+hleg1 = legend(legendInfo);
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+% SUBPLOT /////////////////////////////////////////////////////////////////
+subplot(2,2,2)
+
+% X and Y values ----------------------------------------------------------
+
+% Axis data:
+%    Subscript i = inboard and
+%    Subscript o = outboard
+
+%# Fr=0.30 ----------------------------------------------------------------
+x1  = SpeedFr30Avg(1:5,14);
+y1  = SpeedFr30Avg(1:5,15);
+
+[fitobject1,gof1,output1] = fit(x1,y1,'poly1');
+cvalues1                  = coeffvalues(fitobject1);
+
+if enableCommandWindowOutput == 1
+    cval = cvalues1;
+    gof  = gof1;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    p1      = sprintf(setDecimals1,cval(1));
+    p2      = sprintf(setDecimals2,cval(2));
+    gofrs   = sprintf('%0.2f',gof.rsquare);
+    EoFEqn1 = sprintf('Fr=0.30 (Outboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    disp(EoFEqn1);
+end
+
+%# Fr=0.35 ----------------------------------------------------------------
+x2  = SpeedFr35Avg(1:5,14);
+y2  = SpeedFr35Avg(1:5,15);
+
+[fitobject2,gof2,output2] = fit(x2,y2,'poly1');
+cvalues2                  = coeffvalues(fitobject2);
+
+if enableCommandWindowOutput == 1
+    cval = cvalues2;
+    gof  = gof2;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    p1      = sprintf(setDecimals1,cval(1));
+    p2      = sprintf(setDecimals2,cval(2));
+    gofrs   = sprintf('%0.2f',gof.rsquare);
+    EoFEqn2 = sprintf('Fr=0.35 (Outboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    disp(EoFEqn2);
+end
+
+%# Fr=0.40 ----------------------------------------------------------------
+x3  = SpeedFr40Avg(1:5,14);
+y3  = SpeedFr40Avg(1:5,15);
+
+[fitobject3,gof3,output3] = fit(x3,y3,'poly1');
+cvalues3                  = coeffvalues(fitobject3);
+
+if enableCommandWindowOutput == 1
+    cval = cvalues3;
+    gof  = gof3;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    p1      = sprintf(setDecimals1,cval(1));
+    p2      = sprintf(setDecimals2,cval(2));
+    gofrs   = sprintf('%0.2f',gof.rsquare);
+    EoFEqn3 = sprintf('Fr=0.40 (Outboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    disp(EoFEqn3);
+end
+
+% Plotting ----------------------------------------------------------------
+%# Fr=0.30
+h1 = plot(fitobject1,'-',x1,y1,'*');
+legendInfo{1}  = 'Fr=0.30';
+legendInfo{2}  = 'Fr=0.30 Linear fit';
+set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle1,'linewidth',setLineWidth);
+%# Fr=0.35
+hold on;
+h2 = plot(fitobject2,'-',x2,y2,'*');
+legendInfo{3}  = 'Fr=0.35';
+legendInfo{4}  = 'Fr=0.35 Linear fit';
+set(h2(1),'Color',setColor{1},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h2(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+%# Fr=0.40
+hold on;
+h3 = plot(fitobject3,'-',x3,y3,'*');
+legendInfo{5}  = 'Fr=0.40';
+legendInfo{6}  = 'Fr=0.40 Linear fit';
+set(h3(1),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h3(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle3,'linewidth',setLineWidth);
+%if enablePlotTitle == 1
+title('{\bf Outboard}','FontSize',setGeneralFontSize);
+%end
+xlabel('{\bf log10(V/Vm) [-]}','FontSize',setGeneralFontSize);
+ylabel('{\bf log10(y) [-]}','FontSize',setGeneralFontSize);
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+%setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
+%setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+
+%# Set plot figure background to a defined color --------------------------
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Annotations
+text(-0.2,0.15,EoFEqn1,'FontSize',12,'color','k','FontWeight','normal');
+text(-0.2,0.05,EoFEqn2,'FontSize',12,'color','k','FontWeight','normal');
+text(-0.2,-0.05,EoFEqn3,'FontSize',12,'color','k','FontWeight','normal');
+
+% Axis limitations
+minX  = -0.2;
+maxX  = 0.05;
+incrX = 0.05;
+minY  = 0.4;
+maxY  = 2;
+incrY = 0.2;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+%hleg1 = legend('Fr=0.30','Fr=0.35','Fr=0.40');
+hleg1 = legend(legendInfo);
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+% SUBPLOT /////////////////////////////////////////////////////////////////
+subplot(2,2,[3 4])
+
+% X and Y values ----------------------------------------------------------
+
+% Axis data:
+%    Subscript i = inboard and
+%    Subscript o = outboard
+
+%# Fr=0.30 ----------------------------------------------------------------
+x1  = SpeedFr30Avg(1:5,16);
+y1  = SpeedFr30Avg(1:5,17);
+
+[fitobject1,gof1,output1] = fit(x1,y1,'poly1');
+cvalues1                  = coeffvalues(fitobject1);
+
+if enableCommandWindowOutput == 1
+    cval = cvalues1;
+    gof  = gof1;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    p1      = sprintf(setDecimals1,cval(1));
+    p2      = sprintf(setDecimals2,cval(2));
+    gofrs   = sprintf('%0.2f',gof.rsquare);
+    EoFEqn1 = sprintf('Fr=0.30 (Averaged): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    disp(EoFEqn1);
+end
+
+%# Fr=0.35 ----------------------------------------------------------------
+x2  = SpeedFr35Avg(1:5,16);
+y2  = SpeedFr35Avg(1:5,17);
+
+[fitobject2,gof2,output2] = fit(x2,y2,'poly1');
+cvalues2                  = coeffvalues(fitobject2);
+
+if enableCommandWindowOutput == 1
+    cval = cvalues2;
+    gof  = gof2;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    p1      = sprintf(setDecimals1,cval(1));
+    p2      = sprintf(setDecimals2,cval(2));
+    gofrs   = sprintf('%0.2f',gof.rsquare);
+    EoFEqn2 = sprintf('Fr=0.35 (Averaged): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    disp(EoFEqn2);
+end
+
+%# Fr=0.40 ----------------------------------------------------------------
+x3  = SpeedFr40Avg(1:5,16);
+y3  = SpeedFr40Avg(1:5,17);
+
+[fitobject3,gof3,output3] = fit(x3,y3,'poly1');
+cvalues3                  = coeffvalues(fitobject3);
+
+if enableCommandWindowOutput == 1
+    cval = cvalues3;
+    gof  = gof3;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    p1      = sprintf(setDecimals1,cval(1));
+    p2      = sprintf(setDecimals2,cval(2));
+    gofrs   = sprintf('%0.2f',gof.rsquare);
+    EoFEqn3 = sprintf('Fr=0.40 (Averaged): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    disp(EoFEqn3);
+end
+
+% Plotting ----------------------------------------------------------------
+%# Fr=0.30
+h1 = plot(fitobject1,'-',x1,y1,'*');
+legendInfo{1}  = 'Fr=0.30';
+legendInfo{2}  = 'Fr=0.30 Linear fit';
+set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle1,'linewidth',setLineWidth);
+%# Fr=0.35
+hold on;
+h2 = plot(fitobject2,'-',x2,y2,'*');
+legendInfo{3}  = 'Fr=0.35';
+legendInfo{4}  = 'Fr=0.35 Linear fit';
+set(h2(1),'Color',setColor{1},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h2(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+%# Fr=0.40
+hold on;
+h3 = plot(fitobject3,'-',x3,y3,'*');
+legendInfo{5}  = 'Fr=0.40';
+legendInfo{6}  = 'Fr=0.40 Linear fit';
+set(h3(1),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h3(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle3,'linewidth',setLineWidth);
+%if enablePlotTitle == 1
+title('{\bf Averaged speeds}','FontSize',setGeneralFontSize);
+%end
+xlabel('{\bf log10(V/Vm) [-]}','FontSize',setGeneralFontSize);
+ylabel('{\bf log10(y) [-]}','FontSize',setGeneralFontSize);
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+%setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
+%setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+%setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+
+%# Set plot figure background to a defined color --------------------------
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Annotations
+text(-0.2,0.15,EoFEqn1,'FontSize',12,'color','k','FontWeight','normal');
+text(-0.2,0.05,EoFEqn2,'FontSize',12,'color','k','FontWeight','normal');
+text(-0.2,-0.05,EoFEqn3,'FontSize',12,'color','k','FontWeight','normal');
+
+% Axis limitations
+minX  = -0.2;
+maxX  = 0.05;
+incrX = 0.05;
+minY  = 0.4;
+maxY  = 2;
+incrY = 0.2;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+%hleg1 = legend('Fr=0.30','Fr=0.35','Fr=0.40');
+hleg1 = legend(legendInfo);
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+%if enableA4PaperSizePlot == 1
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+%end
+
+%# Plot title ---------------------------------------------------------
+if enablePlotMainTitle == 1
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');
+end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Plot_1_Log10_y_vs_Log10_V_Vm_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+%# ------------------------------------------------------------------------
+%# END Plotting boundary layer
+%# ************************************************************************
+
+
+%# ************************************************************************
+%# Calculate Boundary Layer Thickness (BLT)
+%# ************************************************************************
+%# NOTE: See Excel file:
+%#       >> "Run Sheet - Self-Propulsion Test.xlsx"
+%#       -> Worksheet "3 Boundary Layer PP"
+%# ************************************************************************
+[m,n] = size(slopeInterceptArray);
+
+Log10VVInfArray = -0.1:0.01:0.02;
+[ml,nl] = size(Log10VVInfArray);
+
+Fr30SA = [];
+Fr35SA = [];
+Fr40SA = [];
+% FrXXSA columns (BLT where Log10(V/VInf)=0):
+%[1] Log10(V/VInf)      (-)
+%[2] Log10(Y)           (-)
+%[3] Inv Log10 Y        (-)
+%[4] Inv Log10 X        (-)
+%[5] V                  (m/s)
+BLTArray = [];
+% BLTArray columns:
+%[1] Froude length number       (-)
+%[2] Speed                      (m/s)
+%[3] Boundary layer thickness   (mm)
+for k=1:m
+    Slope        = slopeInterceptArray(k,2);
+    Intercept    = slopeInterceptArray(k,3);
+    AvgShipSpeed = mean(A{k}(:,16));
+    for kl=1:nl
+        LogV_Vm  = Log10VVInfArray(kl);
+        LogY     = Slope*Log10VVInfArray(kl)+Intercept;
+        InvLogY  = 10^LogY;
+        InvLogX  = 10^LogV_Vm;
+        ResSpeed = InvLogX*AvgShipSpeed;
+        if k == 1
+            Fr30SA(kl,1) = LogV_Vm;
+            Fr30SA(kl,2) = LogY;
+            Fr30SA(kl,3) = InvLogY;
+            Fr30SA(kl,4) = InvLogX;
+            Fr30SA(kl,5) = ResSpeed;
+        elseif k == 2
+            Fr35SA(kl,1) = LogV_Vm;
+            Fr35SA(kl,2) = LogY;
+            Fr35SA(kl,3) = InvLogY;
+            Fr35SA(kl,4) = InvLogX;
+            Fr35SA(kl,5) = ResSpeed;
+        else
+            Fr40SA(kl,1) = LogV_Vm;
+            Fr40SA(kl,2) = LogY;
+            Fr40SA(kl,3) = InvLogY;
+            Fr40SA(kl,4) = InvLogX;
+            Fr40SA(kl,5) = ResSpeed;
+        end
+        % Write estimated boundary layer thickness to array
+        if LogV_Vm == 0
+            BLTArray(k,1) = mean(A{k}(:,2));
+            BLTArray(k,2) = ResSpeed;
+            BLTArray(k,3) = InvLogY;
+        end % LogV_Vm = 0
+    end % kl=1:nl
+end % k=1:m
+
+
+%# ************************************************************************
+%# 2. Plot distance from hull vs. speed
+%# ************************************************************************
+
+figurename = sprintf('Plot 2: %s:: Distance from Hull vs. Speed', testName);
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -1234,7 +1904,7 @@ subplot(1,1,1)
 %[8]  u/U0 (Inboard)                           (-)
 %[9]  u/U0 (Outboard)                          (-)
 
-%# Fr=0.30
+%# Fr=0.30 ----------------------------------------------------------------
 if enableAveragedRunsPlot1 == 1
     x1i = SpeedFr30Avg(:,6);
     y1i = SpeedFr30Avg(:,1);
@@ -1249,10 +1919,7 @@ else
     y1o  = A{1}(:,4);
 end
 
-x1BL = A{1}(1,16);
-y1BL = A{1}(1,15);
-
-%# Fr=0.35
+%# Fr=0.35 ----------------------------------------------------------------
 if enableAveragedRunsPlot1 == 1
     x2i = SpeedFr35Avg(:,6);
     y2i = SpeedFr35Avg(:,1);
@@ -1267,10 +1934,7 @@ else
     y2o  = A{2}(:,4);
 end
 
-x2BL = A{2}(1,16);
-y2BL = A{2}(1,15);
-
-%# Fr=0.40
+%# Fr=0.40 ----------------------------------------------------------------
 if enableAveragedRunsPlot1 == 1
     x3i = SpeedFr40Avg(:,6);
     y3i = SpeedFr40Avg(:,1);
@@ -1285,14 +1949,18 @@ else
     y3o  = A{3}(:,4);
 end
 
-x3BL = A{3}(1,16);
-y3BL = A{3}(1,15);
+%# Boundary layer data ----------------------------------------------------
+%xBL = [A{1}(1,16) A{2}(1,16) A{3}(1,16)];
+%yBL = [A{1}(1,15) A{2}(1,15) A{3}(1,15)];
+
+xBL = [BLTArray(1,2) BLTArray(2,2) BLTArray(3,2)];
+yBL = [BLTArray(1,3) BLTArray(2,3) BLTArray(3,3)];
 
 % Plotting ----------------------------------------------------------------
 h1 = plot(x1i,y1i,'*',x1o,y1o,'*',x2i,y2i,'*',x2o,y2o,'*',x3i,y3i,'*',x3o,y3o,'*');
 if enableBLDepthMarker == 1
     hold on;
-    h2 = plot(x1BL,y1BL,'*',x2BL,y2BL,'*',x3BL,y3BL,'*');
+    h2 = plot(xBL,yBL,'*');
 end
 if enablePlotTitle == 1
     title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
@@ -1313,10 +1981,7 @@ setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpe
 
 % Boundary layer depth marker
 if enableBLDepthMarker == 1
-    set(h2(1),'Color',setColor{10},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
-    setMarkerSize = 12;
-    set(h2(2),'Color',setColor{10},'Marker',setMarker{11},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
-    set(h2(3),'Color',setColor{10},'Marker',setMarker{12},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+    set(h2(1),'Color',setColor{10},'Marker',setMarker{7},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
 end
 
 %# Set plot figure background to a defined color --------------------------
@@ -1327,19 +1992,19 @@ set(gcf,'Color',[1,1,1]);
 minX  = 0.8;
 maxX  = 2.8;
 incrX = 0.4;
-% minY  = 0.6;
-% maxY  = 0.95;
-% incrY = 0.05;
+minY  = 0;
+maxY  = 80;
+incrY = 10;
 set(gca,'XLim',[minX maxX]);
 set(gca,'XTick',minX:incrX:maxX);
-% set(gca,'YLim',[minY maxY]);
-% set(gca,'YTick',minY:incrY:maxY);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
 set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
 
 %# Legend
 if enableBLDepthMarker == 1
-    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard','Fr=0.30 Est. boundary layer depth','Fr=0.35 Est. boundary layer depth','Fr=0.40 Est. boundary layer depth');
+    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard','Boundary layer thickness');
 else
     hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard');
 end
@@ -1383,17 +2048,17 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Plot_1_Boundary_Layer_Y_vs_Speed_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Plot_2_Boundary_Layer_Y_vs_Speed_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
 
 
 %# ************************************************************************
-%# 2. Plot distance from hull vs. averaged speed
+%# 3. Plot distance from hull vs. averaged speed
 %# ************************************************************************
 
-figurename = sprintf('Plot 2: %s:: Distance from Hull vs. Speed', testName);
+figurename = sprintf('Plot 3: %s:: Distance from Hull vs. Speed', testName);
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -1488,7 +2153,8 @@ setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpe
 
 % Boundary layer depth marker
 if enableBLDepthMarker == 1
-    set(h2(1),'Color',setColor{10},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});end
+    set(h2(1),'Color',setColor{10},'Marker',setMarker{7},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+end
 
 %# Set plot figure background to a defined color --------------------------
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -1498,13 +2164,13 @@ set(gcf,'Color',[1,1,1]);
 minX  = 0.8;
 maxX  = 2.8;
 incrX = 0.4;
-% minY  = 0.6;
-% maxY  = 0.95;
-% incrY = 0.05;
+minY  = 0;
+maxY  = 80;
+incrY = 10;
 set(gca,'XLim',[minX maxX]);
 set(gca,'XTick',minX:incrX:maxX);
-% set(gca,'YLim',[minY maxY]);
-% set(gca,'YTick',minY:incrY:maxY);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
 set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
 
@@ -1554,17 +2220,17 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Plot_2_Boundary_Layer_Y_vs_Averaged_Speed_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Plot_3_Boundary_Layer_Y_vs_Averaged_Speed_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
 
 
 %# ************************************************************************
-%# 3. Plot speed vs. u/U0
+%# 4. Plot speed vs. u/U0
 %# ************************************************************************
 
-figurename = sprintf('Plot 3: %s:: Speed vs. u/U0', testName);
+figurename = sprintf('Plot 4: %s:: Speed vs. u/U0', testName);
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -1812,17 +2478,17 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Plot_3_Boundary_Layer_Speed_vs_u_Uo_Ratio_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Plot_4_Boundary_Layer_Speed_vs_u_Uo_Ratio_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
 
 
 %# ************************************************************************
-%# 4. Plot speed vs. (averaged)u/U0
+%# 5. Plot speed vs. (averaged)u/U0
 %# ************************************************************************
 
-figurename = sprintf('Plot 4: %s:: Speed vs. u/U0', testName);
+figurename = sprintf('Plot 5: %s:: Speed vs. u/U0', testName);
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -2033,22 +2699,22 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Plot_4_Boundary_Layer_Speed_vs_Averaged_u_Uo_Ratio_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Plot_5_Boundary_Layer_Speed_vs_Averaged_u_Uo_Ratio_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
 
 
 %# ************************************************************************
-%# 5. Log10(y) vs. log10(V/Vm)
+%# 6. Boundary Layer Thickness
 %# ************************************************************************
 
-figurename = sprintf('Plot 5: %s:: Log10(y) vs. log10(V/Vm)', testName);
+figurename = sprintf('Plot 6: %s:: Boundary Layer Thickness', testName);
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
 
-%if enableA4PaperSizePlot == 1
+if enableA4PaperSizePlot == 1
     set(gcf, 'PaperSize', [19 19]);
     set(gcf, 'PaperPositionMode', 'manual');
     set(gcf, 'PaperPosition', [0 0 19 19]);
@@ -2057,13 +2723,13 @@ f = figure('Name',figurename,'NumberTitle','off');
     set(gcf, 'PaperSize', [19 19]);
     set(gcf, 'PaperPositionMode', 'manual');
     set(gcf, 'PaperPosition', [0 0 19 19]);
-%end
+end
 
 % Fonts and colours -------------------------------------------------------
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
-setLegendFontSize  = 12;
+setLegendFontSize  = 14;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -2089,133 +2755,135 @@ end
 setLineStyle  = {'-';'--';'-.';':';'-';'--';'-.';':';'-';'--'};
 
 %# Line, colors and markers
-setMarkerSize      = 10;
-setLineWidthMarker = 1;
+setMarkerSize      = 12;
+setLineWidthMarker = 2;
 setLineWidth       = 2;
+setLineWidthThin   = 1;
 setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
 
 % SUBPLOT /////////////////////////////////////////////////////////////////
-subplot(1,2,1)
+subplot(1,1,1)
 
 % X and Y values ----------------------------------------------------------
 
-% Axis data. Subscript i = inboard and o = outboard
+% Averaged speeds ---------------------------------------------------------
 
-%# Inboard: Fr=0.30
-x1  = SpeedFr30Avg(1:5,12);
-y1  = SpeedFr30Avg(1:5,13);
+%# Fr=0.30
+x1  = SpeedFr30Avg(:,10);
+y1  = SpeedFr30Avg(:,1);
 
 %# Fr=0.35
-x2  = SpeedFr35Avg(1:5,12);
-y2  = SpeedFr35Avg(1:5,13);
+x2  = SpeedFr35Avg(:,10);
+y2  = SpeedFr35Avg(:,1);
 
 %# Fr=0.40
-x3  = SpeedFr40Avg(1:5,12);
-y3  = SpeedFr40Avg(1:5,13);
+x3  = SpeedFr40Avg(:,10);
+y3  = SpeedFr40Avg(:,1);
+
+% Estimated BLT for three speeds ------------------------------------------
+
+xBL = BLTArray(:,2);
+yBL = BLTArray(:,3);
+
+% Curve fitting
+[fitobject,gof,output] = fit(xBL,yBL,'poly2');
+cvalues                = coeffvalues(fitobject);
+
+if enableCommandWindowOutput == 1
+    cval = cvalues;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    p1   = sprintf(setDecimals1,cval(1));
+    p2   = sprintf(setDecimals2,cval(2));
+    p3   = sprintf(setDecimals3,cval(3));
+    gofrs = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('BLT EoF: y=%sx^2%sx%s | R^2: %s',p1,p2,p3,gofrs);
+    disp(EoFEqn);
+end
+
+% Fitted BLT points -------------------------------------------------------
+SpeedList = [1.6:0.1:2.7];
+[mfr,nfr] = size(SpeedList);
+
+FPArray = [];
+for kfr=1:nfr
+    FPArray(kfr,1) = SpeedList(kfr);
+    FPArray(kfr,2) = cvalues(1)*SpeedList(kfr)^2+cvalues(2)*SpeedList(kfr)+cvalues(3);
+end
+
+% Fitted BLT for custom speed range
+xF = FPArray(:,1);
+yF = FPArray(:,2);
 
 % Plotting ----------------------------------------------------------------
-h1 = plot(x1,y1,'*-.',x2,y2,'*-.',x3,y3,'*-.');
-%if enablePlotTitle == 1
-    title('{\bf Inboard}','FontSize',setGeneralFontSize);
-%end
-xlabel('{\bf log10(V/Vm) [-]}','FontSize',setGeneralFontSize);
-ylabel('{\bf log10(y) [-]}','FontSize',setGeneralFontSize);
+h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
+legendInfo{1} = 'Fr=0.30';
+legendInfo{2} = 'Fr=0.35';
+legendInfo{3} = 'Fr=0.40';
+% Boundary layer thicknesses of three measured speeds
+hold on;
+h1 = plot(xBL,yBL,'*');
+legendInfo{4} = 'Boundary layer thickness (\delta)';
+set(h1(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+% Fitted BLT points
+hold on;
+h2 = plot(xF,yF,'-');
+legendInfo{5} = 'Fitted \delta values';
+if enablePlotTitle == 1
+    title('{\bf BLT}','FontSize',setGeneralFontSize);
+end
+xlabel('{\bf Measured speed [m/s]}','FontSize',setGeneralFontSize);
+ylabel('{\bf Boundry layer thickness [mm]}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
 
 %# Line, colors and markers
-setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
-setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
+set(h(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+% Fitted BLT points
+set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
 
 %# Set plot figure background to a defined color --------------------------
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
 set(gcf,'Color',[1,1,1]);
 
-% Axis limitations
-% minX  = 0;
-% maxX  = 100;
-% incrX = 20;
-% minY  = 0.6;
-% maxY  = 1.1;
-% incrY = 0.1;
-% set(gca,'XLim',[minX maxX]);
-% set(gca,'XTick',minX:incrX:maxX);
-% set(gca,'YLim',[minY maxY]);
-% set(gca,'YTick',minY:incrY:maxY);
-% set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
-% set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
-
-%# Legend
-hleg1 = legend('Fr=0.30','Fr=0.35','Fr=0.40');
-set(hleg1,'Location','NorthWest');
-set(hleg1,'Interpreter','none');
-set(hleg1,'LineWidth',1);
-set(hleg1,'FontSize',setLegendFontSize);
-%legend boxoff;
-
-%# Font sizes and border --------------------------------------------------
-
-set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-% SUBPLOT /////////////////////////////////////////////////////////////////
-subplot(1,2,2)
-
-% X and Y values ----------------------------------------------------------
-
-% Axis data. Subscript i = inboard and o = outboard
-
-%# Inboard: Fr=0.30
-x1  = SpeedFr30Avg(1:5,14);
-y1  = SpeedFr30Avg(1:5,15);
-
-%# Fr=0.35
-x2  = SpeedFr35Avg(1:5,14);
-y2  = SpeedFr35Avg(1:5,15);
-
-%# Fr=0.40
-x3  = SpeedFr40Avg(1:5,14);
-y3  = SpeedFr40Avg(1:5,15);
-
-% Plotting ----------------------------------------------------------------
-h1 = plot(x1,y1,'*-.',x2,y2,'*-.',x3,y3,'*-.');
-%if enablePlotTitle == 1
-    title('{\bf Outboard}','FontSize',setGeneralFontSize);
-%end
-xlabel('{\bf log10(V/Vm) [-]}','FontSize',setGeneralFontSize);
-ylabel('{\bf log10(y) [-]}','FontSize',setGeneralFontSize);
-grid on;
-box on;
-axis square;
-
-%# Line, colors and markers
-setSpeed=1;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
-setSpeed=2;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpeed},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-
-%# Set plot figure background to a defined color --------------------------
-%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-set(gcf,'Color',[1,1,1]);
+%# Annotations
+text(1.6,47,EoFEqn,'FontSize',setGeneralFontSize,'color','k','FontWeight','normal');
 
 % Axis limitations
-% minX  = 0;
-% maxX  = 100;
-% incrX = 20;
-% minY  = 0.6;
-% maxY  = 1.1;
-% incrY = 0.1;
-% set(gca,'XLim',[minX maxX]);
-% set(gca,'XTick',minX:incrX:maxX);
-% set(gca,'YLim',[minY maxY]);
-% set(gca,'YTick',minY:incrY:maxY);
-% set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
-% set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+minX  = 0.8;
+maxX  = 2.8;
+incrX = 0.4;
+minY  = 0;
+maxY  = 60;
+incrY = 5;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 
 %# Legend
-hleg1 = legend('Fr=0.30','Fr=0.35','Fr=0.40');
+hleg1 = legend(legendInfo);
 set(hleg1,'Location','NorthWest');
-set(hleg1,'Interpreter','none');
+%set(hleg1,'Interpreter','none');
+set(hleg1,'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
@@ -2232,12 +2900,12 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
 
 %# Figure size printed on paper
-%if enableA4PaperSizePlot == 1
+if enableA4PaperSizePlot == 1
     set(gcf, 'PaperUnits','centimeters');
     set(gcf, 'PaperSize',[XPlot YPlot]);
     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
     set(gcf, 'PaperOrientation','portrait');
-%end
+end
 
 %# Plot title ---------------------------------------------------------
 if enablePlotMainTitle == 1
@@ -2254,15 +2922,10 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Plot_5_Log10_y_vs_Log10_V_Vm_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Plot_6_Boundary_Layer_Thickness_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
-
-
-%# ------------------------------------------------------------------------
-%# END Plotting boundary layer
-%# ************************************************************************
 
 
 % -------------------------------------------------------------------------

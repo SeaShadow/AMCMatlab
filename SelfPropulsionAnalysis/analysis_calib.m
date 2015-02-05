@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 8, 2015
+%# Date       :  February 5, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -67,11 +67,40 @@
 clear
 clc
 
+
 %# ------------------------------------------------------------------------
 %# Find and close all plots
 %# ------------------------------------------------------------------------
 allPlots = findall(0, 'Type', 'figure', 'FileName', []);
 delete(allPlots);   % Close all plots
+
+
+%# ************************************************************************
+%# START: PLOT SWITCHES: 1 = ENABLED
+%#                       0 = DISABLED
+%# ------------------------------------------------------------------------
+
+% Profiler
+enableProfiler            = 0;    % Use profiler to show execution times
+
+% Main and plot titles
+enablePlotMainTitle       = 1;    % Show plot title in saved file
+enablePlotTitle           = 1;    % Show plot title above plot
+enableTextOnPlot          = 0;    % Show text on plot
+enableBlackAndWhitePlot   = 0;    % Show plot in black and white
+enableEqnOfFitPlot        = 0;    % Show equations of fit
+enableCommandWindowOutput = 1;    % Show command windown ouput
+
+% Scaled to A4 paper
+enableA4PaperSizePlot     = 1;    % Show plots scale to A4 size
+
+% Time series plot
+enableTimeSeriesPlot      = 1;    % Enable or disable time series plot
+
+%# ------------------------------------------------------------------------
+%# END: PLOT SWITCHES
+%# ************************************************************************
+
 
 %# ------------------------------------------------------------------------
 %# GENERAL SETTINGS AND CONSTANTS
@@ -79,15 +108,15 @@ delete(allPlots);   % Close all plots
 
 %# Test name --------------------------------------------------------------
 testName = 'PST and DPT Calibration';
-% testName = 'Resistance Test';
-% testName = 'Boundary Layer Investigation';
-% testName = 'Waterjet Self-Propulsion Points';
-%testName = 'Waterjet Self-Propulsion Test';
+
 
 % -------------------------------------------------------------------------
 % Enable profile
 % -------------------------------------------------------------------------
-%profile on
+if enableProfiler == 1
+    profile on
+end
+
 
 %# -------------------------------------------------------------------------
 %# Path where run directories are located
@@ -95,10 +124,63 @@ testName = 'PST and DPT Calibration';
 %runfilespath = 'D:\\Flow Rate MTB Backup\\KZ Flow Rate\\';
 runfilespath = '..\\';      % Relative path from Matlab directory
 
+
+%# ////////////////////////////////////////////////////////////////////////
+%# START: CREATE PLOTS AND RUN DIRECTORY
+%# ------------------------------------------------------------------------
+
+%# _PLOTS directory
+fPath = '_plots/';
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# SPP directory ----------------------------------------------------------
+setDirName = '_plots/PST_Calibration';
+
+fPath = setDirName;
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PDF directory
+fPath = sprintf('%s/%s', setDirName, 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('%s/%s', setDirName, 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('%s/%s', setDirName, 'EPS');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# ------------------------------------------------------------------------
+%# END: CREATE PLOTS AND RUN DIRECTORY
+%# ////////////////////////////////////////////////////////////////////////
+
+
 %# -------------------------------------------------------------------------
 %# GENERAL SETTINGS
 %# -------------------------------------------------------------------------
 Fs = 800;       % Sampling frequency = 800Hz
+
 
 %# ************************************************************************
 %# START CONSTANTS AND PARTICULARS
@@ -152,9 +234,6 @@ cutSamplesFromEnd = 0;
 %# START FILE LOOP FOR RUNS startRun to endRun !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-%startRun = 4;      % Start at run x
-%endRun   = 4;      % Stop at run y
-
 startRun = 4;      % Start at run x
 endRun   = 15;     % Stop at run y
 
@@ -178,19 +257,6 @@ YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-% *************************************************************************
-% START: PLOT SWITCHES: 1 = ENABLED
-%                       0 = DISABLED
-% -------------------------------------------------------------------------
-
-enableDISP   = 1; % Enable or disable values in command window
-enableTSPlot = 1; % Enable or disable time series plot
-
-% -------------------------------------------------------------------------
-% END: PLOT SWITCHES
-% *************************************************************************
-
-
 %# ////////////////////////////////////////////////////////////////////////
 %# LOOP THROUGH ALL RUN FILES (depending on startRun and endRun settings)
 %# ////////////////////////////////////////////////////////////////////////
@@ -198,6 +264,7 @@ enableTSPlot = 1; % Enable or disable time series plot
 resultsArrayCalib = [];
 %w = waitbar(0,'Processed run files');
 for k=startRun:endRun
+%for k=startRun:5
     
     %# Allow for 1 to become 01 for run numbers
     if k < 10
@@ -224,30 +291,6 @@ for k=startRun:endRun
         assignin('base', vars{i}, AllRawChannelData.(vars{i}));
     end
     
-    % /////////////////////////////////////////////////////////////////////
-    % START: CREATE PLOTS AND RUN DIRECTORY
-    % ---------------------------------------------------------------------
-    
-    %# _PLOTS directory
-    fPath = '_plots/';
-    if isequal(exist(fPath, 'dir'),7)
-        % Do nothing as directory exists
-    else
-        mkdir(fPath);
-    end
-    
-    %# RUN directory
-    fPath = sprintf('_plots/%s', 'Calibration');
-    if isequal(exist(fPath, 'dir'),7)
-        % Do nothing as directory exists
-    else
-        mkdir(fPath);
-    end
-    
-    % ---------------------------------------------------------------------
-    % END: CREATE PLOTS AND RUN DIRECTORY
-    % /////////////////////////////////////////////////////////////////////
-    
     %# Columns as variables (RAW DATA)
     timeData               = data(:,1);       % Timeline
     Raw_CH_0_Speed         = data(:,2);       % Speed
@@ -268,30 +311,12 @@ for k=startRun:endRun
     %# Real units ---------------------------------------------------------
     %# --------------------------------------------------------------------
     
+    % Speed
     [CH_0_Speed CH_0_Speed_Mean]         = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
-    
+
+    % Pitot static tubes (PST) and differential pressure transducer (DPT)
     [CH_19_Inb_PST CH_19_Inb_PST_Mean]   = analysis_realunits(Raw_CH_19_Inb_PST,CH_19_Zero,CH_19_CF);
     [CH_20_Outb_PST CH_20_Outb_PST_Mean] = analysis_realunits(Raw_CH_20_Outb_PST,CH_20_Zero,CH_20_CF);
-    
-    %     [CH_1_LVDTFwd CH_1_LVDTFwd_Mean]             = analysis_realunits(Raw_CH_1_LVDTFwd,CH_1_Zero,CH_1_CF);
-    %     [CH_2_LVDTAft CH_2_LVDTAft_Mean]             = analysis_realunits(Raw_CH_2_LVDTAft,CH_2_Zero,CH_2_CF);
-    %     [CH_3_Drag CH_3_Drag_Mean]                   = analysis_realunits(Raw_CH_3_Drag,CH_3_Zero,CH_3_CF);
-    %
-    %     [RPMStbd RPMPort]                            = analysis_rpm(k,name,Fs,timeData,Raw_CH_5_StbdRPM,Raw_CH_4_PortRPM);
-    %
-    %     [CH_6_PortThrust CH_6_PortThrust_Mean]       = analysis_realunits(Raw_CH_6_PortThrust,CH_6_Zero,CH_6_CF);
-    %     [CH_7_PortTorque CH_7_PortTorque_Mean]       = analysis_realunits(Raw_CH_7_PortTorque,CH_7_Zero,CH_7_CF);
-    %     [CH_8_StbdThrust CH_8_StbdThrust_Mean]       = analysis_realunits(Raw_CH_8_StbdThrust,CH_8_Zero,CH_8_CF);
-    %     [CH_9_StbdTorque CH_9_StbdTorque_Mean]       = analysis_realunits(Raw_CH_9_StbdTorque,CH_9_Zero,CH_9_CF);
-    %
-    %     [CH_12_Port_Stat_6 CH_12_Port_Stat_6_Mean]   = analysis_realunits(Raw_CH_12_Port_Stat_6,CH_12_Zero,CH_12_CF);
-    %     [CH_13_Stbd_Stat_6 CH_13_Stbd_Stat_6_Mean]   = analysis_realunits(Raw_CH_13_Stbd_Stat_6,CH_13_Zero,CH_13_CF);
-    %     [CH_14_Stbd_Stat_5 CH_14_Stbd_Stat_5_Mean]   = analysis_realunits(Raw_CH_14_Stbd_Stat_5,CH_14_Zero,CH_14_CF);
-    %     [CH_15_Stbd_Stat_4 CH_15_Stbd_Stat_4_Mean]   = analysis_realunits(Raw_CH_15_Stbd_Stat_4,CH_15_Zero,CH_15_CF);
-    %     [CH_16_Stbd_Stat_3 CH_16_Stbd_Stat_3_Mean]   = analysis_realunits(Raw_CH_16_Stbd_Stat_3,CH_16_Zero,CH_16_CF);
-    %     [CH_17_Port_Stat_1a CH_17_Port_Stat_1a_Mean] = analysis_realunits(Raw_CH_17_Port_Stat_1a,CH_17_Zero,CH_17_CF);
-    %     [CH_18_Stbd_Stat_1a CH_18_Stbd_Stat_1a_Mean] = analysis_realunits(Raw_CH_18_Stbd_Stat_1a,CH_18_Zero,CH_18_CF);
-    
     
     % /////////////////////////////////////////////////////////////////////
     % DISPLAY RESULTS
@@ -357,13 +382,71 @@ for k=startRun:endRun
     %# ********************************************************************
     %# Time series plot
     %# ********************************************************************
-    if enableTSPlot == 1
+    if enableTimeSeriesPlot == 1
         
-        figurename = sprintf('%s:: Time Series Plot, Run %s', testName, num2str(runno));
+        figurename = sprintf('Run %s:: Time Series and Real Units Plot', num2str(runno));
         f = figure('Name',figurename,'NumberTitle','off');
         
-        % Calibration PST: Times series -----------------------------------
-        subplot(2,1,1);
+        %# Paper size settings --------------------------------------------
+        
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+            
+            set(gcf, 'PaperUnits', 'centimeters');
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+        end
+        
+        % Fonts and colours -----------------------------------------------
+        setGeneralFontName = 'Helvetica';
+        setGeneralFontSize = 14;
+        setBorderLineWidth = 2;
+        setLegendFontSize  = 14;
+        
+        %# Change default text fonts for plot title
+        set(0,'DefaultTextFontname',setGeneralFontName);
+        set(0,'DefaultTextFontSize',14);
+        
+        %# Box thickness, axes font size, etc. ----------------------------
+        set(gca,'TickDir','in',...
+            'FontSize',10,...
+            'LineWidth',2,...
+            'FontName',setGeneralFontName,...
+            'Clipping','off',...
+            'Color',[1 1 1],...
+            'LooseInset',get(gca,'TightInset'));
+        
+        %# Markes and colors ----------------------------------------------
+        setMarker = {'*';'+';'x';'o';'s';'d';'<';'^';'x';'>'};
+        % Colored curves
+        setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+        if enableBlackAndWhitePlot == 1
+            % Black and white curves
+            setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+        end
+        setLineStyle  = {'-';'--';'-.';':';'-';'--';'-.';':';'-';'--'};
+        
+        %# Line, colors and markers
+        setMarkerSize      = 10;
+        setLineWidthMarker = 1;
+        setLineWidth       = 2;
+        setLineWidthThin   = 1;
+        setLineStyle       = '-';
+        setLineStyle1      = '--';
+        setLineStyle2      = '-.';
+        setLineStyle3      = ':';
+        
+        % SUBPLOT /////////////////////////////////////////////////////////
+        subplot(1,2,1);
+        
+        % X and Y values --------------------------------------------------
+        
+        MinVal  = min(Raw_CH_19_Inb_PST);
+        MeanVal = mean(Raw_CH_19_Inb_PST);
+        MaxVal  = max(Raw_CH_19_Inb_PST);
         
         % Axis data
         x = timeData;
@@ -373,35 +456,74 @@ for k=startRun:endRun
         polyf = polyfit(x,y,1);
         polyv = polyval(polyf,x);
         
-        h = plot(x,y,'-b',x,polyv,'-k');
-        title('{\bf Times series}');
-        xlabel('{\bf Time (seconds)}');
-        ylabel('{\bf Output (V)}');
+        % Mean
+        x2 = [min(x) max(x)];
+        y2 = [MeanVal MeanVal];
+        
+        % Min
+        x3 = [min(x) max(x)];
+        y3 = [MinVal MinVal];
+        
+        % Max
+        x4 = [min(x) max(x)];
+        y4 = [MaxVal MaxVal];              
+        
+        % Plotting --------------------------------------------------------
+        h = plot(x,y,'-',x,polyv,'-',x2,y2,'-',x3,y3,'-',x4,y4,'-');
+        if enablePlotTitle == 1
+            title('{\bf Raw Output (inclusive zero)}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Time (s)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Output (V)}','FontSize',setGeneralFontSize);
         grid on;
         box on;
-        %axis square;
+        axis square;
         
         %# Set plot figure background to a defined color
         %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
         set(gcf,'Color',[1,1,1]);
         
-        %# Axis limitations
-        xlim([min(x) max(x)]);
-        %set(gca,'XTick',[min(x):0.2:max(x)]);
-        %set(gca,'YLim',[0 75]);
-        %set(gca,'YTick',[0:5:75]);
-        
         %# Line width
-        set(h(1),'linewidth',1);
-        set(h(2),'linewidth',2);
+        set(h(1),'Color',setColor{1},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidthThin);
+        set(h(2),'Color',setColor{6},'Marker','none','LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        set(h(3),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h(4),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+        set(h(5),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);        
+        
+        % Axis limitations
+        minX  = min(x);
+        maxX  = max(x);
+        incrX = 5;
+        minY  = MinVal*0.96;
+        maxY  = MaxVal*1.04;
+        incrY = (maxY-minY)/5;
+        set(gca,'XLim',[minX maxX]);
+        set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
         
         %# Legend
-        hleg1 = legend('Output (time series)','Trendline');
-        set(hleg1,'Location','NorthEast');
+        hleg1 = legend('Output (time series)','Trendline','Mean value');
+        set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
+        %legend boxoff;
         
-        % Calibration PST: Times series -----------------------------------
-        subplot(2,1,2);
+        %# Font sizes and border ------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        % SUBPLOT /////////////////////////////////////////////////////////
+        subplot(1,2,2);
+        
+        % X and Y values --------------------------------------------------
+        
+        MinVal  = min(CH_19_Inb_PST);
+        MeanVal = mean(CH_19_Inb_PST);
+        MaxVal  = max(CH_19_Inb_PST);
         
         % Axis data
         x = timeData;
@@ -411,62 +533,103 @@ for k=startRun:endRun
         polyf = polyfit(x,y,1);
         polyv = polyval(polyf,x);
         
-        h = plot(x,y,'-g',x,polyv,'-k');
-        title('{\bf Real units}');
-        xlabel('{\bf Time (seconds)}');
-        ylabel('{\bf Output (V)}');
+        % Mean
+        x2 = [min(x) max(x)];
+        y2 = [MeanVal MeanVal];        
+        
+        % Min
+        x3 = [min(x) max(x)];
+        y3 = [MinVal MinVal];    
+        
+        % Max
+        x4 = [min(x) max(x)];
+        y4 = [MaxVal MaxVal];            
+        
+        % Plotting --------------------------------------------------------
+        h = plot(x,y,'-',x,polyv,'-',x2,y2,'-',x3,y3,'-',x4,y4,'-');
+        if enablePlotTitle == 1
+            title('{\bf Raw Output (without zero)}','FontSize',setGeneralFontSize);
+        end
+        xlabel('{\bf Time (s)}','FontSize',setGeneralFontSize);
+        ylabel('{\bf Output (V)}','FontSize',setGeneralFontSize);
         grid on;
         box on;
-        %axis square;
-        
-        %# Axis limitations
-        xlim([min(x) max(x)]);
-        %set(gca,'XTick',[min(x):0.2:max(x)]);
-        %set(gca,'YLim',[0 75]);
-        %set(gca,'YTick',[0:5:75]);
+        axis square;
         
         %# Line width
-        set(h(1),'linewidth',1);
-        set(h(2),'linewidth',2);
+        set(h(1),'Color',setColor{2},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidthThin);
+        set(h(2),'Color',setColor{6},'Marker','none','LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        set(h(3),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        set(h(4),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+        set(h(5),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);     
+        
+        % Axis limitations
+        minX  = min(x);
+        maxX  = max(x);
+        incrX = 5;
+        minY  = MinVal*0.85;
+        maxY  = MaxVal*1.15;
+        incrY = (maxY-minY)/5;
+        set(gca,'XLim',[minX maxX]);
+        set(gca,'XTick',minX:incrX:maxX);
+        set(gca,'YLim',[minY maxY]);
+        set(gca,'YTick',minY:incrY:maxY);
+        %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+        set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
         
         %# Legend
-        hleg1 = legend('Output (real units)','Trendline');
-        set(hleg1,'Location','NorthEast');
+        hleg1 = legend('Output (real units)','Trendline','Mean value');
+        set(hleg1,'Location','NorthWest');
         set(hleg1,'Interpreter','none');
+        set(hleg1,'LineWidth',1);
+        set(hleg1,'FontSize',setLegendFontSize);
+        %legend boxoff;
         
-        %# ********************************************************************
+        %# Font sizes and border ------------------------------------------
+        
+        set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+        
+        %# ************************************************************************
         %# Save plot as PNG
-        %# ********************************************************************
+        %# ************************************************************************
         
         %# Figure size on screen (50% scaled, but same aspect ratio)
         set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
         
         %# Figure size printed on paper
-        set(gcf, 'PaperUnits','centimeters');
-        set(gcf, 'PaperSize',[XPlot YPlot]);
-        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-        set(gcf, 'PaperOrientation','portrait');
+        if enableA4PaperSizePlot == 1
+            set(gcf, 'PaperUnits','centimeters');
+            set(gcf, 'PaperSize',[XPlot YPlot]);
+            set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+            set(gcf, 'PaperOrientation','portrait');
+        end
         
         %# Plot title ---------------------------------------------------------
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
+        if enablePlotMainTitle == 1
+            annotation('textbox', [0 0.9 1 0.1], ...
+                'String', strcat('{\bf ', figurename, '}'), ...
+                'EdgeColor', 'none', ...
+                'HorizontalAlignment', 'center');
+        end
         
-        %# Save plots as PDF and PNG
-        %plotsavenamePDF = sprintf('_plots/%s/Run_%s_CH_19-20_PST_Calibration.pdf', 'Calibration', num2str(runno));
-        %saveas(gcf, plotsavenamePDF, 'pdf');    % Save figure as PDF
-        plotsavename = sprintf('_plots/%s/Run_%s_CH_19-20_PST_Calibration.png', 'Calibration', num2str(runno));
-        saveas(f, plotsavename);                % Save plot as PNG
+        %# Save plots as PDF, PNG and EPS -----------------------------------------
+        
+        % Enable renderer for vector graphics output
+        set(gcf, 'renderer', 'painters');
+        setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+        setFileFormat = {'PDF' 'PNG' 'EPS'};
+        for k=1:3
+            plotsavename = sprintf('_plots/%s/%s/Run_%s_CH_19-20_PST_Calibration_Plot.%s', 'PST_Calibration', setFileFormat{k}, num2str(runno), setFileFormat{k});
+            print(gcf, setSaveFormat{k}, plotsavename);
+        end
         close;
         
-    end
+    end % enableTimeSeriesPlot == 1
     
     %# ********************************************************************
     %# Command Window Output
     %# ********************************************************************
-    if enableDISP == 1
-        
+    if enableCommandWindowOutput == 1
         froudeno      = sprintf('%s:: Froude length number: %s [-]', runno, sprintf('%.2f',modelfrrounded));
         
         % Time series data
@@ -492,23 +655,209 @@ for k=startRun:endRun
         disp(inbpstCFZero);
         disp(inbpstAvgMean);
         
-        %         disp('-------------------------------------------------');
-        %
-        %         % CH_20
-        %         disp(outbpst);
-        %         disp(outbpstCFZero);
-        %         disp(outbpstAvgMean);
+        %disp('-------------------------------------------------');
         
-        disp('/////////////////////////////////////////////////');
-        
-    end
+        % CH_20
+        %disp(outbpst);
+        %disp(outbpstCFZero);
+        %disp(outbpstAvgMean);
+    end % enableCommandWindowOutput == 1
     
-    %wtot = endRun - startRun;
-    %w = waitbar(k/wtot,w,['iteration: ',num2str(k)]);
+end % k=startRun:endRun
+
+
+%# ************************************************************************
+%# 1. Speed vs. Voltage
+%# ************************************************************************
+
+M = resultsArrayCalib;
+M = M(any(M,2),:);   % Remove zero rows
+
+%# Plotting speed ---------------------------------------------------------
+figurename = 'Plot 1: Speed vs. Voltage';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+%if enableA4PaperSizePlot == 1
+set(gcf, 'PaperSize', [19 19]);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperPosition', [0 0 19 19]);
+
+set(gcf, 'PaperUnits', 'centimeters');
+set(gcf, 'PaperSize', [19 19]);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperPosition', [0 0 19 19]);
+%end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 14;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
 end
 
-%# Close progress bar
-%close(w);
+%# Line, colors and markers
+setMarkerSize      = 12;
+setLineWidthMarker = 2;
+setLineWidth       = 2;
+setLineWidthThin   = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+subplot(1,1,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+x1 = M(:,10);
+y1 = M(:,5);
+
+% Curve fitting
+[fitobject,gof,output] = fit(x1,y1,'poly4');
+cvalues                = coeffvalues(fitobject);
+
+if enableCommandWindowOutput == 1
+    cval = cvalues;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    setDecimals5 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    if cval(5) < 0
+        setDecimals5 = '%0.4f';
+    end
+    p1   = sprintf(setDecimals1,cval(1));
+    p2   = sprintf(setDecimals2,cval(2));
+    p3   = sprintf(setDecimals3,cval(3));
+    p4   = sprintf(setDecimals4,cval(4));
+    p5   = sprintf(setDecimals5,cval(5));
+    gofrs = sprintf('%0.2f',gof.rsquare);
+    EoFEqn = sprintf('EoF: y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofrs);
+    disp(EoFEqn);
+end
+
+%# Plotting ---------------------------------------------------------------
+h1 = plot(fitobject,'-',x1,y1,'*');
+legendInfo{1}  = 'Speed vs. Voltage';
+legendInfo{2}  = 'Speed vs. Voltage curve fitting';
+set(h1(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+xlabel('{\bf Mean (excl. zero) DPT output (V)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Carriage speed (m/s)}','FontSize',setGeneralFontSize);
+%if enablePlotTitle == 1
+%    title('{\bf Calibration)}','FontSize',setGeneralFontSize);
+%end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+%set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin
+%set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Annotations
+text(0.7,0.9,EoFEqn,'FontSize',setGeneralFontSize,'color','k','FontWeight','normal');
+
+%# Axis limitations
+minX  = 0;
+maxX  = 3;
+incrX = 0.2;
+minY  = 0;
+maxY  = 3;
+incrY = 0.2;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+hleg1 = legend(legendInfo);
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+%if enableA4PaperSizePlot == 1
+set(gcf, 'PaperUnits','centimeters');
+set(gcf, 'PaperSize',[XPlot YPlot]);
+set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+set(gcf, 'PaperOrientation','portrait');
+%end
+
+%# Plot title -------------------------------------------------------------
+%if enablePlotMainTitle == 1
+annotation('textbox', [0 0.9 1 0.1], ...
+    'String', strcat('{\bf ', figurename, '}'), ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center');
+%end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Plot_1_Speed_vs_Voltage_Plot.%s', 'PST_Calibration', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
 
 
 % /////////////////////////////////////////////////////////////////////
@@ -525,4 +874,6 @@ dlmwrite('resultsArrayCalib.txt', M, 'delimiter', '\t', 'precision', 4)  % Expor
 % -------------------------------------------------------------------------
 % View profile
 % -------------------------------------------------------------------------
-%profile viewer
+if enableProfiler == 1
+    profile viewer
+end

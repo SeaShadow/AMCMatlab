@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 3, 2015
+%# Date       :  February 5, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -2393,13 +2393,13 @@ set(gcf,'Color',[1,1,1]);
 minX  = 13;
 maxX  = 25;
 incrX = 1;
-% minY  = 0;
-% maxY  = 0.3;
-% incrY = 0.05;
+minY  = 0;
+maxY  = 800;
+incrY = 100;
 set(gca,'XLim',[minX maxX]);
 set(gca,'XTick',minX:incrX:maxX);
-% set(gca,'YLim',[minY maxY]);
-% set(gca,'YTick',minY:incrY:maxY);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
 % set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
 % set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
 

@@ -6,7 +6,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 2, 2015
+%# Date       :  February 5, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -581,7 +581,7 @@ dlmwrite('resultsAveragedArray.txt', M, 'delimiter', '\t', 'precision', 4)  % Ex
 AD    = avgcond7; % Active dataset (AD)
 [m,n] = size(AD);
 
-RRArray             = [];
+RRArray = [];
 
 % RRArray columns
 % [1]  Froude length number                                     (-)
@@ -639,6 +639,7 @@ RACorrectedScott    = [];
 % [25] ITTC'57: Grigson: Full scale resistace, RTs              (kN)
 
 % Set shorter variables
+% TODO: Add switch for other test conditions if required
 testcond     = AD(1,28);
 MSlwl        = MSlwl1500;
 MSwsa        = MSwsa1500;

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 3, 2015
+%# Date       :  February 5, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -88,30 +88,30 @@ delete(allPlots);   % Close all plots
 % -------------------------------------------------------------------------
 
 % Profiler
-enableProfiler              = 0;    % Use profiler to show execution times
+enableProfiler            = 0;    % Use profiler to show execution times
 
 % Decide if June 2013 or September 2014 data is used for calculations
-enableSept2014FRMValues     = 1;    % Use enable uses flow rate values established September 2014
+enableSept2014FRMValues   = 1;    % Use enable uses flow rate values established September 2014
 
 % Plot titles, colours, etc.
-enablePlotMainTitle         = 0;    % Show plot title in saved file
-enablePlotTitle             = 0;    % Show plot title above plot
-enableBlackAndWhitePlot     = 1;    % Show plot in black and white only
-enableTowingForceFDPlot     = 1;    % Show towing force (FD)
+enablePlotMainTitle       = 0;    % Show plot title in saved file
+enablePlotTitle           = 0;    % Show plot title above plot
+enableBlackAndWhitePlot   = 1;    % Show plot in black and white only
+enableTowingForceFDPlot   = 1;    % Show towing force (FD)
 
 % Scaled to A4 paper
-enableA4PaperSizePlot       = 0;    % Show plots scale to A4 size
+enableA4PaperSizePlot     = 0;    % Show plots scale to A4 size
 
 % Adjusted fitting for towing force vs. thrust plot and F at T=0 as well as
-enableAdjustedFitting       = 1;    % Show adjusted fitting for speeds 6,8 and 9
-enableAdjustedCommandWindow = 1;    % Show command window output
+enableAdjustedFitting     = 1;    % Show adjusted fitting for speeds 6,8 and 9
+enableCommandWindowOutput = 1;    % Show command window output
 
 % Wake scaling with rudder componets
 % If TRUE (1) wake scaling uses +(t+0.04)(1-(CFs/CFm)) part of equation
-enableWakeScalingRudderComp = 0;    % Use rudder components in wake scaling
+enableWakeScalingRudderComp = 0;  % Use rudder components in wake scaling
 
 % Pump effective power, PPE
-enablePPEEstPumpCurveHead   = 0;    % If TRUE use PPE = p g QJ H35 (ITTC) instead of PPE = (E7/nn)-niE1 (Bose 2008)
+enablePPEEstPumpCurveHead   = 0;  % If TRUE use PPE = p g QJ H35 (ITTC) instead of PPE = (E7/nn)-niE1 (Bose 2008)
 
 % Check if Curve Fitting Toolbox is installed
 % See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
@@ -188,6 +188,7 @@ MSwsa           = 1.501;                         % Model scale wetted surface ar
 MSdraft         = 0.133;                         % Model draft                     (m)
 MSAx            = 0.024;                         % Model area of max. transverse section (m^2)
 BlockCoeff      = 0.592;                         % Mode block coefficient          (-)
+AreaRatio       = MSAx/(ttwaterdepth*ttwidth);   % Area ratio                      (-)
 FSlwl           = MSlwl*FStoMSratio;             % Full scale length waterline     (m)
 FSwsa           = MSwsa*FStoMSratio^2;           % Full scale wetted surface area  (m^2)
 FSdraft         = MSdraft*FStoMSratio;           % Full scale draft                (m)
@@ -236,11 +237,21 @@ MS_PumpInlArea = 0.004;
 FS_PumpMaxArea = 0.67;
 MS_PumpMaxArea = 0.001;
 
+%# ************************************************************************
+%# Start Boundary layer related constants
+%# ------------------------------------------------------------------------
+
 % Boundary layer: Power law factors (-)
-BLPLFactorArray  = [6.672 6.672 6.672 6.672 6.672 6.672 6.672 6.672 6.672];
+% NOTE: See Matlab file "analysis_bl.m" for values
+BLPLFactorArray  = [6.6467 6.6467 6.6467 6.6467 6.6467 6.6467 6.6467 6.6467 6.6467];
 
 % Boundary layer: Thickness (m)
-BLThicknessArray = [0.04546 0.04548 0.04519 0.04459 0.04369 0.04248 0.04097 0.03915 0.03702];
+% NOTE: See Excel file "Run Sheet - Self-Propulsion Test.xlsx" WS "3 BL and wake fraction" for values
+BLThicknessArray = [0.0446 0.0448 0.0447 0.0442 0.0433 0.0421 0.0406 0.0386 0.0364];
+
+%# ------------------------------------------------------------------------
+%# End Boundary layer related constants
+%# ************************************************************************
 
 % Installation efficiency (typical value)
 InstEff = 1;
@@ -424,7 +435,7 @@ if exist(SetMFRvsKPDataFilePath, 'file') == 2
     cvaluesMFRvsKPSept2014Port = coeffvalues(fitobjectP);
     
     % Check Equation of Fit
-    %     if enableAdjustedCommandWindow == 1
+    %     if enableCommandWindowOutput == 1
     %         cval = cvaluesMFRvsKPSept2014Port;
     %         setDecimals1 = '%0.4f';
     %         setDecimals2 = '+%0.4f';
@@ -460,7 +471,7 @@ if exist(SetMFRvsKPDataFilePath, 'file') == 2
     cvaluesMFRvsKPSept2014Stbd = coeffvalues(fitobjectS);
     
     % Check Equation of Fit
-    %     if enableAdjustedCommandWindow == 1
+    %     if enableCommandWindowOutput == 1
     %         cval = cvaluesMFRvsKPSept2014Stbd;
     %         setDecimals1 = '%0.4f';
     %         setDecimals2 = '+%0.4f';
@@ -790,7 +801,7 @@ if exist('resultsArraySPP_CCDoTT.dat', 'file') == 0
         CH_11_CF   = ZeroAndCalib(26);
         
         %# --------------------------------------------------------------------
-        %# Real units ---------------------------------------------------------
+        %# Voltage to real units conversion
         %# --------------------------------------------------------------------
         
         [CH_0_Speed CH_0_Speed_Mean]           = analysis_realunits(Raw_CH_0_Speed,CH_0_Zero,CH_0_CF);
@@ -924,17 +935,65 @@ if exist('resultsArraySPP_CCDoTT.dat', 'file') == 0
         end
         resultsArraySPP(k, 19)  = shaftSpeedRPM;                                        % Shaft/motor speed (RPM)
         
+        % Full scale speed        
         MSspeed = CH_0_Speed_Mean;
         FSspeed = CH_0_Speed_Mean*sqrt(FStoMSratio);
         
         resultsArraySPP(k, 20)  = FSspeed;                                              % Ship speed (m/s)
         resultsArraySPP(k, 21)  = FSspeed/0.514444;                                     % Ship speed (knots)
         
-        resultsArraySPP(k, 22)  = (MSspeed*MSlwl)/MSKinVis;                             % Model scale Reynolds number (-)
-        resultsArraySPP(k, 23)  = (FSspeed*FSlwl)/FSKinVis;                             % Full scale Reynolds number (-)
+        %# ****************************************************************
+        %# Start Schuster correction factors (only Re and CF)
+        %# ----------------------------------------------------------------
+
+        MSReynoldsNo = (MSspeed*MSlwl)/MSKinVis;
         
-        MSReynoldsNo = resultsArraySPP(k, 22);
-        FSReynoldsNo = resultsArraySPP(k, 23);
+        if MSReynoldsNo < 10000000
+            MSCFm = 10^(2.98651-10.8843*(log10(log10(MSReynoldsNo)))+5.15283*(log10(log10(MSReynoldsNo)))^2); % Model Frictional Resistance Coefficient (Grigson) (-)
+        else
+            MSCFm = 10^(-9.57459+26.6084*(log10(log10(MSReynoldsNo)))-30.8285*(log10(log10(MSReynoldsNo)))^2+10.8914*(log10(log10(MSReynoldsNo)))^3); % Model Frictional Resistance Coefficient (Grigson) (-)
+        end
+        
+        %R Fr vs. single demihull corrected resistance
+        xres = ResResults(:,1);
+        yres = ResResults(:,26);
+        
+        % Equation of fit for RTm vs. Fr
+        [fitobject,gof,output] = fit(xres,yres,'poly5');
+        cvalues = coeffvalues(fitobject);
+        
+        P1 = cvalues(1);
+        P2 = cvalues(2);
+        P3 = cvalues(3);
+        P4 = cvalues(4);
+        P5 = cvalues(5);
+        P6 = cvalues(6);
+        
+        % Froude length number, RTm, and CTm
+        FN               = roundedspeed / sqrt(gravconst*MSlwl);
+        MSRTm            = P1*FN^5+P2*FN^4+P3*FN^3+P4*FN^2+P5*FN+P6;
+        MSCTm            = MSRTm/(0.5*freshwaterdensity*MSwsa*MSspeed^2);
+
+        % Schuster corrections
+        MSRv             = MSCFm*(0.5*freshwaterdensity*MSwsa*MSspeed^2);
+        DepthFroudeNo    = MSspeed/sqrt(gravconst*ttwaterdepth);
+        MSCorrSpeedRatio = (AreaRatio/(1-AreaRatio-DepthFroudeNo^2))+(1-(MSRv/MSRTm))*(2/3)*DepthFroudeNo^10;
+        
+        % Schuster corrected model speed and Reynolds number
+        MSSpeedCorr      = MSspeed*(1+MSCorrSpeedRatio);
+        MSReynoldsNo     = (MSSpeedCorr*MSlwl)/MSKinVis;
+
+        %# ----------------------------------------------------------------
+        %# End Schuster correction factors (only Re and CF)
+        %# ****************************************************************
+        
+        % Model and full scale Reynolds number
+        %MSReynoldsNo = (MSspeed*MSlwl)/MSKinVis;
+        MSReynoldsNo = MSReynoldsNo;
+        FSReynoldsNo = (FSspeed*FSlwl)/FSKinVis;
+        
+        resultsArraySPP(k, 22) = MSReynoldsNo;  % Model scale Reynolds number (-)
+        resultsArraySPP(k, 23) = FSReynoldsNo;  % Full scale Reynolds number (-)
         
         % Model scale frictional resistance coefficient (Grigson), CFm (-)
         if MSReynoldsNo < 10000000
@@ -1149,13 +1208,17 @@ A = arrayfun(@(x) R(R(:,5) == x, :), unique(R(:,5)), 'uniformoutput', false);
 
 % Froude numbers for nine (9) speeds
 Froude_Numbers = [];
+% Froude_Numbers columns:
+%[1] Froude length number, Fr                   (-)
+%[2] Repeated runs averaged measured speed, Vm  (m/s)
 for k=1:ma
     Froude_Numbers(k,1) = A{k}(1,5);
     Froude_Numbers(k,2) = mean(A{k}(:,6));
 end
 
-
-% Bare hull resistance ----------------------------------------------------
+%# ************************************************************************
+%# Model Scale: Uncorrected and corrected bnare hull resistance
+%# ************************************************************************
 
 %# UNCORRECTED: calBHResistanceBasedOnFr results array columns:
 %[1]  Froude length number             (-)
@@ -2991,6 +3054,12 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         %[21] Force at zero thrust, FT=0       (N)
         %[22] Corrected BH resistance, RC      (N)
         
+        % CFm, CFs and CA
+        %[23] Model scale: CFm                 (-)
+        %[24] Full scale: CFs                  (-)
+        %[25] Correlation coefficient, CA      (-)
+        %[26] Cross-check towing force, FD     (N)
+        
         % FROUDE LENGTH NUMBER AND TOWING FORCE, FD
         resSPP_CCDoTT(klp,1)  = A{klp}(1,5);
         resSPP_CCDoTT(klp,2)  = TowForceFD;
@@ -3027,6 +3096,12 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         resSPP_CCDoTT(klp,21) = 0;
         resSPP_CCDoTT(klp,22) = 0;
         
+        % CFm, CFs and CA
+        resSPP_CCDoTT(klp,23) = 0;
+        resSPP_CCDoTT(klp,24) = 0;
+        resSPP_CCDoTT(klp,25) = 0;
+        resSPP_CCDoTT(klp,26) = 0;
+            
     end % klp=1:ma
     
 else
@@ -3068,6 +3143,7 @@ thrustDedFracArray  = [];   % Thrust deduction array where TG = p Q (vj - vi)
 shaftSpeedConvArray = [];   % Shaft speed array where TG = p Q (vj - vi)
 resSPP              = [];   % Summary results of self-propulsion points
 for k=1:ma
+    
     [mb,nb] = size(A{k});
     
     % Corrected resistance (RC) at current Froude length number -----------
@@ -3187,7 +3263,16 @@ for k=1:ma
     resSPP_CCDoTT(k,21) = TowingForceAtZeroThrust;
     resSPP_CCDoTT(k,22) = resistance(k,3);
     
-end
+    % CFm, CFs and CA
+    setCFm = A{k}(1,24);
+    setCFs = A{k}(1,25);
+    setMSSpeed = mean(A{k}(:,6));
+    resSPP_CCDoTT(k,23) = setCFm;
+    resSPP_CCDoTT(k,24) = setCFs;
+    resSPP_CCDoTT(k,25) = CorrCoeff;
+    resSPP_CCDoTT(k,26) = 0.5*freshwaterdensity*(setMSSpeed^2)*MSwsa*(FormFactor*(setCFm-setCFs)-CorrCoeff);;
+    
+end % k=1:ma
 %# ------------------------------------------------------------------------
 %# END OVERWRITES
 %# ************************************************************************
@@ -3198,7 +3283,7 @@ end
 %# ------------------------------------------------------------------------
 if enableAdjustedFitting == 1
     
-    if enableAdjustedCommandWindow == 1
+    if enableCommandWindowOutput == 1
         disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
         disp('!Adjusted T at F=0 and Slopes Values (Speeds 6, 8 and 9) !');
         disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
@@ -3236,7 +3321,7 @@ if enableAdjustedFitting == 1
         slopeInterceptArray(kftg,2) = cvaluesSlopesAndYInt(2);
         
         %# Command window
-        if enableAdjustedCommandWindow == 1
+        if enableCommandWindowOutput == 1
             %setDec = '%.2f';
             %disp(sprintf('Speed %s: y = %s*x+%s, R^{2}=%s',num2str(kftg),sprintf(setDec,cvaluesSlopesAndYInt(1)),sprintf(setDec,cvaluesSlopesAndYInt(2)),sprintf(setDec,gof.rsquare)));
         end
@@ -3323,7 +3408,7 @@ if enableAdjustedFitting == 1
     cvaluesTF0vsSlope      = coeffvalues(fitobject);
     
     %# Command window
-    if enableAdjustedCommandWindow == 1
+    if enableCommandWindowOutput == 1
         setDec = '%.3f';
         disp(sprintf('Thrust at F=0 vs. Slope of Linear Fit: y = %s*x+%s, R^{2}=%s',sprintf(setDec,cvaluesTF0vsSlope(1)),sprintf(setDec,cvaluesTF0vsSlope(2)),sprintf(setDec,gof.rsquare)));
     end
@@ -3419,7 +3504,7 @@ if enableAdjustedFitting == 1
     slopeInterceptArray(9,1) = Slope9Adj;
     
     %# Command window
-    if enableAdjustedCommandWindow == 1
+    if enableCommandWindowOutput == 1
         disp(sprintf('Speed 6 (Adj. F at T=0) = %s, Speed 8 (Adj. F at T=0) = %s, Speed 9 (Adj. F at T=0) = %s',num2str(yInt6Adj),num2str(yInt8Adj),num2str(yInt9Adj)));
         disp(sprintf('Speed 6 (Slope) = %s, Speed 8 (Slope) = %s, Speed 0 (Slope) = %s',num2str(Slope6Adj),num2str(Slope8Adj),num2str(Slope9Adj)));
     end
