@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 29, 2015
+%# Date       :  February 13, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -278,6 +278,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
     % [2:7]   Min, Max, Mean, Var, Std, Diff. max to mean >> STBD: DPT with kiel probe (V)
     % [8:13]  Min, Max, Mean, Var, Std, Diff. max to mean >> PORT: DPT with kiel probe (V)
     for k=startRun:endRun
+    %for k=27:27
         
         %# Allow for 1 to become 01 for run numbers
         if k < 10
@@ -461,7 +462,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
         
         
         %# --------------------------------------------------------------------
-        %# TIME SRIES PLOTS
+        %# TIME SERIES PLOTS
         %# --------------------------------------------------------------------
         if enbaleTimeSeriesPlot == 1
             
@@ -493,9 +494,9 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             
             % Fonts and colours ---------------------------------------------------
             setGeneralFontName = 'Helvetica';
-            setGeneralFontSize = 14;
+            setGeneralFontSize = 16;
             setBorderLineWidth = 2;
-            setLegendFontSize  = 12;
+            setLegendFontSize  = 14;
             
             %# Change default text fonts for plot title
             set(0,'DefaultTextFontname',setGeneralFontName);
@@ -577,11 +578,11 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             h1 = plot(x,pv2,'-');
             hold on;
             h2 = plot(x,pv3,'-');
-            if enablePlotTitle == 1
-                title('{\bf Wave Probe Output}','FontSize',setGeneralFontSize);
-            end
-            xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
-            ylabel('{\bf Mass flow rate [Kg]}','FontSize',setGeneralFontSize);
+%             if enablePlotTitle == 1
+%                 title('{\bf Wave Probe Output}','FontSize',setGeneralFontSize);
+%             end
+            xlabel('{\bf Time (s)}','FontSize',setGeneralFontSize);
+            ylabel('{\bf Mass flow rate (Kg)}','FontSize',setGeneralFontSize);
             grid on;
             box on;
             axis square;
@@ -725,44 +726,68 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             kppolyfitport = polyfit(x,y2,1);
             kppolyvalport = polyval(kppolyfitport,x);
             
-            %# Plotting
-            h = plot(x,y1,'-',x,kppolyvalstbd,'-',x,y2,'-',x,kppolyvalport,'-');
-            hold on;
-            h1 = plot(plotArray1(:,1),plotArray1(:,2),'-',plotArray1(:,3),plotArray1(:,4),'-');
-            hold on;
-            h2 = plot(plotArray2(:,1),plotArray2(:,2),'-',plotArray2(:,3),plotArray2(:,4),'-');
-            if enablePlotTitle == 1
-                title('{\bf Kiel Probe Output}','FontSize',setGeneralFontSize);
-            end
-            xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+            %# Plotting ---------------------------------------------------
+            if ismember(k,stbdRuns) == 1
+                %# STBD
+                h = plot(x,y1,'-',x,kppolyvalstbd,'-');
+                hold on;
+                h1 = plot(plotArray1(:,1),plotArray1(:,2),'r-',plotArray1(:,3),plotArray1(:,4),'g-');
+            elseif ismember(k,portRuns)
+                %# PORT
+                h = plot(x,y2,'-',x,kppolyvalport,'-');
+                hold on;
+                h2 = plot(plotArray2(:,1),plotArray2(:,2),'b-',plotArray2(:,3),plotArray2(:,4),'k-');
+            end            
+%             h = plot(x,y1,'-',x,kppolyvalstbd,'-',x,y2,'-',x,kppolyvalport,'-');
+%             hold on;
+%             h1 = plot(plotArray1(:,1),plotArray1(:,2),'-',plotArray1(:,3),plotArray1(:,4),'-');
+%             hold on;
+%             h2 = plot(plotArray2(:,1),plotArray2(:,2),'-',plotArray2(:,3),plotArray2(:,4),'-');
+%             if enablePlotTitle == 1
+%                 title('{\bf Kiel Probe Output}','FontSize',setGeneralFontSize);
+%             end
+            xlabel('{\bf Time (s)}','FontSize',setGeneralFontSize);
             ylabel('{\bf Output [V]}','FontSize',setGeneralFontSize);
             grid on;
             box on;
             axis square;
             
             %# Line, colors and markers
-            set(h(1),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-            set(h(2),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',2);
-            set(h(3),'Color',setColor{2},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-            set(h(4),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',2);
-            % Min, max band
-            set(h1(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-            set(h1(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-            set(h2(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-            set(h2(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            if ismember(k,stbdRuns) == 1
+                %# STBD
+                set(h(1),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+                set(h(2),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',2);
+                set(h1(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+                set(h1(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            elseif ismember(k,portRuns)
+                %# PORT
+                set(h(1),'Color',setColor{2},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+                set(h(2),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',2);
+                set(h2(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+                set(h2(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            end
+%             set(h(1),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+%             set(h(2),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',2);
+%             set(h(3),'Color',setColor{2},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+%             set(h(4),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',2);
+%             % Min, max band
+%             set(h1(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+%             set(h1(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+%             set(h2(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+%             set(h2(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
             
             %# Axis limitations
             minX  = x(1);
             maxX  = x(end);
             %incrX = 10;
             minY  = 0;
-            if y2 > y1
-                maxY  = y2(end)+1;
-            elseif y1 > y2
-                maxY  = y1(end)+1;
-            else
+            %if y2 > y1
+            %    maxY  = y2(end)+1;
+            %elseif y1 > y2
+            %    maxY  = y1(end)+1;
+            %else
                 maxY  = 5;
-            end
+            %end
             incrY = 0.5;
             set(gca,'XLim',[minX maxX]);
             %set(gca,'XTick',minX:incrX:maxX);
@@ -772,7 +797,14 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
             
             %# Legend
-            hleg1 = legend('Kiel probe (Stbd)','Linear fit (Stbd)','Kiel probe (Port)','Linear fit (Port)');
+            if ismember(k,stbdRuns) == 1
+                %# STBD
+                hleg1 = legend('Stbd: Kiel probe','Stbd: Linear fit');
+            elseif ismember(k,portRuns)
+                %# PORT
+                hleg1 = legend('Port: Kiel probe','Port: Linear fit');
+            end            
+            %hleg1 = legend('Stbd: Kiel probe','Stbd: Linear fit','Port: Kiel probe','Port: Linear fit');
             set(hleg1,'Location','NorthWest');
             set(hleg1,'Interpreter','none');
             set(hleg1,'LineWidth',1);
@@ -816,7 +848,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
                 if enablePlotTitle == 1
                     title('{\bf Dynamometer: Thrust}','FontSize',setGeneralFontSize);
                 end
-                xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+                xlabel('{\bf Time (s)}','FontSize',setGeneralFontSize);
                 ylabel('{\bf Thrust [g]}','FontSize',setGeneralFontSize);
                 grid on;
                 box on;
@@ -884,7 +916,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
                 if enablePlotTitle == 1
                     title('{\bf Dynamometer: Torque}','FontSize',setGeneralFontSize);
                 end
-                xlabel('{\bf Time [s]}','FontSize',setGeneralFontSize);
+                xlabel('{\bf Time (s)}','FontSize',setGeneralFontSize);
                 ylabel('{\bf Torque [Nm]}','FontSize',setGeneralFontSize);
                 grid on;
                 box on;
@@ -949,12 +981,12 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             end
             
             %# Plot title -----------------------------------------------------
-            if enablePlotMainTitle == 1
-                annotation('textbox', [0 0.9 1 0.1], ...
-                    'String', strcat('{\bf ', figurename, '}'), ...
-                    'EdgeColor', 'none', ...
-                    'HorizontalAlignment', 'center');
-            end
+%             if enablePlotMainTitle == 1
+%                 annotation('textbox', [0 0.9 1 0.1], ...
+%                     'String', strcat('{\bf ', figurename, '}'), ...
+%                     'EdgeColor', 'none', ...
+%                     'HorizontalAlignment', 'center');
+%             end
             
             %# Save plots as PDF, PNG and EPS ---------------------------------
             % Enable renderer for vector graphics output

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 5, 2015
+%# Date       :  February 13, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -145,17 +145,20 @@ enableBlackAndWhitePlot = 1;    % Show plot in black and white only
 enableA4PaperSizePlot   = 0;    % Show plots scale to A4 size
 
 % Individual plots
-enableTurbStimPlot      = 0; % Turbulence stimulator investigation
-enableTrimTabPlot       = 0; % Trim tab investigation
-enableResistancePlot    = 1; % Resistance plots, Ctm, power, heave and trim
-enableProhaskaPlot      = 0; % Prohaska plot, form factor at deep transom
-enableErrorPlot         = 0; % Error plots (% of max-avg to magnitude)
-enableMeanStdPlot       = 0; % Show Fr vs. mean of standard deviation
-enableStdPlot           = 0; % Show Fr vs. standard deviation
-enableRemVSCFmPlot      = 0; % Show Re vs. Cfm plot
-enableTSResDiffPlot     = 0; % Show difference in resistance with and without 
-                             % turbulence resistance in total model resistance
+enableTurbStimPlot      = 1;    % Turbulence stimulator investigation
+enableTrimTabPlot       = 1;    % Trim tab investigation
+enableResistancePlot    = 1;    % Resistance plots, Ctm, power, heave and trim
+enableProhaskaPlot      = 1;    % Prohaska plot, form factor at deep transom
+enableErrorPlot         = 0;    % Error plots (% of max-avg to magnitude)
+enableMeanStdPlot       = 0;    % Show Fr vs. mean of standard deviation
+enableStdPlot           = 0;    % Show Fr vs. standard deviation
+enableRemVSCFmPlot      = 0;    % Show Re vs. Cfm plot
+enableTSResDiffPlot     = 0;    % Show difference in resistance with and without 
+                                % turbulence resistance in total model resistance
 
+% Show connecting lines in plots (i.e. connrecting markers)
+enableConnectMarkersPlot = 1;   % Show lines connecting markers
+                             
 % Check if Curve Fitting Toolbox is installed
 % See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
 v = ver;
@@ -307,15 +310,17 @@ if exist('full_resistance_data.dat', 'file') == 2
     %# Remove zero rows
     results(all(results==0,2),:)=[];
 else
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     disp('WARNING: Data file for full resistance data (full_resistance_data) does not exist!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     %break;
 end
 
 %# Stop script if required data unavailble --------------------------------
 if exist('results','var') == 0
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    disp('WARNING: Required resistance data file does not exist!');
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('WARNING: Required resistance data variable does not exist!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     break;
 end
 
@@ -408,7 +413,9 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     startRun = 1;
     endRun   = 35;
     
-    %figurename = sprintf('Plot 1: Turbulence Stimulator Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
+    %# --------------------------------------------------------------------
+    %# 1. Turbulence Stimulator Investigation (Thesis Plot)
+    %# --------------------------------------------------------------------   
     figurename = 'Plot 1: Turbulence Stimulator Investigation';
     f = figure('Name',figurename,'NumberTitle','off');
     
@@ -458,7 +465,10 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     setMarkerSize      = 16;
     setLineWidthMarker = 2;
     setLineWidth       = 1;
-    setLineStyle       = '-.';
+    setLineStyle       = '-';
+    setLineStyle1      = '--';
+    setLineStyle2      = '-.';
+    setLineStyle3      = ':';
   
     %# SUBPLOT ////////////////////////////////////////////////////////////////
     %subplot(1,1,1)
@@ -523,8 +533,8 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
 %     if enablePlotTitle == 1
 %         title('{\bf Average of repeated runs}','FontSize',setGeneralFontSize);
 %     end
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Total resistance coefficient C_{Tm}*1000 [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance coefficient C_{Tm}*1000 (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -535,8 +545,8 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     
     %# Line, colors and markers
     set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle,'linewidth',setLineWidth
-    set(h(2),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);  
+    set(h(2),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);  
     
     %# Axis limitations
     minX  = 0.2;
@@ -553,7 +563,7 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    hleg1 = legend('Turbulence stimulators: Barehull','Turbulence stimulators: 1st row','Turbulence stimulators: 1st and 2nd');
+    hleg1 = legend('Barehull (no turbulence stimulators)','First row of turbulence stimulators only','First and second row of turbulence stimulators');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -593,7 +603,7 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_1_Run_%s_to_Run_%s_Turbulence_Stimulator_Resistance_Thesis_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_1_Turbulence_Stimulator_Resistance_Thesis_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -618,7 +628,9 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     DiffInTSArray(2,1) = avgcond3(2,11);
     DiffInTSArray(2,2) = avgcond3(2,9)-avgcond1(2,9);
     
-    %# Plotting ---------------------------------------------------------------
+    %# --------------------------------------------------------------------
+    %# 1.1 Turbulence Stimulator Investigation - Differences
+    %# --------------------------------------------------------------------
     figurename = 'Plot 1.1: Turbulence Stimulator Investigation - Differences';
     f = figure('Name',figurename,'NumberTitle','off');
     
@@ -771,7 +783,7 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_1_1_Run_%s_to_Run_%s_Turbulence_Stimulator_Resistance_Differences_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_1_1_Turbulence_Stimulator_Resistance_Differences_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -791,15 +803,14 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     %enableA4PaperSizePlot   = 0;    % Show plots scale to A4 size
 
     %# --------------------------------------------------------------------
-    %# 2.1 Plot CTm (averaged + errrors) and trim
+    %# 2. Plot CTm (averaged + errrors) and trim (Thesis Plot)
     %# --------------------------------------------------------------------
-    %figurename = sprintf('Plot 2.1: Trim Tab Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
-    figurename = 'Plot 2.1: Trim Tab Investigation';
+    figurename = 'Plot 2: Trim Tab Investigation';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
     
-    if enableA4PaperSizePlot == 1
+    %if enableA4PaperSizePlot == 1
         set(gcf, 'PaperSize', [19 19]);
         set(gcf, 'PaperPositionMode', 'manual');
         set(gcf, 'PaperPosition', [0 0 19 19]);
@@ -808,13 +819,13 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
         set(gcf, 'PaperSize', [19 19]);
         set(gcf, 'PaperPositionMode', 'manual');
         set(gcf, 'PaperPosition', [0 0 19 19]);
-    end
+    %end
     
     % Fonts and colours ---------------------------------------------------
     setGeneralFontName = 'Helvetica';
-    setGeneralFontSize = 14;
+    setGeneralFontSize = 16;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 12;
+    setLegendFontSize  = 14;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -841,12 +852,15 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     
     %# Line, colors and markers
     setMarkerSize      = 16;
-    setLineWidthMarker = 2;
+    setLineWidthMarker = 1;
     setLineWidth       = 1;
-    setLineStyle       = '-.';
+    setLineStyle       = '-';
+    setLineStyle1      = '--';
+    setLineStyle2      = '-.';
+    setLineStyle3      = ':';
     
-    %# SUBPLOT 1  -------------------------------------------------------------
-    %subplot(1,1,1)
+    %# SUBPLOT ////////////////////////////////////////////////////////////////
+    subplot(1,2,1)
     
     %# X and Y axis -----------------------------------------------------------
     
@@ -909,16 +923,16 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     %if enablePlotTitle == 1
     %    title('{\bf C_{Tm} vs. F_{r} (averaged runs)}','FontSize',setGeneralFontSize);
     %end
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Total resistance coefficient, C_{Tm}*1000 [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance coefficient, C_{Tm}*1000 (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
     
     %# Line, colors and markers
     set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    set(h(2),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize-2,'LineWidth',setLineWidthMarker);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize-2,'LineWidth',setLineWidthMarker);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -950,97 +964,8 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     
     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
 
-    %# ********************************************************************
-    %# Save plot as PNG
-    %# ********************************************************************
-    
-    %# Figure size on screen (50% scaled, but same aspect ratio)
-    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-    
-    %# Figure size printed on paper
-    if enableA4PaperSizePlot == 1
-        set(gcf, 'PaperUnits','centimeters');
-        set(gcf, 'PaperSize',[XPlot YPlot]);
-        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-        set(gcf, 'PaperOrientation','portrait');
-    end
-    
-    %# Plot title ---------------------------------------------------------
-    %if enablePlotMainTitle == 1
-    %    annotation('textbox', [0 0.9 1 0.1], ...
-    %        'String', strcat('{\bf ', figurename, '}'), ...
-    %        'EdgeColor', 'none', ...
-    %        'HorizontalAlignment', 'center');
-    %end
-    
-    %# Save plots as PDF, PNG and EPS -------------------------------------
-    % Enable renderer for vector graphics output
-    set(gcf, 'renderer', 'painters');
-    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
-    setFileFormat = {'PDF' 'PNG' 'EPS'};
-    for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_2_1_Run_%s_to_Run_%s_Trim_Tab_Resistance_Data_Ctm_Thesis_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
-        print(gcf, setSaveFormat{k}, plotsavename);
-    end
-    %close;    
-    
-    %# --------------------------------------------------------------------
-    %# 2.2 Plot Trim
-    %# --------------------------------------------------------------------
-    %figurename = sprintf('Plot 2.2: Trim Tab Investigation, Run %s to %s', num2str(startRun), num2str(endRun));
-    figurename = 'Plot 2.2: Trim Tab Investigation';
-    f = figure('Name',figurename,'NumberTitle','off');
-    
-    %# Paper size settings ------------------------------------------------
-    
-    if enableA4PaperSizePlot == 1
-        set(gcf, 'PaperSize', [19 19]);
-        set(gcf, 'PaperPositionMode', 'manual');
-        set(gcf, 'PaperPosition', [0 0 19 19]);
-        
-        set(gcf, 'PaperUnits', 'centimeters');
-        set(gcf, 'PaperSize', [19 19]);
-        set(gcf, 'PaperPositionMode', 'manual');
-        set(gcf, 'PaperPosition', [0 0 19 19]);
-    end
-    
-    % Fonts and colours ---------------------------------------------------
-    setGeneralFontName = 'Helvetica';
-    setGeneralFontSize = 14;
-    setBorderLineWidth = 2;
-    setLegendFontSize  = 12;
-    
-    %# Change default text fonts for plot title
-    set(0,'DefaultTextFontname',setGeneralFontName);
-    set(0,'DefaultTextFontSize',14);
-    
-    %# Box thickness, axes font size, etc. --------------------------------
-    set(gca,'TickDir','in',...
-        'FontSize',12,...
-        'LineWidth',2,...
-        'FontName',setGeneralFontName,...
-        'Clipping','off',...
-        'Color',[1 1 1],...
-        'LooseInset',get(gca,'TightInset'));
-    
-    %# Markes and colors ------------------------------------------------------
-    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
-    %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
-    % Colored curves
-    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
-    if enableBlackAndWhitePlot == 1
-        % Black and white curves
-        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
-    end
-    
-    %# Line, colors and markers
-    setMarkerSize      = 16;
-    setLineWidthMarker = 2;
-    setLineWidth       = 1;
-    setLineStyle       = '-.';
-
-    %# SUBPLOT 1  -------------------------------------------------------------
-    %subplot(1,1,1)
+    %# SUBPLOT ////////////////////////////////////////////////////////////////
+    subplot(1,2,2)
     
     %# X and Y axis -----------------------------------------------------------
     
@@ -1091,16 +1016,16 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     %if enablePlotTitle == 1
     %    title('{\bf Trim vs. F_{r}}','FontSize',setGeneralFontSize);
     %end
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Running trim [deg]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Running trim (deg)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
     
     %# Line, colors and markers
     set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    set(h(2),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize-2,'LineWidth',setLineWidthMarker);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize-2,'LineWidth',setLineWidthMarker);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -1140,12 +1065,12 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
     %# Figure size printed on paper
-    if enableA4PaperSizePlot == 1
+    %if enableA4PaperSizePlot == 1
         set(gcf, 'PaperUnits','centimeters');
         set(gcf, 'PaperSize',[XPlot YPlot]);
         set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
         set(gcf, 'PaperOrientation','portrait');
-    end
+    %end
     
     %# Plot title ---------------------------------------------------------
     %if enablePlotMainTitle == 1
@@ -1161,7 +1086,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_2_2_Run_%s_to_Run_%s_Trim_Tab_Resistance_Data_Trim_Thesis_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_2_Trim_Tab_Resistance_Data_Trim_Thesis_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;     
@@ -1177,7 +1102,9 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     startRun = 81;
     endRun   = 231;
     
-    %figurename = sprintf('Plot 3: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
+    %# --------------------------------------------------------------------
+    %# 3. 1,500 and 1,804 tonnes (Repeated Runs)
+    %# --------------------------------------------------------------------     
     figurename = 'Plot 3: 1,500 and 1,804 tonnes (Repeated Runs)';
     f = figure('Name',figurename,'NumberTitle','off');
     
@@ -1299,8 +1226,8 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     if enablePlotTitle == 1
         title('{\bf Total resitance coefficient, C_{Tm}}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Total resistance coeff., C_{Tm}*1000 [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance coeff., C_{Tm}*1000 (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -1332,8 +1259,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    %hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
-    hleg1 = legend('1,500t (0.5 deg)','1,500t (0 deg)','1,500t (-0.5 deg)','1,804t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)');
+    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -1401,8 +1327,8 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     if enablePlotTitle == 1
         title('{\bf Full Scale Effective power, P_{Es}}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Full scale speed [knots]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Effective power [MW]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Full scale speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Effective power (MW)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -1430,8 +1356,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    %hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
-    hleg1 = legend('1,500t (0.5 deg)','1,500t (0 deg)','1,500t (-0.5 deg)','1,804t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)');
+    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -1481,8 +1406,8 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     if enablePlotTitle == 1
         title('{\bf Heave}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave (mm)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -1510,8 +1435,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    %hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
-    hleg1 = legend('1,500t (0.5 deg)','1,500t (0 deg)','1,500t (-0.5 deg)','1,804t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)');
+    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
     set(hleg1,'Location','SouthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -1585,8 +1509,8 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     if enablePlotTitle == 1
         title('{\bf Running trim}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Running trim [deg]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Running trim (deg)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -1614,8 +1538,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    %hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
-    hleg1 = legend('1,500t (0.5 deg)','1,500t (0 deg)','1,500t (-0.5 deg)','1,804t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)');
+    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -1655,7 +1578,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_3_Run_%s_to_Run_%s_Summary_Resistance_Data_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_3_Summary_Resistance_Data_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -1676,7 +1599,6 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %# --------------------------------------------------------------------
     %# 4. Resistance and Effective Power
     %# --------------------------------------------------------------------    
-    %figurename = sprintf('Plot 4: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
     figurename = 'Plot 4: 1,500 and 1,804 tonnes (Averaged Repeated Runs)';
     f = figure('Name',figurename,'NumberTitle','off');
     
@@ -1726,8 +1648,11 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     setMarkerSize      = 10;
     setLineWidthMarker = 1;
     setLineWidth       = 1;
-    setLineStyle       = '-.';    
-    
+    setLineStyle       = '-.';
+    setLineStyle1      = '--';
+    setLineStyle2      = '-.';
+    setLineStyle3      = ':';
+
     % Fr vs. Ctm ----------------------------------------------------------
     subplot(1,2,1)
     
@@ -1793,12 +1718,12 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     end
     
     % Plotting
-    h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');
+    h = plot(x9,y9,'*-',x7,y7,'*-',x8,y8,'*-',x12,y12,'*-',x10,y10,'*-',x11,y11,'*-');
 %     if enablePlotTitle == 1
 %         title('{\bf Total resitance coefficient, C_{Tm}}','FontSize',setGeneralFontSize);
 %     end
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Total resistance coeff., C_{Tm}*1000 [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance coeff., C_{Tm}*1000 (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -1808,12 +1733,12 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gcf,'Color',[1,1,1]);
     
     %# Line, colors and markers
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
     
     %# Axis limitations
     minX  = 0.1;
@@ -1830,8 +1755,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    %hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
-    hleg1 = legend('1,500t (0.5 deg)','1,500t (0 deg)','1,500t (-0.5 deg)','1,804t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)');
+    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -1898,23 +1822,23 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     end
     
     % Plotting
-    h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');
+    h = plot(x9,y9,'*-',x7,y7,'*-',x8,y8,'*-',x12,y12,'*-',x10,y10,'*-',x11,y11,'*-');
 %     if enablePlotTitle == 1
-%         title('{\bf Full Scale Effective power, P_{Es}}','FontSize',setGeneralFontSize);
+%         title('{\bf Full scale effective power, P_{Es}}','FontSize',setGeneralFontSize);
 %     end
-    xlabel('{\bf Full scale speed [knots]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Effective power [MW]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Effective power (MW)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
     
     %# Line, colors and markers
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
     
     %# Axis limitations
     minX  = 5;
@@ -1931,8 +1855,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    %hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
-    hleg1 = legend('1,500t (0.5 deg)','1,500t (0 deg)','1,500t (-0.5 deg)','1,804t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)');
+    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -1972,22 +1895,21 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_4_Run_%s_to_Run_%s_Averaged_Resistance_Data_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_4_Averaged_Resistance_Data_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
     
     
     %# --------------------------------------------------------------------
-    %# 4.1 Heave and Running Trim
+    %# 4.1 Heave and Running Trim (Thesis Plot)
     %# --------------------------------------------------------------------
-    %figurename = sprintf('Plot 4: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
     figurename = 'Plot 4.1: 1,500 and 1,804 tonnes (Averaged Repeated Runs)';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
     
-    %if enableA4PaperSizePlot == 1
+%     if enableA4PaperSizePlot == 1
         set(gcf, 'PaperSize', [19 19]);
         set(gcf, 'PaperPositionMode', 'manual');
         set(gcf, 'PaperPosition', [0 0 19 19]);
@@ -1996,13 +1918,13 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
         set(gcf, 'PaperSize', [19 19]);
         set(gcf, 'PaperPositionMode', 'manual');
         set(gcf, 'PaperPosition', [0 0 19 19]);
-    %end
+%     end
     
     % Fonts and colours ---------------------------------------------------
     setGeneralFontName = 'Helvetica';
-    setGeneralFontSize = 14;
+    setGeneralFontSize = 16;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 12;
+    setLegendFontSize  = 14;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -2031,7 +1953,10 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     setMarkerSize      = 10;
     setLineWidthMarker = 1;
     setLineWidth       = 1;
-    setLineStyle       = '-.';        
+    setLineStyle       = '-';
+    setLineStyle1      = '--';
+    setLineStyle2      = '-.';
+    setLineStyle3      = ':';
     
     % Model speed vs. model heave (mm) ------------------------------------
     subplot(1,2,1)
@@ -2071,12 +1996,16 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     end
     
     % Plotting
-    h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');
+    if enableConnectMarkersPlot == 1
+        h = plot(x9,y9,'*-',x7,y7,'*-',x8,y8,'*-',x12,y12,'*-',x10,y10,'*-',x11,y11,'*-');   
+    else
+        h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');    
+    end
 %     if enablePlotTitle == 1
 %         title('{\bf Heave}','FontSize',setGeneralFontSize);
 %     end
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Heave [mm]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave (mm)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -2086,19 +2015,28 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gcf,'Color',[1,1,1]);    
     
     %# Line, colors and markers
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    if enableConnectMarkersPlot == 1
+        setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    else
+        setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    end
     
     %# Axis limitations
     minX  = 0.1;
     maxX  = 0.5;
     incrX = 0.1;
     minY  = -15;
-    maxY  = 5;
+    maxY  = 10;
     incrY = 5;
     set(gca,'XLim',[minX maxX]);
     set(gca,'XTick',minX:incrX:maxX);
@@ -2108,9 +2046,8 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    %hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
-    hleg1 = legend('1,500t (0.5 deg)','1,500t (0 deg)','1,500t (-0.5 deg)','1,804t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)');
-    set(hleg1,'Location','SouthWest');
+    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
+    set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
@@ -2182,23 +2119,36 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     end
     
     % Plotting
-    h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');
+    if enableConnectMarkersPlot == 1
+        h = plot(x9,y9,'*-',x7,y7,'*-',x8,y8,'*-',x12,y12,'*-',x10,y10,'*-',x11,y11,'*-');   
+    else
+        h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');    
+    end 
 %     if enablePlotTitle == 1
 %         title('{\bf Running trim}','FontSize',setGeneralFontSize);
 %     end
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Running trim [deg]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Running trim (deg)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
     
     %# Line, colors and markers
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    if enableConnectMarkersPlot == 1
+        setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    else
+        setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    end
     
     %# Axis limitations
     minX  = 0.1;
@@ -2215,8 +2165,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    %hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
-    hleg1 = legend('1,500t (0.5 deg)','1,500t (0 deg)','1,500t (-0.5 deg)','1,804t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)');
+    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -2235,20 +2184,20 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
     %# Figure size printed on paper
-    %if enableA4PaperSizePlot == 1
+%     if enableA4PaperSizePlot == 1
         set(gcf, 'PaperUnits','centimeters');
         set(gcf, 'PaperSize',[XPlot YPlot]);
         set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
         set(gcf, 'PaperOrientation','portrait');
-    %end
+%     end
     
     %# Plot title ---------------------------------------------------------
-    if enablePlotMainTitle == 1
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
-    end
+%     if enablePlotMainTitle == 1
+%         annotation('textbox', [0 0.9 1 0.1], ...
+%             'String', strcat('{\bf ', figurename, '}'), ...
+%             'EdgeColor', 'none', ...
+%             'HorizontalAlignment', 'center');
+%     end
     
     %# Save plots as PDF, PNG and EPS -------------------------------------
     % Enable renderer for vector graphics output
@@ -2256,10 +2205,216 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_4_1_Run_%s_to_Run_%s_Averaged_Heve_And_Running_Trim_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_4_1_Averaged_Heve_And_Running_Trim_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
+    
+    
+    %# --------------------------------------------------------------------
+    %# 4.2 Full scale effective power (Thesis Plot)
+    %# --------------------------------------------------------------------    
+    figurename = 'Plot 4.2: Full scale effective power';
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ------------------------------------------------
+    
+%     if enableA4PaperSizePlot == 1
+%         set(gcf, 'PaperSize', [19 19]);
+%         set(gcf, 'PaperPositionMode', 'manual');
+%         set(gcf, 'PaperPosition', [0 0 19 19]);
+%         
+%         set(gcf, 'PaperUnits', 'centimeters');
+%         set(gcf, 'PaperSize', [19 19]);
+%         set(gcf, 'PaperPositionMode', 'manual');
+%         set(gcf, 'PaperPosition', [0 0 19 19]);
+%     end
+    
+    % Fonts and colours ---------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 12;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. --------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    %setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
+    
+    %# Line, colors and markers
+    setMarkerSize      = 10;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-';
+    setLineStyle1      = '--';
+    setLineStyle2      = '-.';
+    setLineStyle3      = ':';
+
+    % SUBPLOT /////////////////////////////////////////////////////////////
+    %subplot(1,1,1)
+    
+    if length(avgcond7) ~= 0
+        x7 = avgcond7(:,15); y7 = avgcond7(:,26);
+        Raw_Data  = num2cell(y7);                                             % Double to cell conversion
+        Raw_Data  = cellfun(@(y) y/1000^2, Raw_Data, 'UniformOutput', false); % Apply functions to cell
+        y7 = cell2mat(Raw_Data);                                              % Cell to double conversion
+    else
+        x7 = 0; y7 = 0;
+    end
+    if length(avgcond8) ~= 0
+        x8 = avgcond8(:,15); y8 = avgcond8(:,26);
+        Raw_Data  = num2cell(y8);                                             % Double to cell conversion
+        Raw_Data  = cellfun(@(y) y/1000^2, Raw_Data, 'UniformOutput', false); % Apply functions to cell
+        y8 = cell2mat(Raw_Data);                                              % Cell to double conversion            
+    else
+        x8 = 0; y8 = 0;
+    end
+    if length(avgcond9) ~= 0
+        x9 = avgcond9(:,15); y9 = avgcond9(:,26);
+        Raw_Data  = num2cell(y9);                                             % Double to cell conversion
+        Raw_Data  = cellfun(@(y) y/1000^2, Raw_Data, 'UniformOutput', false); % Apply functions to cell
+        y9 = cell2mat(Raw_Data);                                              % Cell to double conversion            
+    else
+        x9 = 0; y9 = 0;
+    end
+    if length(avgcond10) ~= 0
+        x10 = avgcond10(:,15); y10 = avgcond10(:,26);
+        Raw_Data  = num2cell(y10);                                            % Double to cell conversion
+        Raw_Data  = cellfun(@(y) y/1000^2, Raw_Data, 'UniformOutput', false); % Apply functions to cell
+        y10 = cell2mat(Raw_Data);                                             % Cell to double conversion            
+    else
+        x10 = 0; y10 = 0;
+    end
+    if length(avgcond11) ~= 0
+        x11 = avgcond11(:,15); y11 = avgcond11(:,26);
+        Raw_Data  = num2cell(y11);                                            % Double to cell conversion
+        Raw_Data  = cellfun(@(y) y/1000^2, Raw_Data, 'UniformOutput', false); % Apply functions to cell
+        y11 = cell2mat(Raw_Data);                                             % Cell to double conversion            
+    else
+        x11 = 0; y11 = 0;
+    end
+    if length(avgcond12) ~= 0
+        x12 = avgcond12(:,15); y12 = avgcond12(:,26);
+        Raw_Data  = num2cell(y12);                                            % Double to cell conversion
+        Raw_Data  = cellfun(@(y) y/1000^2, Raw_Data, 'UniformOutput', false); % Apply functions to cell
+        y12 = cell2mat(Raw_Data);                                             % Cell to double conversion            
+    else
+        x12 = 0; y12 = 0;
+    end
+    
+    % Plotting
+    if enableConnectMarkersPlot == 1
+        h = plot(x9,y9,'*-',x7,y7,'*-',x8,y8,'*-',x12,y12,'*-',x10,y10,'*-',x11,y11,'*-');   
+    else
+        h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');    
+    end
+%     if enablePlotTitle == 1
+%         title('{\bf Full scale effective power, P_{Es}}','FontSize',setGeneralFontSize);
+%     end
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Effective power (MW)}','FontSize',setGeneralFontSize);
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);        
+    
+    %# Line, colors and markers
+    if enableConnectMarkersPlot == 1
+        setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+        setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    else
+        setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+        setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    end
+    
+    %# Axis limitations
+    minX  = 5;
+    maxX  = 30;
+    incrX = 5;
+    minY  = 0;
+    maxY  = 9;
+    incrY = 1;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','none');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# ********************************************************************
+    %# Save plot as PNG
+    %# ********************************************************************
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+%     if enableA4PaperSizePlot == 1
+%         set(gcf, 'PaperUnits','centimeters');
+%         set(gcf, 'PaperSize',[XPlot YPlot]);
+%         set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%         set(gcf, 'PaperOrientation','portrait');
+%     end
+    
+    %# Plot title ---------------------------------------------------------
+%     if enablePlotMainTitle == 1
+%         annotation('textbox', [0 0.9 1 0.1], ...
+%             'String', strcat('{\bf ', figurename, '}'), ...
+%             'EdgeColor', 'none', ...
+%             'HorizontalAlignment', 'center');
+%     end
+    
+    %# Save plots as PDF, PNG and EPS -------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Plot_4_2_Averaged_Effective_Power_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;    
     
 end % enableResistancePlot
 
@@ -2375,8 +2530,8 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     if enablePlotTitle == 1
         title('{\bf Total resistance, R_{Tm}}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf R_{Tm} [N]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf R_{Tm} (N)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -2409,7 +2564,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
     %# Legend
     %hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
-    hleg1 = legend('1,500t (0.5 deg)','1,500t (0 deg)','1,500t (-0.5 deg)','1,804t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)');
+    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -2471,8 +2626,8 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     if enablePlotTitle == 1
         title('{\bf Total resistance coeff., C_{Tm}}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf C_{Tm}*1000 [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf C_{Tm}*1000 (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -2505,7 +2660,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
     %# Legend
     %hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
-    hleg1 = legend('1,500t (0.5 deg)','1,500t (0 deg)','1,500t (-0.5 deg)','1,804t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)');
+    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -2567,8 +2722,8 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     if enablePlotTitle == 1
         title('{\bf Residual resistance coeff., C_{Rm}}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf C_{Rm}*1000 [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf C_{Rm}*1000 (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -2601,7 +2756,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     
     %# Legend
     %hleg1 = legend('Cond. 7: 1,500t (0 deg)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (0 deg)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
-    hleg1 = legend('1,500t (0.5 deg)','1,500t (0 deg)','1,500t (-0.5 deg)','1,804t (0.5 deg)','1,804t (0 deg)','1,804t (-0.5 deg)');
+    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -2641,7 +2796,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_5_Run_%s_to_Run_%s_Resistance_Data_Fr_vs_Ctm_and_Crm_Averaged_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_5_Resistance_Data_Fr_vs_Ctm_and_Crm_Averaged_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -2669,7 +2824,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     [m,n]    = size(cond13);
     
     %# --------------------------------------------------------------------
-    %# Prohaska array columns ---------------------------------------------
+    %# Prohaska array columns
     %# --------------------------------------------------------------------
     %  [1]  X-Axis; Fr^4/Cfm (Using ITTC 1957 for Cfm)
     %  [2]  Y-Axis; Ctm/Cfm  (Using ITTC 1957 for Cfm)
@@ -2686,7 +2841,10 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
         ittcprohaskadata(q,4) = cond13(q,10)/cond13(q,18);
     end
     
-    figurename = sprintf('Plot 6: Prohaska Runs, Form Factor, Deep Transom, Run %s to %s', num2str(startRun), num2str(endRun));
+    %# --------------------------------------------------------------------
+    %# 6. Prohaska Runs, Form Factor, Deep Transom (Thesis Plot)
+    %# --------------------------------------------------------------------        
+    figurename = 'Plot 6: Prohaska Runs, Form Factor, Deep Transom)';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -2872,7 +3030,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
         set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         hold on;
         h = plot(fitobjectITTC,'--');
-        legendInfo{2} = 'Cond. 13: ITTC 1957 (Fit)';
+        legendInfo{2} = 'Cond. 13: ITTC 1957 (linear fit)';
         set(h(1),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
         hold on;
         h = plot(x2,y2,'x');
@@ -2880,13 +3038,13 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
         set(h(1),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
         hold on;
         h = plot(fitobjectGrigson,'-.');
-        legendInfo{4} = 'Cond. 13: Grigson (Fit)';
-        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);        
+        legendInfo{4} = 'Cond. 13: Grigson (linear fit)';
+        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
     else
         h = plot(x1,y1,'*b',x2,y2,'xg',x1,polyv1,'-b',x2,polyv2,'-g');
     end
-    xlabel('{\bf F_{r}^4/C_{Fm} [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf C_{Tm}/C_{Fm} [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf F_{r}^4/C_{Fm} (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf C_{Tm}/C_{Fm} (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -2925,7 +3083,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     if enableCurveFittingToolboxPlot == 1
         hleg1 = legend(legendInfo);
     else
-        hleg1 = legend('Cond. 13: ITTC 1957','Cond. 13: Grigson','Cond. 13: ITTC 1957 (Fit)','Cond. 13: Grigson (Fit)');
+        hleg1 = legend('Cond. 13: ITTC 1957','Cond. 13: Grigson','Cond. 13: ITTC 1957 (linear fit)','Cond. 13: Grigson (linear fit)');
     end
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
@@ -2966,7 +3124,7 @@ if enableProhaskaPlot == 1 && length(cond13) ~= 0
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_6_Run_%s_to_Run_%s_Prohaska_Form_Factor_Resistance_Data_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_6_Prohaska_Form_Factor_Resistance_Data_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -3061,7 +3219,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x7,y71,'*',x7,y72,'*',x7,y73,'*',x7,y74,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 7: 1,500 tonnes, level}','FontSize',setGeneralFontSize);
@@ -3134,7 +3292,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x8,y81,'*',x8,y82,'*',x8,y83,'*',x8,y84,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 8: 1,500 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
@@ -3207,7 +3365,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x9,y91,'*',x9,y92,'*',x9,y93,'*',x9,y94,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 9: 1,500 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
@@ -3280,7 +3438,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x10,y101,'*',x10,y102,'*',x10,y103,'*',x10,y104,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 10: 1,804 tonnes, level}','FontSize',setGeneralFontSize);
@@ -3353,7 +3511,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x11,y111,'*',x11,y112,'*',x11,y113,'*',x11,y114,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 11: 1,804 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
@@ -3426,7 +3584,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x12,y121,'*',x12,y122,'*',x12,y123,'*',x12,y124,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 12: 1,804 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
@@ -3501,7 +3659,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_7_Run_%s_to_Run_%s_Errors_Resistance_Data_Repeated_Runs_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_7_Errors_Resistance_Data_Repeated_Runs_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -3596,7 +3754,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x7,y71,'*',x7,y72,'*',x7,y73,'*',x7,y74,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 7: 1,500 tonnes, level}','FontSize',setGeneralFontSize);
@@ -3669,7 +3827,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x8,y81,'*',x8,y82,'*',x8,y83,'*',x8,y84,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 8: 1,500 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
@@ -3742,7 +3900,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x9,y91,'*',x9,y92,'*',x9,y93,'*',x9,y94,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 9: 1,500 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
@@ -3815,7 +3973,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x10,y101,'*',x10,y102,'*',x10,y103,'*',x10,y104,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 10: 1,804 tonnes, level}','FontSize',setGeneralFontSize);
@@ -3888,7 +4046,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x11,y111,'*',x11,y112,'*',x11,y113,'*',x11,y114,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 11: 1,804 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
@@ -3961,7 +4119,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x12,y121,'*',x12,y122,'*',x12,y123,'*',x12,y124,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 12: 1,804 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
@@ -4036,7 +4194,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_8_Run_%s_to_Run_%s_Errors_Resistance_Data_Averaged_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_8_Errors_Resistance_Data_Averaged_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;    
@@ -4115,8 +4273,8 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     
     % Plotting
     bar(x7,y7,0.5);
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Mean of standard deviation [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Mean of standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 7: 1,500 tonnes, level}','FontSize',setGeneralFontSize);
     end
@@ -4171,8 +4329,8 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     
     % Plotting
     bar(x8,y8,0.5);
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Mean of standard deviation [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Mean of standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 8: 1,500 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
     end
@@ -4227,8 +4385,8 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     
     % Plotting
     bar(x9,y9,0.5);
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Mean of standard deviation [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Mean of standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 9: 1,500 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
     end
@@ -4283,8 +4441,8 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     
     % Plotting
     bar(x10,y10,0.5);
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Mean of standard deviation [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Mean of standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 10: 1,804 tonnes, level}','FontSize',setGeneralFontSize);
     end
@@ -4339,8 +4497,8 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     
     % Plotting
     bar(x11,y11,0.5);
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Mean of standard deviation [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Mean of standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 11: 1,804 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
     end
@@ -4395,8 +4553,8 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     
     % Plotting
     bar(x12,y12,0.5);
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Mean of standard deviation [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Mean of standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 12: 1,804 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
     end
@@ -4463,7 +4621,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_9_Run_%s_to_Run_%s_Fr_vs_Standard_Deviation_Mean_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_9_Fr_vs_Standard_Deviation_Mean_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;    
@@ -4479,7 +4637,6 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     startRun = 81;
     endRun   = 231;
     
-    %figurename = sprintf('Plot 10: 1,500 and 1,804 tonnes, Run %s to %s', num2str(startRun), num2str(endRun));
     figurename = 'Plot 10: 1,500 and 1,804 tonnes, Standard Deviation';
     f = figure('Name',figurename,'NumberTitle','off');
     
@@ -4550,8 +4707,8 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     
     % Plotting
     h = plot(x7sp,y7sp,'*',x7fl,y7fl,'*',x7al,y7al,'*',x7dr,y7dr,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Standard deviation [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 7: 1,500 tonnes, level}','FontSize',setGeneralFontSize);
     end
@@ -4614,8 +4771,8 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     
     % Plotting
     h = plot(x8sp,y8sp,'*',x8fl,y8fl,'*',x8al,y8al,'*',x8dr,y8dr,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Standard deviation [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 8: 1,500 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
     end
@@ -4678,8 +4835,8 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     
     % Plotting
     h = plot(x9sp,y9sp,'*',x9fl,y9fl,'*',x9al,y9al,'*',x9dr,y9dr,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Standard deviation [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 9: 1,500 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
     end
@@ -4742,8 +4899,8 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     
     % Plotting
     h = plot(x10sp,y10sp,'*',x10fl,y10fl,'*',x10al,y10al,'*',x10dr,y10dr,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Standard deviation [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 10: 1,804 tonnes, level}','FontSize',setGeneralFontSize);
     end
@@ -4806,8 +4963,8 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     
     % Plotting
     h = plot(x11sp,y11sp,'*',x11fl,y11fl,'*',x11al,y11al,'*',x11dr,y11dr,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Standard deviation [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 11: 1,804 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
     end
@@ -4870,8 +5027,8 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     
     % Plotting
     h = plot(x12sp,y12sp,'*',x12fl,y12fl,'*',x12al,y12al,'*',x12dr,y12dr,'*');
-    xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Standard deviation [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 12: 1,804 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
     end
@@ -4944,7 +5101,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_10_Run_%s_to_Run_%s_Fr_vs_Standard_Deviation_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_10_Fr_vs_Standard_Deviation_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;    
@@ -5102,8 +5259,8 @@ if enableRemVSCFmPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || lengt
         x18 = 0; y18 = 0;
     end    
     h = plot(x7,y7,'*',x8,y8,'*',x9,y9,'*',x10,y10,'*',x11,y11,'*',x12,y12,'*',x13,y13,'*',x14,y14,'*',x15,y15,'*',x16,y16,'*',x17,y17,'*',x18,y18,'*');
-    xlabel('{\bf Reynolds Number, R_{em} [-]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Frictional resistance coeff., C_{Fm}*10^{3} [-]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Reynolds Number, R_{em} (-)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Frictional resistance coeff., C_{Fm}*10^{3} (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -5176,7 +5333,7 @@ if enableRemVSCFmPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || lengt
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_11_Run_%s_to_Run_%s_Rem_vs_Cfm_Resistance_Data_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_11_Rem_vs_Cfm_Resistance_Data_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;    
@@ -5260,8 +5417,8 @@ if enableTSResDiffPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || leng
     if enablePlotTitle == 1
         title('{\bf Condition 7: 1,500 tonnes}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Ship speed [knots]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Total resistance, R_{Tm} [N]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance, R_{Tm} (N)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -5318,8 +5475,8 @@ if enableTSResDiffPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || leng
     if enablePlotTitle == 1
         title('{\bf Cindition 8: 1,500 tonnes}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Ship speed [knots]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Total resistance, R_{Tm} [N]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance, R_{Tm} (N)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -5376,8 +5533,8 @@ if enableTSResDiffPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || leng
     if enablePlotTitle == 1
         title('{\bf Condition 9: 1,500 tonnes}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Ship speed [knots]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Total resistance, R_{Tm} [N]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance, R_{Tm} (N)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -5434,8 +5591,8 @@ if enableTSResDiffPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || leng
     if enablePlotTitle == 1
         title('{\bf Condition 10: 1,804 tonnes}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Ship speed [knots]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Total resistance, R_{Tm} [N]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance, R_{Tm} (N)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -5492,8 +5649,8 @@ if enableTSResDiffPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || leng
     if enablePlotTitle == 1
         title('{\bf Condition 11: 1,804 tonnes}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Ship speed [knots]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Total resistance, R_{Tm} [N]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance, R_{Tm} (N)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -5550,8 +5707,8 @@ if enableTSResDiffPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || leng
     if enablePlotTitle == 1
         title('{\bf Condition 12: 1,804 tonnes}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Ship speed [knots]}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Total resistance, R_{Tm} [N]}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Total resistance, R_{Tm} (N)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -5620,7 +5777,7 @@ if enableTSResDiffPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || leng
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Plot_12_Run_%s_to_Run_%s_Compare_RTm_with_and_without_Turb_Stim_Resistance_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_12_Compare_RTm_with_and_without_Turb_Stim_Resistance_Plot.%s', '_averaged', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end    
     %close;      

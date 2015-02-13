@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 5, 2015
+%# Date       :  February 13, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -1677,12 +1677,12 @@ for k=startRun:endRun
     resultsArray(k, 43) = mean(ddata);                                          % DRAG: Average value (g)
     resultsArray(k, 44) = (max(ddata) - mean(ddata)) / max(ddata);              % DRAG: Percentage (max.-avg.) to max. value (exp. 3%) (g)
     % ---------------------------------------------------------------------
-    % Additional values added: 18/09/2013
+    % Additional values added: 18/09/2013: Statistics (Standard Deviation)
     % ---------------------------------------------------------------------
-    resultsArray(k, 45) = std(sdata);                                           % SPEED: Standard deviation (-)
-    resultsArray(k, 46) = std(tfwddata);                                        % LVDT (FWD): Standard deviation (-)
-    resultsArray(k, 47) = std(taftdata);                                        % LVDT (AFT): Standard deviation (-)
-    resultsArray(k, 48) = std(ddata);                                           % DRAG: Standard deviation (-)
+    resultsArray(k, 45) = std(sdata,1);                                         % SPEED: Standard deviation (-)
+    resultsArray(k, 46) = std(tfwddata,1);                                      % LVDT (FWD): Standard deviation (-)
+    resultsArray(k, 47) = std(taftdata,1);                                      % LVDT (AFT): Standard deviation (-)
+    resultsArray(k, 48) = std(ddata,1);                                         % DRAG: Standard deviation (-)
     % ---------------------------------------------------------------------
     % Additional values added: 04/08/2014
     % ---------------------------------------------------------------------
@@ -1703,6 +1703,13 @@ for k=startRun:endRun
     % ---------------------------------------------------------------------  
     resultsArray(k, 53) = (resultsArray(k, 8)/1000)*gravconst;
     
+    % ---------------------------------------------------------------------
+    % Additional values added: 13/02/2015: Statistics (Variance)
+    % ---------------------------------------------------------------------
+    resultsArray(k, 54) = var(sdata,1);                                         % SPEED: Variance (-)
+    resultsArray(k, 55) = var(tfwddata,1);                                      % LVDT (FWD): Variance (-)
+    resultsArray(k, 56) = var(taftdata,1);                                      % LVDT (AFT): Variance (-)
+    resultsArray(k, 57) = var(ddata,1);                                         % DRAG: Variance (-)
     
     % Command window output -----------------------------------------------
     if enableCommandWindowOutput == 1
