@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 13, 2015
+%# Date       :  February 16, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -77,7 +77,7 @@ enableBlackAndWhitePlot = 0;    % Show plot in black and white only
 enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
 
 % Individual plots
-enbaleTimeSeriesPlot    = 1;    % Time Series: Show plot
+enbaleTimeSeriesPlot    = 0;    % Time Series: Show plot
 enableThrustTorquePlot  = 0;    % Time Series: Show thrust and torque
 
 % Result summary
@@ -278,8 +278,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
     % [2:7]   Min, Max, Mean, Var, Std, Diff. max to mean >> STBD: DPT with kiel probe (V)
     % [8:13]  Min, Max, Mean, Var, Std, Diff. max to mean >> PORT: DPT with kiel probe (V)
     for k=startRun:endRun
-    %for k=27:27
-        
+
         %# Allow for 1 to become 01 for run numbers
         if k < 10
             filename = sprintf('%s0%s.run\\R0%s-02_moving.dat', runfilespath, num2str(k), num2str(k));
@@ -366,12 +365,27 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
         %# Get real units by applying calibration factors and zeros
         [CH_0_WaveProbe CH_0_WaveProbe_Mean] = analysis_realunits(Raw_CH_0_WaveProbe,CH_0_Zero,CH_0_CF);
         
+        %# Get real units by applying calibration factors and zeros
+        [CH_7_ThrustStbd CH_7_ThrustStbd_Mean] = analysis_realunits(Raw_CH_7_ThrustStbd,CH_7_Zero,CH_7_CF);
+        [CH_8_ThrustPort CH_8_ThrustPort_Mean] = analysis_realunits(Raw_CH_8_ThrustPort,CH_8_Zero,CH_8_CF);
+        
+        %# Get real units by applying calibration factors and zeros
+        [CH_9_TorqueStbd CH_9_TorqueStbd_Mean]   = analysis_realunits(Raw_CH_9_TorqueStbd,CH_9_Zero,CH_9_CF);
+        [CH_10_TorquePort CH_10_TorquePort_Mean] = analysis_realunits(Raw_CH_10_TorquePort,CH_10_Zero,CH_10_CF);
+        
+        % Wave probe data: 
+        %   x-axis = time
+        %   y-axis = real values
         x = timeData(startSamplePos:end-cutSamplesFromEnd);
         y = CH_0_WaveProbe(startSamplePos:end-cutSamplesFromEnd);
         
         %# Linear fit
         p  = polyfit(x,y,1);
         p2 = polyval(p,x);
+        
+        % Equation of fit
+        [fitobject,gof,output] = fit(x,y,'poly1');
+        cvalues                = coeffvalues(fitobject);
         
         % Slope of Linear fit => Y = (slope1 * X ) + slope2
         slope{i}   = polyfit(x,y,1);
@@ -386,7 +400,6 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
         
         %# Calulcate flow rate based on Linear fit
         flowrate = abs((slope1 * 1) + intercept1) - abs((slope1 * 0) + intercept1);     % Difference between flow rate at 1 and 0 second
-        
         
         %# START: MFR BASED ON 1s INTERVALS AND OVERALL ***********************
         
@@ -622,7 +635,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             %disp(linfiteqntxt);
             
             %# Legend
-            linfittxt = sprintf('Linear fit, %s',linfiteqn);
+            linfittxt = sprintf('Equation of fit: %s',linfiteqn);
             hleg1 = legend('Wave probe',linfittxt);
             set(hleg1,'Location','NorthWest');
             set(hleg1,'Interpreter','none');
@@ -691,11 +704,12 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             if ismember(k,stbdRuns) == 1
                 DS1    = sprintf('Run %s: STBD: Kiel Probe: Min = %s, Max = %s, Mean = %s, Var = %s, Std = %s, Diff. max to mean = %s%%',num2str(k),sprintf(setDec,min1),sprintf(setDec,max1),sprintf(setDec,avg1),sprintf(setDec,var1),sprintf(setDec,std1),sprintf('%.1f',DtM1));
                 disp(DS1);
+                disp('-------------------------------------------------');
             elseif ismember(k,portRuns)
                 DS2    = sprintf('Run %s: PORT: Kiel Probe: Min = %s, Max = %s, Mean = %s, Var = %s, Std = %s, Diff. max to mean = %s%%',num2str(k),sprintf(setDec,min2),sprintf(setDec,max2),sprintf(setDec,avg2),sprintf(setDec,var2),sprintf(setDec,std2),sprintf('%.1f',DtM2));
                 disp(DS2);
+                disp('-------------------------------------------------');
             end
-            disp('-------------------------------------------------');
             %end
             
             % Min, max band plot 1
@@ -737,15 +751,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
                 h = plot(x,y2,'-',x,kppolyvalport,'-');
                 hold on;
                 h2 = plot(plotArray2(:,1),plotArray2(:,2),'b-',plotArray2(:,3),plotArray2(:,4),'k-');
-            end            
-%             h = plot(x,y1,'-',x,kppolyvalstbd,'-',x,y2,'-',x,kppolyvalport,'-');
-%             hold on;
-%             h1 = plot(plotArray1(:,1),plotArray1(:,2),'-',plotArray1(:,3),plotArray1(:,4),'-');
-%             hold on;
-%             h2 = plot(plotArray2(:,1),plotArray2(:,2),'-',plotArray2(:,3),plotArray2(:,4),'-');
-%             if enablePlotTitle == 1
-%                 title('{\bf Kiel Probe Output}','FontSize',setGeneralFontSize);
-%             end
+            end
             xlabel('{\bf Time (s)}','FontSize',setGeneralFontSize);
             ylabel('{\bf Output [V]}','FontSize',setGeneralFontSize);
             grid on;
@@ -766,28 +772,12 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
                 set(h2(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
                 set(h2(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
             end
-%             set(h(1),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-%             set(h(2),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',2);
-%             set(h(3),'Color',setColor{2},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-%             set(h(4),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',2);
-%             % Min, max band
-%             set(h1(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-%             set(h1(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-%             set(h2(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-%             set(h2(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
             
             %# Axis limitations
             minX  = x(1);
             maxX  = x(end);
-            %incrX = 10;
             minY  = 0;
-            %if y2 > y1
-            %    maxY  = y2(end)+1;
-            %elseif y1 > y2
-            %    maxY  = y1(end)+1;
-            %else
-                maxY  = 5;
-            %end
+            maxY  = 5;
             incrY = 0.5;
             set(gca,'XLim',[minX maxX]);
             %set(gca,'XTick',minX:incrX:maxX);
@@ -803,8 +793,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             elseif ismember(k,portRuns)
                 %# PORT
                 hleg1 = legend('Port: Kiel probe','Port: Linear fit');
-            end            
-            %hleg1 = legend('Stbd: Kiel probe','Stbd: Linear fit','Port: Kiel probe','Port: Linear fit');
+            end
             set(hleg1,'Location','NorthWest');
             set(hleg1,'Interpreter','none');
             set(hleg1,'LineWidth',1);
@@ -818,14 +807,6 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             %# ----------------------------------------------------------------
             %# END: KIEL PROBE
             %# ////////////////////////////////////////////////////////////////
-            
-            %# Get real units by applying calibration factors and zeros
-            [CH_7_ThrustStbd CH_7_ThrustStbd_Mean] = analysis_realunits(Raw_CH_7_ThrustStbd,CH_7_Zero,CH_7_CF);
-            [CH_8_ThrustPort CH_8_ThrustPort_Mean] = analysis_realunits(Raw_CH_8_ThrustPort,CH_8_Zero,CH_8_CF);
-            
-            %# Get real units by applying calibration factors and zeros
-            [CH_9_TorqueStbd CH_9_TorqueStbd_Mean]   = analysis_realunits(Raw_CH_9_TorqueStbd,CH_9_Zero,CH_9_CF);
-            [CH_10_TorquePort CH_10_TorquePort_Mean] = analysis_realunits(Raw_CH_10_TorquePort,CH_10_Zero,CH_10_CF);
             
             if enableThrustTorquePlot == 1
                 %# ////////////////////////////////////////////////////////////////
@@ -981,12 +962,12 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             end
             
             %# Plot title -----------------------------------------------------
-%             if enablePlotMainTitle == 1
-%                 annotation('textbox', [0 0.9 1 0.1], ...
-%                     'String', strcat('{\bf ', figurename, '}'), ...
-%                     'EdgeColor', 'none', ...
-%                     'HorizontalAlignment', 'center');
-%             end
+            %             if enablePlotMainTitle == 1
+            %                 annotation('textbox', [0 0.9 1 0.1], ...
+            %                     'String', strcat('{\bf ', figurename, '}'), ...
+            %                     'EdgeColor', 'none', ...
+            %                     'HorizontalAlignment', 'center');
+            %             end
             
             %# Save plots as PDF, PNG and EPS ---------------------------------
             % Enable renderer for vector graphics output
@@ -1027,6 +1008,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
         %[17] Mass flow rate (mean, 1s intervals)                       (Kg/s)
         %[18] Mass flow rate (overall, Q/t)                             (Kg/s)
         %[19] Diff. mass flow rate (mean, 1s intervals)/(overall, Q/t)  (%)
+        %[20] Mass flow rate (CROSS-CHECK)                              (Kg/s)
         
         resultsArray(k, 1) = k;                                                          % Run No.
         resultsArray(k, 2) = round(length(timeData) / timeData(end));                    % FS (Hz)
@@ -1050,6 +1032,13 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
         resultsArray(k, 17) = abs(getMeanMFR);                                           % Mass flow rate (mean, 1s intervals) (Kg/s)
         resultsArray(k, 18) = abs(getOverallMFR);                                        % Mass flow rate (overall, Q/t) (Kg/s)
         resultsArray(k, 19) = abs(getCalDiffMFR);                                        % Diff. mass flow rate (mean, 1s intervals)/(overall, Q/t) (%)
+        
+        % Mass Flow Rate - Cross-Check
+        setSampleTime1 = 20;
+        setSampleTime2 = 30;
+        sample1 = cvalues(1)*setSampleTime1+cvalues(2);
+        sample2 = cvalues(1)*setSampleTime2+cvalues(2);
+        resultsArray(k, 20) = (sample2-sample1)/(setSampleTime2-setSampleTime1);         % Mass flow rate (CROSS-CHECK) (Kg/s)
         
         if enableCWResultSummary == 1
             %# Prepare strings for display
@@ -1089,6 +1078,9 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             end % enableRPMandPowerCalc
             disp('/////////////////////////////////////////////////');
         end % enableCWResultSummary
+        
+        disp(sprintf('Run %s: Succssfully processed...',num2str(k)));
+        
     end
     
     %# ************************************************************************
@@ -1103,7 +1095,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
     %# ------------------------------------------------------------------------
     %# END Write results to DAT or TXT file
     %# ************************************************************************
-    
+
 else
     
     statisticsArray = results;
@@ -1220,13 +1212,13 @@ if msa > 1
     set(gcf,'Color',[1,1,1]);
     
     %# Legend
-%     hleg1 = legend('Starboard','Port');
-%     set(hleg1,'Location','NorthWest');
-%     %set(hleg1,'Interpreter','none');
-%     set(hleg1, 'Interpreter','tex');
-%     set(hleg1,'LineWidth',1);
-%     set(hleg1,'FontSize',setLegendFontSize);
-%     %legend boxoff;
+    %     hleg1 = legend('Starboard','Port');
+    %     set(hleg1,'Location','NorthWest');
+    %     %set(hleg1,'Interpreter','none');
+    %     set(hleg1, 'Interpreter','tex');
+    %     set(hleg1,'LineWidth',1);
+    %     set(hleg1,'FontSize',setLegendFontSize);
+    %     %legend boxoff;
     
     %# Font sizes and border --------------------------------------------------
     
@@ -1271,17 +1263,17 @@ if msa > 1
     set(gcf,'Color',[1,1,1]);
     
     %# Legend
-%     hleg1 = legend('Starboard','Port');
-%     set(hleg1,'Location','NorthWest');
-%     %set(hleg1,'Interpreter','none');
-%     set(hleg1, 'Interpreter','tex');
-%     set(hleg1,'LineWidth',1);
-%     set(hleg1,'FontSize',setLegendFontSize);
-%     %legend boxoff;
+    %     hleg1 = legend('Starboard','Port');
+    %     set(hleg1,'Location','NorthWest');
+    %     %set(hleg1,'Interpreter','none');
+    %     set(hleg1, 'Interpreter','tex');
+    %     set(hleg1,'LineWidth',1);
+    %     set(hleg1,'FontSize',setLegendFontSize);
+    %     %legend boxoff;
     
     %# Font sizes and border --------------------------------------------------
     
-    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     %# Subplot #3 -------------------------------------------------------------
     subplot(2,2,3);
@@ -1330,19 +1322,19 @@ if msa > 1
     set(gcf,'Color',[1,1,1]);
     
     %# Legend
-%     hleg1 = legend('Starboard','Port');
-%     set(hleg1,'Location','NorthWest');
-%     %set(hleg1,'Interpreter','none');
-%     set(hleg1, 'Interpreter','tex');
-%     set(hleg1,'LineWidth',1);
-%     set(hleg1,'FontSize',setLegendFontSize);
-%     %legend boxoff;
+    %     hleg1 = legend('Starboard','Port');
+    %     set(hleg1,'Location','NorthWest');
+    %     %set(hleg1,'Interpreter','none');
+    %     set(hleg1, 'Interpreter','tex');
+    %     set(hleg1,'LineWidth',1);
+    %     set(hleg1,'FontSize',setLegendFontSize);
+    %     %legend boxoff;
     
     %# Font sizes and border --------------------------------------------------
     
     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
-   %# Subplot #4 -------------------------------------------------------------
+    %# Subplot #4 -------------------------------------------------------------
     subplot(2,2,4);
     
     %# X and Y axis -----------------------------------------------------------
@@ -1389,17 +1381,17 @@ if msa > 1
     set(gcf,'Color',[1,1,1]);
     
     %# Legend
-%     hleg1 = legend('Starboard','Port');
-%     set(hleg1,'Location','NorthWest');
-%     %set(hleg1,'Interpreter','none');
-%     set(hleg1, 'Interpreter','tex');
-%     set(hleg1,'LineWidth',1);
-%     set(hleg1,'FontSize',setLegendFontSize);
-%     %legend boxoff;
+    %     hleg1 = legend('Starboard','Port');
+    %     set(hleg1,'Location','NorthWest');
+    %     %set(hleg1,'Interpreter','none');
+    %     set(hleg1, 'Interpreter','tex');
+    %     set(hleg1,'LineWidth',1);
+    %     set(hleg1,'FontSize',setLegendFontSize);
+    %     %legend boxoff;
     
     %# Font sizes and border --------------------------------------------------
     
-    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
     %# ************************************************************************
     %# Save plot as PNG

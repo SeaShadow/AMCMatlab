@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 13, 2015
+%# Date       :  February 16, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -424,13 +424,14 @@ end
 
 
 %# ************************************************************************
-%# START Kiel probe vs. mass flow rate
+%# START Kiel probe vs. mass flow rate (from analysis_stats.m)
 %# ------------------------------------------------------------------------
 SetMFRvsKPDataFilePath = '..\..\..\2014 August - Flow rate measuements REDUX\_Run files\_Matlab analysis\SummaryMFRSept2014Array.dat';
 if exist(SetMFRvsKPDataFilePath, 'file') == 2
     % Load file into shaftSpeedList variable
     load(SetMFRvsKPDataFilePath);
     
+    % Create polynomial 4 fit
     [fitobjectP,gofP,outputP]  = fit(SummaryMFRSept2014Array(:,2),SummaryMFRSept2014Array(:,3),'poly4');
     cvaluesMFRvsKPSept2014Port = coeffvalues(fitobjectP);
     
@@ -467,6 +468,7 @@ if exist(SetMFRvsKPDataFilePath, 'file') == 2
     %         disp(EoFEqn);
     %     end
     
+    % Create polynomial 4 fit
     [fitobjectS,gofS,outputS]  = fit(SummaryMFRSept2014Array(:,4),SummaryMFRSept2014Array(:,5),'poly4');
     cvaluesMFRvsKPSept2014Stbd = coeffvalues(fitobjectS);
     

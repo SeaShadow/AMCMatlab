@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 1, 2015
+%# Date       :  February 16, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -138,37 +138,96 @@ end
 
 
 %# ************************************************************************
-%# START First and second wave prove calibration results
+%# START Import Wave Calibration Files
 %# ------------------------------------------------------------------------
-if exist('WPCalibrations.mat', 'file') == 2
-    % Load file into shaftSpeedList variable
-    load('WPCalibrations.mat');
-    
-    WPCalStart = [];
-    WPCalEnd   = [];
-    
-    % First Calibration (Start)
-    WPCalStart(:,1) = WPCalibrations(:,1);
-    WPCalStart(:,2) = WPCalibrations(:,2);
-    
-    % Second Calibration (Start)
-    WPCalEnd(:,1)   = WPCalibrations(:,1);
-    WPCalEnd(:,2)   = WPCalibrations(:,3);
-else
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    disp('WARNING: Required data file (June2013FRMT.mat) does not exist!');
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+
+% Number of headerlines and filespath
+headerlines  = 15;           % Number of headerlines to data
+runfilespath = '..\\..\\';   % Relative path from Matlab directory
+
+% Filepath and filenames
+filename1 = sprintf('%s%s\\%s', runfilespath, 'DAQ TaskStore', '00_Ch0_WP Gain 9.4_2 Filter 1Hz 020914_01.cal');
+filename2 = sprintf('%s%s\\%s', runfilespath, 'DAQ TaskStore', '00_Ch0_WP Gain 9.4_2 Filter 1Hz 040914_02.cal');
+
+%# ------------------------------------------------------------------------
+%# Break Analysis if Wave Prove Calibration Files Do Not Exist
+%# ------------------------------------------------------------------------
+
+if exist(filename1, 'file') ~= 2
+    disp('----------------------------------------------------------------------------------');
+    disp('File ..\..\TaskStore\00_Ch0_WP Gain 9.4_2 Filter 1Hz 020914_01.cal does not exist!');
+    disp('----------------------------------------------------------------------------------');
     break;
 end
+
+if exist(filename2, 'file') ~= 2
+    disp('----------------------------------------------------------------------------------');
+    disp('File ..\..\TaskStore\00_Ch0_WP Gain 9.4_2 Filter 1Hz 020914_01.cal does not exist!');
+    disp('----------------------------------------------------------------------------------');
+    break;
+end
+
 %# ------------------------------------------------------------------------
-%# START First and second wave prove calibration results
+%# First Wave Probe Calibration - 02/09/2014
+%# ------------------------------------------------------------------------
+
+[pathstr, name, ext] = fileparts(filename1);     % Get file details like path, filename and extension
+
+%# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
+zAndCFData = importdata(filename1, ' ', headerlines);
+zAndCF     = zAndCFData.data;
+
+%# Time series
+AllRawChannelData = importdata(filename1, ' ', headerlines);
+
+%# Create new variables in the base workspace from those fields.
+vars = fieldnames(AllRawChannelData);
+for i = 1:length(vars)
+    assignin('base', vars{i}, AllRawChannelData.(vars{i}));
+end
+
+%# Columns as variables (RAW DATA)
+MassIncrement      = data(:,1);       % Change in water mass (i.e. 25 Kg icrements)
+Raw_CH_0_WaveProbe = data(:,2);       % Wave probe voltage
+Raw_CH_0_Slope     = data(:,3);       % Slope
+
+WPCalibration1 = data;
+
+%# ------------------------------------------------------------------------
+%# Second Wave Probe Calibration - 04/09/2014
+%# ------------------------------------------------------------------------
+
+[pathstr, name, ext] = fileparts(filename2);     % Get file details like path, filename and extension
+
+%# Import the file: importdata(FILENAME, DELIMETER, NUMBER OF HEADERLINES)
+zAndCFData = importdata(filename2, ' ', headerlines);
+zAndCF     = zAndCFData.data;
+
+%# Time series
+AllRawChannelData = importdata(filename2, ' ', headerlines);
+
+%# Create new variables in the base workspace from those fields.
+vars = fieldnames(AllRawChannelData);
+for i = 1:length(vars)
+    assignin('base', vars{i}, AllRawChannelData.(vars{i}));
+end
+
+%# Columns as variables (RAW DATA)
+MassIncrement      = data(:,1);       % Change in water mass (i.e. 25 Kg icrements)
+Raw_CH_0_WaveProbe = data(:,2);       % Wave probe voltage
+Raw_CH_0_Slope     = data(:,3);       % Slope
+
+WPCalibration2 = data;
+
+%# ------------------------------------------------------------------------
+%# END Import Wave Calibration Files
 %# ************************************************************************
 
 
 %# ************************************************************************
-%# Plot 1: Wave Probe Calibrations
+%# Plot 1: Wave Probe Calibrations 02/09/2014 and 04/09/2014
 %# ************************************************************************
-figurename = 'Plot 1: Wave Probe Calibration';
+figurename = 'Plot 1: Wave Probe Calibrations 02/09/2014 and 04/09/2014';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ------------------------------------------------
@@ -217,42 +276,45 @@ setMarkerSize      = 12;
 setLineWidthMarker = 2;
 setLineWidth       = 2;
 setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
 
 %# SUBPLOT ////////////////////////////////////////////////////////////////
 %subplot(1,1,1)
 
 %# X and Y axis -----------------------------------------------------------
 
-x1 = WPCalStart(:,2);
-y1 = WPCalStart(:,1);
+x1 = WPCalibration1(:,2);
+y1 = WPCalibration1(:,1);
 
 % Model data - Linear fit
 [fitobject1,gof1,output1] = fit(x1,y1,'poly1');
-cvalues1 = coeffvalues(fitobject1);
-cnames1  = coeffnames(fitobject1);
-output1  = formula(fitobject1);
+cvalues1     = coeffvalues(fitobject1);
+cnames1      = coeffnames(fitobject1);
+output1      = formula(fitobject1);
+FirstCalText = sprintf('\\bf 02/09/2014: \\rm y = %sx+%s, R^2=%s',sprintf('%.2f',cvalues1(1)),sprintf('%.2f',cvalues1(2)),sprintf('%.1f',gof1.rsquare));
 
-FirstCalText = sprintf('\\bf First equation of fit: \\rm y = %sx+%s, R^2=%s',sprintf('%.1f',cvalues1(1)),sprintf('%.1f',cvalues1(2)),sprintf('%.1f',gof1.rsquare));
-
-x2 = WPCalEnd(:,2);
-y2 = WPCalEnd(:,1);
+x2 = WPCalibration2(:,2);
+y2 = WPCalibration2(:,1);
 
 % Model data - Linear fit
 [fitobject2,gof2,output2] = fit(x2,y2,'poly1');
-cvalues2 = coeffvalues(fitobject2);
-cnames2  = coeffnames(fitobject2);
-output2  = formula(fitobject2);
-
-SecondCalText = sprintf('\\bf Second equation of fit: \\rm y = %sx+%s, R^2=%s',sprintf('%.1f',cvalues2(1)),sprintf('%.1f',cvalues2(2)),sprintf('%.1f',gof2.rsquare));
+cvalues2      = coeffvalues(fitobject2);
+cnames2       = coeffnames(fitobject2);
+output2       = formula(fitobject2);
+SecondCalText = sprintf('\\bf 04/09/2014: \\rm y = %sx+%s, R^2=%s',sprintf('%.2f',cvalues2(1)),sprintf('%.2f',cvalues2(2)),sprintf('%.1f',gof2.rsquare));
 
 %# Plotting ---------------------------------------------------------------
-h1 = plot(fitobject1,'k--',x1,y1,'*');
-legendInfo{1} = 'Calibration 1';
-legendInfo{2} = 'Calibration 1 (linear fit)';
+% First calibration (02/09/2014) and second calibration (04/09/2014)
+h1 = plot(x1,y1,'*',x2,y2,'*');
+legendInfo{1} = 'Calibration 1 (02/09/2014)';
+legendInfo{2} = 'Calibration 2 (04/09/2014)';
+% Linear fit
 hold on;
-h2 = plot(fitobject2,'k-.',x2,y2,'*');
-legendInfo{3} = 'Calibration 2';
-legendInfo{4} = 'Calibration 2 (linear fit)';
+h2 = plot(fitobject1,'k--');
+hold on;
+h3 = plot(fitobject2,'k-.');
 xlabel('{\bf Analog wave probe output (Volt)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Mass of water (Kg)}','FontSize',setGeneralFontSize);
 %if enablePlotTitle == 1
@@ -263,16 +325,14 @@ box on;
 axis square;
 
 %# Line, colors and markers
-%set(h1(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h1(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-%set(h2(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h2(1),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h1(1),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h1(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize-2,'LineWidth',setLineWidthMarker);
 % set(h1,'marker','+');
 % set(h1,'linestyle','none');
 
-%# Annotations
-text(-6.5,80,FirstCalText,'FontSize',12,'color','k','FontWeight','normal');
-text(-6.5,30,SecondCalText,'FontSize',12,'color','k','FontWeight','normal');
+%# Annotations (i.e. custom text on plot)
+text(-5.5,90,FirstCalText,'FontSize',12,'color','k','FontWeight','normal');
+text(-5.5,60,SecondCalText,'FontSize',12,'color','k','FontWeight','normal');
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -282,9 +342,9 @@ set(gcf,'Color',[1,1,1]);
 minX  = -10;
 maxX  = 4;
 incrX = 1;
-minY  = -100;
-maxY  = 600;
-incrY = 100;
+minY  = 0;
+maxY  = 550;
+incrY = 50;
 set(gca,'XLim',[minX maxX]);
 set(gca,'XTick',minX:incrX:maxX);
 set(gca,'YLim',[minY maxY]);
@@ -293,8 +353,6 @@ set(gca,'YTick',minY:incrY:maxY);
 %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 
 %# Legend
-%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-%hleg1 = legend('First calibration (start of test)','Second calibration (end of testing)');
 hleg1 = legend(legendInfo);
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 13, 2015
+%# Date       :  February 16, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -144,8 +144,11 @@ else
     mkdir(fPath);
 end
 
+%# _kp_vs_mass_flow_rate directory ----------------------------------------
+setDirName = '_plots/_kp_vs_mass_flow_rate';
+
 %# Repeat directory
-fPath = sprintf('_plots/%s', '_kp_vs_mass_flow_rate');
+fPath = setDirName;
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
@@ -153,7 +156,7 @@ else
 end
 
 %# PDF directory
-fPath = sprintf('_plots/%s/%s', '_kp_vs_mass_flow_rate', 'PDF');
+fPath = sprintf('%s/%s', setDirName, 'PDF');
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
@@ -161,7 +164,7 @@ else
 end
 
 %# PNG directory
-fPath = sprintf('_plots/%s/%s', '_kp_vs_mass_flow_rate', 'PNG');
+fPath = sprintf('%s/%s', setDirName, 'PNG');
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
@@ -169,7 +172,7 @@ else
 end
 
 %# EPS directory
-fPath = sprintf('_plots/%s/%s', '_kp_vs_mass_flow_rate', 'EPS');
+fPath = sprintf('%s/%s', setDirName, 'EPS');
 if isequal(exist(fPath, 'dir'),7)
     % Do nothing as directory exists
 else
@@ -584,7 +587,7 @@ if enableBlackAndWhitePlot == 1
 end
 
 % Markers sizes, etc.
-setMarkerSize      = 10;
+setMarkerSize      = 12;
 setLineWidth       = 1;
 setLineWidth1      = 2;
 setLineWidthMarker = 1;
@@ -594,6 +597,7 @@ setLineStyle1      = '--';
 setLineStyle2      = '--';
 setLineStyle3      = '-.';
 setLineStyle4      = '-.';
+setLineStyle5      = ':';
 
 %# Subplot ////////////////////////////////////////////////////////////////
 %subplot(1,1,1);
@@ -1170,104 +1174,28 @@ if enableCurveFittingToolboxPlot == 1
     
 else
     
-    % Port WJ system (June 2013)
-    h = plot(xPort13,yPort13,'*');
+    h = plot(xPort13,yPort13,'*',xStbd13,yStbd13,'*',xPort14,yPort14,'*',xStbd14,yStbd14,'*');
+    % Legend entries
     legendInfo{1} = 'Port WJ system (June 2013)';
+    legendInfo{2} = 'Stbd WJ system (June 2013)';
+    legendInfo{3} = 'Port WJ system (Sept. 2014)';
+    legendInfo{4} = 'Stbd WJ system (Sept. 2014)';
+    %# Line, colors and markers
     set(h(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(2),'Color',setColor{5},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(3),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    set(h(4),'Color',setColor{3},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     hold on;
-    % Fit
+    % Curve fitting
     if enableCurveFittingPlot == 1
-        h = plot(xPort13,pvPort13,'-.');
-        legendInfo{2} = 'Port WJ system (June 2013) Fit';
-        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-        hold on;
+        h1 = plot(xPort13,pvPort13,'-.',xStbd13,pvStbd13,'-.',xPort14,pvPort14,'-.',xStbd14,pvStbd14,'-.');
+        %# Line, colors and markers
+        set(h1(1),'Color',setColor{10},'LineStyle',setLineStyle5,'linewidth',setLineWidth);
+        set(h1(2),'Color',setColor{10},'LineStyle',setLineStyle5,'linewidth',setLineWidth);
+        set(h1(3),'Color',setColor{10},'LineStyle',setLineStyle5,'linewidth',setLineWidth);
+        set(h1(4),'Color',setColor{10},'LineStyle',setLineStyle5,'linewidth',setLineWidth);
     end % enableCurveFittingPlot
-    
-    % Stbd (June 2013)
-    h = plot(xStbd13,yStbd13,'*');
-    if enableCurveFittingPlot == 1
-        legendInfo{3} = 'Stbd WJ system (June 2013)';
-    else
-        legendInfo{2} = 'Stbd WJ system (June 2013)';
-    end
-    set(h(1),'Color',setColor{5},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    hold on;
-    % Fit
-    if enableCurveFittingPlot == 1
-        h = plot(xStbd13,pvStbd13,'-.');
-        legendInfo{4} = 'Stbd WJ system (June 2013) Fit';
-        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
-        hold on;
-    end % enableCurveFittingPlot
-    
-    % Port WJ system (Sept. 2014)
-    h = plot(xPort14,yPort14,'*');
-    if enableCurveFittingPlot == 1
-        legendInfo{5} = 'Port WJ system (Sept. 2014)';
-    else
-        legendInfo{3} = 'Port WJ system (Sept. 2014)';
-    end
-    set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    % Fit
-    if enableCurveFittingPlot == 1
-        hold on;
-        h = plot(xPort14,pvPort14,'-.');
-        legendInfo{6} = 'Port WJ system (Sept. 2014) Fit';
-        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle3,'linewidth',setLineWidth);
-    end % enableCurveFittingPlot
-    
-    % Stbd WJ system (Sept. 2014)
-    h = plot(xStbd14,yStbd14,'*');
-    if enableCurveFittingPlot == 1
-        legendInfo{7} = 'Stbd WJ system (Sept. 2014)';
-    else
-        legendInfo{4} = 'Stbd WJ system (Sept. 2014)';
-    end
-    set(h(1),'Color',setColor{3},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    % Fit
-    hold on;
-    if enableCurveFittingPlot == 1
-        h = plot(xStbd14,pvStbd14,'-.');
-        legendInfo{8} = 'Stbd WJ system (Sept. 2014) Fit';
-        set(h(1),'Color',setColor{10},'LineStyle',setLineStyle4,'linewidth',setLineWidth);
-    end % enableCurveFittingPlot
-    
-    % Averaged Port and Stbd WJ system (Sept. 2014)
-    if enableAvgPortStbdPlot == 1
-        h = plot(xPortStbdAvg14,yPortStbdAvg14,'*');
-        if enableCurveFittingPlot == 1
-            legendInfo{9} = 'Averaged (Sept. 2014)';
-        else
-            legendInfo{5} = 'Averaged (Sept. 2014)';
-        end
-        set(h(1),'Color',setColor{6},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-        % Fit
-        if enableCurveFittingPlot == 1
-            hold on;
-            h = plot(xPortStbdAvg14,pvPortStbd14,'-.');
-            legendInfo{10} = 'Averaged (Sept. 2014) Fit';
-            set(h(1),'Color',setColor{6},'LineStyle','--','LineWidth',setLineWidth);
-        end
-    end % enableAvgPortStbdPlot
-    
-    % Error bars
-    if enableErrorBarPlot == 1
-        % Error Bars: Port WJ system (Sept. 2014)
-        hold on;
-        delta = repeatedRunsDescStatArray(:,5);
-        h1    = errorbar(xPort14,yPort14,delta,'k');
-        set(h1,'marker','+');
-        set(h1,'linestyle','none');
-        hold on;
-        
-        % Error Bars: Stbd WJ system (Sept. 2014)
-        hold on;
-        delta = repeatedRunsDescStatArray(:,20);
-        h1    = errorbar(xStbd14,yStbd14,delta,'k');
-        set(h1,'marker','+');
-        set(h1,'linestyle','none');
-    end % enableErrorBarPlot
-    
+
 end % enableCurveFittingToolboxPlot
 
 % Cross check SummaryMFRSept2014Array data
@@ -1282,15 +1210,6 @@ ylabel('{\bf Mass flow rate (Kg/s)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
-
-% Box thickness, axes font size, etc. -------------------------------------
-set(gca,'TickDir','in',...
-    'FontSize',12,...
-    'LineWidth',2,...
-    'FontName',setGeneralFontName,...
-    'Clipping','off',...
-    'Color',[1 1 1],...
-    'LooseInset',get(gca,'TightInset'));
 
 %# Set plot figure background to a defined color --------------------------
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -1365,7 +1284,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Run_%s_to_%s_Kiel_Probe_vs_Mass_Flow_Rate_Plot.%s', '_kp_vs_mass_flow_rate', setFileFormat{k}, num2str(minRun), num2str(maxRun), setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/MS_Kiel_Probe_vs_Mass_Flow_Rate_Plot.%s', '_kp_vs_mass_flow_rate', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
