@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 16, 2015
+%# Date       :  February 17, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -397,6 +397,7 @@ if exist('resultsArrayBlm_Repo.dat', 'file') == 2
     
     %# Remove zero rows
     resultsArrayBlm(all(resultsArrayBlm==0,2),:)=[];
+    
 else
     
     %# ////////////////////////////////////////////////////////////////////////
@@ -611,10 +612,6 @@ else
         x2 = CH_20_PSTOutboard_Mean;
         
         % Start Curve fitting based on EoF --------------------------------
-        
-        % Old values (Excel based)
-        %InbVTSFittingE = -0.0328*x1^4+0.2521*x1^3-0.7873*x1^2+1.7721*x1+0.4389;
-        %OubVTSFittingE = -0.0328*x2^4+0.2521*x2^3-0.7873*x2^2+1.7721*x2+0.4389;
         
         % New values (Matlab based)
         InbVTSFittingM = -0.0305*x1^4+0.2396*x1^3-0.7659*x1^2+1.7608*x1+0.4403;
