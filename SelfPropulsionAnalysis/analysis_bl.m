@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 17, 2015
+%# Date       :  February 20, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -745,7 +745,7 @@ else
             %# Legend
             hleg1 = legend('Output (real units)','Trendline');
             set(hleg1,'Location','NorthEast');
-            set(hleg1,'Interpreter','none');
+            set(hleg1,'Interpreter','tex');
             set(hleg1,'LineWidth',1);
             set(hleg1,'FontSize',setLegendFontSize);
             %legend boxoff;
@@ -793,7 +793,7 @@ else
             %# Legend
             hleg1 = legend('Output (real units)','Trendline');
             set(hleg1,'Location','NorthEast');
-            set(hleg1,'Interpreter','none');
+            set(hleg1,'Interpreter','tex');
             set(hleg1,'LineWidth',1);
             set(hleg1,'FontSize',setLegendFontSize);
             %legend boxoff;
@@ -849,7 +849,7 @@ else
             %# Legend
             hleg1 = legend('Inboard Output','Outboard Output','Inboard Trendline','Outboard Trendline');
             set(hleg1,'Location','NorthEast');
-            set(hleg1,'Interpreter','none');
+            set(hleg1,'Interpreter','tex');
             set(hleg1,'LineWidth',1);
             set(hleg1,'FontSize',setLegendFontSize);
             %legend boxoff;
@@ -871,7 +871,7 @@ else
                 mininbpst = sprintf('%s:: Inboard PST (Minimum): %s (V)', runno, sprintf('%.2f',min(CHData)));
                 maxinbpst = sprintf('%s:: Inboard PST (Maximum): %s (V)', runno, sprintf('%.2f',max(CHData)));
                 ptainbpst = sprintf('%s:: Diff. min to avg: %s (percent)%', runno, sprintf('%.2f',100*abs(1-(min(CHData)/MeanData))));
-                stdinbpst = sprintf('%s:: Standard deviation: %s (V)', runno, sprintf('%.4f',std(CHData)));
+                stdinbpst = sprintf('%s:: Standard deviation: %s (V)', runno, sprintf('%.4f',std(CHData,1)));
                 
                 disp(avginbpst);
                 disp(mininbpst);
@@ -889,7 +889,7 @@ else
                 minoutbbpst = sprintf('%s:: Outboard PST (Minimum): %s (V)', runno, sprintf('%.2f',min(CHData)));
                 maxoutbbpst = sprintf('%s:: Outboard PST (Maximum): %s (V)', runno, sprintf('%.2f',max(CHData)));
                 ptaoutbbpst = sprintf('%s:: Diff. min to avg: %s (percent)%', runno, sprintf('%.2f',100*abs(1-(min(CHData)/MeanData))));
-                stdoutbbpst = sprintf('%s:: Standard deviation: %s (V)', runno, sprintf('%.4f',std(CHData)));
+                stdoutbbpst = sprintf('%s:: Standard deviation: %s (V)', runno, sprintf('%.4f',std(CHData,1)));
                 
                 disp(avgoutbbpst);
                 disp(minoutbbpst);
@@ -954,7 +954,7 @@ else
             resultsArrayBlmTS(k, 7)  = min(CHData);
             resultsArrayBlmTS(k, 8)  = max(CHData);
             resultsArrayBlmTS(k, 9)  = abs(1-(min(CHData)/MeanData));
-            resultsArrayBlmTS(k, 10) = std(CHData);
+            resultsArrayBlmTS(k, 10) = std(CHData,1);
             
             % Inboard CF and zero
             resultsArrayBlmTS(k, 11)  = CH_19_Zero;
@@ -969,7 +969,7 @@ else
             resultsArrayBlmTS(k, 15) = min(CHData);
             resultsArrayBlmTS(k, 16) = max(CHData);
             resultsArrayBlmTS(k, 17) = abs(1-(min(CHData)/MeanData));
-            resultsArrayBlmTS(k, 18) = std(CHData);
+            resultsArrayBlmTS(k, 18) = std(CHData,1);
             
             % Outboard CF and zero
             resultsArrayBlmTS(k, 19) = CH_20_Zero;
@@ -1069,8 +1069,8 @@ if enableAveragedRunsPlot1 == 1 || enableAveragedRunsPlot2 == 1
     %[6]  INBOARD PST: Real units using CF          (m/s)
     %[7]  OUTBOARD PST: Real units using CF         (m/s)
     
-    %[8]  INBOARD: u/U0                             (-)
-    %[9]  OUTBOARD: u/U0                            (-)
+    %[8]  INBOARD: U/U0                             (-)
+    %[9]  OUTBOARD: U/U0                            (-)
     
     %[10] Averaged inboard and outboard speed       (m/s)
     %[11] u/U0 using averaged speed                 (-)
@@ -1083,6 +1083,8 @@ if enableAveragedRunsPlot1 == 1 || enableAveragedRunsPlot2 == 1
     
     %[16] AVERAGED: log10(V/Vm)                     (-)
     %[17] AVERAGED: Log(y)                          (-)
+    
+    %[18] Ship speed                                (m/s)
     
     SpeedFr30Avg = [];
     SpeedFr35Avg = [];
@@ -1117,6 +1119,7 @@ if enableAveragedRunsPlot1 == 1 || enableAveragedRunsPlot2 == 1
         SpeedFr30Avg(k, 15) = log10(distHull);
         SpeedFr30Avg(k, 16) = log10(avgSpeed/shipSpeed);
         SpeedFr30Avg(k, 17) = log10(distHull);
+        SpeedFr30Avg(k, 18) = shipSpeed;
     end
     
     %# Fr=0.35 ----------------------------------------------------------------
@@ -1148,6 +1151,7 @@ if enableAveragedRunsPlot1 == 1 || enableAveragedRunsPlot2 == 1
         SpeedFr35Avg(k, 15) = log10(distHull);
         SpeedFr35Avg(k, 16) = log10(avgSpeed/shipSpeed);
         SpeedFr35Avg(k, 17) = log10(distHull);
+        SpeedFr35Avg(k, 18) = shipSpeed;
     end
     
     %# Fr=0.40 ----------------------------------------------------------------
@@ -1179,6 +1183,7 @@ if enableAveragedRunsPlot1 == 1 || enableAveragedRunsPlot2 == 1
         SpeedFr40Avg(k, 15) = log10(distHull);
         SpeedFr40Avg(k, 16) = log10(avgSpeed/shipSpeed);
         SpeedFr40Avg(k, 17) = log10(distHull);
+        SpeedFr40Avg(k, 18) = shipSpeed;
     end
     
 end % enableAveragedRunsPlot1 == 1 || enableAveragedRunsPlot2 == 1
@@ -1274,7 +1279,7 @@ if enableCommandWindowOutput == 1
     p1      = sprintf(setDecimals1,cval(1));
     p2      = sprintf(setDecimals2,cval(2));
     gofrs   = sprintf('%0.2f',gof.rsquare);
-    EoFEqn1 = sprintf('Fr=0.30 (Inboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    EoFEqn1 = sprintf('F_{r}=0.30 (Inboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
     disp(EoFEqn1);
 end
 
@@ -1304,7 +1309,7 @@ if enableCommandWindowOutput == 1
     p1      = sprintf(setDecimals1,cval(1));
     p2      = sprintf(setDecimals2,cval(2));
     gofrs   = sprintf('%0.2f',gof.rsquare);
-    EoFEqn2 = sprintf('Fr=0.35 (Inboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    EoFEqn2 = sprintf('F_{r}=0.35 (Inboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
     disp(EoFEqn2);
 end
 
@@ -1334,7 +1339,7 @@ if enableCommandWindowOutput == 1
     p1      = sprintf(setDecimals1,cval(1));
     p2      = sprintf(setDecimals2,cval(2));
     gofrs   = sprintf('%0.2f',gof.rsquare);
-    EoFEqn3 = sprintf('Fr=0.40 (Inboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    EoFEqn3 = sprintf('F_{r}=0.40 (Inboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
     disp(EoFEqn3);
 end
 
@@ -1346,22 +1351,22 @@ slopeInterceptArray(3,3) = cvalues3(2);
 % Plotting ----------------------------------------------------------------
 %# Fr=0.30
 h1 = plot(fitobject1,'-',x1,y1,'*');
-legendInfo{1}  = 'Fr=0.30';
-legendInfo{2}  = 'Fr=0.30 Linear fit';
+legendInfo{1}  = 'F_{r}=0.30';
+legendInfo{2}  = 'F_{r}=0.30 Linear fit';
 set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle1,'linewidth',setLineWidth);
 %# Fr=0.35
 hold on;
 h2 = plot(fitobject2,'-',x2,y2,'*');
-legendInfo{3}  = 'Fr=0.35';
-legendInfo{4}  = 'Fr=0.35 Linear fit';
+legendInfo{3}  = 'F_{r}=0.35';
+legendInfo{4}  = 'F_{r}=0.35 Linear fit';
 set(h2(1),'Color',setColor{1},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h2(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
 %# Fr=0.40
 hold on;
 h3 = plot(fitobject3,'-',x3,y3,'*');
-legendInfo{5}  = 'Fr=0.40';
-legendInfo{6}  = 'Fr=0.40 Linear fit';
+legendInfo{5}  = 'F_{r}=0.40';
+legendInfo{6}  = 'F_{r}=0.40 Linear fit';
 set(h3(1),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h3(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle3,'linewidth',setLineWidth);
 %if enablePlotTitle == 1
@@ -1402,10 +1407,10 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 
 %# Legend
-%hleg1 = legend('Fr=0.30','Fr=0.35','Fr=0.40');
+%hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40');
 hleg1 = legend(legendInfo);
 set(hleg1,'Location','NorthWest');
-set(hleg1,'Interpreter','none');
+set(hleg1,'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
@@ -1444,7 +1449,7 @@ if enableCommandWindowOutput == 1
     p1      = sprintf(setDecimals1,cval(1));
     p2      = sprintf(setDecimals2,cval(2));
     gofrs   = sprintf('%0.2f',gof.rsquare);
-    EoFEqn1 = sprintf('Fr=0.30 (Outboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    EoFEqn1 = sprintf('F_{r}=0.30 (Outboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
     disp(EoFEqn1);
 end
 
@@ -1469,7 +1474,7 @@ if enableCommandWindowOutput == 1
     p1      = sprintf(setDecimals1,cval(1));
     p2      = sprintf(setDecimals2,cval(2));
     gofrs   = sprintf('%0.2f',gof.rsquare);
-    EoFEqn2 = sprintf('Fr=0.35 (Outboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    EoFEqn2 = sprintf('F_{r}=0.35 (Outboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
     disp(EoFEqn2);
 end
 
@@ -1494,29 +1499,29 @@ if enableCommandWindowOutput == 1
     p1      = sprintf(setDecimals1,cval(1));
     p2      = sprintf(setDecimals2,cval(2));
     gofrs   = sprintf('%0.2f',gof.rsquare);
-    EoFEqn3 = sprintf('Fr=0.40 (Outboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    EoFEqn3 = sprintf('F_{r}=0.40 (Outboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
     disp(EoFEqn3);
 end
 
 % Plotting ----------------------------------------------------------------
 %# Fr=0.30
 h1 = plot(fitobject1,'-',x1,y1,'*');
-legendInfo{1}  = 'Fr=0.30';
-legendInfo{2}  = 'Fr=0.30 Linear fit';
+legendInfo{1}  = 'F_{r}=0.30';
+legendInfo{2}  = 'F_{r}=0.30 Linear fit';
 set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle1,'linewidth',setLineWidth);
 %# Fr=0.35
 hold on;
 h2 = plot(fitobject2,'-',x2,y2,'*');
-legendInfo{3}  = 'Fr=0.35';
-legendInfo{4}  = 'Fr=0.35 Linear fit';
+legendInfo{3}  = 'F_{r}=0.35';
+legendInfo{4}  = 'F_{r}=0.35 Linear fit';
 set(h2(1),'Color',setColor{1},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h2(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
 %# Fr=0.40
 hold on;
 h3 = plot(fitobject3,'-',x3,y3,'*');
-legendInfo{5}  = 'Fr=0.40';
-legendInfo{6}  = 'Fr=0.40 Linear fit';
+legendInfo{5}  = 'F_{r}=0.40';
+legendInfo{6}  = 'F_{r}=0.40 Linear fit';
 set(h3(1),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h3(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle3,'linewidth',setLineWidth);
 %if enablePlotTitle == 1
@@ -1557,10 +1562,10 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 
 %# Legend
-%hleg1 = legend('Fr=0.30','Fr=0.35','Fr=0.40');
+%hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40');
 hleg1 = legend(legendInfo);
 set(hleg1,'Location','NorthWest');
-set(hleg1,'Interpreter','none');
+set(hleg1,'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
@@ -1599,7 +1604,7 @@ if enableCommandWindowOutput == 1
     p1      = sprintf(setDecimals1,cval(1));
     p2      = sprintf(setDecimals2,cval(2));
     gofrs   = sprintf('%0.2f',gof.rsquare);
-    EoFEqn1 = sprintf('Fr=0.30 (Averaged): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    EoFEqn1 = sprintf('F_{r}=0.30 (Averaged): y=%sx%s | R^2: %s',p1,p2,gofrs);
     disp(EoFEqn1);
 end
 
@@ -1624,7 +1629,7 @@ if enableCommandWindowOutput == 1
     p1      = sprintf(setDecimals1,cval(1));
     p2      = sprintf(setDecimals2,cval(2));
     gofrs   = sprintf('%0.2f',gof.rsquare);
-    EoFEqn2 = sprintf('Fr=0.35 (Averaged): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    EoFEqn2 = sprintf('F_{r}=0.35 (Averaged): y=%sx%s | R^2: %s',p1,p2,gofrs);
     disp(EoFEqn2);
 end
 
@@ -1649,29 +1654,29 @@ if enableCommandWindowOutput == 1
     p1      = sprintf(setDecimals1,cval(1));
     p2      = sprintf(setDecimals2,cval(2));
     gofrs   = sprintf('%0.2f',gof.rsquare);
-    EoFEqn3 = sprintf('Fr=0.40 (Averaged): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    EoFEqn3 = sprintf('F_{r}=0.40 (Averaged): y=%sx%s | R^2: %s',p1,p2,gofrs);
     disp(EoFEqn3);
 end
 
 % Plotting ----------------------------------------------------------------
 %# Fr=0.30
 h1 = plot(fitobject1,'-',x1,y1,'*');
-legendInfo{1}  = 'Fr=0.30';
-legendInfo{2}  = 'Fr=0.30 Linear fit';
+legendInfo{1}  = 'F_{r}=0.30';
+legendInfo{2}  = 'F_{r}=0.30 Linear fit';
 set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h1(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle1,'linewidth',setLineWidth);
 %# Fr=0.35
 hold on;
 h2 = plot(fitobject2,'-',x2,y2,'*');
-legendInfo{3}  = 'Fr=0.35';
-legendInfo{4}  = 'Fr=0.35 Linear fit';
+legendInfo{3}  = 'F_{r}=0.35';
+legendInfo{4}  = 'F_{r}=0.35 Linear fit';
 set(h2(1),'Color',setColor{1},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h2(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
 %# Fr=0.40
 hold on;
 h3 = plot(fitobject3,'-',x3,y3,'*');
-legendInfo{5}  = 'Fr=0.40';
-legendInfo{6}  = 'Fr=0.40 Linear fit';
+legendInfo{5}  = 'F_{r}=0.40';
+legendInfo{6}  = 'F_{r}=0.40 Linear fit';
 set(h3(1),'Color',setColor{1},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h3(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle3,'linewidth',setLineWidth);
 %if enablePlotTitle == 1
@@ -1712,10 +1717,10 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 
 %# Legend
-%hleg1 = legend('Fr=0.30','Fr=0.35','Fr=0.40');
+%hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40');
 hleg1 = legend(legendInfo);
 set(hleg1,'Location','NorthWest');
-set(hleg1,'Interpreter','none');
+set(hleg1,'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
@@ -1755,6 +1760,251 @@ setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
     plotsavename = sprintf('_plots/%s/%s/Plot_1_Log10_y_vs_Log10_V_Vm_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 1.1 Log10(y) vs. log10(V/Vm) - Thesis Plot
+%# ************************************************************************
+
+slopeInterceptArray = [];
+
+figurename = sprintf('Plot 1.1: %s:: Log10(y) vs. log10(V/Vm)', testName);
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%     
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 12;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',10,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'<';'^';'x';'>'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+setLineStyle  = {'-';'--';'-.';':';'-';'--';'-.';':';'-';'--'};
+
+%# Line, colors and markers
+setMarkerSize      = 14;
+setLineWidthMarker = 1;
+setLineWidth       = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+% SUBPLOT /////////////////////////////////////////////////////////////////
+%subplot(1,1,1)
+
+% X and Y values ----------------------------------------------------------
+
+% Axis data:
+%    Subscript i = inboard and
+%    Subscript o = outboard
+
+%# Fr=0.30 ----------------------------------------------------------------
+x1  = SpeedFr30Avg(1:5,12);
+y1  = SpeedFr30Avg(1:5,13);
+
+[fitobject1,gof1,output1] = fit(x1,y1,'poly1');
+cvalues1                  = coeffvalues(fitobject1);
+
+if enableCommandWindowOutput == 1
+    cval = cvalues1;
+    gof  = gof1;
+    setDecimals1 = '%0.2f';
+    setDecimals2 = '+%0.2f';
+    if cval(1) < 0
+        setDecimals1 = '%0.2f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.2f';
+    end
+    p1      = sprintf(setDecimals1,cval(1));
+    p2      = sprintf(setDecimals2,cval(2));
+    gofrs   = sprintf('%0.1f',gof.rsquare);
+    EoFEqn1 = sprintf('F_{r}=0.30 (Inboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    disp(EoFEqn1);
+end
+
+% Write to array
+slopeInterceptArray(1,1) = 0.30;
+slopeInterceptArray(1,2) = cvalues1(1);
+slopeInterceptArray(1,3) = cvalues1(2);
+
+%# Fr=0.35 ----------------------------------------------------------------
+x2  = SpeedFr35Avg(1:5,12);
+y2  = SpeedFr35Avg(1:5,13);
+
+[fitobject2,gof2,output2] = fit(x2,y2,'poly1');
+cvalues2                  = coeffvalues(fitobject2);
+
+if enableCommandWindowOutput == 1
+    cval = cvalues2;
+    gof  = gof2;
+    setDecimals1 = '%0.2f';
+    setDecimals2 = '+%0.2f';
+    if cval(1) < 0
+        setDecimals1 = '%0.2f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.2f';
+    end
+    p1      = sprintf(setDecimals1,cval(1));
+    p2      = sprintf(setDecimals2,cval(2));
+    gofrs   = sprintf('%0.1f',gof.rsquare);
+    %EoFEqn2 = sprintf('F_{r}=0.35 (Inboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    EoFEqn2 = sprintf('\\bf Linear fit: \\rm y=%sx%s | R^2: %s',p1,p2,gofrs);
+    disp(EoFEqn2);
+end
+
+% Write to array
+slopeInterceptArray(2,1) = 0.35;
+slopeInterceptArray(2,2) = cvalues2(1);
+slopeInterceptArray(2,3) = cvalues2(2);
+
+%# Fr=0.40 ----------------------------------------------------------------
+x3  = SpeedFr40Avg(1:5,12);
+y3  = SpeedFr40Avg(1:5,13);
+
+[fitobject3,gof3,output3] = fit(x3,y3,'poly1');
+cvalues3                  = coeffvalues(fitobject3);
+
+if enableCommandWindowOutput == 1
+    cval = cvalues3;
+    gof  = gof3;
+    setDecimals1 = '%0.2f';
+    setDecimals2 = '+%0.2f';
+    if cval(1) < 0
+        setDecimals1 = '%0.2f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.2f';
+    end
+    p1      = sprintf(setDecimals1,cval(1));
+    p2      = sprintf(setDecimals2,cval(2));
+    gofrs   = sprintf('%0.1f',gof.rsquare);
+    EoFEqn3 = sprintf('F_{r}=0.40 (Inboard): y=%sx%s | R^2: %s',p1,p2,gofrs);
+    disp(EoFEqn3);
+end
+
+% Write to array
+slopeInterceptArray(3,1) = 0.30;
+slopeInterceptArray(3,2) = cvalues3(1);
+slopeInterceptArray(3,3) = cvalues3(2);
+
+% Plotting ----------------------------------------------------------------
+%# Fr=0.35
+h2 = plot(fitobject2,'-',x2,y2,'*');
+legendInfo11{1}  = 'F_{r}=0.35';
+legendInfo11{2}  = 'F_{r}=0.35 (linear fit)';
+set(h2(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h2(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
+% if enablePlotTitle == 1
+%     title('{\bf Inboard}','FontSize',setGeneralFontSize);
+% end
+xlabel('{\bf log10(V/Vm) [-]}','FontSize',setGeneralFontSize);
+ylabel('{\bf log10(y) [-]}','FontSize',setGeneralFontSize);
+grid on;
+box on;
+axis square;
+
+%# Set plot figure background to a defined color --------------------------
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Annotations
+text(-0.08,0.9,EoFEqn2,'FontSize',12,'color','k','FontWeight','normal');
+
+% Axis limitations
+minX  = -0.2;
+maxX  = 0.05;
+incrX = 0.05;
+minY  = 0.4;
+maxY  = 1.8;
+incrY = 0.2;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+hleg1 = legend(legendInfo11);
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
+
+%# Plot title ---------------------------------------------------------
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Plot_1_1_Single_Log10_y_vs_Log10_V_Vm_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -1828,6 +2078,10 @@ for k=1:m
     end % kl=1:nl
 end % k=1:m
 
+% Display boundary layer thickness in command window
+if enableCommandWindowOutput == 1
+    disp(sprintf('Boundary layer thickness: Fr=0.30 = %s mm, Fr=0.35 = %s mm, Fr=0.40 = %s mm',sprintf('%0.1f',BLTArray(1,3)),sprintf('%0.1f',BLTArray(2,3)),sprintf('%0.1f',BLTArray(3,3))));
+end
 
 %# ************************************************************************
 %# 2. Plot distance from hull vs. speed
@@ -1838,16 +2092,16 @@ f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
 
-if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-    
-    set(gcf, 'PaperUnits', 'centimeters');
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-end
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%     
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
 
 % Fonts and colours -------------------------------------------------------
 setGeneralFontName = 'Helvetica';
@@ -1878,13 +2132,16 @@ if enableBlackAndWhitePlot == 1
 end
 
 %# Line, colors and markers
-setMarkerSize      = 10;
+setMarkerSize      = 14;
 setLineWidthMarker = 1;
 setLineWidth       = 1;
-setLineStyle       = '-.';
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
 
 % SUBPLOT /////////////////////////////////////////////////////////////////
-subplot(1,1,1)
+%subplot(1,1,1)
 
 % X and Y values ----------------------------------------------------------
 
@@ -1978,7 +2235,7 @@ setSpeed=6;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpe
 
 % Boundary layer depth marker
 if enableBLDepthMarker == 1
-    set(h2(1),'Color',setColor{10},'Marker',setMarker{7},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+    set(h2(1),'Color',setColor{10},'Marker',setMarker{7},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker+1); %,'MarkerFaceColor',setColor{10}
 end
 
 %# Set plot figure background to a defined color --------------------------
@@ -1988,7 +2245,7 @@ set(gcf,'Color',[1,1,1]);
 % Axis limitations
 minX  = 0.8;
 maxX  = 2.8;
-incrX = 0.4;
+incrX = 0.2;
 minY  = 0;
 maxY  = 80;
 incrY = 10;
@@ -2001,12 +2258,12 @@ set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
 
 %# Legend
 if enableBLDepthMarker == 1
-    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard','Boundary layer thickness');
+    hleg1 = legend('F_{r}=0.30 Inboard','F_{r}=0.30 Outboard','F_{r}=0.35 Inboard','F_{r}=0.35 Outboard','F_{r}=0.40 Inboard','F_{r}=0.40 Outboard','Boundary layer thickness');
 else
-    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard');
+    hleg1 = legend('F_{r}=0.30 Inboard','F_{r}=0.30 Outboard','F_{r}=0.35 Inboard','F_{r}=0.35 Outboard','F_{r}=0.40 Inboard','F_{r}=0.40 Outboard');
 end
 set(hleg1,'Location','NorthWest');
-set(hleg1,'Interpreter','none');
+set(hleg1,'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
@@ -2023,20 +2280,20 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
 
 %# Figure size printed on paper
-if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-end
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
 
 %# Plot title ---------------------------------------------------------
-if enablePlotMainTitle == 1
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-end
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
 
 %# Save plots as PDF, PNG and EPS -----------------------------------------
 
@@ -2060,16 +2317,16 @@ f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
 
-if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-    
-    set(gcf, 'PaperUnits', 'centimeters');
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-end
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%     
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
 
 % Fonts and colours -------------------------------------------------------
 setGeneralFontName = 'Helvetica';
@@ -2100,13 +2357,16 @@ if enableBlackAndWhitePlot == 1
 end
 
 %# Line, colors and markers
-setMarkerSize      = 10;
+setMarkerSize      = 14;
 setLineWidthMarker = 1;
 setLineWidth       = 1;
-setLineStyle       = '-.';
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
 
 % SUBPLOT /////////////////////////////////////////////////////////////////
-subplot(1,1,1)
+%subplot(1,1,1)
 
 % X and Y values ----------------------------------------------------------
 
@@ -2150,7 +2410,7 @@ setSpeed=3;set(h1(setSpeed),'Color',setColor{setSpeed},'Marker',setMarker{setSpe
 
 % Boundary layer depth marker
 if enableBLDepthMarker == 1
-    set(h2(1),'Color',setColor{10},'Marker',setMarker{7},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'MarkerFaceColor',setColor{10});
+    set(h2(1),'Color',setColor{10},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker+1); %,'MarkerFaceColor',setColor{10}
 end
 
 %# Set plot figure background to a defined color --------------------------
@@ -2160,7 +2420,7 @@ set(gcf,'Color',[1,1,1]);
 % Axis limitations
 minX  = 0.8;
 maxX  = 2.8;
-incrX = 0.4;
+incrX = 0.2;
 minY  = 0;
 maxY  = 80;
 incrY = 10;
@@ -2173,12 +2433,12 @@ set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
 
 %# Legend
 if enableBLDepthMarker == 1
-    hleg1 = legend('Fr=0.30','Fr=0.35','Fr=0.40','Boundary layer thickness');
+    hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40','Boundary layer thickness \delta');
 else
-    hleg1 = legend('Fr=0.30','Fr=0.35','Fr=0.40');
+    hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40');
 end
 set(hleg1,'Location','NorthWest');
-set(hleg1,'Interpreter','none');
+set(hleg1,'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
@@ -2195,20 +2455,20 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
 
 %# Figure size printed on paper
-if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-end
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
 
 %# Plot title ---------------------------------------------------------
-if enablePlotMainTitle == 1
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-end
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
 
 %# Save plots as PDF, PNG and EPS -----------------------------------------
 
@@ -2232,16 +2492,16 @@ f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
 
-if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-    
-    set(gcf, 'PaperUnits', 'centimeters');
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-end
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%     
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
 
 % Fonts and colours -------------------------------------------------------
 setGeneralFontName = 'Helvetica';
@@ -2273,13 +2533,16 @@ end
 setLineStyle  = {'-';'--';'-.';':';'-';'--';'-.';':';'-';'--'};
 
 %# Line, colors and markers
-setMarkerSize      = 10;
+setMarkerSize      = 14;
 setLineWidthMarker = 1;
 setLineWidth       = 2;
 setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
 
 % SUBPLOT /////////////////////////////////////////////////////////////////
-subplot(1,1,1)
+%subplot(1,1,1)
 
 % X and Y values ----------------------------------------------------------
 
@@ -2373,7 +2636,7 @@ if enablePlotTitle == 1
     title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
 end
 xlabel('{\bf Vertical distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
-ylabel('{\bf u/U_{0} [-]}','FontSize',setGeneralFontSize);
+ylabel('{\bf U/U_{0} [-]}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
@@ -2411,14 +2674,14 @@ end
 set(gcf,'Color',[1,1,1]);
 
 % Axis limitations
-% minX  = 0;
-% maxX  = 100;
-% incrX = 20;
+minX  = 0;
+maxX  = 100;
+incrX = 10;
 minY  = 0.6;
 maxY  = 1.1;
 incrY = 0.1;
-% set(gca,'XLim',[minX maxX]);
-% set(gca,'XTick',minX:incrX:maxX);
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
 set(gca,'YLim',[minY maxY]);
 set(gca,'YTick',minY:incrY:maxY);
 set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
@@ -2427,16 +2690,16 @@ set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 %# Legend
 %# MARIN boundary layer data
 if enableMARINBLData == 1 && enableAMCLJ120EBLData == 0
-    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard','MARIN 112m JHSV Cond. T1');
+    hleg1 = legend('F_{r}=0.30 Inboard','F_{r}=0.30 Outboard','F_{r}=0.35 Inboard','F_{r}=0.35 Outboard','F_{r}=0.40 Inboard','F_{r}=0.40 Outboard','MARIN 112m JHSV Cond. T1');
 elseif enableMARINBLData == 0 && enableAMCLJ120EBLData == 1
-    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
+    hleg1 = legend('F_{r}=0.30 Inboard','F_{r}=0.30 Outboard','F_{r}=0.35 Inboard','F_{r}=0.35 Outboard','F_{r}=0.40 Inboard','F_{r}=0.40 Outboard','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
 elseif enableMARINBLData == 1 && enableAMCLJ120EBLData == 1
-    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard','MARIN 112m JHSV Cond. T1','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
+    hleg1 = legend('F_{r}=0.30 Inboard','F_{r}=0.30 Outboard','F_{r}=0.35 Inboard','F_{r}=0.35 Outboard','F_{r}=0.40 Inboard','F_{r}=0.40 Outboard','MARIN 112m JHSV Cond. T1','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
 else
-    hleg1 = legend('Fr=0.30 Inboard','Fr=0.30 Outboard','Fr=0.35 Inboard','Fr=0.35 Outboard','Fr=0.40 Inboard','Fr=0.40 Outboard');
+    hleg1 = legend('F_{r}=0.30 Inboard','F_{r}=0.30 Outboard','F_{r}=0.35 Inboard','F_{r}=0.35 Outboard','F_{r}=0.40 Inboard','F_{r}=0.40 Outboard');
 end
 set(hleg1,'Location','SouthEast');
-set(hleg1,'Interpreter','none');
+set(hleg1,'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
@@ -2453,20 +2716,20 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
 
 %# Figure size printed on paper
-if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-end
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
 
 %# Plot title ---------------------------------------------------------
-if enablePlotMainTitle == 1
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-end
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
 
 %# Save plots as PDF, PNG and EPS -----------------------------------------
 
@@ -2490,16 +2753,16 @@ f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
 
-if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-    
-    set(gcf, 'PaperUnits', 'centimeters');
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-end
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%     
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
 
 % Fonts and colours -------------------------------------------------------
 setGeneralFontName = 'Helvetica';
@@ -2531,13 +2794,16 @@ end
 setLineStyle  = {'-';'--';'-.';':';'-';'--';'-.';':';'-';'--'};
 
 %# Line, colors and markers
-setMarkerSize      = 10;
+setMarkerSize      = 14;
 setLineWidthMarker = 1;
 setLineWidth       = 2;
 setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
 
 % SUBPLOT /////////////////////////////////////////////////////////////////
-subplot(1,1,1)
+%subplot(1,1,1)
 
 % X and Y values ----------------------------------------------------------
 
@@ -2598,7 +2864,7 @@ if enablePlotTitle == 1
     title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
 end
 xlabel('{\bf Vertical distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
-ylabel('{\bf u/U_{0} [-]}','FontSize',setGeneralFontSize);
+ylabel('{\bf U/U_{0} [-]}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
@@ -2632,14 +2898,14 @@ end
 set(gcf,'Color',[1,1,1]);
 
 % Axis limitations
-% minX  = 0;
-% maxX  = 100;
-% incrX = 20;
+minX  = 0;
+maxX  = 100;
+incrX = 10;
 minY  = 0.6;
 maxY  = 1.1;
 incrY = 0.1;
-% set(gca,'XLim',[minX maxX]);
-% set(gca,'XTick',minX:incrX:maxX);
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
 set(gca,'YLim',[minY maxY]);
 set(gca,'YTick',minY:incrY:maxY);
 set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
@@ -2648,16 +2914,16 @@ set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 %# Legend
 %# MARIN boundary layer data
 if enableMARINBLData == 1 && enableAMCLJ120EBLData == 0
-    hleg1 = legend('Fr=0.30','Fr=0.35','Fr=0.40','MARIN 112m JHSV Cond. T1');
+    hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40','MARIN 112m JHSV Cond. T1');
 elseif enableMARINBLData == 0 && enableAMCLJ120EBLData == 1
-    hleg1 = legend('Fr=0.30','Fr=0.35','Fr=0.40','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
+    hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
 elseif enableMARINBLData == 1 && enableAMCLJ120EBLData == 1
-    hleg1 = legend('Fr=0.30','Fr=0.35','Fr=0.40','MARIN 112m JHSV Cond. T1','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
+    hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40','MARIN 112m JHSV Cond. T1','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
 else
-    hleg1 = legend('Fr=0.30','Fr=0.35','Fr=0.40');
+    hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40');
 end
 set(hleg1,'Location','SouthEast');
-set(hleg1,'Interpreter','none');
+set(hleg1,'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
@@ -2674,20 +2940,20 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
 
 %# Figure size printed on paper
-if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-end
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
 
 %# Plot title ---------------------------------------------------------
-if enablePlotMainTitle == 1
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-end
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
 
 %# Save plots as PDF, PNG and EPS -----------------------------------------
 
@@ -2711,22 +2977,22 @@ f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
 
-if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-    
-    set(gcf, 'PaperUnits', 'centimeters');
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-end
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%     
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
 
 % Fonts and colours -------------------------------------------------------
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
-setLegendFontSize  = 14;
+setLegendFontSize  = 12;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -2752,8 +3018,8 @@ end
 setLineStyle  = {'-';'--';'-.';':';'-';'--';'-.';':';'-';'--'};
 
 %# Line, colors and markers
-setMarkerSize      = 12;
-setLineWidthMarker = 2;
+setMarkerSize      = 14;
+setLineWidthMarker = 1;
 setLineWidth       = 2;
 setLineWidthThin   = 1;
 setLineStyle       = '-';
@@ -2762,7 +3028,7 @@ setLineStyle2      = '-.';
 setLineStyle3      = ':';
 
 % SUBPLOT /////////////////////////////////////////////////////////////////
-subplot(1,1,1)
+%subplot(1,1,1)
 
 % X and Y values ----------------------------------------------------------
 
@@ -2807,7 +3073,7 @@ if enableCommandWindowOutput == 1
     p2   = sprintf(setDecimals2,cval(2));
     p3   = sprintf(setDecimals3,cval(3));
     gofrs = sprintf('%0.2f',gof.rsquare);
-    EoFEqn = sprintf('BLT EoF: y=%sx^2%sx%s | R^2: %s',p1,p2,p3,gofrs);
+    EoFEqn = sprintf('EoF: y=%sx^2%sx%s | R^2: %s',p1,p2,p3,gofrs);
     disp(EoFEqn);
 end
 
@@ -2827,18 +3093,18 @@ yF = FPArray(:,2);
 
 % Plotting ----------------------------------------------------------------
 h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
-legendInfo{1} = 'Fr=0.30';
-legendInfo{2} = 'Fr=0.35';
-legendInfo{3} = 'Fr=0.40';
+legendInfo1{1} = 'F_{r}=0.30';
+legendInfo1{2} = 'F_{r}=0.35';
+legendInfo1{3} = 'F_{r}=0.40';
 % Boundary layer thicknesses of three measured speeds
 hold on;
 h1 = plot(xBL,yBL,'*');
-legendInfo{4} = 'Boundary layer thickness (\delta)';
-set(h1(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+legendInfo1{4} = 'Boundary layer thickness \delta';
+set(h1(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker+1);
 % Fitted BLT points
 hold on;
 h2 = plot(xF,yF,'-');
-legendInfo{5} = 'Fitted \delta values';
+%legendInfo{5} = 'Fitted \delta values';
 if enablePlotTitle == 1
     title('{\bf BLT}','FontSize',setGeneralFontSize);
 end
@@ -2851,7 +3117,7 @@ axis square;
 %# Line, colors and markers
 set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
 set(h(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'MarkerFaceColor',setColor{10}
 % Fitted BLT points
 set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
 
@@ -2860,15 +3126,15 @@ set(h2(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewi
 set(gcf,'Color',[1,1,1]);
 
 %# Annotations
-text(1.6,47,EoFEqn,'FontSize',setGeneralFontSize,'color','k','FontWeight','normal');
+text(1.2,48,EoFEqn,'FontSize',setGeneralFontSize,'color','k','FontWeight','normal');
 
 % Axis limitations
 minX  = 0.8;
 maxX  = 2.8;
-incrX = 0.4;
+incrX = 0.2;
 minY  = 0;
-maxY  = 60;
-incrY = 5;
+maxY  = 80;
+incrY = 10;
 set(gca,'XLim',[minX maxX]);
 set(gca,'XTick',minX:incrX:maxX);
 set(gca,'YLim',[minY maxY]);
@@ -2877,7 +3143,7 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
 %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 
 %# Legend
-hleg1 = legend(legendInfo);
+hleg1 = legend(legendInfo1);
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1,'Interpreter','tex');
@@ -2897,20 +3163,20 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
 
 %# Figure size printed on paper
-if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-end
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
 
 %# Plot title ---------------------------------------------------------
-if enablePlotMainTitle == 1
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-end
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
 
 %# Save plots as PDF, PNG and EPS -----------------------------------------
 
@@ -2920,6 +3186,512 @@ setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
     plotsavename = sprintf('_plots/%s/%s/Plot_6_Boundary_Layer_Thickness_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 7. Distance from Hull vs. Speed and Power Law
+%# ************************************************************************
+
+figurename = 'Plot 7: Distance from Hull vs. Speed and Power Law';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%     
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 11;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',10,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'<';'^';'x';'>';'p';'h'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 14;
+setLineWidthMarker = 1;
+setLineWidth       = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+% SUBPLOT /////////////////////////////////////////////////////////////////
+%subplot(1,1,1)
+
+% X and Y values ----------------------------------------------------------
+
+% Axis data. Subscript i = inboard and o = outboard
+
+%# Results array columns:
+%[1]  Distance from model hull                 (mm)
+%[2]  Averaged zero value (Inboard)            (V)
+%[3]  Averaged zero value (Outboard)           (V)
+%[4]  PST: Voltage (Inboard)                   (V)
+%[5]  PST: Voltage (Outboard)                  (V)
+%[6]  PST: Real speed using CF (Inboard)       (m/s)
+%[7]  PST: Real speed using CF (Outboard)      (m/s)
+%[8]  u/U0 (Inboard)                           (-)
+%[9]  u/U0 (Outboard)                          (-)
+
+%# Fr=0.30 ----------------------------------------------------------------
+
+x1i = SpeedFr30Avg(:,6);
+y1i = SpeedFr30Avg(:,1);
+
+x1o = SpeedFr30Avg(:,7);
+y1o = SpeedFr30Avg(:,1);
+
+%# Fr=0.35 ----------------------------------------------------------------
+
+x2i = SpeedFr35Avg(:,6);
+y2i = SpeedFr35Avg(:,1);
+
+x2o = SpeedFr35Avg(:,7);
+y2o = SpeedFr35Avg(:,1);
+
+%# Fr=0.40 ----------------------------------------------------------------
+
+x3i = SpeedFr40Avg(:,6);
+y3i = SpeedFr40Avg(:,1);
+
+x3o = SpeedFr40Avg(:,7);
+y3o = SpeedFr40Avg(:,1);
+
+%# Boundary layer data ----------------------------------------------------
+
+xBL = [BLTArray(1,2) BLTArray(2,2) BLTArray(3,2)];
+yBL = [BLTArray(1,3) BLTArray(2,3) BLTArray(3,3)];
+
+%# Power Law --------------------------------------------------------------
+
+% Power law index, n
+PLIndexn = 7;
+
+% Speeds
+Speed30 = SpeedFr30Avg(1,18);
+Speed35 = SpeedFr35Avg(1,18);
+Speed40 = SpeedFr40Avg(1,18);
+
+% Boundary layer thickness
+BLT30 = BLTArray(1,3);
+BLT35 = BLTArray(2,3);
+BLT40 = BLTArray(3,3);
+
+%# Fr=0.30
+Temp30YArray = 0:0.2:BLT30;
+Temp30YArray = Temp30YArray';
+[m30,n30]    = size(Temp30YArray);
+Temp30VArray = [];
+for kx=1:m30
+    %# Fr=0.30
+    Temp30VArray(kx,1) = Speed30*(Temp30YArray(kx,1)/BLT30)^(1/PLIndexn);
+end
+
+%# Fr=0.35
+Temp35YArray = 0:0.2:BLT35;
+Temp35YArray = Temp35YArray';
+[m35,n35]    = size(Temp35YArray);
+Temp35VArray = [];
+for kx=1:m35
+    %# Fr=0.35
+    Temp35VArray(kx,1) = Speed35*(Temp35YArray(kx,1)/BLT35)^(1/PLIndexn);
+end
+
+%# Fr=0.40
+Temp40YArray = 0:0.2:BLT40;
+Temp40YArray = Temp40YArray';
+[m40,n40]    = size(Temp40YArray);
+Temp40VArray = [];
+for kx=1:m40
+    Temp40VArray(kx,1) = Speed40*(Temp40YArray(kx,1)/BLT40)^(1/PLIndexn);
+end
+
+%# Fr=0.30
+xPL30 = Temp30VArray;
+yPL30 = Temp30YArray;
+
+%# Fr=0.35
+xPL35 = Temp35VArray;
+yPL35 = Temp35YArray;
+
+%# Fr=0.40
+xPL40 = Temp40VArray;
+yPL40 = Temp40YArray;
+
+% Plotting ----------------------------------------------------------------
+h1 = plot(x1i,y1i,'*',x1o,y1o,'*',x2i,y2i,'*',x2o,y2o,'*',x3i,y3i,'*',x3o,y3o,'*');
+%# Inboard and outboard plots
+legendInfo{1} = 'F_{r}=0.30 Inboard';
+legendInfo{2} = 'F_{r}=0.30 Outboard';
+legendInfo{3} = 'F_{r}=0.35 Inboard';
+legendInfo{4} = 'F_{r}=0.35 Outboard';
+legendInfo{5} = 'F_{r}=0.40 Inboard';
+legendInfo{6} = 'F_{r}=0.40 Outboard';
+%# Boundary layer thickness marker
+hold on;
+h2 = plot(xBL,yBL,'*');
+legendInfo{7} = 'Boundary layer thickness (\delta)';
+%# Power law curves
+hold on;
+h3 = plot(xPL30,yPL30,'*',xPL35,yPL35,'*',xPL40,yPL40,'*');
+legendInfo{8}  = 'F_{r}=0.30 (Power law, n=7)';
+legendInfo{9}  = 'F_{r}=0.35 (Power law, n=7)';
+legendInfo{10} = 'F_{r}=0.40 (Power law, n=7)';
+if enablePlotTitle == 1
+    title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
+end
+xlabel('{\bf Measured speed [m/s]}','FontSize',setGeneralFontSize);
+ylabel('{\bf Vertical distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
+set(h1(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h1(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h1(4),'Color',setColor{4},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h1(5),'Color',setColor{5},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h1(6),'Color',setColor{6},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+% Boundary layer depth marker
+set(h2(1),'Color',setColor{10},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker+1); %,'MarkerFaceColor',setColor{10}
+%# Power law curves
+set(h3(1),'Color',setColor{10},'Marker','none','LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+set(h3(2),'Color',setColor{10},'Marker','none','LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+set(h3(3),'Color',setColor{10},'Marker','none','LineWidth',setLineWidthMarker,'LineStyle',setLineStyle3,'linewidth',setLineWidth);
+
+%# Set plot figure background to a defined color --------------------------
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+% Axis limitations
+minX  = 0.8;
+maxX  = 2.8;
+incrX = 0.2;
+minY  = 0;
+maxY  = 80;
+incrY = 10;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
+
+%# Legend
+hleg1 = legend(legendInfo);
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
+
+%# Plot title ---------------------------------------------------------
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Plot_7_Boundary_Layer_Y_vs_Speed_and_Power_Law_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 8. Distance from Hull vs. Speed and Power Law
+%# ************************************************************************
+
+figurename = 'Plot 8: Distance from Hull vs. Averaged Speed and Power Law';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%     
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 12;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',10,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'<';'^';'x';'>';'p';'h'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 14;
+setLineWidthMarker = 1;
+setLineWidth       = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+% SUBPLOT /////////////////////////////////////////////////////////////////
+%subplot(1,1,1)
+
+% X and Y values ----------------------------------------------------------
+
+% Averaged speeds ---------------------------------------------------------
+
+%# Fr=0.30
+x1  = SpeedFr30Avg(:,10);
+y1  = SpeedFr30Avg(:,1);
+
+%# Fr=0.35
+x2  = SpeedFr35Avg(:,10);
+y2  = SpeedFr35Avg(:,1);
+
+%# Fr=0.40
+x3  = SpeedFr40Avg(:,10);
+y3  = SpeedFr40Avg(:,1);
+
+% Boundary layer thickness markers ----------------------------------------
+
+xBL = [BLTArray(1,2) BLTArray(2,2) BLTArray(3,2)];
+yBL = [BLTArray(1,3) BLTArray(2,3) BLTArray(3,3)];
+
+%# Power Law --------------------------------------------------------------
+
+% Power law index, n
+PLIndexn = 7;
+
+% Speeds
+Speed30 = SpeedFr30Avg(1,18);
+Speed35 = SpeedFr35Avg(1,18);
+Speed40 = SpeedFr40Avg(1,18);
+
+% Boundary layer thickness
+BLT30 = BLTArray(1,3);
+BLT35 = BLTArray(2,3);
+BLT40 = BLTArray(3,3);
+
+%# Fr=0.30
+Temp30YArray = 0:0.2:BLT30;
+Temp30YArray = Temp30YArray';
+[m30,n30]    = size(Temp30YArray);
+Temp30VArray = [];
+for kx=1:m30
+    %# Fr=0.30
+    Temp30VArray(kx,1) = Speed30*(Temp30YArray(kx,1)/BLT30)^(1/PLIndexn);
+end
+
+%# Fr=0.35
+Temp35YArray = 0:0.2:BLT35;
+Temp35YArray = Temp35YArray';
+[m35,n35]    = size(Temp35YArray);
+Temp35VArray = [];
+for kx=1:m35
+    %# Fr=0.35
+    Temp35VArray(kx,1) = Speed35*(Temp35YArray(kx,1)/BLT35)^(1/PLIndexn);
+end
+
+%# Fr=0.40
+Temp40YArray = 0:0.2:BLT40;
+Temp40YArray = Temp40YArray';
+[m40,n40]    = size(Temp40YArray);
+Temp40VArray = [];
+for kx=1:m40
+    Temp40VArray(kx,1) = Speed40*(Temp40YArray(kx,1)/BLT40)^(1/PLIndexn);
+end
+
+%# Fr=0.30
+xPL30 = Temp30VArray;
+yPL30 = Temp30YArray;
+
+%# Fr=0.35
+xPL35 = Temp35VArray;
+yPL35 = Temp35YArray;
+
+%# Fr=0.40
+xPL40 = Temp40VArray;
+yPL40 = Temp40YArray;
+
+% Plotting ----------------------------------------------------------------
+h1 = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
+legendInfo2{1} = 'F_{r}=0.30';
+legendInfo2{2} = 'F_{r}=0.35';
+legendInfo2{3} = 'F_{r}=0.40';
+%# Boundary layer thickness marker
+hold on;
+h2 = plot(xBL,yBL,'*');
+legendInfo2{4} = 'Boundary layer thickness (\delta)';
+%# Power law curves
+hold on;
+h3 = plot(xPL30,yPL30,'*',xPL35,yPL35,'*',xPL40,yPL40,'*');
+legendInfo{5} = 'F_{r}=0.30 (Power law, n=7)';
+legendInfo{6} = 'F_{r}=0.35 (Power law, n=7)';
+legendInfo{7} = 'F_{r}=0.40 (Power law, n=7)';
+if enablePlotTitle == 1
+    title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
+end
+xlabel('{\bf Measured speed [m/s]}','FontSize',setGeneralFontSize);
+ylabel('{\bf Vertical distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); % ,'MarkerFaceColor',setColor{setSpeed}
+set(h1(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h1(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+% Boundary layer depth marker
+set(h2(1),'Color',setColor{10},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker+1); %,'MarkerFaceColor',setColor{10}
+%# Power law curves
+set(h3(1),'Color',setColor{10},'Marker','none','LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+set(h3(2),'Color',setColor{10},'Marker','none','LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+set(h3(3),'Color',setColor{10},'Marker','none','LineWidth',setLineWidthMarker,'LineStyle',setLineStyle3,'linewidth',setLineWidth);
+
+%# Set plot figure background to a defined color --------------------------
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+% Axis limitations
+minX  = 0.8;
+maxX  = 2.8;
+incrX = 0.2;
+minY  = 0;
+maxY  = 80;
+incrY = 10;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
+
+%# Legend
+hleg1 = legend(legendInfo2);
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
+
+%# Plot title ---------------------------------------------------------
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Plot_8_Boundary_Layer_Y_vs_Averaged_Speed_Plot.%s', 'Bounday_Layer', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;

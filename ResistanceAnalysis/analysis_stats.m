@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 17, 2015
+%# Date       :  February 20, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -147,8 +147,8 @@ enableA4PaperSizePlot   = 0;    % Show plots scale to A4 size
 % Individual plots
 enableTurbStimPlot      = 1;    % Turbulence stimulator investigation
 enableTrimTabPlot       = 1;    % Trim tab investigation
-enableResistancePlot    = 1;    % Resistance plots, Ctm, power, heave and trim
-enableProhaskaPlot      = 1;    % Prohaska plot, form factor at deep transom
+enableResistancePlot    = 0;    % Resistance plots, Ctm, power, heave and trim
+enableProhaskaPlot      = 0;    % Prohaska plot, form factor at deep transom
 enableErrorPlot         = 0;    % Error plots (% of max-avg to magnitude)
 enableMeanStdPlot       = 0;    % Show Fr vs. mean of standard deviation
 enableStdPlot           = 0;    % Show Fr vs. standard deviation
@@ -563,9 +563,9 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    hleg1 = legend('Barehull (no turbulence stimulators)','First row of turbulence stimulators only','First and second row of turbulence stimulators');
+    hleg1 = legend('Bare hull (no turbulence stimulators)','1^{st} row of turbulence stimulators only','1^{st} and 2^{nd} row of turbulence stimulators');
     set(hleg1,'Location','NorthWest');
-    set(hleg1,'Interpreter','none');
+    set(hleg1,'Interpreter','tex');
     set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
     %legend boxoff;
@@ -852,7 +852,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     
     %# Line, colors and markers
     setMarkerSize      = 16;
-    setLineWidthMarker = 1;
+    setLineWidthMarker = 2;
     setLineWidth       = 1;
     setLineStyle       = '-';
     setLineStyle1      = '--';
@@ -953,7 +953,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
         
     %# Legend
-    hleg1 = legend('Trim tab: 0 degrees','Trim tab: 5 degrees','Trim tab: 10 degrees');
+    hleg1 = legend('0 degrees','5 degrees','10 degrees');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -1046,7 +1046,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    hleg1 = legend('Trim tab: 0 degrees','Trim tab: 5 degrees','Trim tab: 10 degrees');
+    hleg1 = legend('0 degrees','5 degrees','10 degrees');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
