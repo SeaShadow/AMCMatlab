@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 20, 2015
+%# Date       :  February 24, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -1479,16 +1479,16 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         
         %# Paper size settings ------------------------------------------------
         
-        %if enableA4PaperSizePlot == 1
-        set(gcf, 'PaperSize', [19 19]);
-        set(gcf, 'PaperPositionMode', 'manual');
-        set(gcf, 'PaperPosition', [0 0 19 19]);
-        
-        set(gcf, 'PaperUnits', 'centimeters');
-        set(gcf, 'PaperSize', [19 19]);
-        set(gcf, 'PaperPositionMode', 'manual');
-        set(gcf, 'PaperPosition', [0 0 19 19]);
-        %end
+%         if enableA4PaperSizePlot == 1
+%             set(gcf, 'PaperSize', [19 19]);
+%             set(gcf, 'PaperPositionMode', 'manual');
+%             set(gcf, 'PaperPosition', [0 0 19 19]);
+%             
+%             set(gcf, 'PaperUnits', 'centimeters');
+%             set(gcf, 'PaperSize', [19 19]);
+%             set(gcf, 'PaperPositionMode', 'manual');
+%             set(gcf, 'PaperPosition', [0 0 19 19]);
+%         end
         
         % Fonts and colours ---------------------------------------------------
         setGeneralFontName = 'Helvetica';
@@ -1531,7 +1531,7 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         TowForceFD = TG_at_FDArray(klp, 3);
         
         %# Subplot ////////////////////////////////////////////////////////////
-        subplot(1,1,1)
+        %subplot(1,1,1)
         
         %# X and Y axis -------------------------------------------------------
         
@@ -1591,7 +1591,7 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         legendInfo{4} = 'Self-Propulsion Point (SPP)';
         xlabel('{\bf Gross thrust (N)}','FontSize',setGeneralFontSize);
         ylabel('{\bf Towing force (drag) (N)}','FontSize',setGeneralFontSize);
-        title('{\bf Gross Thrust}','FontSize',setGeneralFontSize);
+        %title('{\bf Gross Thrust}','FontSize',setGeneralFontSize);
         grid on;
         box on;
         axis square;
@@ -1641,20 +1641,20 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
         
         %# Figure size printed on paper
-        %if enableA4PaperSizePlot == 1
-        set(gcf, 'PaperUnits','centimeters');
-        set(gcf, 'PaperSize',[XPlot YPlot]);
-        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-        set(gcf, 'PaperOrientation','portrait');
-        %end
+%         if enableA4PaperSizePlot == 1
+%             set(gcf, 'PaperUnits','centimeters');
+%             set(gcf, 'PaperSize',[XPlot YPlot]);
+%             set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%             set(gcf, 'PaperOrientation','portrait');
+%         end
         
         %# Plot title ---------------------------------------------------------
-        %if enablePlotMainTitle == 1
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
-        %end
+%         if enablePlotMainTitle == 1
+%             annotation('textbox', [0 0.9 1 0.1], ...
+%                 'String', strcat('{\bf ', figurename, '}'), ...
+%                 'EdgeColor', 'none', ...
+%                 'HorizontalAlignment', 'center');
+%         end
         
         %# Save plots as PDF, PNG and EPS -------------------------------------
         % Enable renderer for vector graphics output
@@ -1677,14 +1677,14 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         %# Paper size settings ------------------------------------------------
         
         %if enableA4PaperSizePlot == 1
-        set(gcf, 'PaperSize', [19 19]);
-        set(gcf, 'PaperPositionMode', 'manual');
-        set(gcf, 'PaperPosition', [0 0 19 19]);
-        
-        set(gcf, 'PaperUnits', 'centimeters');
-        set(gcf, 'PaperSize', [19 19]);
-        set(gcf, 'PaperPositionMode', 'manual');
-        set(gcf, 'PaperPosition', [0 0 19 19]);
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
+            
+            set(gcf, 'PaperUnits', 'centimeters');
+            set(gcf, 'PaperSize', [19 19]);
+            set(gcf, 'PaperPositionMode', 'manual');
+            set(gcf, 'PaperPosition', [0 0 19 19]);
         %end
         
         % Fonts and colours ---------------------------------------------------
@@ -2156,19 +2156,19 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         
         %# Figure size printed on paper
         %if enableA4PaperSizePlot == 1
-        set(gcf, 'PaperUnits','centimeters');
-        set(gcf, 'PaperSize',[XPlot YPlot]);
-        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-        set(gcf, 'PaperOrientation','portrait');
+            set(gcf, 'PaperUnits','centimeters');
+            set(gcf, 'PaperSize',[XPlot YPlot]);
+            set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+            set(gcf, 'PaperOrientation','portrait');
         %end
         
         %# Plot title ---------------------------------------------------------
-        %if enablePlotMainTitle == 1
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
-        %end
+%         if enablePlotMainTitle == 1
+%             annotation('textbox', [0 0.9 1 0.1], ...
+%                 'String', strcat('{\bf ', figurename, '}'), ...
+%                 'EdgeColor', 'none', ...
+%                 'HorizontalAlignment', 'center');
+%         end
         
         %# Save plots as PDF, PNG and EPS -------------------------------------
         % Enable renderer for vector graphics output
@@ -2190,16 +2190,16 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         
         %# Paper size settings ------------------------------------------------
         
-        %if enableA4PaperSizePlot == 1
-        set(gcf, 'PaperSize', [19 19]);
-        set(gcf, 'PaperPositionMode', 'manual');
-        set(gcf, 'PaperPosition', [0 0 19 19]);
-        
-        set(gcf, 'PaperUnits', 'centimeters');
-        set(gcf, 'PaperSize', [19 19]);
-        set(gcf, 'PaperPositionMode', 'manual');
-        set(gcf, 'PaperPosition', [0 0 19 19]);
-        %end
+%         if enableA4PaperSizePlot == 1
+%             set(gcf, 'PaperSize', [19 19]);
+%             set(gcf, 'PaperPositionMode', 'manual');
+%             set(gcf, 'PaperPosition', [0 0 19 19]);
+%             
+%             set(gcf, 'PaperUnits', 'centimeters');
+%             set(gcf, 'PaperSize', [19 19]);
+%             set(gcf, 'PaperPositionMode', 'manual');
+%             set(gcf, 'PaperPosition', [0 0 19 19]);
+%         end
         
         % Fonts and colours ---------------------------------------------------
         setGeneralFontName = 'Helvetica';
@@ -2669,20 +2669,20 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
         
         %# Figure size printed on paper
-        %if enableA4PaperSizePlot == 1
-        set(gcf, 'PaperUnits','centimeters');
-        set(gcf, 'PaperSize',[XPlot YPlot]);
-        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-        set(gcf, 'PaperOrientation','portrait');
-        %end
+%         if enableA4PaperSizePlot == 1
+%             set(gcf, 'PaperUnits','centimeters');
+%             set(gcf, 'PaperSize',[XPlot YPlot]);
+%             set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%             set(gcf, 'PaperOrientation','portrait');
+%         end
         
         %# Plot title ---------------------------------------------------------
-        %if enablePlotMainTitle == 1
-        annotation('textbox', [0 0.9 1 0.1], ...
-            'String', strcat('{\bf ', figurename, '}'), ...
-            'EdgeColor', 'none', ...
-            'HorizontalAlignment', 'center');
-        %end
+%         if enablePlotMainTitle == 1
+%             annotation('textbox', [0 0.9 1 0.1], ...
+%                 'String', strcat('{\bf ', figurename, '}'), ...
+%                 'EdgeColor', 'none', ...
+%                 'HorizontalAlignment', 'center');
+%         end
         
         %# Save plots as PDF, PNG and EPS -------------------------------------
         % Enable renderer for vector graphics output
@@ -3104,6 +3104,10 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         resSPP_CCDoTT(klp,25) = 0;
         resSPP_CCDoTT(klp,26) = 0;
             
+        % F_SPP = TF=0-FD
+        resSPP_CCDoTT(klp,27) = 0;
+        resSPP_CCDoTT(klp,28) = 0;
+        
     end % klp=1:ma
     
 else
@@ -3273,6 +3277,11 @@ for k=1:ma
     resSPP_CCDoTT(k,24) = setCFs;
     resSPP_CCDoTT(k,25) = CorrCoeff;
     resSPP_CCDoTT(k,26) = 0.5*freshwaterdensity*(setMSSpeed^2)*MSwsa*(FormFactor*(setCFm-setCFs)-CorrCoeff);
+    
+    % F_SPP = TF=0-FD
+    FatSPP = ThrustAtZeroDrag-resSPP_CCDoTT(k,2);
+    resSPP_CCDoTT(k,27) = FatSPP;
+    resSPP_CCDoTT(k,28) = (1-(FatSPP/resSPP_CCDoTT(k,11)))*100;
     
 end % k=1:ma
 %# ------------------------------------------------------------------------
@@ -5347,6 +5356,28 @@ for k=1:m
     fullScaleDataArray(k,81)  = ((1-MSThrustDed)/(1-FSWakeFraction))*FSPortPumpEff*((FSPortGrosThrust*FSPortInlVel)/(saltwaterdensity*gravconst*FSNumPumpHead*FSPortVolFR));
     fullScaleDataArray(k,82)  = ((1-MSThrustDed)/(1-FSWakeFraction))*FSStbdPumpEff*((FSStbdGrosThrust*FSStbdInlVel)/(saltwaterdensity*gravconst*FSNumPumpHead*FSStbdVolFR));
     
+    % 24. Effective power and overall propulsive efficiency ---------------
+    % Added: 23/02/2015    
+    % See Ghadimi (2013), Eqn. 3. PE = T V = p QJ V (Vj-Vi) then nD = PE/PD
+    
+    MSEffPowerPort = MSPortGrosThrust*MSSpeed;
+    MSEffPowerStbd = MSStbdGrosThrust*MSSpeed;
+    MSOPEPort      = MSEffPowerPort/MSPortDelPower;
+    MSOPEStbd      = MSEffPowerStbd/MSStbdDelPower;
+    modelScaleDataArray(k,83) = MSEffPowerPort;
+    modelScaleDataArray(k,84) = MSEffPowerStbd;
+    modelScaleDataArray(k,85) = MSOPEPort;
+    modelScaleDataArray(k,86) = MSOPEStbd;
+    
+    FSEffPowerPort = FSPortGrosThrust*FSSpeed;
+    FSEffPowerStbd = FSStbdGrosThrust*FSSpeed;
+    FSOPEPort      = FSEffPowerPort/FSPortDelPower;
+    FSOPEStbd      = FSEffPowerStbd/FSStbdDelPower;
+    fullScaleDataArray(k,83)  = FSEffPowerPort;
+    fullScaleDataArray(k,84)  = FSEffPowerStbd;
+    fullScaleDataArray(k,85)  = FSOPEPort;
+    fullScaleDataArray(k,86)  = FSOPEStbd;
+    
 end % k=1:m
 
 
@@ -5424,27 +5455,35 @@ x1 = fullScaleDataArray(:,1);
 y1 = fullScaleDataArray(:,46);
 
 %# Overall propulsive efficiency where nD = PE/PD where PD = PJSE/hJS
-x2 = fullScaleDataArray(:,1);
-y2 = fullScaleDataArray(:,68);
+%x2 = fullScaleDataArray(:,1);
+%y2 = fullScaleDataArray(:,68);
 
 % nD=(thrust V)/PPE
-x3 = fullScaleDataArray(:,1);
-y3 = fullScaleDataArray(:,72);
+%x3 = fullScaleDataArray(:,1);
+%y3 = fullScaleDataArray(:,72);
 
 % Bose (2008), Eqn. 10-28
 x4 = fullScaleDataArray(:,1);
 y4 = fullScaleDataArray(:,73);
 
 % Bose (2008), Eqn. 10-29
-x5 = fullScaleDataArray(:,1);
-y5 = fullScaleDataArray(:,74);
+%x5 = fullScaleDataArray(:,1);
+%y5 = fullScaleDataArray(:,74);
 
 % Bulten (2006), Eqn. 2.61. nD=((1-t)/(1-w))nPump((T Vi)/(p g H Q))
 x6 = fullScaleDataArray(:,1);
 y6 = fullScaleDataArray(:,81);
 
+% See Ghadimi (2013), Eqn. 3. PE = T V = p QJ V (Vj-Vi) then nD = PE/PD
+x7 = fullScaleDataArray(:,1);
+y7 = fullScaleDataArray(:,85);
+
 %# Plotting ---------------------------------------------------------------
-h = plot(x1,y1,'*',x4,y4,'*',x5,y5,'*',x6,y6,'*');
+h = plot(x1,y1,'*',x4,y4,'*',x6,y6,'*',x7,y7,'*');
+Plot5LegendInfo{1} = '\eta_{D}=P_{E}/P_{D} where P_{E}=R_{BH}V, P_{D}=P_{PE}/\eta_{Pump}\eta_{Inst}';
+Plot5LegendInfo{2} = 'Bose (2008): Eqn. 10-28';
+Plot5LegendInfo{3} = 'Bulten (2006): Eqn. 2.61';
+Plot5LegendInfo{4} = '\eta_{D}=P_{E}/P_{D} where P_{E}=T V=p Q_{J} V (V_{j}-V_{i}), P_{D}=P_{PE}/\eta_{Pump}\eta_{Inst}';
 xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
 %xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Overall propulsive efficiency, \eta_{D} (-)}','FontSize',setGeneralFontSize);
@@ -5456,10 +5495,10 @@ box on;
 axis square;
 
 %# Line, colors and markers
-set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-set(h(2),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-set(h(3),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-set(h(4),'Color',setColor{5},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(4),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -5485,10 +5524,10 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'))
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
 
 %# Legend
-hleg1 = legend('\eta_{D}=P_{E}/P_{D} where P_{D}=P_{PE}/\eta_{Pump}\eta_{Inst}','Bose (2008), Eqn. 10-28','Bose (2008), Eqn. 10-29','Bulten (2006), Eqn. 2.61' ); %,'\eta_{D}=P_{E}/P_{D} where P_{D}=P_{JSE}/\eta_{JS}'
+hleg1 = legend(Plot5LegendInfo);
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
-set(hleg1, 'Interpreter','tex');
+set(hleg1,'Interpreter','tex');
 set(hleg1,'LineWidth',1);
 set(hleg1,'FontSize',setLegendFontSize);
 %legend boxoff;
@@ -7445,6 +7484,158 @@ setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
     plotsavename = sprintf('_plots/%s/%s/SPP_Plot_14_Power_Comparison_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 15. Thrust at SPP using graphical method and TF=0-FD
+%# ************************************************************************
+
+figurename = 'Plot 15: Thrust at SPP using graphical method and TF=0-FD';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%     
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 16;
+setBorderLineWidth = 2;
+setLegendFontSize  = 14;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 14;
+setLineWidthMarker = 1;
+setLineWidth       = 2;
+setLineWidthThin   = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+%subplot(1,1,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+% Tow force vs. thrust plot
+x1 = modelScaleDataArray(:,3);
+y1 = resSPP_CCDoTT(:,11);
+
+% T_{SPP}=T_{F=0}-F_{D}
+x2 = modelScaleDataArray(:,3);
+y2 = resSPP_CCDoTT(:,27);
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'*-',x2,y2,'*-');
+xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Thrust at full scale self-propulsion point (N)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+%     title('{\bf Thrust at self-propulsion point)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+set(h(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+% %# Axis limitations
+minX  = 13;
+maxX  = 25;
+incrX = 1;
+minY  = 0;
+maxY  = 25;
+incrY = 5;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+% set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+% set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+hleg1 = legend('Graphical method','T_{SPP}=T_{F=0}-F_{D}');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+    
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
+
+%# Plot title -------------------------------------------------------------
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_15_Thrust_at_SPP_vs_Ship_Speed_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
