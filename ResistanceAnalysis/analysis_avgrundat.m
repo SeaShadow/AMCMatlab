@@ -6,7 +6,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 20, 2015
+%# Date       :  February 27, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -374,7 +374,7 @@ if exist('full_resistance_data.dat', 'file') == 2
     % ---------------------------------------------------------------------
     %[49] Full Scale (CFs) Frictional Resistance Coefficient (Grigson)             (-)
     % ---------------------------------------------------------------------
-    % Additional values added: 15/12/2014, R_{TBH} (2011), 7.5-02-03-01.4
+    % Additional values added: 15/12/2014, R_{BH} (2011), 7.5-02-03-01.4
     % ---------------------------------------------------------------------
     %[50] Roughness allowance, delta CFs                                           (-)
     %[51] Correlation allowance, Ca                                                (-)
@@ -1069,10 +1069,8 @@ end
 
 
 %# ************************************************************************
-%# 5. Plottting results
+%# 1. Uncorrected and Corrected Resistance
 %# ************************************************************************
-
-%# Plotting Uncorrected and Corrected Resistance --------------------------
 figurename = 'Plot 1: Uncorrected and Corrected Resistance';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -1093,7 +1091,7 @@ end
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
-setLegendFontSize  = 14;
+setLegendFontSize  = 12;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1158,14 +1156,6 @@ box on;
 axis square;
 
 %# Line, colors and markers
-%set(h(1),'Color',setColor{1},'Marker','none','LineStyle','-','linewidth',setLineWidth);
-%set(h(2),'Color',setColor{2},'Marker','none','LineStyle','--','linewidth',setLineWidth);
-%set(h(3),'Color',setColor{3},'Marker','none','LineStyle','-.','linewidth',setLineWidth);
-%set(h(4),'Color',setColor{4},'Marker','none','LineStyle',':','linewidth',setLineWidth);
-%set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-%set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-%set(h(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-%set(h(4),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-','linewidth',setLineWidth);
 set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','--','linewidth',setLineWidth);
 set(h(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.','linewidth',setLineWidth);
@@ -1190,7 +1180,7 @@ set(gca,'YTick',minY:incrY:maxY);
 % set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
 
 %# Legend
-hleg1 = legend('R_{TBH}','Tamura','Schuster','Scott');
+hleg1 = legend('Uncorrected resistance','Tamura (1975)','Schuster (1955)','Scott (1970)');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
@@ -1243,9 +1233,6 @@ box on;
 axis square;
 
 %# Line, colors and markers
-%set(h(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-%set(h(2),'Color',setColor{2},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-%set(h(3),'Color',setColor{3},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
 set(h(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','--','linewidth',setLineWidth);
 set(h(2),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.','linewidth',setLineWidth);
 set(h(3),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',':','linewidth',setLineWidth);
@@ -1269,7 +1256,7 @@ set(gca,'YTick',minY:incrY:maxY);
 % set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
 
 %# Legend
-hleg1 = legend('R_{TBH} to Tamura','R_{TBH} to Schuster','R_{TBH} to Scott');
+hleg1 = legend('R_{BH} to Tamura (1975)','R_{BH} to Schuster (1955)','R_{BH} to Scott (1970)');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
@@ -1297,12 +1284,12 @@ if enableA4PaperSizePlot == 1
 end
 
 %# Plot title -------------------------------------------------------------
-%if enablePlotMainTitle == 1
-annotation('textbox', [0 0.9 1 0.1], ...
-    'String', strcat('{\bf ', figurename, '}'), ...
-    'EdgeColor', 'none', ...
-    'HorizontalAlignment', 'center');
-%end
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
 
 %# Save plots as PDF, PNG and EPS -----------------------------------------
 % Enable renderer for vector graphics output
@@ -1316,7 +1303,9 @@ end
 %close;
 
 
-%# Plotting Uncorrected and Corrected Resistance --------------------------
+%# ************************************************************************
+%# 2. Uncorrected and Corrected Resistance - Thesis Plot
+%# ************************************************************************
 figurename = 'Plot 2: Uncorrected and Corrected Resistance';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -1335,7 +1324,255 @@ end
 
 % Fonts and colours -------------------------------------------------------
 setGeneralFontName = 'Helvetica';
-setGeneralFontSize = 14;
+setGeneralFontSize = 16;
+setBorderLineWidth = 2;
+setLegendFontSize  = 14;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 12;
+setLineWidthMarker = 1;
+setLineWidth       = 1;
+setLineStyle       = '-';
+setLineStyle1      = '-.';
+setLineStyle2      = '-.';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+subplot(1,2,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+% Uncorrected
+x1 = RAUncorrected(:,11);
+y1 = RAUncorrected(:,24);
+
+% Corrected using Tamura
+x2 = RACorrectedTamura(:,11);
+y2 = RACorrectedTamura(:,24);
+
+% Corrected using Schuster
+x3 = RACorrectedSchuster(:,11);
+y3 = RACorrectedSchuster(:,24);
+
+% Corrected using Scott
+x4 = RACorrectedScott(1:17,11);
+y4 = RACorrectedScott(1:17,24);
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'*-',x2,y2,'*-',x3,y3,'*-',x4,y4,'*-');
+xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Total resistance, R_{T} (kN)}','FontSize',setGeneralFontSize);
+if enablePlotTitle == 1
+    title('{\bf Blockage and depth corrections}','FontSize',setGeneralFontSize);
+end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-','linewidth',setLineWidth);
+set(h(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','--','linewidth',setLineWidth);
+set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.','linewidth',setLineWidth);
+set(h(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',':','linewidth',setLineWidth);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+% %# Axis limitations
+minX  = 5;
+maxX  = 29;
+incrX = 2;
+minY  = 0;
+maxY  = 800;
+incrY = 100;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+% set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+% set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
+
+%# Legend
+hleg1 = legend('Uncorrected resistance','Tamura (1975)','Schuster (1955)','Scott (1970)');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+subplot(1,2,2)
+
+%# X and Y axis -----------------------------------------------------------
+
+% Uncorrected
+x1 = RAUncorrected(:,1);
+y1 = RAUncorrected(:,18);
+
+%# Multiply resistance data by 1000 for better readibility
+Raw_Data = num2cell(y1); 
+Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); 
+y1 = cell2mat(Raw_Data);
+
+% Corrected using Tamura
+x2 = RACorrectedTamura(:,1);
+y2 = RACorrectedTamura(:,18);
+
+%# Multiply resistance data by 1000 for better readibility
+Raw_Data = num2cell(y2); 
+Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); 
+y2 = cell2mat(Raw_Data);
+
+% Corrected using Schuster
+x3 = RACorrectedSchuster(:,1);
+y3 = RACorrectedSchuster(:,18);
+
+%# Multiply resistance data by 1000 for better readibility
+Raw_Data = num2cell(y3); 
+Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); 
+y3 = cell2mat(Raw_Data);
+
+% Corrected using Scott
+x4 = RACorrectedScott(1:17,1);
+y4 = RACorrectedScott(1:17,18);
+
+%# Multiply resistance data by 1000 for better readibility
+Raw_Data = num2cell(y4); 
+Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false); 
+y4 = cell2mat(Raw_Data);
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'*-',x2,y2,'*-',x3,y3,'*-',x4,y4,'*-');
+xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Total resistance coefficient, C_{T}*10^{3} (-)}','FontSize',setGeneralFontSize);
+if enablePlotTitle == 1
+    title('{\bf Blockage and depth corrections}','FontSize',setGeneralFontSize);
+end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-','linewidth',setLineWidth);
+set(h(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','--','linewidth',setLineWidth);
+set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.','linewidth',setLineWidth);
+set(h(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',':','linewidth',setLineWidth);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+% %# Axis limitations
+minX  = 0.1;
+maxX  = 0.5;
+incrX = 0.1;
+minY  = 3.9;
+maxY  = 6.4;
+incrY = 0.5;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+hleg1 = legend('Uncorrected resistance','Tamura (1975)','Schuster (1955)','Scott (1970)');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title -------------------------------------------------------------
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Plot_2_Uncorrected_and_Corrected_Resistance_Comparison_Plot.%s', '_averaged_corr_shallow_water', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 3. Uncorrected and Corrected Resistance
+%# ************************************************************************
+figurename = 'Plot 3: Uncorrected and Corrected Resistance';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 16;
 setBorderLineWidth = 2;
 setLegendFontSize  = 14;
 
@@ -1392,7 +1629,7 @@ y4 = RACorrectedScott(1:17,8);
 
 %# Plotting ---------------------------------------------------------------
 h = plot(x1,y1,'*-',x2,y2,'*-',x3,y3,'*-',x4,y4,'*-');
-xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Residual resistance coefficient, C_{R} (-)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
     title('{\bf Residual resistance comparison}','FontSize',setGeneralFontSize);
@@ -1402,14 +1639,6 @@ box on;
 axis square;
 
 %# Line, colors and markers
-%set(h(1),'Color',setColor{1},'Marker','none','LineStyle','-','linewidth',setLineWidth);
-%set(h(2),'Color',setColor{2},'Marker','none','LineStyle','--','linewidth',setLineWidth);
-%set(h(3),'Color',setColor{3},'Marker','none','LineStyle','-.','linewidth',setLineWidth);
-%set(h(4),'Color',setColor{4},'Marker','none','LineStyle',':','linewidth',setLineWidth);
-%set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-%set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-%set(h(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-%set(h(4),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-','linewidth',setLineWidth);
 set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','--','linewidth',setLineWidth);
 set(h(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.','linewidth',setLineWidth);
@@ -1434,7 +1663,7 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.4f'));
 
 %# Legend
-hleg1 = legend('R_{TBH}','Tamura','Schuster','Scott');
+hleg1 = legend('R_{BH}','Tamura (1975)','Schuster (1955)','Scott (1970)');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
@@ -1465,7 +1694,7 @@ y3 = RRArray(1:17,14);
 
 %# Plotting ---------------------------------------------------------------
 h = plot(x1,y1,'*-',x2,y2,'*-',x3,y3,'*-');
-xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
 ylabel('{\bf (CR(shallow)-CR(deep)) / CR(deep) (-)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
     title('{\bf Residual resistance comparison}','FontSize',setGeneralFontSize);
@@ -1475,12 +1704,6 @@ box on;
 axis square;
 
 %# Line, colors and markers
-%set(h(1),'Color',setColor{1},'Marker','none','LineStyle','-','linewidth',setLineWidth);
-%set(h(2),'Color',setColor{2},'Marker','none','LineStyle','--','linewidth',setLineWidth);
-%set(h(3),'Color',setColor{3},'Marker','none','LineStyle','-.','linewidth',setLineWidth);
-%set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-%set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-%set(h(3),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','--','linewidth',setLineWidth);
 set(h(2),'Color',setColor{3},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.','linewidth',setLineWidth);
 set(h(3),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',':','linewidth',setLineWidth);
@@ -1504,7 +1727,7 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
 
 %# Legend
-hleg1 = legend('Tamura','Schuster','Scott');
+hleg1 = legend('Tamura (1975)','Schuster (1955)','Scott (1970)');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
@@ -1545,7 +1768,163 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Plot_2_Uncorrected_and_Corrected_Resistance_Comparison_Plot.%s', '_averaged_corr_shallow_water', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Plot_3_Uncorrected_and_Corrected_Resistance_Comparison_Plot.%s', '_averaged_corr_shallow_water', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 4. Uncorrected and Corrected Resistance
+%# ************************************************************************
+figurename = 'Plot 4: Uncorrected and Corrected Resistance';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%     
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 12;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 14;
+setLineWidthMarker = 1;
+setLineWidth       = 2;
+setLineWidthThin   = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+%subplot(1,1,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+% Tamura
+x1 = RRArray(:,1);
+y1 = RRArray(:,6);
+
+% Schuster
+x2 = RRArray(:,1);
+y2 = RRArray(:,10);
+
+% Scott
+x3 = RRArray(1:17,1);
+y3 = RRArray(1:17,14);
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'*-',x2,y2,'*-',x3,y3,'*-');
+xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf (CR(shallow)-CR(deep)) / CR(deep) (-)}','FontSize',setGeneralFontSize);
+if enablePlotTitle == 1
+    title('{\bf Residual resistance comparison}','FontSize',setGeneralFontSize);
+end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','--','linewidth',setLineWidthThin);
+set(h(2),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle','-.','linewidth',setLineWidthThin);
+set(h(3),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',':','linewidth',setLineWidthThin);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+% %# Axis limitations
+minX  = 0.1;
+maxX  = 0.5;
+incrX = 0.05;
+minY  = 0;
+maxY  = 0.35;
+incrY = 0.05;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
+
+%# Legend
+hleg1 = legend('Tamura (1975)','Schuster (1955)','Scott (1970)');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
+
+%# Plot title -------------------------------------------------------------
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Plot_4_Uncorrected_and_Corrected_Resistance_Comparison_Plot.%s', '_averaged_corr_shallow_water', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;

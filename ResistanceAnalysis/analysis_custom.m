@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 20, 2015
+%# Date       :  February 27, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -137,7 +137,7 @@ delete(allPlots);   % Close all plots
 %# ------------------------------------------------------------------------
 
 % Plot titles, colours, etc.
-enablePlotMainTitle     = 1;    % Show plot title in saved file
+enablePlotMainTitle     = 0;    % Show plot title in saved file
 enablePlotTitle         = 1;    % Show plot title above plot
 enableBlackAndWhitePlot = 1;    % Show plot in black and white only
 
@@ -633,7 +633,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Plotting
     h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');
-    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf RTm \\ \nabla \rho g (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -786,7 +786,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Plotting
     h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');
-    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
     %ylabel('$\frac{\bf{R_{Tm}}}{\bf{\nabla\;\rho\;g}}\;\frac{\bf{1}}{\bf{F_{r}^{2}}}$ (-)','Interpreter','LaTex','FontSize',setGeneralFontSize);
     ylabel('{\bf (RTm \\ \nabla \rho g) * (1 \\ Fr^2) (-)}','FontSize',setGeneralFontSize);
     grid on;
@@ -914,7 +914,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     end
     
     %# Line, colors and markers
-    setMarkerSize      = 10;
+    setMarkerSize      = 12;
     setLineWidthMarker = 1;
     setLineWidth       = 1;
     setLineStyle       = '-';
@@ -1034,7 +1034,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     else
         h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');
     end
-    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf (RTm \\ \nabla \rho g) * (1 \\ Fr^2) (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -1065,9 +1065,9 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     minX  = 0.1;
     maxX  = 0.5;
     incrX = 0.1;
-    minY  = 0.2;
-    maxY  = 0.36;
-    incrY = 0.04;
+    minY  = 0.22;
+    maxY  = 0.34;
+    incrY = 0.02;
     set(gca,'XLim',[minX maxX]);
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
@@ -1234,7 +1234,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Plotting
     h = plot(x9,y9,'*--',x7,y7,'*-.',x8,y8,'*:');
-    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
     %ylabel('$\frac{\bf{R_{Tm}}}{\bf{\nabla\;\rho\;g}}$ (-)','Interpreter','LaTex','FontSize',setGeneralFontSize);
     ylabel('{\bf RTm \\ \nabla \rho g (-)}','FontSize',setGeneralFontSize);
     grid on;
@@ -1334,7 +1334,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Plotting
     h = plot(x9,y9,'*--',x7,y7,'*-.',x8,y8,'*:');
-    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
     %ylabel('$\frac{\bf{R_{Tm}}}{\bf{\nabla\;\rho\;g}}\;\frac{\bf{1}}{\bf{F_{r}^{2}}}$ (-)','Interpreter','LaTex','FontSize',setGeneralFontSize);
     ylabel('{\bf (RTm \\ \nabla \rho g) * (1 \\ Fr^2) (-)}','FontSize',setGeneralFontSize);
     grid on;
@@ -1524,7 +1524,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Plotting
     h = plot(x12,y12,'*--',x10,y10,'*-.',x11,y11,'*:');
-    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
     %ylabel('$\frac{\bf{R_{Tm}}}{\bf{\nabla\;\rho\;g}}$ (-)','Interpreter','LaTex','FontSize',setGeneralFontSize);
     ylabel('{\bf RTm \\ \nabla \rho g (-)}','FontSize',setGeneralFontSize);
     grid on;
@@ -1624,7 +1624,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Plotting
     h = plot(x12,y12,'*--',x10,y10,'*-.',x11,y11,'*:');
-    xlabel('{\bf Froude length number (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf (RTm \\ \nabla \rho g) * (1 \\ Fr^2) (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -1935,7 +1935,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# --------------------------------------------------------------------
     %# 4.1 Sinkage and trim vs. resistance (1,500 tonnes) - Thesis Plot
     %# --------------------------------------------------------------------
-    figurename = 'Plot 4: Sinkage and trim vs. resistance (1,500 tonnes)';
+    figurename = 'Plot 4.1: Sinkage and trim vs. resistance (1,500 tonnes)';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -2013,21 +2013,21 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     axis square;
     
     %# Line, colors and markers
-    set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-    set(h(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    minX  = -20;
-    maxX  = 24;
+    minX  = -16;
+    maxX  = 8;
     incrX = 4;
     minY  = 0;
-    maxY  = 70;
-    incrY = 10;
+    maxY  = 55;
+    incrY = 5;
     set(gca,'XLim',[minX maxX]);
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
@@ -2037,7 +2037,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     %# Legend
     hleg1 = legend('1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,500t (0.5 deg. static trim)');
-    set(hleg1,'Location','NorthEast');
+    set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
@@ -2070,21 +2070,21 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     axis square;
     
     %# Line, colors and markers
-    set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-    set(h(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
     set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    minX  = -1;
-    maxX  = 2;
+    minX  = -0.5;
+    maxX  = 1.5;
     incrX = 0.5;
     minY  = 0;
-    maxY  = 70;
-    incrY = 10;
+    maxY  = 55;
+    incrY = 5;
     set(gca,'XLim',[minX maxX]);
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
@@ -2141,7 +2141,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# --------------------------------------------------------------------
     %# 4.2 Sinkage and trim vs. resistance (1,804 tonnes) - Thesis Plot
     %# --------------------------------------------------------------------
-    figurename = 'Plot 4: Sinkage and trim vs. resistance (1,804 tonnes)';
+    figurename = 'Plot 4.2: Sinkage and trim vs. resistance (1,804 tonnes)';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -2220,7 +2220,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     %# Line, colors and markers
     set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-    set(h(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth);
     set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
     
     %# Set plot figure background to a defined color
@@ -2228,8 +2228,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gcf,'Color',[1,1,1]);
     
     %# Axis limitations
-    minX  = -20;
-    maxX  = 24;
+    minX  = -24;
+    maxX  = 8;
     incrX = 4;
     minY  = 0;
     maxY  = 70;
@@ -2243,7 +2243,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     %# Legend
     hleg1 = legend('1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)');
-    set(hleg1,'Location','NorthEast');
+    set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
@@ -2277,7 +2277,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     %# Line, colors and markers
     set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-    set(h(2),'Color',setColor{2},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth);
     set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
     
     %# Set plot figure background to a defined color

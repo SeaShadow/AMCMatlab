@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 20, 2015
+%# Date       :  February 27, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -1195,7 +1195,7 @@ end % enableAveragedRunsPlot1 == 1 || enableAveragedRunsPlot2 == 1
 
 slopeInterceptArray = [];
 
-figurename = sprintf('Plot 1: %s:: Log10(y) vs. log10(V/Vm)', testName);
+figurename = 'Plot 1: Log10(y) vs. log10(V/Vm)';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -1372,8 +1372,8 @@ set(h3(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle3,'linewi
 %if enablePlotTitle == 1
 title('{\bf Inboard}','FontSize',setGeneralFontSize);
 %end
-xlabel('{\bf log10(V/Vm) [-]}','FontSize',setGeneralFontSize);
-ylabel('{\bf log10(y) [-]}','FontSize',setGeneralFontSize);
+xlabel('{\bf log10(V/Vm) (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf log10(y) (-)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
@@ -1527,8 +1527,8 @@ set(h3(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle3,'linewi
 %if enablePlotTitle == 1
 title('{\bf Outboard}','FontSize',setGeneralFontSize);
 %end
-xlabel('{\bf log10(V/Vm) [-]}','FontSize',setGeneralFontSize);
-ylabel('{\bf log10(y) [-]}','FontSize',setGeneralFontSize);
+xlabel('{\bf log10(V/Vm) (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf log10(y) (-)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
@@ -1682,8 +1682,8 @@ set(h3(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle3,'linewi
 %if enablePlotTitle == 1
 title('{\bf Averaged speeds}','FontSize',setGeneralFontSize);
 %end
-xlabel('{\bf log10(V/Vm) [-]}','FontSize',setGeneralFontSize);
-ylabel('{\bf log10(y) [-]}','FontSize',setGeneralFontSize);
+xlabel('{\bf log10(V/Vm) (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf log10(y) (-)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
@@ -1780,7 +1780,7 @@ f = figure('Name',figurename,'NumberTitle','off');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
 %     set(gcf, 'PaperPosition', [0 0 19 19]);
-%     
+%
 %     set(gcf, 'PaperUnits', 'centimeters');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
@@ -1928,15 +1928,15 @@ slopeInterceptArray(3,3) = cvalues3(2);
 % Plotting ----------------------------------------------------------------
 %# Fr=0.35
 h2 = plot(fitobject2,'-',x2,y2,'*');
-legendInfo11{1}  = 'F_{r}=0.35';
-legendInfo11{2}  = 'F_{r}=0.35 (linear fit)';
+legendInfo11{1}  = 'Speed #2 (F_{r}=0.35)';
+legendInfo11{2}  = 'Speed #2 (F_{r}=0.35) linear fit';
 set(h2(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h2(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
 % if enablePlotTitle == 1
 %     title('{\bf Inboard}','FontSize',setGeneralFontSize);
 % end
-xlabel('{\bf log10(V/Vm) [-]}','FontSize',setGeneralFontSize);
-ylabel('{\bf log10(y) [-]}','FontSize',setGeneralFontSize);
+xlabel('{\bf log10(V/Vm) (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf log10(y) (-)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
@@ -2087,7 +2087,7 @@ end
 %# 2. Plot distance from hull vs. speed
 %# ************************************************************************
 
-figurename = sprintf('Plot 2: %s:: Distance from Hull vs. Speed', testName);
+figurename = 'Plot 2: Plot distance from hull vs. speed';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -2096,7 +2096,7 @@ f = figure('Name',figurename,'NumberTitle','off');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
 %     set(gcf, 'PaperPosition', [0 0 19 19]);
-%     
+%
 %     set(gcf, 'PaperUnits', 'centimeters');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
@@ -2219,8 +2219,8 @@ end
 if enablePlotTitle == 1
     title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Measured speed [m/s]}','FontSize',setGeneralFontSize);
-ylabel('{\bf Vertical distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
+xlabel('{\bf Measured speed (m/s)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Vertical distance from model hull, Y (mm)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
@@ -2312,7 +2312,7 @@ end
 %# 3. Plot distance from hull vs. averaged speed
 %# ************************************************************************
 
-figurename = sprintf('Plot 3: %s:: Distance from Hull vs. Speed', testName);
+figurename = 'Plot 3: Plot distance from hull vs. averaged speed';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -2321,7 +2321,7 @@ f = figure('Name',figurename,'NumberTitle','off');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
 %     set(gcf, 'PaperPosition', [0 0 19 19]);
-%     
+%
 %     set(gcf, 'PaperUnits', 'centimeters');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
@@ -2397,8 +2397,8 @@ end
 if enablePlotTitle == 1
     title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Measured speed [m/s]}','FontSize',setGeneralFontSize);
-ylabel('{\bf Vertical distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
+xlabel('{\bf Measured speed (m/s)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Vertical distance from model hull, Y (mm)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
@@ -2433,9 +2433,9 @@ set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
 
 %# Legend
 if enableBLDepthMarker == 1
-    hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40','Boundary layer thickness \delta');
+    hleg1 = legend('Speed #1 (F_{r}=0.30)','Speed #2 (F_{r}=0.35)','Speed #3 (F_{r}=0.40)','Boundary layer thickness (\delta)');
 else
-    hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40');
+    hleg1 = legend('Speed #1 (F_{r}=0.30)','Speed #2 (F_{r}=0.35)','Speed #3 (F_{r}=0.40)');
 end
 set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','tex');
@@ -2487,7 +2487,7 @@ end
 %# 4. Plot speed vs. u/U0
 %# ************************************************************************
 
-figurename = sprintf('Plot 4: %s:: Speed vs. u/U0', testName);
+figurename = 'Plot 4: Speed vs. u/U0';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -2496,7 +2496,7 @@ f = figure('Name',figurename,'NumberTitle','off');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
 %     set(gcf, 'PaperPosition', [0 0 19 19]);
-%     
+%
 %     set(gcf, 'PaperUnits', 'centimeters');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
@@ -2635,8 +2635,8 @@ end
 if enablePlotTitle == 1
     title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Vertical distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
-ylabel('{\bf U/U_{0} [-]}','FontSize',setGeneralFontSize);
+xlabel('{\bf Vertical distance from model hull, Y (mm)}','FontSize',setGeneralFontSize);
+ylabel('{\bf U/U_{0} (-)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
@@ -2690,13 +2690,13 @@ set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 %# Legend
 %# MARIN boundary layer data
 if enableMARINBLData == 1 && enableAMCLJ120EBLData == 0
-    hleg1 = legend('F_{r}=0.30 Inboard','F_{r}=0.30 Outboard','F_{r}=0.35 Inboard','F_{r}=0.35 Outboard','F_{r}=0.40 Inboard','F_{r}=0.40 Outboard','MARIN 112m JHSV Cond. T1');
+    hleg1 = legend('Speed #1 (F_{r}=0.30 Inboard)','Speed #1 (F_{r}=0.30 Outboard)','Speed #2 (F_{r}=0.35 Inboard)','Speed #2 (F_{r}=0.35 Outboard)','Speed #3 (F_{r}=0.40 Inboard)','Speed #3 (F_{r}=0.40 Outboard)','MARIN 112m JHSV Cond. T1');
 elseif enableMARINBLData == 0 && enableAMCLJ120EBLData == 1
-    hleg1 = legend('F_{r}=0.30 Inboard','F_{r}=0.30 Outboard','F_{r}=0.35 Inboard','F_{r}=0.35 Outboard','F_{r}=0.40 Inboard','F_{r}=0.40 Outboard','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
+    hleg1 = legend('Speed #1 (F_{r}=0.30 Inboard)','Speed #1 (F_{r}=0.30 Outboard)','Speed #2 (F_{r}=0.35 Inboard)','Speed #2 (F_{r}=0.35 Outboard)','Speed #3 (F_{r}=0.40 Inboard)','Speed #3 (F_{r}=0.40 Outboard)','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
 elseif enableMARINBLData == 1 && enableAMCLJ120EBLData == 1
-    hleg1 = legend('F_{r}=0.30 Inboard','F_{r}=0.30 Outboard','F_{r}=0.35 Inboard','F_{r}=0.35 Outboard','F_{r}=0.40 Inboard','F_{r}=0.40 Outboard','MARIN 112m JHSV Cond. T1','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
+    hleg1 = legend('Speed #1 (F_{r}=0.30 Inboard)','Speed #1 (F_{r}=0.30 Outboard)','Speed #2 (F_{r}=0.35 Inboard)','Speed #2 (F_{r}=0.35 Outboard)','Speed #3 (F_{r}=0.40 Inboard)','Speed #3 (F_{r}=0.40 Outboard)','MARIN 112m JHSV Cond. T1','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
 else
-    hleg1 = legend('F_{r}=0.30 Inboard','F_{r}=0.30 Outboard','F_{r}=0.35 Inboard','F_{r}=0.35 Outboard','F_{r}=0.40 Inboard','F_{r}=0.40 Outboard');
+    hleg1 = legend('Speed #1 (F_{r}=0.30 Inboard)','Speed #1 (F_{r}=0.30 Outboard)','Speed #2 (F_{r}=0.35 Inboard)','Speed #2 (F_{r}=0.35 Outboard)','Speed #3 (F_{r}=0.40 Inboard)','Speed #3 (F_{r}=0.40 Outboard)');
 end
 set(hleg1,'Location','SouthEast');
 set(hleg1,'Interpreter','tex');
@@ -2745,10 +2745,10 @@ end
 
 
 %# ************************************************************************
-%# 5. Plot speed vs. (averaged)u/U0
+%# 5. Plot speed vs. (averaged) u/U0
 %# ************************************************************************
 
-figurename = sprintf('Plot 5: %s:: Speed vs. u/U0', testName);
+figurename = 'Plot 5: Plot speed vs. (averaged) u/U0';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -2757,7 +2757,7 @@ f = figure('Name',figurename,'NumberTitle','off');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
 %     set(gcf, 'PaperPosition', [0 0 19 19]);
-%     
+%
 %     set(gcf, 'PaperUnits', 'centimeters');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
@@ -2863,8 +2863,8 @@ end
 if enablePlotTitle == 1
     title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Vertical distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
-ylabel('{\bf U/U_{0} [-]}','FontSize',setGeneralFontSize);
+xlabel('{\bf Vertical distance from model hull, Y (mm)}','FontSize',setGeneralFontSize);
+ylabel('{\bf U/U_{0} (-)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
@@ -2914,13 +2914,13 @@ set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 %# Legend
 %# MARIN boundary layer data
 if enableMARINBLData == 1 && enableAMCLJ120EBLData == 0
-    hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40','MARIN 112m JHSV Cond. T1');
+    hleg1 = legend('Speed #1 (F_{r}=0.30)','Speed #2 (F_{r}=0.35)','Speed #3 (F_{r}=0.40)','MARIN 112m JHSV Cond. T1');
 elseif enableMARINBLData == 0 && enableAMCLJ120EBLData == 1
-    hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
+    hleg1 = legend('Speed #1 (F_{r}=0.30)','Speed #2 (F_{r}=0.35)','Speed #3 (F_{r}=0.40)','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
 elseif enableMARINBLData == 1 && enableAMCLJ120EBLData == 1
-    hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40','MARIN 112m JHSV Cond. T1','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
+    hleg1 = legend('Speed #1 (F_{r}=0.30)','Speed #2 (F_{r}=0.35)','Speed #3 (F_{r}=0.40)','MARIN 112m JHSV Cond. T1','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
 else
-    hleg1 = legend('F_{r}=0.30','F_{r}=0.35','F_{r}=0.40');
+    hleg1 = legend('Speed #1 (F_{r}=0.30)','Speed #2 (F_{r}=0.35)','Speed #3 (F_{r}=0.40)');
 end
 set(hleg1,'Location','SouthEast');
 set(hleg1,'Interpreter','tex');
@@ -2972,7 +2972,7 @@ end
 %# 6. Boundary Layer Thickness
 %# ************************************************************************
 
-figurename = sprintf('Plot 6: %s:: Boundary Layer Thickness', testName);
+figurename = 'Plot 6: Boundary Layer Thickness';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -2981,7 +2981,7 @@ f = figure('Name',figurename,'NumberTitle','off');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
 %     set(gcf, 'PaperPosition', [0 0 19 19]);
-%     
+%
 %     set(gcf, 'PaperUnits', 'centimeters');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
@@ -3093,9 +3093,9 @@ yF = FPArray(:,2);
 
 % Plotting ----------------------------------------------------------------
 h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
-legendInfo1{1} = 'F_{r}=0.30';
-legendInfo1{2} = 'F_{r}=0.35';
-legendInfo1{3} = 'F_{r}=0.40';
+legendInfo1{1} = 'Speed #1 (F_{r}=0.30)';
+legendInfo1{2} = 'Speed #2 (F_{r}=0.35)';
+legendInfo1{3} = 'Speed #3 (F_{r}=0.40)';
 % Boundary layer thicknesses of three measured speeds
 hold on;
 h1 = plot(xBL,yBL,'*');
@@ -3108,8 +3108,8 @@ h2 = plot(xF,yF,'-');
 if enablePlotTitle == 1
     title('{\bf BLT}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Measured speed [m/s]}','FontSize',setGeneralFontSize);
-ylabel('{\bf Boundry layer thickness [mm]}','FontSize',setGeneralFontSize);
+xlabel('{\bf Measured speed (m/s)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Boundry layer thickness (mm)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
@@ -3204,7 +3204,7 @@ f = figure('Name',figurename,'NumberTitle','off');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
 %     set(gcf, 'PaperPosition', [0 0 19 19]);
-%     
+%
 %     set(gcf, 'PaperUnits', 'centimeters');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
@@ -3354,12 +3354,12 @@ yPL40 = Temp40YArray;
 % Plotting ----------------------------------------------------------------
 h1 = plot(x1i,y1i,'*',x1o,y1o,'*',x2i,y2i,'*',x2o,y2o,'*',x3i,y3i,'*',x3o,y3o,'*');
 %# Inboard and outboard plots
-legendInfo{1} = 'F_{r}=0.30 Inboard';
-legendInfo{2} = 'F_{r}=0.30 Outboard';
-legendInfo{3} = 'F_{r}=0.35 Inboard';
-legendInfo{4} = 'F_{r}=0.35 Outboard';
-legendInfo{5} = 'F_{r}=0.40 Inboard';
-legendInfo{6} = 'F_{r}=0.40 Outboard';
+legendInfo{1} = 'Speed #1 (F_{r}=0.30 Inboard)';
+legendInfo{2} = 'Speed #1 (F_{r}=0.30 Outboard)';
+legendInfo{3} = 'Speed #2 (F_{r}=0.35 Inboard)';
+legendInfo{4} = 'Speed #2 (F_{r}=0.35 Outboard)';
+legendInfo{5} = 'Speed #3 (F_{r}=0.40 Inboard)';
+legendInfo{6} = 'Speed #3 (F_{r}=0.40 Outboard)';
 %# Boundary layer thickness marker
 hold on;
 h2 = plot(xBL,yBL,'*');
@@ -3367,14 +3367,14 @@ legendInfo{7} = 'Boundary layer thickness (\delta)';
 %# Power law curves
 hold on;
 h3 = plot(xPL30,yPL30,'*',xPL35,yPL35,'*',xPL40,yPL40,'*');
-legendInfo{8}  = 'F_{r}=0.30 (Power law, n=7)';
-legendInfo{9}  = 'F_{r}=0.35 (Power law, n=7)';
-legendInfo{10} = 'F_{r}=0.40 (Power law, n=7)';
+legendInfo{8}  = 'F_{r}=0.30 (power law, n=7)';
+legendInfo{9}  = 'F_{r}=0.35 (power law, n=7)';
+legendInfo{10} = 'F_{r}=0.40 (power law, n=7)';
 if enablePlotTitle == 1
     title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Measured speed [m/s]}','FontSize',setGeneralFontSize);
-ylabel('{\bf Vertical distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
+xlabel('{\bf Measured speed (m/s)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Vertical distance from model hull, Y (mm)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
@@ -3472,7 +3472,7 @@ f = figure('Name',figurename,'NumberTitle','off');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
 %     set(gcf, 'PaperPosition', [0 0 19 19]);
-%     
+%
 %     set(gcf, 'PaperUnits', 'centimeters');
 %     set(gcf, 'PaperSize', [19 19]);
 %     set(gcf, 'PaperPositionMode', 'manual');
@@ -3598,9 +3598,9 @@ yPL40 = Temp40YArray;
 
 % Plotting ----------------------------------------------------------------
 h1 = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
-legendInfo2{1} = 'F_{r}=0.30';
-legendInfo2{2} = 'F_{r}=0.35';
-legendInfo2{3} = 'F_{r}=0.40';
+legendInfo2{1} = 'Speed #1 (F_{r}=0.30)';
+legendInfo2{2} = 'Speed #2 (F_{r}=0.35)';
+legendInfo2{3} = 'Speed #3 (F_{r}=0.40)';
 %# Boundary layer thickness marker
 hold on;
 h2 = plot(xBL,yBL,'*');
@@ -3608,14 +3608,14 @@ legendInfo2{4} = 'Boundary layer thickness (\delta)';
 %# Power law curves
 hold on;
 h3 = plot(xPL30,yPL30,'*',xPL35,yPL35,'*',xPL40,yPL40,'*');
-legendInfo{5} = 'F_{r}=0.30 (Power law, n=7)';
-legendInfo{6} = 'F_{r}=0.35 (Power law, n=7)';
-legendInfo{7} = 'F_{r}=0.40 (Power law, n=7)';
+legendInfo2{5} = 'F_{r}=0.30 (power law, n=7)';
+legendInfo2{6} = 'F_{r}=0.35 (power law, n=7)';
+legendInfo2{7} = 'F_{r}=0.40 (power law, n=7)';
 if enablePlotTitle == 1
     title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Measured speed [m/s]}','FontSize',setGeneralFontSize);
-ylabel('{\bf Vertical distance from model hull, Y [mm]}','FontSize',setGeneralFontSize);
+xlabel('{\bf Measured speed (m/s)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Vertical distance from model hull, Y (mm)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;

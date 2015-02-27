@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 20, 2015
+%# Date       :  February 27, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -51,7 +51,7 @@ enableTextOnPlot        = 0;    % Show equation of fit text on plot
 enableAvgPortStbdPlot   = 0;    % Show averaged port and stbd curve
 
 % Show curve fitting
-enableCurveFittingPlot  = 1;    % Show curve fitting  
+enableCurveFittingPlot  = 1;    % Show curve fitting
 
 % Show error plots based on standard deviation
 enableErrorBarPlot      = 0;    % Show error bars based on standard deviations
@@ -90,6 +90,31 @@ XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
 YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
 %# ------------------------------------------------------------------------
 %# END Define plot size
+%# ************************************************************************
+
+
+%# ************************************************************************
+%# START CONSTANTS AND PARTICULARS
+%# ------------------------------------------------------------------------
+
+% On test date
+ttlength            = 100;                    % Towing Tank: Length            (m)
+ttwidth             = 3.5;                    % Towing Tank: Width             (m)
+ttwaterdepth        = 1.45;                   % Towing Tank: Water depth       (m)
+ttcsa               = ttwidth * ttwaterdepth; % Towing Tank: Sectional area    (m^2)
+ttwatertemp         = 18.5;                   % Towing Tank: Water temperature (degrees C)
+
+% General constants
+gravconst           = 9.806;                  % Gravitational constant           (m/s^2)
+MSKinVis            = 0.0000010411;           % Model scale kinetic viscosity at 18.5 deg. C  (m^2/s) -> See table in ITTC 7.5-02-01-03 (2008)
+FSKinVis            = 0.0000010711;           % Full scale kinetic viscosity at 19.2 deg. C   (m^2/s) -> See table in ITTC 7.5-02-01-03 (2008)
+freshwaterdensity   = 998.5048;               % Model scale water density at 18.5 deg. C      (Kg/m^3) -> See table in ITTC 7.5-02-01-03 (2008)
+saltwaterdensity    = 1025.0187;              % Salt water scale water density at 19.2 deg. C (Kg/m^3) -> See table in ITTC 7.5-02-01-03 (2008)
+distbetwposts       = 1150;                   % Distance between carriage posts               (mm)
+FStoMSratio         = 21.6;                   % Full scale to model scale ratio               (-)
+
+%# ------------------------------------------------------------------------
+%# END CONSTANTS AND PARTICULARS
 %# ************************************************************************
 
 
@@ -297,17 +322,31 @@ AvgStbdArray = [AvgStbdArray;stats_avg(2,3400,results(65:67,:))];
 %# Summary array
 SummaryMFRSept2014Array = [];
 % SummaryMFRSept2014Array colums
-%[1] Set shaft speed            (RPM)
-%[2] PORT: Kiel probe           (V)
-%[3] PORT: Mass flow rate       (Kg/s)
-%[4] STBD: Kiel probe           (V)
-%[5] STBD: Mass flow rate       (Kg/s)
+%[1]  Set shaft speed                (RPM)
+%[2]  PORT: Kiel probe               (V)
+%[3]  PORT: Mass flow rate           (Kg/s)
+%[4]  STBD: Kiel probe               (V)
+%[5]  STBD: Mass flow rate           (Kg/s)
+%# New columns: added 27/2/2015
+%[6]  PORT: Measured shaft Speed     (RPM)
+%[7]  STBD: Measured shaft Speed     (RPM)
+%[8]  PORT: Measured shaft Speed     (PMS)
+%[9]  STBD: Measured shaft Speed     (RPS)
+%[10] PORT: Volumetric flow rate     (m^3/s)
+%[10] STBD: Volumetric flow rate     (m^3/s)
 for ks=1:mp
-    SummaryMFRSept2014Array(ks,1) = AvgStbdArray(ks,1);
-    SummaryMFRSept2014Array(ks,2) = AvgPortArray(ks,7);
-    SummaryMFRSept2014Array(ks,3) = AvgPortArray(ks,5);
-    SummaryMFRSept2014Array(ks,4) = AvgStbdArray(ks,6);
-    SummaryMFRSept2014Array(ks,5) = AvgStbdArray(ks,5);
+    SummaryMFRSept2014Array(ks,1)  = AvgStbdArray(ks,1);
+    SummaryMFRSept2014Array(ks,2)  = AvgPortArray(ks,7);
+    SummaryMFRSept2014Array(ks,3)  = AvgPortArray(ks,5);
+    SummaryMFRSept2014Array(ks,4)  = AvgStbdArray(ks,6);
+    SummaryMFRSept2014Array(ks,5)  = AvgStbdArray(ks,5);
+    %# New columns: added 27/2/2015
+    SummaryMFRSept2014Array(ks,6)  = AvgPortArray(ks,4);
+    SummaryMFRSept2014Array(ks,7)  = AvgStbdArray(ks,3);
+    SummaryMFRSept2014Array(ks,8)  = AvgPortArray(ks,4)/60;
+    SummaryMFRSept2014Array(ks,9)  = AvgStbdArray(ks,3)/60;
+    SummaryMFRSept2014Array(ks,10) = AvgPortArray(ks,4)/freshwaterdensity;
+    SummaryMFRSept2014Array(ks,11) = AvgStbdArray(ks,3)/freshwaterdensity;
 end
 
 % /////////////////////////////////////////////////////////////////////////
@@ -370,7 +409,7 @@ repeatedRunsDescStatArray = [];
 
 %# PORT: Mass flow rate ///////////////////////////////////////////////////
 
-% MFR (1s only) 
+% MFR (1s only)
 %[1]  Min                                   (Kg/s)
 %[2]  Max                                   (Kg/s)
 %[3]  Mean (or average)                     (Kg/s)
@@ -393,7 +432,7 @@ repeatedRunsDescStatArray = [];
 
 %# STBD: Mass flow rate ///////////////////////////////////////////////////
 
-% MFR (1s only) 
+% MFR (1s only)
 %[16] Min                                   (Kg/s)
 %[17] Max                                   (Kg/s)
 %[18] Mean (or average)                     (Kg/s)
@@ -476,7 +515,7 @@ for k=1:14
     repeatedRunsDescStatArray(k, 4)  = var(dataset,1);
     repeatedRunsDescStatArray(k, 5)  = std(dataset,1);
     
-    % MFR (mean, 1s intervals) 
+    % MFR (mean, 1s intervals)
     dataset = sortedByRPMPortArray{k}(:,17);
     repeatedRunsDescStatArray(k, 6)  = min(dataset);
     repeatedRunsDescStatArray(k, 7)  = max(dataset);
@@ -484,7 +523,7 @@ for k=1:14
     repeatedRunsDescStatArray(k, 9)  = var(dataset,1);
     repeatedRunsDescStatArray(k, 10) = std(dataset,1);
     
-    % MFR (overall, Q/t) 
+    % MFR (overall, Q/t)
     dataset = sortedByRPMPortArray{k}(:,18);
     repeatedRunsDescStatArray(k, 11) = min(dataset);
     repeatedRunsDescStatArray(k, 12) = max(dataset);
@@ -502,7 +541,7 @@ for k=1:14
     repeatedRunsDescStatArray(k, 19) = var(dataset,1);
     repeatedRunsDescStatArray(k, 20) = std(dataset,1);
     
-    % MFR (mean, 1s intervals) 
+    % MFR (mean, 1s intervals)
     dataset = sortedByRPMStbdArray{k}(:,17);
     repeatedRunsDescStatArray(k, 21) = min(dataset);
     repeatedRunsDescStatArray(k, 22) = max(dataset);
@@ -510,7 +549,7 @@ for k=1:14
     repeatedRunsDescStatArray(k, 25) = var(dataset,1);
     repeatedRunsDescStatArray(k, 25) = std(dataset,1);
     
-    % MFR (overall, Q/t) 
+    % MFR (overall, Q/t)
     dataset = sortedByRPMStbdArray{k}(:,18);
     repeatedRunsDescStatArray(k, 26) = min(dataset);
     repeatedRunsDescStatArray(k, 27) = max(dataset);
@@ -1195,7 +1234,7 @@ else
         set(h1(3),'Color',setColor{10},'LineStyle',setLineStyle5,'linewidth',setLineWidth);
         set(h1(4),'Color',setColor{10},'LineStyle',setLineStyle5,'linewidth',setLineWidth);
     end % enableCurveFittingPlot
-
+    
 end % enableCurveFittingToolboxPlot
 
 % Cross check SummaryMFRSept2014Array data
