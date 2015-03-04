@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 10, 2015
+%# Date       :  March 4, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -1806,11 +1806,11 @@ minc = 1;
 maxc = 200;
 c = distinguishable_colors(maxc,'w');
 
-%# Plotting speed ---------------------------------------------------------
+%# Plotting ---------------------------------------------------------------
 figurename = 'Plot 1: Thrust  Curve for LJ120E Waterjet Unit (Caterpillar Engines) 100% MCR = 7200kW, transmission losses = 2%';
 f = figure('Name',figurename,'NumberTitle','off');
 
-%# Paper size settings ------------------------------------------------
+%# Paper size settings ----------------------------------------------------
 
 if enableA4PaperSizePlot == 1
     set(gcf, 'PaperSize', [19 19]);
@@ -1823,11 +1823,12 @@ if enableA4PaperSizePlot == 1
     set(gcf, 'PaperPosition', [0 0 19 19]);
 end
 
-% Fonts and colours ---------------------------------------------------
-setGeneralFontName = 'Helvetica';
-setGeneralFontSize = 14;
-setBorderLineWidth = 2;
-setLegendFontSize  = 14;
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName  = 'Helvetica';
+setGeneralFontSize  = 16;
+setBorderLineWidth  = 2;
+setLegendFontSize   = 14;
+setPlotTextFontSize = 14;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1869,7 +1870,7 @@ setLineStyle2      = '-.';
 setLineStyle3      = ':';
 
 %# SUBPLOT ////////////////////////////////////////////////////////////////
-subplot(1,1,1)
+%ubplot(1,1,1)
 
 %# X and Y axis -----------------------------------------------------------
 
@@ -2029,6 +2030,9 @@ grid on;
 box on;
 %axis square;
 
+% Border spaces
+set(gca,'Position', [0.06 0.06 0.86 0.92]); % [Left, bottom, right, top]
+
 %# Line, colors and markers
 set(h(1),'Color',setColor2{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
 set(h(2),'Color',setColor2{1},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
@@ -2076,42 +2080,42 @@ set(gcf,'Color',[1,1,1]);
 
 %# Annotations
 % Text on plot
-text(max(x21)-1,max(y21)+6,'S/S1=1','FontSize',12,'color','k','FontWeight','bold');
-text(24.5,max(yST),'Thrust using sea trials shaft power','FontSize',12,'color','k','FontWeight','bold');
-text(24.5,max(yEFSPort),'Extrapolated PORT thrust','FontSize',12,'color','k','FontWeight','bold');
-text(24.5,max(yEFSStbd),'Extrapolated STBD thrust','FontSize',12,'color','k','FontWeight','bold');
+text(max(x21)-1,max(y21)+6,'S/S1=1','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(24.5,max(yST),'Thrust using sea trials shaft power','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(24.5,max(yEFSPort),'Extrapolated PORT thrust','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(24.5,max(yEFSStbd),'Extrapolated STBD thrust','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
 % MCR values
 rightAxisText = 45.2;
-text(max(Pct5MCR(:,3)),5,'5% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(max(Pct10MCR(:,3)),5,'10% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct15MCR(:,4)),'15% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct20MCR(:,4)),'20% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct25MCR(:,4)),'25% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct30MCR(:,4)),'30% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct35MCR(:,4)),'35% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct40MCR(:,4)),'40% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct45MCR(:,4)),'45% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct50MCR(:,4)),'50% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct55MCR(:,4)),'55% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct60MCR(:,4)),'60% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct65MCR(:,4)),'65% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct70MCR(:,4)),'70% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct75MCR(:,4)),'75% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct80MCR(:,4)),'80% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct85MCR(:,4)),'85% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct90MCR(:,4)),'90% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct95MCR(:,4)),'95% MCR','FontSize',12,'color','k','FontWeight','bold');
-text(rightAxisText,min(Pct100MCR(:,4)),'100% MCR','FontSize',12,'color','k','FontWeight','bold');
+text(max(Pct5MCR(:,3)),5,'5% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(max(Pct10MCR(:,3)),5,'10% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct15MCR(:,4)),'15% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct20MCR(:,4)),'20% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct25MCR(:,4)),'25% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct30MCR(:,4)),'30% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct35MCR(:,4)),'35% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct40MCR(:,4)),'40% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct45MCR(:,4)),'45% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct50MCR(:,4)),'50% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct55MCR(:,4)),'55% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct60MCR(:,4)),'60% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct65MCR(:,4)),'65% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct70MCR(:,4)),'70% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct75MCR(:,4)),'75% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct80MCR(:,4)),'80% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct85MCR(:,4)),'85% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct90MCR(:,4)),'90% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct95MCR(:,4)),'95% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(rightAxisText,min(Pct100MCR(:,4)),'100% MCR','FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
 % MCR values based on sea trials power
-text(5.5,max(IntPolS1(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(1,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
-text(5.5,max(IntPolS2(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(2,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
-text(5.5,max(IntPolS3(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(3,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
-text(5.5,max(IntPolS4(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(4,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
-text(5.5,max(IntPolS5(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(5,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
-text(5.5,max(IntPolS6(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(6,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
-text(5.5,max(IntPolS7(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(7,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
-text(5.5,max(IntPolS8(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(8,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
-text(5.5,max(IntPolS9(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(9,3)*100)),'FontSize',12,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS1(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(1,3)*100)),'FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS2(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(2,3)*100)),'FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS3(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(3,3)*100)),'FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS4(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(4,3)*100)),'FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS5(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(5,3)*100)),'FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS6(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(6,3)*100)),'FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS7(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(7,3)*100)),'FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS8(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(8,3)*100)),'FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
+text(5.5,max(IntPolS9(:,4)),sprintf('%s%% MCR',sprintf('%0.1f',IntPolThrustArray(9,3)*100)),'FontSize',setPlotTextFontSize,'color','k','FontWeight','bold');
 
 % %# Axis limitations
 minX  = 5;
@@ -2157,12 +2161,12 @@ if enableA4PaperSizePlot == 1
 end
 
 %# Plot title -------------------------------------------------------------
-%if enablePlotMainTitle == 1
-annotation('textbox', [0 0.9 1 0.1], ...
-    'String', strcat('{\bf ', figurename, '}'), ...
-    'EdgeColor', 'none', ...
-    'HorizontalAlignment', 'center');
-%end
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
 
 %# Save plots as PDF, PNG and EPS -----------------------------------------
 % Enable renderer for vector graphics output
@@ -2174,6 +2178,7 @@ for k=1:3
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
+
 
 %# ************************************************************************
 %# Import Resistance Data
@@ -2235,29 +2240,27 @@ end
 %# ************************************************************************
 %# Plot 2: Thrust and Resistance Comparison Plot
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 2: Thrust and Resistance Comparison Plot';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ------------------------------------------------
 
-if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-    
-    set(gcf, 'PaperUnits', 'centimeters');
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-end
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%     
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
 
 % Fonts and colours ---------------------------------------------------
 setGeneralFontName = 'Helvetica';
 setGeneralFontSize = 14;
 setBorderLineWidth = 2;
-setLegendFontSize  = 14;
+setLegendFontSize  = 12;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -2404,7 +2407,7 @@ set(gca,'YTick',minY:incrY:maxY);
 % set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
 
 %# Legend
-hleg1 = legend('Extrapolated resistance from model test, R_{TBH}','Thrust based on sea trials power, T_{SeaTrials}','Extrapolated thrust from model tests, T_{Extrapolated}');
+hleg1 = legend('Extrapolated resistance from model test (R_{TBH})','Thrust based on sea trials power (T_{SeaTrials})','Extrapolated thrust from model tests (T_{Extrapolated})');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
@@ -2424,20 +2427,20 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
 
 %# Figure size printed on paper
-if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-end
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
 
 %# Plot title -------------------------------------------------------------
-%if enablePlotMainTitle == 1
-annotation('textbox', [0 0.9 1 0.1], ...
-    'String', strcat('{\bf ', figurename, '}'), ...
-    'EdgeColor', 'none', ...
-    'HorizontalAlignment', 'center');
-%end
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
 
 %# Save plots as PDF, PNG and EPS -----------------------------------------
 % Enable renderer for vector graphics output

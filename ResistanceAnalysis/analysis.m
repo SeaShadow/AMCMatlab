@@ -1610,7 +1610,7 @@ for k=startRun:endRun
         %disp(sprintf('Run: %s, Condition: %s, DO NOT apply TS correction.',num2str(k),num2str(testcond)));
         MSRTInNewton = MSRTInNewton;
     end % any(7:13==testcond)
-    resultsArray(k, 9)  = MSRTInNewton;                                            % Model Averaged drag (RTm) (N)
+    resultsArray(k, 9)  = MSRTInNewton;                                             % Model Averaged drag (RTm) (N)
     resultsArray(k, 10) = resultsArray(k, 9) / (0.5*freshwaterdensity*MSwsa*CH_0_Speed_Mean^2); % Model Averaged drag (CTm) (-)
     resultsArray(k, 11) = MSFrRounded;                                              % Froude length number (adjusted for Lwl change at different conditions) (-)
     

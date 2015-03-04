@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 17, 2015
+%# Date       :  March 2, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -245,7 +245,7 @@ end
 
 % Fonts and colours ---------------------------------------------------
 setGeneralFontName = 'Helvetica';
-setGeneralFontSize = 14;
+setGeneralFontSize = 16;
 setBorderLineWidth = 2;
 setLegendFontSize  = 14;
 
@@ -272,8 +272,8 @@ if enableBlackAndWhitePlot == 1
 end
 
 %# Line, colors and markers
-setMarkerSize      = 12;
-setLineWidthMarker = 2;
+setMarkerSize      = 14;
+setLineWidthMarker = 1;
 setLineWidth       = 2;
 setLineStyle       = '-';
 setLineStyle1      = '--';
@@ -293,7 +293,7 @@ y1 = WPCalibration1(:,1);
 cvalues1     = coeffvalues(fitobject1);
 cnames1      = coeffnames(fitobject1);
 output1      = formula(fitobject1);
-FirstCalText = sprintf('\\bf 02/09/2014: \\rm y = %sx+%s, R^2=%s',sprintf('%.2f',cvalues1(1)),sprintf('%.2f',cvalues1(2)),sprintf('%.1f',gof1.rsquare));
+FirstCalText = sprintf('\\bf Calibration #1: \\rm y = %sx+%s, R^2=%s',sprintf('%.2f',cvalues1(1)),sprintf('%.2f',cvalues1(2)),sprintf('%.1f',gof1.rsquare));
 
 x2 = WPCalibration2(:,2);
 y2 = WPCalibration2(:,1);
@@ -303,13 +303,13 @@ y2 = WPCalibration2(:,1);
 cvalues2      = coeffvalues(fitobject2);
 cnames2       = coeffnames(fitobject2);
 output2       = formula(fitobject2);
-SecondCalText = sprintf('\\bf 04/09/2014: \\rm y = %sx+%s, R^2=%s',sprintf('%.2f',cvalues2(1)),sprintf('%.2f',cvalues2(2)),sprintf('%.1f',gof2.rsquare));
+SecondCalText = sprintf('\\bf Calibration #2: \\rm y = %sx+%s, R^2=%s',sprintf('%.2f',cvalues2(1)),sprintf('%.2f',cvalues2(2)),sprintf('%.1f',gof2.rsquare));
 
 %# Plotting ---------------------------------------------------------------
 % First calibration (02/09/2014) and second calibration (04/09/2014)
 h1 = plot(x1,y1,'*',x2,y2,'*');
-legendInfo{1} = 'Calibration 1 (02/09/2014)';
-legendInfo{2} = 'Calibration 2 (04/09/2014)';
+legendInfo{1} = 'Calibration #1 (02/09/2014)';
+legendInfo{2} = 'Calibration #2 (04/09/2014)';
 % Linear fit
 hold on;
 h2 = plot(fitobject1,'k--');
@@ -325,14 +325,14 @@ box on;
 axis square;
 
 %# Line, colors and markers
-set(h1(1),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h1(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h1(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize-2,'LineWidth',setLineWidthMarker);
 % set(h1,'marker','+');
 % set(h1,'linestyle','none');
 
 %# Annotations (i.e. custom text on plot)
-text(-5.5,90,FirstCalText,'FontSize',12,'color','k','FontWeight','normal');
-text(-5.5,60,SecondCalText,'FontSize',12,'color','k','FontWeight','normal');
+text(-5.8,90,FirstCalText,'FontSize',12,'color','k','FontWeight','normal');
+text(-5.8,60,SecondCalText,'FontSize',12,'color','k','FontWeight','normal');
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html

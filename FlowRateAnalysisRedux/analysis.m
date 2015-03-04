@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 27, 2015
+%# Date       :  March 2, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -77,7 +77,7 @@ enableBlackAndWhitePlot = 0;    % Show plot in black and white only
 enableA4PaperSizePlot   = 1;    % Show plots scale to A4 size
 
 % Individual plots
-enbaleTimeSeriesPlot    = 0;    % Time Series: Show plot
+enbaleTimeSeriesPlot    = 1;    % Time Series: Show plot
 enableThrustTorquePlot  = 0;    % Time Series: Show thrust and torque
 
 % Result summary
@@ -133,8 +133,8 @@ cutSamplesFromEnd = 4000;
 startRun = 1;       % Start at run x
 endRun   = 67;      % Stop at run y
 
-%startRun = 20;      % Start at run x
-%endRun   = 21;      % Stop at run y
+startRun = 27;      % Start at run x
+endRun   = 27;      % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END File loop for runs, startRun to endRun
@@ -488,7 +488,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
                 measuredShaftRPM = 0;
             end
             
-            %# Plotting
+            %# Plotting -----------------------------------------------------------
             figurename = sprintf('Run %s (%s RPM): Wave Probe and Kiel Probe Time Series Data', num2str(k), num2str(sprintf('%.0f',measuredShaftRPM)));
             f = figure('Name',figurename,'NumberTitle','off');
             
@@ -587,10 +587,12 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             
             %# Plotting
             h = plot(x,y,'-',x,p2,'-');
-            hold on;
-            h1 = plot(x,pv2,'-');
-            hold on;
-            h2 = plot(x,pv3,'-');
+            % Patch min/max area
+            patch([x;flipud(x)],[pv2;flipud(pv3)],[0.8,0.8,0.8],'EdgeColor','none'); %,'EdgeColor','none'
+%             hold on;
+%             h1 = plot(x,pv2,'-');
+%             hold on;
+%             h2 = plot(x,pv3,'-');
 %             if enablePlotTitle == 1
 %                 title('{\bf Wave Probe Output}','FontSize',setGeneralFontSize);
 %             end
@@ -602,9 +604,9 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             
             %# Line, colors and markers
             set(h(1),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-            set(h(2),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',2);
-            set(h1(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-            set(h2(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            set(h(2),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth+1);
+%             set(h1(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+%             set(h2(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
             
             %# Set plot figure background to a defined color
             %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -635,8 +637,8 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             %disp(linfiteqntxt);
             
             %# Legend
-            linfittxt = sprintf('Equation of fit: %s',linfiteqn);
-            hleg1 = legend('Wave probe',linfittxt);
+            linfittxt = sprintf('Linear fit: %s',linfiteqn);
+            hleg1 = legend('Wave probe output',linfittxt,'Minimum and maximum value');
             set(hleg1,'Location','NorthWest');
             set(hleg1,'Interpreter','none');
             set(hleg1,'LineWidth',1);
@@ -664,7 +666,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             y1 = Raw_CH_1_KPStbd(startSamplePos:end-cutSamplesFromEnd);   % 5 PSI DPT
             y2 = Raw_CH_2_KPPort(startSamplePos:end-cutSamplesFromEnd);   % 5 PSI DPT
             
-            % Descriptive statistics plot 1
+            % STBD: Descriptive statistics plot
             dataset = y1;
             min1 = min(dataset);
             max1 = max(dataset);
@@ -673,7 +675,7 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             std1 = std(dataset,1);
             DtM1 = (1-(max1/avg1))*100;
             
-            % Descriptive statistics plot 2
+            % PORT: Descriptive statistics plot
             dataset = y2;
             min2 = min(dataset);
             max2 = max(dataset);
@@ -740,17 +742,26 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             kppolyfitport = polyfit(x,y2,1);
             kppolyvalport = polyval(kppolyfitport,x);
             
+            % Port and stbd mean values
+            xportstbd = [min(x) max(x)];
+            ystbdmean = [avg1 avg1];
+            yportmean = [avg2 avg2];
+            
             %# Plotting ---------------------------------------------------
             if ismember(k,stbdRuns) == 1
                 %# STBD
-                h = plot(x,y1,'-',x,kppolyvalstbd,'-');
-                hold on;
-                h1 = plot(plotArray1(:,1),plotArray1(:,2),'r-',plotArray1(:,3),plotArray1(:,4),'g-');
+                h = plot(x,y1,'-',xportstbd,ystbdmean,'-'); %,x,kppolyvalstbd,'-'
+                % Patch min/max area
+                patch([plotArray1(:,1);flipud(plotArray1(:,3))],[plotArray1(:,2);flipud(plotArray1(:,4))],[0.8,0.8,0.8],'EdgeColor','none'); %,'EdgeColor','none'
+%                 hold on;
+%                 h1 = plot(plotArray1(:,1),plotArray1(:,2),'r-',plotArray1(:,3),plotArray1(:,4),'g-');
             elseif ismember(k,portRuns)
                 %# PORT
-                h = plot(x,y2,'-',x,kppolyvalport,'-');
-                hold on;
-                h2 = plot(plotArray2(:,1),plotArray2(:,2),'b-',plotArray2(:,3),plotArray2(:,4),'k-');
+                h = plot(x,y2,'-',xportstbd,yportmean,'-'); %,x,kppolyvalport,'-'
+                % Patch min/max area
+                patch([plotArray2(:,1);flipud(plotArray2(:,3))],[plotArray2(:,2);flipud(plotArray2(:,4))],[0.8,0.8,0.8],'EdgeColor','none'); %,'EdgeColor','none'                
+%                 hold on;
+%                 h2 = plot(plotArray2(:,1),plotArray2(:,2),'b-',plotArray2(:,3),plotArray2(:,4),'k-');
             end
             xlabel('{\bf Time (s)}','FontSize',setGeneralFontSize);
             ylabel('{\bf Output [V]}','FontSize',setGeneralFontSize);
@@ -759,19 +770,23 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             axis square;
             
             %# Line, colors and markers
-            if ismember(k,stbdRuns) == 1
-                %# STBD
-                set(h(1),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-                set(h(2),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',2);
-                set(h1(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-                set(h1(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-            elseif ismember(k,portRuns)
-                %# PORT
-                set(h(1),'Color',setColor{2},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-                set(h(2),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',2);
-                set(h2(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-                set(h2(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-            end
+            set(h(1),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            set(h(2),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth+1);
+%             if ismember(k,stbdRuns) == 1
+%                 %# STBD
+%                 set(h(1),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+%                 set(h(2),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+%                 set(h(3),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+%                 set(h1(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+%                 set(h1(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+%             elseif ismember(k,portRuns)
+%                 %# PORT
+%                 set(h(1),'Color',setColor{2},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+%                 set(h(2),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+%                 set(h(3),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+%                 set(h2(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+%                 set(h2(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+%             end
             
             %# Axis limitations
             minX  = x(1);
@@ -788,11 +803,13 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             
             %# Legend
             if ismember(k,stbdRuns) == 1
+                stbdmeanlegend = sprintf('Mean value: %sV',sprintf('%0.2f',avg1));
                 %# STBD
-                hleg1 = legend('Stbd: Kiel probe','Stbd: Linear fit');
+                hleg1 = legend('Kiel probe output',stbdmeanlegend,'Minimum and maximum value'); %,'Linear fit'
             elseif ismember(k,portRuns)
+                portmeanlegend = sprintf('Mean value: %sV',sprintf('%0.2f',avg2));
                 %# PORT
-                hleg1 = legend('Port: Kiel probe','Port: Linear fit');
+                hleg1 = legend('Kiel probe output',portmeanlegend,'Minimum and maximum value'); %,'Linear fit'
             end
             set(hleg1,'Location','NorthWest');
             set(hleg1,'Interpreter','none');

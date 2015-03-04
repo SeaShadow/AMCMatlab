@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 27, 2015
+%# Date       :  March 4, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -112,6 +112,9 @@ enableWakeScalingRudderComp = 0;  % Use rudder components in wake scaling
 
 % Pump effective power, PPE
 enablePPEEstPumpCurveHead   = 0;  % If TRUE use PPE = p g QJ H35 (ITTC) instead of PPE = (E7/nn)-niE1 (Bose 2008)
+
+% Close all plots
+enableCloseAllPlots         = 1;  % If TRUE all Matlab plots will be closed
 
 % Check if Curve Fitting Toolbox is installed
 % See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
@@ -276,11 +279,17 @@ airDensity = 1.2041;
 % Established using Incat GA drawing and extracting transverse area then scaling to full scale size.
 FSProjectedArea = 341.5/2;
 
+%# ------------------------------------------------------------------------
+%# END CONSTANTS AND PARTICULARS
+%# ************************************************************************
+
+
 %# -------------------------------------------------------------------------
 %# Number of headerlines in DAT file
 %# -------------------------------------------------------------------------
 headerlines             = 39;  % Number of headerlines to data
 headerlinesZeroAndCalib = 33;  % Number of headerlines to zero and calibration factors
+
 
 %# ------------------------------------------------------------------------
 %# Omit first 10 seconds of data due to acceleration
@@ -291,6 +300,7 @@ startSamplePos    = 1;
 
 % 10 seconds x sample frequency = 10 x 800 = 8000 samples (from end)
 cutSamplesFromEnd = 0;
+
 
 %# ************************************************************************
 %# START FILE LOOP FOR RUNS startRun to endRun
@@ -4412,7 +4422,7 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 
 %# Legend
-hleg1 = legend('98m (MS) t by slope','98m (MS) F=T_{M}(t-1)+F_{at T=0}','98m (MS) F_{M}=F_{at T=0}-T_{M}(1-t)','98m (MS) t=(T_{M}+F_{D}-R_{C})/T_{M}','98m (MS) using R_{CW}=T_{G}(1-t)+F+{D}','98m (FS) t=(T-R_{T})/T','98m (FS) RBH=(1-t)T => t=1-(RBH/T)');
+hleg1 = legend('98m (MS) t by slope','98m (MS) F=T_{M}(t-1)+F_{at T=0}','98m (MS) F_{M}=F_{at T=0}-T_{M}(1-t)','98m (MS) t=(T_{M}+F_{D}-R_{C})/T_{M}','98m (MS) R_{CW}=T_{G}(1-t)+F+{D}','98m (FS) t=(T-R_{T})/T','98m (FS) R_{BH}=(1-t)T => t=1-(R_{BH}/T)');
 set(hleg1,'Location','NorthEast');
 set(hleg1,'Interpreter','Tex');
 set(hleg1,'LineWidth',1);
@@ -5403,26 +5413,42 @@ for k=1:m
     fullScaleDataArray(k,82)  = ((1-MSThrustDed)/(1-FSWakeFraction))*FSStbdPumpEff*((FSStbdGrosThrust*FSStbdInlVel)/(saltwaterdensity*gravconst*FSNumPumpHead*FSStbdVolFR));
     
     % 24. Effective power and overall propulsive efficiency ---------------
-    % Added: 23/02/2015
-    % See Ghadimi (2013), Eqn. 3. PE = T V = p QJ V (Vj-Vi) then nD = PE/PD
+    % Added: 3/3/2015
+    % See Ghadimi (2013), Eqn. 3. PE = TF=0 V = p QJ V (Vj-Vi) then nD = PE/PD     
     
-    MSEffPowerPort = MSPortGrosThrust*MSSpeed;
-    MSEffPowerStbd = MSStbdGrosThrust*MSSpeed;
-    MSOPEPort      = MSEffPowerPort/MSPortDelPower;
-    MSOPEStbd      = MSEffPowerStbd/MSStbdDelPower;
-    modelScaleDataArray(k,83) = MSEffPowerPort;
-    modelScaleDataArray(k,84) = MSEffPowerStbd;
-    modelScaleDataArray(k,85) = MSOPEPort;
-    modelScaleDataArray(k,86) = MSOPEStbd;
+    % Model Scale
+    MSEffPower = resSPP_CCDoTT(k,20)*MSSpeed;
+    MSOPE      = MSEffPower/(MSPortDelPower+MSStbdDelPower);
+    modelScaleDataArray(k,83) = MSEffPower;
+    modelScaleDataArray(k,84) = MSOPE;
+
+    % Full Scale - How to extrapoalted TF=0 to full scale
+        
+    % Use Ts=Tm FStoMSratio^3 ps/pm
+    FSEffPower = (resSPP_CCDoTT(k,20)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity))*FSSpeed;
+    FSOPE      = FSEffPower/(FSPortDelPower+FSStbdDelPower);
+    fullScaleDataArray(k,83) = FSEffPower;
+    fullScaleDataArray(k,84) = FSOPE;
     
-    FSEffPowerPort = FSPortGrosThrust*FSSpeed;
-    FSEffPowerStbd = FSStbdGrosThrust*FSSpeed;
-    FSOPEPort      = FSEffPowerPort/FSPortDelPower;
-    FSOPEStbd      = FSEffPowerStbd/FSStbdDelPower;
-    fullScaleDataArray(k,83)  = FSEffPowerPort;
-    fullScaleDataArray(k,84)  = FSEffPowerStbd;
-    fullScaleDataArray(k,85)  = FSOPEPort;
-    fullScaleDataArray(k,86)  = FSOPEStbd;
+    % Use TF=0 as RTm and scale using ITTC 1978
+    
+    %# SINGLE DEMIHULL ONLY -----------------------------------------------
+%     % Roughness allowance
+%     FSRoughnessAllowance = 0.044*((RoughnessOfHullSurface/FSlwl)^(1/3)-10*FSReynoldsNo^(-1/3))+0.000125;
+%     % Correlation coefficient
+%     FSCorrelelationCoeff = (5.68-0.6*log10(FSReynoldsNo))*10^(-3);
+%     % Air resistance coefficient
+%     FSAirResistanceCoeff = DragCoeff*((airDensity*FSProjectedArea)/(saltwaterdensity*FSwsa));
+%     % Total resistance coefficient
+%     FSCTs      = FormFactor*FSCF+FSRoughnessAllowance+FSCorrelelationCoeff+FSCR+FSAirResistanceCoeff;
+%     % Total resistance
+%     FSRTs      = 0.5*saltwaterdensity*(FSSpeed^2)*FSwsa*FSCTs;
+%     % Effective power
+%     FSEffPower = FSRTs*FSSpeed;
+%     % Overall propulsive efficiency
+%     FSOPE      = FSEffPower/(FSPortDelPower+FSStbdDelPower);
+%     fullScaleDataArray(k,85) = FSEffPower;
+%     fullScaleDataArray(k,86) = FSOPE;
     
 end % k=1:m
 
@@ -5434,8 +5460,6 @@ end % k=1:m
 %# ************************************************************************
 %# 5. Full Scale Overall propulsive efficiency, nD
 %# ************************************************************************
-
-%# Plotting Overall propulsive efficiency, nD -----------------------------
 figurename = 'Plot 5: Full Scale, Propulsive Efficiency';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -5520,16 +5544,16 @@ y4 = fullScaleDataArray(:,73);
 x6 = fullScaleDataArray(:,1);
 y6 = fullScaleDataArray(:,81);
 
-% See Ghadimi (2013), Eqn. 3. PE = T V = p QJ V (Vj-Vi) then nD = PE/PD
+% See Ghadimi (2013), Eqn. 3. PE = TF=0 V = p QJ V (Vj-Vi) then nD = PE/PD
 x7 = fullScaleDataArray(:,1);
-y7 = fullScaleDataArray(:,85);
+y7 = fullScaleDataArray(:,84);
 
 %# Plotting ---------------------------------------------------------------
 h = plot(x1,y1,'*',x4,y4,'*',x6,y6,'*',x7,y7,'*');
 Plot5LegendInfo{1} = '\eta_{D}=P_{E}/P_{D} where P_{E}=R_{BH}V, P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})';
 Plot5LegendInfo{2} = 'Bose (2008): Eqn. 10-28';
 Plot5LegendInfo{3} = 'Bulten (2006): Eqn. 2.61';
-Plot5LegendInfo{4} = '\eta_{D}=P_{E}/P_{D} where P_{E}=T V=pQ_{J}V(V_{j}-V_{i}), P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})';
+Plot5LegendInfo{4} = '\eta_{D}=P_{E}/P_{D} where P_{E}=T_{F=0}V, P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})'; %'\eta_{D}=P_{E}/P_{D} where P_{E}=T_{F=0}V=pQ_{J}V(V_{j}-V_{i}), P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})'
 xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
 %xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Overall propulsive efficiency, \eta_{D} (-)}','FontSize',setGeneralFontSize);
@@ -5812,8 +5836,6 @@ end
 %# ************************************************************************
 %# 7. Full Scale, Jet and Inlet Velocity
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 7: Full Scale, Jet and Inlet Velocity';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -5973,8 +5995,6 @@ end
 %# ************************************************************************
 %# 8. Comparison Delivered Power to Sea Trials Data
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 8: Comparison Delivered Power to Corrected Sea Trials Data';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -6160,8 +6180,6 @@ end
 %# ************************************************************************
 %# 9. Comparison Delivered Power to Sea Trials Data
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 9: Comparison Propulsive Efficiency Using nD=PE/PD and nD=(thrust V)/PPE';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -6322,8 +6340,6 @@ end
 %# ************************************************************************
 %# 10. Comparing model (KTm) and full scale (KTs) thrust coefficients
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 10: Thrust identity (C_{T})';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -6484,8 +6500,6 @@ end
 %# ************************************************************************
 %# 11. Thrust-drag equilibrium
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 11: Thrust-drag equilibrium';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -6531,7 +6545,7 @@ if enableBlackAndWhitePlot == 1
 end
 
 %# Line, colors and markers
-setMarkerSize      = 10;
+setMarkerSize      = 12;
 setLineWidthMarker = 2;
 setLineWidth       = 2;
 setLineWidthThin   = 1;
@@ -6546,8 +6560,8 @@ setLineStyle3      = ':';
 %# X and Y axis -----------------------------------------------------------
 
 % Total resistance, RT
-x1 = ResResults(:,11);
-y1 = ResResults(:,24);
+x1 = ResResults(7:19,11);
+y1 = ResResults(7:19,24);
 
 % Extrapolated thrust: total catamaran = (port thrust + stbd thrust) * 2
 x2  = fullScaleDataArray(:,3);
@@ -6601,8 +6615,8 @@ axis square;
 
 %# Line, colors and markers
 set(h(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(2),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
-set(h(3),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h(2),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+set(h(3),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -6623,7 +6637,7 @@ set(gca,'YTick',minY:incrY:maxY);
 % set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
 
 %# Legend
-hleg1 = legend('Resistance from model test (R_{TBH})','Thrust from model test (T_{Gs})','Thrust using sea trials power & thrust curves (T_{Gs, ST})');
+hleg1 = legend('Bare hull resistance (R_{BH})','Extrapolated thrust from model tests (T_{Extrapolated})','Thrust based on sea trials power and thrust curves (T_{SeaTrials})');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
@@ -6673,8 +6687,6 @@ end
 %# ************************************************************************
 %# 12. Model scale ship speed, jet and inlet velocity and mass flow rate
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 12: Model scale ship speed, jet and inlet velocity and mass flow rate';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -6900,8 +6912,6 @@ end
 %# ************************************************************************
 %# 12.1 Full scale ship speed vs. jet and inlet velocity - Thesis plot
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 12.1: Full scale ship speed vs. jet and inlet velocity';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -7068,8 +7078,6 @@ end
 %# ************************************************************************
 %# 12.1.1 Averaged full scale ship speed vs. jet and inlet velocity - Thesis plot
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 12.1.1: Averaged full scale ship speed vs. jet and inlet velocity';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -7256,8 +7264,6 @@ end
 %# ************************************************************************
 %# 12.2 Full scale ship speed vs. mass flow rate
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 12.2: Full scale ship speed vs. mass flow rate';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -7475,8 +7481,6 @@ end
 %# ************************************************************************
 %# 12.2.1 Averaged full scale ship speed vs. mass flow rate (single propulsion system)
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 12.2.1: Averaged full scale ship speed vs. mass flow rate (single propulsion system)';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -7704,8 +7708,6 @@ end
 %# ************************************************************************
 %# 12.3 Full scale shaft speed (RPS) vs. mass flow rate
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 12.3: Full scale shaft speed (RPS) vs. mass flow rate';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -8111,12 +8113,10 @@ end
 %close;
 
 
-%# ************************************************************************
-%# 13. Heave and running trim comparison plot (Resistace and SP test)
-%# ************************************************************************
-
 if exist(SetAvgResistanceFilePath, 'file') == 2
-    %# Plotting speed ---------------------------------------------------------
+    %# ************************************************************************
+    %# 13. Heave and running trim comparison plot (Resistace and SP test)
+    %# ************************************************************************
     figurename = 'Plot 13: Heave and running trim comparison plot (Resistace and SP test)';
     f = figure('Name',figurename,'NumberTitle','off');
     
@@ -8217,6 +8217,16 @@ if exist(SetAvgResistanceFilePath, 'file') == 2
     x1 = avgcond7(:,15);
     y1 = avgcond7(:,12);
     
+    [fitobject1,gof1,output1]  = fit(x1,y1,'poly5');
+    cvalues1 = coeffvalues(fitobject1);
+    
+    [m1,n1] = size(x1);
+    TA1 = [];
+    for k1=1:m1
+        TA1(k1,1) = x1(k1);
+        TA1(k1,2) = cvalues1(1)*x1(k1)^5+cvalues1(2)*x1(k1)^4+cvalues1(3)*x1(k1)^3+cvalues1(4)*x1(k1)^2+cvalues1(5)*x1(k1)+cvalues1(6);
+    end
+    
     % Self-propulsion test
     x2 = modelScaleDataArray(:,3);
     y2 = resSPP_CCDoTT(:,18);
@@ -8225,16 +8235,36 @@ if exist(SetAvgResistanceFilePath, 'file') == 2
     x3 = MinMaxHeaveTrimArray(:,1);
     y3 = MinMaxHeaveTrimArray(:,2);
     
+    [fitobject3,gof3,output3]  = fit(x3,y3,'poly5');
+    cvalues3 = coeffvalues(fitobject3);
+    
+    [m3,n3] = size(x3);
+    TA3 = [];
+    for k3=1:m3
+        TA3(k3,1) = x3(k3);
+        TA3(k3,2) = cvalues3(1)*x3(k3)^5+cvalues3(2)*x3(k3)^4+cvalues3(3)*x3(k3)^3+cvalues3(4)*x3(k3)^2+cvalues3(5)*x3(k3)+cvalues3(6);
+    end    
+    
     % Minimum value
     x4 = MinMaxHeaveTrimArray(:,1);
     y4 = MinMaxHeaveTrimArray(:,4);
+    
+    [fitobject4,gof4,output4]  = fit(x4,y4,'poly5');
+    cvalues4 = coeffvalues(fitobject4);
+    
+    [m4,n4] = size(x4);
+    TA4 = [];
+    for k4=1:m4
+        TA4(k4,1) = x4(k4);
+        TA4(k4,2) = cvalues4(1)*x4(k4)^5+cvalues4(2)*x4(k4)^4+cvalues4(3)*x4(k4)^3+cvalues4(4)*x4(k4)^2+cvalues4(5)*x4(k4)+cvalues4(6);
+    end
     
     %# Plotting ---------------------------------------------------------------
     h = plot(x1,y1,'*-');
     legendInfoPlot13_1{1} = 'Resistance test (mean)';
     % Patch min/max area
     patch([x3;flipud(x4)],[y3;flipud(y4)],[0.9,0.9,0.9]); %,'EdgeColor','none'
-    legendInfoPlot13_1{2} = 'Resistance test (minimum to maximum area)';
+    legendInfoPlot13_1{2} = 'Resistance test (minimum and maximum values)';
     % Maximum values
     %hold on;
     %h1 = plot(x3,y3,'-');
@@ -8250,7 +8280,7 @@ if exist(SetAvgResistanceFilePath, 'file') == 2
     % Self-propulsion test
     hold on;
     h4 = plot(x2,y2,'*-');
-    legendInfoPlot13_1{3} = 'Self-propulsion test';
+    legendInfoPlot13_1{3} = 'Self-propulsion test';  
     xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Heave (mm)}','FontSize',setGeneralFontSize);
     % if enablePlotTitle == 1
@@ -8435,6 +8465,374 @@ if exist(SetAvgResistanceFilePath, 'file') == 2
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
         plotsavename = sprintf('_plots/%s/%s/SPP_Plot_13_Heave_And_Running_Trim_Comparison_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;
+    
+    
+    %# ************************************************************************
+    %# 13.1. Curve fitted heave and running trim comparison plot
+    %# ************************************************************************
+    figurename = 'Plot 13.1: Curve fitted heave and running trim comparison plot (Resistace and SP test)';
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ----------------------------------------------------
+    
+    %if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    %end
+    
+    % Fonts and colours -------------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 16;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 14;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. ------------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
+    
+    %# Line, colors and markers
+    setMarkerSize      = 14;
+    setLineWidthMarker = 1;
+    setLineWidth       = 2;
+    setLineWidthThin   = 1;
+    setLineStyle       = '-';
+    setLineStyle1      = '--';
+    setLineStyle2      = '-.';
+    setLineStyle3      = ':';
+    
+    %# Minimum and maximum heave and trim values
+    [mavg,navg] = size(avgcond7);
+    
+    MinMaxHeaveTrimArray = [];
+    % MinMaxHeaveTrimArray columns:
+    %[1] Ship speed                 (knots)
+    %[2] Minimum heave              (mm)
+    %[3] Average heave              (mm)
+    %[4] Maximum heave              (mm)
+    %[5] Standard deviation heave   (mm)
+    %[6] Minimum trim               (deg)
+    %[7] Average trim               (deg)
+    %[8] Maximum trim               (deg)
+    %[9] Standard deviation trim    (deg)
+    for kavg=1:mavg
+        % Ship speed ------------------------------------------------------
+        MinMaxHeaveTrimArray(kavg,1) = avgcond7(kavg,15);
+        % Heave -----------------------------------------------------------
+        MinHeave = (avgcond7(kavg,33)+avgcond7(kavg,37))/2;
+        AvgHeave = avgcond7(kavg,12);
+        MaxHeave = (avgcond7(kavg,34)+avgcond7(kavg,38))/2;
+        StdHeave = std([MinHeave AvgHeave MaxHeave],1);
+        MinMaxHeaveTrimArray(kavg,2) = MinHeave;
+        MinMaxHeaveTrimArray(kavg,3) = AvgHeave;
+        MinMaxHeaveTrimArray(kavg,4) = MaxHeave;
+        MinMaxHeaveTrimArray(kavg,5) = StdHeave;
+        % Trim ------------------------------------------------------------
+        MinTrim = atand((avgcond7(kavg,33)-avgcond7(kavg,37))/distbetwposts);
+        AvgTrim = avgcond7(kavg,13);
+        MaxTrim = atand((avgcond7(kavg,34)-avgcond7(kavg,38))/distbetwposts);
+        StdTrim = std([MinTrim AvgTrim MaxTrim],1);
+        MinMaxHeaveTrimArray(kavg,6) = MinTrim;
+        MinMaxHeaveTrimArray(kavg,7) = AvgTrim;
+        MinMaxHeaveTrimArray(kavg,8) = MaxTrim;
+        MinMaxHeaveTrimArray(kavg,9) = StdTrim;
+    end
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////////
+    subplot(1,2,1)
+    
+    %# X and Y axis -----------------------------------------------------------
+    
+    % Resistance test
+    x1 = avgcond7(:,15);
+    y1 = avgcond7(:,12);
+    
+    [fitobject1,gof1,output1]  = fit(x1,y1,'poly5');
+    cvalues1 = coeffvalues(fitobject1);
+    
+    [m1,n1] = size(x1);
+    TA1 = [];
+    for k1=1:m1
+        TA1(k1,1) = x1(k1);
+        TA1(k1,2) = cvalues1(1)*x1(k1)^5+cvalues1(2)*x1(k1)^4+cvalues1(3)*x1(k1)^3+cvalues1(4)*x1(k1)^2+cvalues1(5)*x1(k1)+cvalues1(6);
+    end
+    
+    % Self-propulsion test
+    x2 = modelScaleDataArray(:,3);
+    y2 = resSPP_CCDoTT(:,18);
+    
+    % Maximum value
+    x3 = MinMaxHeaveTrimArray(:,1);
+    y3 = MinMaxHeaveTrimArray(:,2);
+    
+    [fitobject3,gof3,output3]  = fit(x3,y3,'poly5');
+    cvalues3 = coeffvalues(fitobject3);
+    
+    [m3,n3] = size(x3);
+    TA3 = [];
+    for k3=1:m3
+        TA3(k3,1) = x3(k3);
+        TA3(k3,2) = cvalues3(1)*x3(k3)^5+cvalues3(2)*x3(k3)^4+cvalues3(3)*x3(k3)^3+cvalues3(4)*x3(k3)^2+cvalues3(5)*x3(k3)+cvalues3(6);
+    end    
+    
+    % Minimum value
+    x4 = MinMaxHeaveTrimArray(:,1);
+    y4 = MinMaxHeaveTrimArray(:,4);
+    
+    [fitobject4,gof4,output4]  = fit(x4,y4,'poly5');
+    cvalues4 = coeffvalues(fitobject4);
+    
+    [m4,n4] = size(x4);
+    TA4 = [];
+    for k4=1:m4
+        TA4(k4,1) = x4(k4);
+        TA4(k4,2) = cvalues4(1)*x4(k4)^5+cvalues4(2)*x4(k4)^4+cvalues4(3)*x4(k4)^3+cvalues4(4)*x4(k4)^2+cvalues4(5)*x4(k4)+cvalues4(6);
+    end
+    
+    %# Plotting ---------------------------------------------------------------
+    h = plot(TA1(:,1),TA1(:,2),'*-');
+    legendInfoPlot13_1{1} = 'Resistance test (mean)';
+    % Patch min/max area
+    patch([TA3(:,1);flipud(TA4(:,1))],[TA3(:,2);flipud(TA4(:,2))],[0.9,0.9,0.9]); %,'EdgeColor','none'
+    legendInfoPlot13_1{2} = 'Resistance test (minimum and maximum values)';
+    % Maximum values
+    %hold on;
+    %h1 = plot(x3,y3,'-');
+    %legendInfoPlot13_1{2} = 'Resistance test (maximum)';
+    % Minimum values
+    %hold on;
+    %h2 = plot(x4,y4,'-');
+    %legendInfoPlot13_1{3} = 'Resistance test (minimum)';
+    %patch([x3;flipud(x3)],[y4;flipud(y2)],[0.05 0.1 0.3]);
+    % Standard deviation
+    %hold on;
+    %h3 = errorbar(x1,y1,MinMaxHeaveTrimArray(:,5),'k');
+    % Self-propulsion test
+    hold on;
+    h4 = plot(x2,y2,'*-');
+    legendInfoPlot13_1{3} = 'Self-propulsion test';
+%     % Curve fitting
+%     hold on;
+%     %hf1x = plot(fitobject1,'r-',x3,y3,'k*');
+%     hf1 = plot(TA1(:,1),TA1(:,2),'*-');
+%     hold on;
+%     %hf3x = plot(fitobject3,'g-',x3,y3,'kx');
+%     hf3 = plot(TA3(:,1),TA3(:,2),'*-');
+%     hold on;
+%     %hf4x = plot(fitobject4,'b-',x4,y4,'k+');
+%     hf4 = plot(TA4(:,1),TA4(:,2),'*-');
+%     % Patch min/max area
+%     patch([TA3(:,1);flipud(TA4(:,1))],[TA3(:,2);flipud(TA4(:,2))],[0.8,0.8,0.8]); %,'EdgeColor','none'    
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Heave (mm)}','FontSize',setGeneralFontSize);
+    % if enablePlotTitle == 1
+    %     title('{\bf Velocities)}','FontSize',setGeneralFontSize);
+    % end
+    grid on;
+    box on;
+    axis square;
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+    set(h4(1),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+    % Min, avg, max values, and standard deviation
+    %set(h1(1),'Color',setColor{10},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+    %set(h2(1),'Color',setColor{10},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+    % Error bars
+    %set(h3,'marker','x');
+    %set(h3,'linestyle','none');
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Annotations
+    % Text on plot
+    %text(13.5,-8.5,'Legend:','FontSize',12,'color','k','FontWeight','bold');
+    %text(13.5,-9,'RES = Resistance test','FontSize',12,'color','k','FontWeight','normal');
+    %text(13.5,-9.5,'SPT = Self-propulsion test','FontSize',12,'color','k','FontWeight','normal');
+    
+    %# Axis limitations
+    minX  = 13;
+    maxX  = 25;
+    incrX = 1;
+    minY  = -10;
+    maxY  = 2;
+    incrY = 1;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    % set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    % set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend(legendInfoPlot13_1);
+    set(hleg1,'Location','NorthWest');
+    %set(hleg1,'Interpreter','none');
+    set(hleg1, 'Interpreter','tex');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////////
+    subplot(1,2,2)
+    
+    %# X and Y axis -----------------------------------------------------------
+    
+    % Resistance test
+    x1 = avgcond7(:,15);
+    y1 = avgcond7(:,13);
+    
+    % Self-propulsion test
+    x2 = modelScaleDataArray(:,3);
+    y2 = resSPP_CCDoTT(:,19);
+    
+    % Maximum value
+    x3 = MinMaxHeaveTrimArray(:,1);
+    y3 = MinMaxHeaveTrimArray(:,6);
+    
+    % Minimum value
+    x4 = MinMaxHeaveTrimArray(:,1);
+    y4 = MinMaxHeaveTrimArray(:,8);
+    
+    %# Plotting ---------------------------------------------------------------
+    h = plot(x1,y1,'*-');
+    legendInfoPlot13_2{1} = 'Resistance test';
+    % Patch min/max area
+    %patch([x3;flipud(x4)],[y3;flipud(y4)],[0.8,0.8,0.8]);
+    %legendInfo{2} = 'Resistance test (min. to max. values)';
+    % Maximum values
+    %hold on;
+    %h1 = plot(x3,y3,'-');
+    %legendInfo{2} = 'Resistance test (maximum)';
+    % Minimum values
+    %hold on;
+    %h2 = plot(x4,y4,'-');
+    %legendInfo{3} = 'Resistance test (minimum)';
+    % Standard deviation
+    %hold on;
+    %h3 = errorbar(x1,y1,MinMaxHeaveTrimArray(:,9),'k');
+    % Self-propulsion test
+    hold on;
+    h4 = plot(x2,y2,'*-');
+    legendInfoPlot13_2{2} = 'Self-propulsion test';
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Running trim (deg)}','FontSize',setGeneralFontSize);
+    % if enablePlotTitle == 1
+    %     title('{\bf Velocities)}','FontSize',setGeneralFontSize);
+    % end
+    grid on;
+    box on;
+    axis square;
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+    set(h4(1),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+    % Min, avg, max values, and standard deviation
+    %set(h1(1),'Color',setColor{10},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+    %set(h2(1),'Color',setColor{10},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+    % Error bars
+    %set(h3,'marker','x');
+    %set(h3,'linestyle','none');
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Annotations
+    % Text on plot
+    %text(13.5,-0.06,'Legend:','FontSize',12,'color','k','FontWeight','bold');
+    %text(13.5,-0.11,'RES = Resistance test','FontSize',12,'color','k','FontWeight','normal');
+    %text(13.5,-0.16,'SPT = Self-propulsion test','FontSize',12,'color','k','FontWeight','normal');
+    
+    %# Axis limitations
+    minX  = 13;
+    maxX  = 25;
+    incrX = 1;
+    minY  = 0;
+    maxY  = 0.7;
+    incrY = 0.1;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    % set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend(legendInfoPlot13_2);
+    set(hleg1,'Location','NorthWest');
+    %set(hleg1,'Interpreter','none');
+    set(hleg1, 'Interpreter','tex');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# ************************************************************************
+    %# Save plot as PNG
+    %# ************************************************************************
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+    %if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+    %end
+    
+    %# Plot title -------------------------------------------------------------
+    %     if enablePlotMainTitle == 1
+    %         annotation('textbox', [0 0.9 1 0.1], ...
+    %             'String', strcat('{\bf ', figurename, '}'), ...
+    %             'EdgeColor', 'none', ...
+    %             'HorizontalAlignment', 'center');
+    %     end
+    
+    %# Save plots as PDF, PNG and EPS -----------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_13_1_Heave_And_Running_Trim_Comparison_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -8773,7 +9171,7 @@ end
 
 
 %# ************************************************************************
-%# 14. Port Full Scale Power Comparison (NEW!!! 2 x Y-Axes Template)
+%# 14.1 Port Full Scale Power Comparison (NEW!!! 2 x Y-Axes Template)
 %# ************************************************************************
 
 figurename = 'Plot 14.1: Port Full Scale Power Comparison';
@@ -8889,7 +9287,7 @@ yOPE1 = fullScaleDataArray(:,46);
 
 %# Overall propulsive efficiency where nD = PE/PD where PE=T V and where PD = PPE/nPumpnInst
 xOPE2 = fullScaleDataArray(:,3);
-yOPE2 = fullScaleDataArray(:,85);
+yOPE2 = fullScaleDataArray(:,84);
 
 % Create a plot with 2 y axes using the plotyy function
 [ax, h1, h2] = plotyy([x1 x3 x5 x7], [y1 y3 y5 y7], [xOPE1 xOPE2], [yOPE1 yOPE2], 'plot');
@@ -8955,7 +9353,7 @@ set(ax(2),'yticklabel',num2str(get(ax(2),'ytick')','%.1f'));
 
 %# Legend
 %hleg1 = legend('Effective pump power, P_{PE}','Effective jet system power, P_{JSE}','Delivered power, P_{D}','Effective thrust power, P_{TE}','\eta_{D}=P_{E}/P_{D} where P_{E}=R_{BH} V and P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})','\eta_{D}=P_{E}/P_{D} where P_{E}=T V and P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})');
-hleg1 = legend('Effective pump power (P_{PE})','Effective jet system power (P_{JSE})','Delivered power (P_{D})','Effective thrust power (P_{TE})','\eta_{D}=P_{E}/P_{D} where P_{E}=R_{BH} V and P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})','\eta_{D}=P_{E}/P_{D} where P_{E}=T V and P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})');
+hleg1 = legend('Effective pump power (P_{PE})','Effective jet system power (P_{JSE})','Delivered power (P_{D})','Effective thrust power (P_{TE})','\eta_{D}=P_{E}/P_{D} where P_{E}=R_{BH}V and P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})','\eta_{D}=P_{E}/P_{D} where P_{E}=T_{F=0}V and P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
@@ -9158,8 +9556,6 @@ end
 %# ************************************************************************
 %# 16. Full scale ship speed vs. residual resistance coefficient and delivered power
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 16: Full scale ship speed vs. residual resistance coefficient and delivered power';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -9356,8 +9752,6 @@ end
 %# ************************************************************************
 %# 16.1 Averaged full scale ship speed vs. residual resistance coefficient and delivered power
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 16.1: Averaged full scale ship speed vs. residual resistance coefficient and delivered power';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -9564,8 +9958,6 @@ end
 %# ************************************************************************
 %# 17. Full scale Froude length number vs. OPE and CRs
 %# ************************************************************************
-
-%# Plotting speed ---------------------------------------------------------
 figurename = 'Plot 17: Full scale Froude length number vs. OPE and CRs';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -9743,6 +10135,20 @@ for k=1:3
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
+
+
+%# ************************************************************************
+%# START Close all plots
+%# ------------------------------------------------------------------------
+
+if enableCloseAllPlots == 1
+    allPlots = findall(0, 'Type', 'figure', 'FileName', []);
+    delete(allPlots);   % Close all plots
+end
+
+%# ------------------------------------------------------------------------
+%# END Close all plots
+%# ************************************************************************
 
 
 %# ************************************************************************

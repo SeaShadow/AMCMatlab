@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 27, 2015
+%# Date       :  March 2, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -1227,12 +1227,17 @@ else
     hold on;
     % Curve fitting
     if enableCurveFittingPlot == 1
+        % Patch min/max area
+        patch([xStbd13;flipud(xPort13)],[pvStbd13;flipud(pvPort13)],[0.7,0.7,0.7],'EdgeColor','none'); %,'EdgeColor','none' [0.6,1,0.6]
+        legendInfo{5} = 'Values covered by June 2013 testing)';
+        patch([xStbd14;flipud(xPort14)],[pvStbd14;flipud(pvPort14)],[0.9,0.9,0.9],'EdgeColor','none'); %,'EdgeColor','none' [0.6,0.8,1]
+        legendInfo{6} = 'Values covered by Sept. 2014 testing)';        
         h1 = plot(xPort13,pvPort13,'-.',xStbd13,pvStbd13,'-.',xPort14,pvPort14,'-.',xStbd14,pvStbd14,'-.');
         %# Line, colors and markers
-        set(h1(1),'Color',setColor{10},'LineStyle',setLineStyle5,'linewidth',setLineWidth);
-        set(h1(2),'Color',setColor{10},'LineStyle',setLineStyle5,'linewidth',setLineWidth);
-        set(h1(3),'Color',setColor{10},'LineStyle',setLineStyle5,'linewidth',setLineWidth);
-        set(h1(4),'Color',setColor{10},'LineStyle',setLineStyle5,'linewidth',setLineWidth);
+        set(h1(1),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        set(h1(2),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+        set(h1(3),'Color',setColor{10},'LineStyle',setLineStyle3,'linewidth',setLineWidth);
+        set(h1(4),'Color',setColor{10},'LineStyle',setLineStyle3,'linewidth',setLineWidth);
     end % enableCurveFittingPlot
     
 end % enableCurveFittingToolboxPlot
@@ -1273,15 +1278,6 @@ set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 
 %# Legend -----------------------------------------------------------------
-
-%hleg1 = legend('Port WJ system (June 2013)','Fit','Starboard (June 2013)','Fit','Port WJ system (Sept. 2014)','Fit','Starboard (Sept. 2014)','Fit');
-% if enableCurveFittingToolboxPlot == 1
-%     hleg1 = legend(legendInfo);
-%     legendLoc = 'SouthEast';
-% else
-%     hleg1 = legend(legendInfo);
-%     legendLoc = 'NorthWest';
-% end
 hleg1 = legend(legendInfo);
 set(hleg1,'Location','SouthEast');
 set(hleg1,'Interpreter','none');
