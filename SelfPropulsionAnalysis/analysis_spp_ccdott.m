@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 4, 2015
+%# Date       :  March 6, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -384,6 +384,23 @@ else
 end
 %# ------------------------------------------------------------------------
 %# END Sea Trials Data (variable name is SeaTrialsCorrectedPower by default)
+%# ************************************************************************
+
+
+%# ************************************************************************
+%# START Shallow Water Sea Trials Data (variable name is SeaTrials1500TonnesCorrPowerShallowWater by default)
+%# ------------------------------------------------------------------------
+if exist('SeaTrials1500TonnesCorrPowerShallowWater.mat', 'file') == 2
+    % Load file into shaftSpeedList variable
+    load('SeaTrials1500TonnesCorrPowerShallowWater.mat');
+else
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    disp('WARNING: Required data file for shaft speed data (SeaTrials1500TonnesCorrPowerShallowWater.mat) does not exist!');
+    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    break;
+end
+%# ------------------------------------------------------------------------
+%# END Shallow Water Sea Trials Data (variable name is SeaTrialsCorrectedPower by default)
 %# ************************************************************************
 
 
@@ -5416,39 +5433,55 @@ for k=1:m
     % Added: 3/3/2015
     % See Ghadimi (2013), Eqn. 3. PE = TF=0 V = p QJ V (Vj-Vi) then nD = PE/PD     
     
+    % Use FT=0 at RTm for ITTC1978 extrapolation
+    setRTmITTC1978 = resSPP_CCDoTT(k,21);
+    
     % Model Scale
-    MSEffPower = resSPP_CCDoTT(k,20)*MSSpeed;
+    MSEffPower = setRTmITTC1978*MSSpeed;
     MSOPE      = MSEffPower/(MSPortDelPower+MSStbdDelPower);
     modelScaleDataArray(k,83) = MSEffPower;
     modelScaleDataArray(k,84) = MSOPE;
+    modelScaleDataArray(k,85) = setRTmITTC1978;
 
-    % Full Scale - How to extrapoalted TF=0 to full scale
-        
-    % Use Ts=Tm FStoMSratio^3 ps/pm
-    FSEffPower = (resSPP_CCDoTT(k,20)*(FStoMSratio^3)*(saltwaterdensity/freshwaterdensity))*FSSpeed;
+    % Full Scale (single demihull) use ITTC1978 to extrapolate FT=0
+
+    % Model scale: Total resistance coefficient
+    MSCTm = setRTmITTC1978/(0.5*freshwaterdensity*MSwsa*MSSpeed^2);
+    
+    % Model scale: Frictional resistance coefficient
+    MSCFm = MSCF;
+    
+    % Model scale: Residual resistance coefficient
+    MSCRm = MSCTm-(FormFactor*MSCFm);
+    
+    % Roughness allowance
+    FSRoughnessAllowance = 0.044*((RoughnessOfHullSurface/FSlwl)^(1/3)-10*FSReynoldsNo^(-1/3))+0.000125;
+    % Correlation coefficient
+    FSCorrelelationCoeff = (5.68-0.6*log10(FSReynoldsNo))*10^(-3);
+    % Air resistance coefficient
+    FSAirResistanceCoeff = DragCoeff*((airDensity*FSProjectedArea)/(saltwaterdensity*FSwsa));    
+    
+    % Full scale: Residual resistance coefficient
+    FSCRs = MSCRm;
+    
+    % Full scale: Frictional resistance coefficient
+    FSCFs = FSCF;
+    
+    % TFull scale: otal resistance coefficient
+    FSCTs      = FormFactor*FSCFs+FSRoughnessAllowance+FSCorrelelationCoeff+FSCRs+FSAirResistanceCoeff;
+    
+    % Full scale: Total resistance
+    FSRTs      = 0.5*saltwaterdensity*(FSSpeed^2)*FSwsa*FSCTs;
+    
+    % Full scale: Effective power
+    FSEffPower = FSRTs*FSSpeed;
+    
+    % Full scale: Overall propulsive efficiency
     FSOPE      = FSEffPower/(FSPortDelPower+FSStbdDelPower);
+    
     fullScaleDataArray(k,83) = FSEffPower;
     fullScaleDataArray(k,84) = FSOPE;
-    
-    % Use TF=0 as RTm and scale using ITTC 1978
-    
-    %# SINGLE DEMIHULL ONLY -----------------------------------------------
-%     % Roughness allowance
-%     FSRoughnessAllowance = 0.044*((RoughnessOfHullSurface/FSlwl)^(1/3)-10*FSReynoldsNo^(-1/3))+0.000125;
-%     % Correlation coefficient
-%     FSCorrelelationCoeff = (5.68-0.6*log10(FSReynoldsNo))*10^(-3);
-%     % Air resistance coefficient
-%     FSAirResistanceCoeff = DragCoeff*((airDensity*FSProjectedArea)/(saltwaterdensity*FSwsa));
-%     % Total resistance coefficient
-%     FSCTs      = FormFactor*FSCF+FSRoughnessAllowance+FSCorrelelationCoeff+FSCR+FSAirResistanceCoeff;
-%     % Total resistance
-%     FSRTs      = 0.5*saltwaterdensity*(FSSpeed^2)*FSwsa*FSCTs;
-%     % Effective power
-%     FSEffPower = FSRTs*FSSpeed;
-%     % Overall propulsive efficiency
-%     FSOPE      = FSEffPower/(FSPortDelPower+FSStbdDelPower);
-%     fullScaleDataArray(k,85) = FSEffPower;
-%     fullScaleDataArray(k,86) = FSOPE;
+    fullScaleDataArray(k,85) = FSRTs;
     
 end % k=1:m
 
@@ -5458,7 +5491,7 @@ end % k=1:m
 %# ////////////////////////////////////////////////////////////////////////
 
 %# ************************************************************************
-%# 5. Full Scale Overall propulsive efficiency, nD
+%# 5. Full scale overall propulsive efficiency, nD
 %# ************************************************************************
 figurename = 'Plot 5: Full Scale, Propulsive Efficiency';
 f = figure('Name',figurename,'NumberTitle','off');
@@ -5524,36 +5557,24 @@ setLineStyle3      = ':';
 x1 = fullScaleDataArray(:,1);
 y1 = fullScaleDataArray(:,46);
 
-%# Overall propulsive efficiency where nD = PE/PD where PD = PJSE/hJS
-%x2 = fullScaleDataArray(:,1);
-%y2 = fullScaleDataArray(:,68);
-
-% nD=(thrust V)/PPE
-%x3 = fullScaleDataArray(:,1);
-%y3 = fullScaleDataArray(:,72);
-
 % Bose (2008), Eqn. 10-28
-x4 = fullScaleDataArray(:,1);
-y4 = fullScaleDataArray(:,73);
-
-% Bose (2008), Eqn. 10-29
-%x5 = fullScaleDataArray(:,1);
-%y5 = fullScaleDataArray(:,74);
+x2 = fullScaleDataArray(:,1);
+y2 = fullScaleDataArray(:,73);
 
 % Bulten (2006), Eqn. 2.61. nD=((1-t)/(1-w))nPump((T Vi)/(p g H Q))
-x6 = fullScaleDataArray(:,1);
-y6 = fullScaleDataArray(:,81);
+x3 = fullScaleDataArray(:,1);
+y3 = fullScaleDataArray(:,81);
 
 % See Ghadimi (2013), Eqn. 3. PE = TF=0 V = p QJ V (Vj-Vi) then nD = PE/PD
-x7 = fullScaleDataArray(:,1);
-y7 = fullScaleDataArray(:,84);
+x4 = fullScaleDataArray(:,1);
+y4 = fullScaleDataArray(:,84);
 
 %# Plotting ---------------------------------------------------------------
-h = plot(x1,y1,'*',x4,y4,'*',x6,y6,'*',x7,y7,'*');
+h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*');
 Plot5LegendInfo{1} = '\eta_{D}=P_{E}/P_{D} where P_{E}=R_{BH}V, P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})';
 Plot5LegendInfo{2} = 'Bose (2008): Eqn. 10-28';
 Plot5LegendInfo{3} = 'Bulten (2006): Eqn. 2.61';
-Plot5LegendInfo{4} = '\eta_{D}=P_{E}/P_{D} where P_{E}=T_{F=0}V, P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})'; %'\eta_{D}=P_{E}/P_{D} where P_{E}=T_{F=0}V=pQ_{J}V(V_{j}-V_{i}), P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})'
+Plot5LegendInfo{4} = '\eta_{D}=P_{E}/P_{D} where P_{E}=T_{F=0}V, P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})';
 xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
 %xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Overall propulsive efficiency, \eta_{D} (-)}','FontSize',setGeneralFontSize);
@@ -5638,6 +5659,206 @@ setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
     plotsavename = sprintf('_plots/%s/%s/SPP_Plot_5_FS_Overall_Propulsive_Efficiency_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 5.1 Full scale overall propulsive efficiency, nD
+%# ************************************************************************
+figurename = 'Plot 5.1: Full Scale, Propulsive Efficiency';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 12;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 14;
+setLineWidthMarker = 1;
+setLineWidth       = 2;
+setLineWidthThin   = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+%subplot(1,1,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+%# Overall propulsive efficiency where nD = PE/PD where PD = PPE/hpump
+x1 = fullScaleDataArray(:,1);
+y1 = fullScaleDataArray(:,46);
+
+% See Ghadimi (2013), Eqn. 3. PE = TF=0 V = p QJ V (Vj-Vi) then nD = PE/PD
+x2 = fullScaleDataArray(:,1);
+y2 = fullScaleDataArray(:,84);
+
+% Bare hull resistance RBH
+x3 = fullScaleDataArray(:,1);
+y3 = fullScaleDataArray(:,12);
+
+Raw_Data = num2cell(y3);
+Raw_Data = cellfun(@(y) y/1000, Raw_Data, 'UniformOutput', false);
+y3 = cell2mat(Raw_Data);
+
+% Force at zero thrust FT=0 extrapolated to full scale using ITTC1978
+x4 = fullScaleDataArray(:,1);
+y4 = fullScaleDataArray(:,85);
+
+Raw_Data = num2cell(y4);
+Raw_Data = cellfun(@(y) y/1000, Raw_Data, 'UniformOutput', false);
+y4 = cell2mat(Raw_Data);
+
+%# Plotting ---------------------------------------------------------------
+[ax, h1, h2] = plotyy([x1 x2], [y1 y2], [x3 x4], [y3 y4], 'plot');
+Plot51LegendInfo{1} = '\eta_{D}=P_{E}/P_{D} where P_{E}=R_{BH}V, P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})';
+Plot51LegendInfo{2} = '\eta_{D}=P_{E}/P_{D} where P_{E}=T_{F=0}V, P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})';
+Plot51LegendInfo{3} = 'Bare hull resistance (R_{BH})';
+Plot51LegendInfo{4} = 'Force at zero thrust (F_{T=0})';
+% Left color black, right color black
+set(ax,{'ycolor'},{'k';'k'});
+% Add title and x axis label
+xlabel('Froude length number, F_{r} (-)','FontSize',setGeneralFontSize,'FontWeight','bold');
+% if enablePlotTitle == 1
+%title('Full scale overall propulsive efficiency','FontSize',setGeneralFontSize,'FontWeight','bold');
+% end
+% Use the axis handles to set the labels of the y axes
+set(get(ax(1), 'Ylabel'), 'String', 'Overall propulsive efficiency, \eta_{D} (-)','FontSize',setGeneralFontSize,'FontWeight','bold');
+set(get(ax(2), 'Ylabel'), 'String', 'Resistance R_{BH} and force at zero thrust F_{T=0} (kN)','FontSize',setGeneralFontSize,'FontWeight','bold');
+grid on;
+box on;
+axis(ax,'square');
+
+%# Axis positions
+set(ax(1),'Position', [0 0.085 0.97 0.9]); % [Left, bottom, right, top]
+set(ax(2),'Position', [0 0.085 0.97 0.9]); % [Left, bottom, right, top]
+
+%# Line, colors and markers
+% Left Y-axis
+set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin); 
+set(h1(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin); 
+% Right Y-axis
+set(h2(1),'Color',setColor{3},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth); 
+set(h2(2),'Color',setColor{4},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth); 
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 0.22;
+maxX  = 0.42;
+incrX = 0.02;
+minY  = 0.2;
+maxY  = 0.8;
+incrY = 0.1;
+set(ax(1),'XLim',[minX maxX]);
+set(ax(1),'XTick',minX:incrX:maxX);
+set(ax(1),'YLim',[minY maxY]);
+set(ax(1),'YTick',minY:incrY:maxY);
+set(ax(1),'xticklabel',num2str(get(ax(1),'xtick')','%.2f'));
+set(ax(1),'yticklabel',num2str(get(ax(1),'ytick')','%.1f'));
+
+%# Axis limitations
+minX  = 0.22;
+maxX  = 0.42;
+incrX = 0.02;
+minY  = 60;
+maxY  = 300;
+incrY = 40;
+set(ax(2),'XLim',[minX maxX]);
+set(ax(2),'XTick',minX:incrX:maxX);
+set(ax(2),'YLim',[minY maxY]);
+set(ax(2),'YTick',minY:incrY:maxY);
+set(ax(2),'xticklabel',num2str(get(ax(2),'xtick')','%.2f'));
+%set(ax(2),'yticklabel',num2str(get(ax(2),'ytick')','%.1f'));
+
+%# Legend
+%hleg1 = legend('Overall propulsive efficiency (\eta_{D})','Residual resistance coefficient (C_{Rs})');
+hleg1 = legend(Plot51LegendInfo);
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(ax(1),'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+set(ax(2),'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
+
+%# Plot title -------------------------------------------------------------
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_5_1_FS_Overall_Propulsive_Efficiency_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -6043,6 +6264,7 @@ end
 setMarkerSize      = 12;
 setLineWidthMarker = 1;
 setLineWidth       = 2;
+setLineWidthThin   = 1;
 setLineStyle       = '-';
 setLineStyle1      = '--';
 setLineStyle2      = '-.';
@@ -6053,8 +6275,13 @@ setLineStyle3      = ':';
 
 %# X and Y axis -----------------------------------------------------------
 
+% Deep water: Corrected sea trials power
 x = SeaTrialsCorrectedPower(:,1);
 y = SeaTrialsCorrectedPower(:,3);
+
+% Shallow water: Corrected sea trials power
+x1 = SeaTrialsCorrectedPowerShallowWater(:,1);
+y1 = SeaTrialsCorrectedPowerShallowWater(:,3);
 
 % Fitting curve through sea trials delivered power
 fitobject = fit(x,y,'poly5');
@@ -6080,7 +6307,6 @@ for k=1:ma
 end
 x  = fullScaleDataArray(:,3);
 y  = delpowerMW';
-%e1  = std(y1)*ones(size(x1));
 
 % Polynomial fit through points for m-th order least-squares regression analysis
 % See: http://stats.stackexchange.com/questions/56596/finding-uncertainty-in-coefficients-from-polyfit-in-matlab
@@ -6092,7 +6318,7 @@ y  = delpowerMW';
 delta = [0.19,0.24,0.30,0.34,0.43,0.52,0.61,0.72,0.86,]';
 
 %# Plotting ---------------------------------------------------------------
-h = plot(xst,yst,'-',x,y,'*');
+h = plot(xst,yst,'-',x,y,'*-');
 hold on;
 h1 = errorbar(x,y,delta,'k');
 xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
@@ -6106,7 +6332,7 @@ axis square;
 
 %# Line, colors and markers
 set(h(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(2),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h(2),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
 set(h1,'marker','x');
 set(h1,'linestyle','none');
 
@@ -6119,7 +6345,7 @@ minX  = 13;
 maxX  = 25;
 incrX = 1;
 minY  = 0;
-maxY  = 18;
+maxY  = 14;
 incrY = 2;
 set(gca,'XLim',[minX maxX]);
 set(gca,'XTick',minX:incrX:maxX);
@@ -6129,7 +6355,6 @@ set(gca,'YTick',minY:incrY:maxY);
 %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
 
 %# Legend
-%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
 hleg1 = legend('Corrected power from sea trials (P_{D})','Measured delivered power (P_{D})');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
@@ -6172,6 +6397,157 @@ setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
     plotsavename = sprintf('_plots/%s/%s/SPP_Plot_8_FS_Comparison_PD_to_Sea_Trials_Data_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 8.1 Comparison of uncorrected Sea Trials Power
+%# ************************************************************************
+figurename = 'Plot 8.1: Comparison of uncorrected Sea Trials Power';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 12;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 14;
+setLineWidthMarker = 1;
+setLineWidth       = 2;
+setLineWidthThin   = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+%subplot(1,1,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+% Deep water: Corrected sea trials power
+x1 = SeaTrialsCorrectedPower(:,1);
+y1 = SeaTrialsCorrectedPower(:,3);
+
+% Shallow water: Corrected sea trials power
+x2 = SeaTrialsCorrectedPowerShallowWater(:,1);
+y2 = SeaTrialsCorrectedPowerShallowWater(:,3);
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'*-',x2,y2,'*-');
+xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Shaft power (MW)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+%     title('{\bf Sea trials power)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+set(h(2),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 7;
+maxX  = 43;
+incrX = 4;
+minY  = 0;
+maxY  = 30;
+incrY = 5;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+% set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+% set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+hleg1 = legend('Deep water (1,500 tonnes)','Shallow water (1,525 tonnes)');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
+
+%# Plot title -------------------------------------------------------------
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_8_1_FS_Comparison_PD_to_Sea_Trials_Data_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -6603,7 +6979,7 @@ end
 %# ************************************************************************
 
 %# Plotting ---------------------------------------------------------------
-h = plot(x1,y1,'-',x2,y2t,'*-',x3,y3,'*-');
+h = plot(x2,y2t,'*-',x3,y3,'*-',x1,y1,'-');
 xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Resistance and thrust (kN)}','FontSize',setGeneralFontSize);
 % if enablePlotTitle == 1
@@ -6614,9 +6990,9 @@ box on;
 axis square;
 
 %# Line, colors and markers
-set(h(1),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(2),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
-set(h(3),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+set(h(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h(3),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidth);
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -6626,9 +7002,9 @@ set(gcf,'Color',[1,1,1]);
 minX  = 13;
 maxX  = 25;
 incrX = 1;
-minY  = 0;
-maxY  = 800;
-incrY = 100;
+minY  = 150;
+maxY  = 600;
+incrY = 50;
 set(gca,'XLim',[minX maxX]);
 set(gca,'XTick',minX:incrX:maxX);
 set(gca,'YLim',[minY maxY]);
@@ -6637,7 +7013,7 @@ set(gca,'YTick',minY:incrY:maxY);
 % set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
 
 %# Legend
-hleg1 = legend('Bare hull resistance (R_{BH})','Extrapolated thrust from model tests (T_{Extrapolated})','Thrust based on sea trials power and thrust curves (T_{SeaTrials})');
+hleg1 = legend('Extrapolated thrust from model tests (T_{Ext})','Thrust using sea trials and thrust curves (T_{ST})','Bare hull resistance (R_{BH})');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
@@ -6679,6 +7055,239 @@ setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
     plotsavename = sprintf('_plots/%s/%s/SPP_Plot_11_FS_Resistance_vs_Extrapolated_Thrust_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 11.1 Thrust-drag equilibrium
+%# ************************************************************************
+figurename = 'Plot 11.1: Thrust-drag equilibrium';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 12;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 14;
+setLineWidthMarker = 1;
+setLineWidth       = 2;
+setLineWidthThin   = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+%subplot(1,1,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+% Total resistance, RT
+%x1 = ResResults(7:19,11);
+%y1 = ResResults(7:19,24);
+x1 = fullScaleDataArray(:,3);
+y1 = fullScaleDataArray(:,12);
+
+Raw_Data = num2cell(y1);
+Raw_Data = cellfun(@(y) (y/1000)*2, Raw_Data, 'UniformOutput', false);
+y1 = cell2mat(Raw_Data);
+
+% Extrapolated thrust: total catamaran = (port thrust + stbd thrust) * 2
+x2  = fullScaleDataArray(:,3);
+y2p = fullScaleDataArray(:,20);
+y2s = fullScaleDataArray(:,21);
+
+[m2,n2] = size(x2);
+y2t = [];
+for k2=1:m2
+    y2t(k2) = (y2p(k2)+y2s(k2))*2;
+end
+y2t = y2t';
+
+%# Divide thrust data by 1000 for kN
+Raw_Data = num2cell(y2t);
+Raw_Data = cellfun(@(y) y/1000, Raw_Data, 'UniformOutput', false);
+y2t = cell2mat(Raw_Data);
+
+% Thrust based on sea trials shaft power (see IntPolThrustArray in analysis_thrustcurves.m)
+
+%# ************************************************************************
+%# START Interpolated thrust results (thrust curves + sea trials power)
+%# ------------------------------------------------------------------------
+if exist('IntPolThrustArray.dat', 'file') == 2
+    %# Results array columns:
+    IntPolThrustArray = csvread('IntPolThrustArray.dat');
+    [mfsr,nfsr] = size(IntPolThrustArray);
+    %# Remove zero rows
+    IntPolThrustArray(all(IntPolThrustArray==0,2),:)=[];
+    x3 = IntPolThrustArray(:,1);
+    y3 = IntPolThrustArray(:,5);
+else
+    % Example set of data
+    x3 = [14.10 15.35 16.52 17.66 18.83 20.08 21.26 22.40 23.65];
+    y3 = [243.94 274.44 305.69 337.89 373.26 413.68 453.09 491.89 535.19];
+end
+%# ------------------------------------------------------------------------
+%# START Interpolated thrust results (thrust curves + sea trials power)
+%# ************************************************************************
+
+% Force at zero thrust FT=0 extrapolated to full scale using ITTC1978
+x4 = fullScaleDataArray(:,3);
+y4 = fullScaleDataArray(:,85);
+
+Raw_Data = num2cell(y4);
+Raw_Data = cellfun(@(y) (y/1000)*2, Raw_Data, 'UniformOutput', false);
+y4 = cell2mat(Raw_Data);
+
+%# Plotting ---------------------------------------------------------------
+[ax, h1, h2] = plotyy([x2 x3], [y2t y3], [x1 x4], [y1 y4], 'plot');
+Plot111LegendInfo{1} = 'Extrapolated thrust from model tests (T_{Ext})';
+Plot111LegendInfo{2} = 'Thrust using sea trials and thrust curves (T_{ST})';
+Plot111LegendInfo{3} = 'Bare hull resistance (R_{BH})';
+Plot111LegendInfo{4} = 'Force at zero thrust (F_{T=0})';
+% Left color black, right color black
+set(ax,{'ycolor'},{'k';'k'});
+% Add title and x axis label
+xlabel('Froude length number, F_{r} (-)','FontSize',setGeneralFontSize,'FontWeight','bold');
+% if enablePlotTitle == 1
+%title('Full scale thrust and restistance','FontSize',setGeneralFontSize,'FontWeight','bold');
+% end
+% Use the axis handles to set the labels of the y axes
+set(get(ax(1), 'Ylabel'), 'String', 'Thrust (kN)','FontSize',setGeneralFontSize,'FontWeight','bold');
+set(get(ax(2), 'Ylabel'), 'String', 'Resistance R_{BH} and force at zero thrust F_{T=0} (kN)','FontSize',setGeneralFontSize,'FontWeight','bold');
+grid on;
+box on;
+axis(ax,'square');
+
+%# Axis positions
+set(ax(1),'Position', [0 0.085 0.97 0.9]); % [Left, bottom, right, top]
+set(ax(2),'Position', [0 0.085 0.97 0.9]); % [Left, bottom, right, top]
+
+%# Line, colors and markers
+% Left Y-axis
+set(h1(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin); 
+set(h1(2),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin); 
+% Right Y-axis
+set(h2(1),'Color',setColor{3},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth); 
+set(h2(2),'Color',setColor{4},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth); 
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 13;
+maxX  = 25;
+incrX = 1;
+minY  = 150;
+maxY  = 600;
+incrY = 50;
+set(ax(1),'XLim',[minX maxX]);
+set(ax(1),'XTick',minX:incrX:maxX);
+set(ax(1),'YLim',[minY maxY]);
+set(ax(1),'YTick',minY:incrY:maxY);
+%set(ax(1),'xticklabel',num2str(get(ax(1),'xtick')','%.2f'));
+%set(ax(1),'yticklabel',num2str(get(ax(1),'ytick')','%.1f'));
+
+%# Axis limitations
+minX  = 13;
+maxX  = 25;
+incrX = 1;
+minY  = 150;
+maxY  = 600;
+incrY = 50;
+set(ax(2),'XLim',[minX maxX]);
+set(ax(2),'XTick',minX:incrX:maxX);
+set(ax(2),'YLim',[minY maxY]);
+set(ax(2),'YTick',minY:incrY:maxY);
+%set(ax(2),'xticklabel',num2str(get(ax(2),'xtick')','%.2f'));
+%set(ax(2),'yticklabel',num2str(get(ax(2),'ytick')','%.1f'));
+
+%# Legend
+%hleg1 = legend('Overall propulsive efficiency (\eta_{D})','Residual resistance coefficient (C_{Rs})');
+hleg1 = legend(Plot111LegendInfo);
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(ax(1),'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+set(ax(2),'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
+
+%# Plot title -------------------------------------------------------------
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_11_1_FS_Resistance_vs_Extrapolated_Thrust_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -9352,7 +9961,6 @@ set(ax(2),'YTick',minY:incrY:maxY);
 set(ax(2),'yticklabel',num2str(get(ax(2),'ytick')','%.1f'));
 
 %# Legend
-%hleg1 = legend('Effective pump power, P_{PE}','Effective jet system power, P_{JSE}','Delivered power, P_{D}','Effective thrust power, P_{TE}','\eta_{D}=P_{E}/P_{D} where P_{E}=R_{BH} V and P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})','\eta_{D}=P_{E}/P_{D} where P_{E}=T V and P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})');
 hleg1 = legend('Effective pump power (P_{PE})','Effective jet system power (P_{JSE})','Delivered power (P_{D})','Effective thrust power (P_{TE})','\eta_{D}=P_{E}/P_{D} where P_{E}=R_{BH}V and P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})','\eta_{D}=P_{E}/P_{D} where P_{E}=T_{F=0}V and P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
@@ -9870,7 +10478,7 @@ set(ax(2),'Position', [0 0.085 0.97 0.9]); % [Left, bottom, right, top]
 
 %# Line, colors and markers
 % Left Y-axis
-set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h1(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
 % Right Y-axis
 set(h2(1),'Color',setColor{5},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth);
 
@@ -10021,17 +10629,21 @@ setLineStyle3      = ':';
 x1 = fullScaleDataArray(:,1);
 y1 = fullScaleDataArray(:,46);
 
+% See Ghadimi (2013), Eqn. 3. PE = TF=0 V then nD = PE/PD and where PD = PPE/nPumpnInst
+x2 = fullScaleDataArray(:,1);
+y2 = fullScaleDataArray(:,84);
+
 % Residual resistance coefficient, CRs (temperature corrected but not corrected for shallow water!)
-x2 = ResResultsUC(:,1);
-y2 = ResResultsUC(:,22);
+x3 = ResResultsUC(:,1);
+y3 = ResResultsUC(:,22);
 
 %# Divide resistance data by 1000 for better readibility
-Raw_Data = num2cell(y2);
+Raw_Data = num2cell(y3);
 Raw_Data = cellfun(@(y) y*1000, Raw_Data, 'UniformOutput', false);
-y2 = cell2mat(Raw_Data);
+y3 = cell2mat(Raw_Data);
 
 %# Plotting ---------------------------------------------------------------
-[ax, h1, h2] = plotyy(x1, y1, x2, y2, 'plot');
+[ax, h1, h2] = plotyy([x1 x2], [y1 y2], x3, y3, 'plot');
 % Left color red, right color blue...
 set(ax,{'ycolor'},{'k';'k'});
 % Add title and x axis label
@@ -10052,7 +10664,8 @@ set(ax(2),'Position', [0 0.085 0.97 0.9]); % [Left, bottom, right, top]
 
 %# Line, colors and markers
 % Left Y-axis
-set(h1(1),'Color',setColor{1},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth); %setMarker{4}
+set(h1(1),'Color',setColor{1},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth); %setMarker{4}
+set(h1(2),'Color',setColor{1},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth); %setMarker{4}
 % Right Y-axis
 set(h2(1),'Color',setColor{5},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth); %setMarker{5}
 
@@ -10078,8 +10691,8 @@ set(ax(1),'yticklabel',num2str(get(ax(1),'ytick')','%.1f'));
 minX  = 0.22;
 maxX  = 0.42;
 incrX = 0.02;
-minY  = 2;
-maxY  = 3.2;
+minY  = 2.1;
+maxY  = 3.3;
 incrY = 0.2;
 set(ax(2),'XLim',[minX maxX]);
 set(ax(2),'XTick',minX:incrX:maxX);
@@ -10089,7 +10702,7 @@ set(ax(2),'xticklabel',num2str(get(ax(2),'xtick')','%.2f'));
 set(ax(2),'yticklabel',num2str(get(ax(2),'ytick')','%.1f'));
 
 %# Legend
-hleg1 = legend('Overall propulsive efficiency (\eta_{D})','Residual resistance coefficient (C_{Rs})');
+hleg1 = legend('\eta_{D}=P_{E}/P_{D} where P_{E}=R_{BH}V, P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})','\eta_{D}=P_{E}/P_{D} where P_{E}=T_{F=0}V, P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})','Residual resistance coefficient (C_{Rs})');
 set(hleg1,'Location','NorthWest');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
