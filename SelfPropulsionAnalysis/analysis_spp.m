@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 3, 2015
+%# Date       :  March 10, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -30,9 +30,6 @@
 %#
 %#               => analysis_calib.m  PST calibration run data
 %#                                    ==> Creates resultsArrayCALIB.dat
-%#
-%#               => analysis_rt.m    Flow visualistation and resistance
-%#                                    ==> Creates resultsArrayRT.dat
 %#
 %#               => analysis_bl.m    Bondary layer measurements
 %#                                    ==> Creates resultsArrayBL.dat

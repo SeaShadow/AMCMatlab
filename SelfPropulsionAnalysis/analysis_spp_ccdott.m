@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 6, 2015
+%# Date       :  March 10, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -30,9 +30,6 @@
 %#
 %#               => analysis_calib.m  PST calibration run data
 %#                                    ==> Creates resultsArrayCALIB.dat
-%#
-%#               => analysis_rt.m    Flow visualistation and resistance
-%#                                    ==> Creates resultsArrayRT.dat
 %#
 %#               => analysis_bl.m    Bondary layer measurements
 %#                                    ==> Creates resultsArrayBL.dat
@@ -168,20 +165,20 @@ Fs = 800;       % Sampling frequency = 800Hz
 %# ------------------------------------------------------------------------
 
 % On test date
-ttlength            = 100;                    % Towing Tank: Length            (m)
-ttwidth             = 3.5;                    % Towing Tank: Width             (m)
-ttwaterdepth        = 1.45;                   % Towing Tank: Water depth       (m)
-ttcsa               = ttwidth * ttwaterdepth; % Towing Tank: Sectional area    (m^2)
-ttwatertemp         = 18.5;                   % Towing Tank: Water temperature (degrees C)
+ttlength            = 100;                       % Towing Tank: Length            (m)
+ttwidth             = 3.5;                       % Towing Tank: Width             (m)
+ttwaterdepth        = 1.45;                      % Towing Tank: Water depth       (m)
+ttcsa               = ttwidth*ttwaterdepth;      % Towing Tank: Sectional area    (m^2)
+ttwatertemp         = 18.5;                      % Towing Tank: Water temperature (degrees C)
 
 % General constants
-gravconst           = 9.806;                  % Gravitational constant           (m/s^2)
-MSKinVis            = 0.0000010411;           % Model scale kinetic viscosity at 18.5 deg. C  (m^2/s) -> See table in ITTC 7.5-02-01-03 (2008)
-FSKinVis            = 0.0000010711;           % Full scale kinetic viscosity at 19.2 deg. C   (m^2/s) -> See table in ITTC 7.5-02-01-03 (2008)
-freshwaterdensity   = 998.5048;               % Model scale water density at 18.5 deg. C      (Kg/m^3) -> See table in ITTC 7.5-02-01-03 (2008)
-saltwaterdensity    = 1025.0187;              % Salt water scale water density at 19.2 deg. C (Kg/m^3) -> See table in ITTC 7.5-02-01-03 (2008)
-distbetwposts       = 1150;                   % Distance between carriage posts               (mm)
-FStoMSratio         = 21.6;                   % Full scale to model scale ratio               (-)
+gravconst           = 9.806;                     % Gravitational constant           (m/s^2)
+MSKinVis            = 0.0000010411;              % Model scale kinetic viscosity at 18.5 deg. C  (m^2/s)  -> See table in ITTC 7.5-02-01-03 (2008)
+FSKinVis            = 0.0000010711;              % Full scale kinetic viscosity at 19.2 deg. C   (m^2/s)  -> See table in ITTC 7.5-02-01-03 (2008)
+freshwaterdensity   = 998.5048;                  % Model scale water density at 18.5 deg. C      (Kg/m^3) -> See table in ITTC 7.5-02-01-03 (2008)
+saltwaterdensity    = 1025.0187;                 % Salt water scale water density at 19.2 deg. C (Kg/m^3) -> See table in ITTC 7.5-02-01-03 (2008)
+distbetwposts       = 1150;                      % Distance between carriage posts               (mm)
+FStoMSratio         = 21.6;                      % Full scale to model scale ratio               (-)
 
 %# ************************************************************************
 %# CONDITION: 1,500 tonnes, level static trim, trim tab at 5 degrees
@@ -250,7 +247,7 @@ BLPLFactorArray  = [6.6467 6.6467 6.6467 6.6467 6.6467 6.6467 6.6467 6.6467 6.64
 
 % Boundary layer: Thickness (m)
 % NOTE: See Excel file "Run Sheet - Self-Propulsion Test.xlsx" WS "3 BL and wake fraction" for values
-BLThicknessArray = [0.0446 0.0448 0.0447 0.0442 0.0433 0.0421 0.0406 0.0386 0.0364];
+BLThicknessArray = [0.0452 0.0453 0.0451 0.0445 0.0436 0.0424 0.0408 0.0389 0.0367];
 
 %# ------------------------------------------------------------------------
 %# End Boundary layer related constants

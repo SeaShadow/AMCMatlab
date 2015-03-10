@@ -1,9 +1,9 @@
 %# ------------------------------------------------------------------------
-%# Resistance Test Analysis - Uncertainty Analysis
+%# Resistance Test Analysis - ITTC Based Uncertainty Analysis
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 29, 2014
+%# Date       :  March 10, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -139,7 +139,7 @@ enableTSDataSave          = 0;    % Enable time series data saving
 
 % Main and plot titles
 enablePlotMainTitle       = 0;    % Show plot title in saved file
-enablePlotTitle           = 0;    % Show plot title above plot
+enablePlotTitle           = 1;    % Show plot title above plot
 enableTextOnPlot          = 0;    % Show text on plot
 enableBlackAndWhitePlot   = 1;    % Show plot in black and white
 enableEqnOfFitPlot        = 0;    % Show equations of fit
@@ -289,7 +289,7 @@ end
 ttlength            = 100;                    % Towing Tank: Length            (m)
 ttwidth             = 3.5;                    % Towing Tank: Width             (m)
 ttwaterdepth        = 1.45;                   % Towing Tank: Water depth       (m)
-ttcsa               = ttwidth * ttwaterdepth; % Towing Tank: Sectional area    (m^2)
+ttcsa               = ttwidth*ttwaterdepth;   % Towing Tank: Sectional area    (m^2)
 ttwatertemp         = 17.5;                   % Towing Tank: Water temperature (degrees C)
 
 % General constants
@@ -300,7 +300,6 @@ freshwaterdensity   = 998.5048;               % Model scale water density at 18.
 saltwaterdensity    = 1025.0187;              % Salt water scale water density at 19.2 deg. C (Kg/m^3) -> See table in ITTC 7.5-02-01-03 (2008)
 distbetwposts       = 1150;                   % Distance between carriage posts               (mm)
 FStoMSratio         = 21.6;                   % Full scale to model scale ratio               (-)
-
 
 %# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 %# CONDITION: 1,500 tonnes, level static trim, trim tab at 5 degrees
@@ -338,6 +337,15 @@ BlockCoeff1500bystern = 0.614;                           % Mode block coefficien
 FSlwl1500bystern      = MSlwl1500bystern*FStoMSratio;    % Full scale length waterline     (m)
 FSwsa1500bystern      = MSwsa1500bystern*FStoMSratio^2;  % Full scale wetted surface area  (m^2)
 FSdraft1500bystern    = MSdraft1500bystern*FStoMSratio;  % Full scale draft                (m)
+%# ------------------------------------------------------------------------
+%# CONDITION: 1,500 tonnes, deep transom for prohaska runs, trim tab at 5 degrees
+%# ------------------------------------------------------------------------
+MSlwl1500prohaska     = 3.78;                            % Model length waterline          (m)
+MSwsa1500prohaska     = 1.49;                            % Model scale wetted surface area (m^2)
+MSdraft1500prohaska   = 0.133;                           % Model draft                     (m)
+FSlwl1500prohaska     = MSlwl1500prohaska*FStoMSratio;   % Full scale length waterline     (m)
+FSwsa1500prohaska     = MSwsa1500prohaska*FStoMSratio^2; % Full scale wetted surface area  (m^2)
+FSdraft1500prohaska   = MSdraft1500prohaska*FStoMSratio; % Full scale draft                (m)
 %# ////////////////////////////////////////////////////////////////////////
 
 
@@ -458,51 +466,58 @@ testName = 'Resistance uncertainty analysis';
 % Loop through conditions
 resultsArrayUARes = [];
 counter1 = 1;
-for condNo=7:12
+for condNo=7:13
     
     % Set variables based on condition number
     if condNo == 7
-        setCond   = cond7;
-        setCondNo = 7;
-        setModWsa = MSwsa1500;
-        setModLwl = MSlwl1500;
-        setBeam   = MSbeam1500;
-        setFormFactor = 0.12;
+        setCond       = cond7;
+        setCondNo     = 7;
+        setModWsa     = MSwsa1500;
+        setModLwl     = MSlwl1500;
+        setBeam       = MSbeam1500;
+        setFormFactor = 0.18;
     elseif condNo == 8
-        setCond   = cond8;
-        setCondNo = 8;
-        setModWsa = MSwsa1500bybow;
-        setModLwl = MSlwl1500bybow;
-        setBeam   = MSbeam1500;
-        setFormFactor = 0.12;
+        setCond       = cond8;
+        setCondNo     = 8;
+        setModWsa     = MSwsa1500bybow;
+        setModLwl     = MSlwl1500bybow;
+        setBeam       = MSbeam1500;
+        setFormFactor = 0.18;
     elseif condNo == 9
-        setCond   = cond9;
-        setCondNo = 9;
-        setModWsa = MSwsa1500bystern;
-        setModLwl = MSlwl1500bystern;
-        setBeam   = MSbeam1500;
-        setFormFactor = 0.12;
+        setCond       = cond9;
+        setCondNo     = 9;
+        setModWsa     = MSwsa1500bystern;
+        setModLwl     = MSlwl1500bystern;
+        setBeam       = MSbeam1500;
+        setFormFactor = 0.18;
     elseif condNo == 10
-        setCond   = cond10;
-        setCondNo = 10;
-        setModWsa = MSwsa1804;
-        setModLwl = MSlwl1804;
-        setBeam   = MSbeam1500;
-        setFormFactor = 0.12;
+        setCond       = cond10;
+        setCondNo     = 10;
+        setModWsa     = MSwsa1804;
+        setModLwl     = MSlwl1804;
+        setBeam       = MSbeam1500;
+        setFormFactor = 0.18;
     elseif condNo == 11
-        setCond   = cond11;
-        setCondNo = 11;
-        setModWsa = MSwsa1804bybow;
-        setModLwl = MSlwl1804bybow;
-        setBeam   = MSbeam1500;
-        setFormFactor = 0.12;
+        setCond       = cond11;
+        setCondNo     = 11;
+        setModWsa     = MSwsa1804bybow;
+        setModLwl     = MSlwl1804bybow;
+        setBeam       = MSbeam1500;
+        setFormFactor = 0.18;
     elseif condNo == 12
-        setCond   = cond12;
-        setCondNo = 12;
-        setModWsa = MSwsa1804bystern;
-        setModLwl = MSlwl1804bystern;
-        setBeam   = MSbeam1500;
-        setFormFactor = 0.12;
+        setCond       = cond12;
+        setCondNo     = 12;
+        setModWsa     = MSwsa1804bystern;
+        setModLwl     = MSlwl1804bystern;
+        setBeam       = MSbeam1500;
+        setFormFactor = 0.18;
+    elseif condNo == 13
+        setCond       = cond13;
+        setCondNo     = 13;
+        setModWsa     = MSwsa1500prohaska;
+        setModLwl     = MSlwl1500prohaska;
+        setBeam       = MSbeam1500;
+        setFormFactor = 0.18;        
     else
         break;
     end
@@ -579,16 +594,7 @@ for condNo=7:12
         % M(1 for single test, else multiple tests) (-)
         % NOTE: Number of repeats of this test (i.e. speed)
         setM = oas;
-        
-        %         if A{j}(1,11) == 0.20
-        %             %resultsArrayRT
-        %             avgCT
-        %             avgCT15degC
-        %             stdDev
-        %             setMx
-        %             setRx
-        %         end
-        
+
         %# ////////////////////////////////////////////////////////////////
         %# 6.0 Bias limits
         %# ////////////////////////////////////////////////////////////////
@@ -620,16 +626,6 @@ for condNo=7:12
         percentOfBs1 = (setBs1^2/setBs^2)*100;
         percentOfBs2 = (setBs2^2/setBs^2)*100;
         
-        %         if A{j}(1,11) == 0.20
-        %             setModLwl
-        %             setBs1
-        %             setBs2
-        %             percentOfBs1
-        %             percentOfBs2
-        %             setBs
-        %             percentOfS
-        %         end
-        
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         % 6.2 Speed
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -646,11 +642,6 @@ for condNo=7:12
         % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         
         percentOfV  = (setBv/A{j}(1,5))*100;
-        
-        %         if A{j}(1,11) == 0.20
-        %             setBv
-        %             percentOfV
-        %         end
         
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         % 6.3 Resistance
@@ -677,28 +668,15 @@ for condNo=7:12
         % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         
         % Wetted surface bias
-        setBMx       = sqrt(setBMx1^2+setBMx2^2+setBMx3^2+setBMx4^2);  % Bs (Wetted Surface)    (Kg)
-        percentOfBMx = (setBMx/setMx)*100;
+        setBMx        = sqrt(setBMx1^2+setBMx2^2+setBMx3^2+setBMx4^2);  % Bs (Wetted Surface)    (Kg)
+        percentOfBMx  = (setBMx/setMx)*100;
         
         % Percentage of (Bs)^2
         percentOfBMx1 = (setBMx1^2/setBMx^2)*100;
         percentOfBMx2 = (setBMx2^2/setBMx^2)*100;
         percentOfBMx3 = (setBMx3^2/setBMx^2)*100;
         percentOfBMx4 = (setBMx4^2/setBMx^2)*100;
-        
-        %         if A{j}(1,11) == 0.20
-        %             setBMx1
-        %             setBMx2
-        %             setBMx3
-        %             setBMx4
-        %             percentOfBMx1
-        %             percentOfBMx2
-        %             percentOfBMx3
-        %             percentOfBMx4
-        %             setBMx
-        %             percentOfBMx
-        %         end
-        
+
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         % 6.4 Towing tank water properties
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -720,13 +698,6 @@ for condNo=7:12
         % Percentage of Tw and ?
         percentOfTw  = (setBtw/setTw)*100;
         percentOfRho = (setBRho/freshwaterdensity)*100;
-        
-        %         if A{j}(1,11) == 0.20
-        %             setBtw
-        %             setBRho
-        %             percentOfTw
-        %             percentOfRho
-        %         end
         
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         % 6.5 Sensitivity Coefficients
@@ -752,14 +723,6 @@ for condNo=7:12
         % NOTE: Sensitivity coefficient for water temperature, tw
         thetaRhoTw = abs(0.0638-(0.0173*15)+(0.000189*(15^2)));
         
-        %         if A{j}(1,11) == 0.20
-        %             thetaS
-        %             thetaV
-        %             thetaMx
-        %             thetaRho
-        %             thetaRhoTw
-        %         end
-        
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         % 6.6 Total Bias of Resistance Coefficient CT
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -777,11 +740,6 @@ for condNo=7:12
         
         percentOfCT15degC = (setBCT/avgCT15degC)*100;
         
-        %         if A{j}(1,11) == 0.20
-        %             setBCT
-        %             percentOfCT15degC
-        %         end
-        
         %# ////////////////////////////////////////////////////////////////
         %# 7.0 Precision Limit
         %# ////////////////////////////////////////////////////////////////
@@ -796,42 +754,20 @@ for condNo=7:12
         % Percent of CT at 15 deg C
         percentOfCT15degC_2 = (setPCT/avgCT15degC)*100;
         
-        %         if A{j}(1,11) == 0.20
-        %             setM
-        %             setSCT
-        %             setPCT
-        %             percentOfCT15degC_2
-        %         end
-        
         %# ////////////////////////////////////////////////////////////////
         %# 8.0 Total Uncertainty
         %# ////////////////////////////////////////////////////////////////
         
         % UCT15 deg C (Resistance Coefficient CT) (-)
-        setUCT152degC = sqrt(setBCT^2+setSCT^2);
+        setUCT152degC        = sqrt(setBCT^2+setSCT^2);
         
         % Percentage of CT at 15 deg C
-        percentOfCT152degC = (setUCT152degC/avgCT15degC)*100;
+        percentOfCT152degC   = (setUCT152degC/avgCT15degC)*100;
         
         % Percentage of UCT at 15 deg C
         percentOfUCT152degC1 = (setBCT^2/setUCT152degC^2)*100;
         percentOfUCT152degC2 = (setPCT^2/setUCT152degC^2)*100;
-        
-        % Display in command window
-        %         disp(sprintf('Run No.: %s => BCT: %s, %% of UCT15 deg C: %s',num2str(A{j}(k,1)),num2str(setBCT),num2str(percentOfUCT152degC1)));
-        %         disp(sprintf('Run No.: %s => PCT: %s, %% of UCT15 deg C: %s',num2str(A{j}(k,1)),num2str(setPCT),num2str(percentOfUCT152degC2)));
-        %         disp(sprintf('Run No.: %s => UCT 15 deg C: %s, %% of CT 15 deg C: %s',num2str(A{j}(k,1)),num2str(setUCT152degC),num2str(percentOfCT152degC)));
-        %         disp('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-        
-        %         if A{j}(1,11) == 0.20
-        %             setBCT
-        %             setSCT
-        %             setUCT152degC
-        %             percentOfCT152degC
-        %             percentOfUCT152degC1
-        %             percentOfUCT152degC2
-        %         end
-        
+
         % /////////////////////////////////////////////////////////////////
         %# Populate resultsArrayUARes
         % /////////////////////////////////////////////////////////////////
@@ -973,64 +909,26 @@ end
 % Create one plot array per condition
 [qas,ras] = size(resultsArrayUARes);
 
-plotArray7  = [];
-plotArray8  = [];
-plotArray9  = [];
-plotArray10 = [];
-plotArray11 = [];
-plotArray12 = [];
+R = resultsArrayUARes;
+AA = arrayfun(@(x) R(R(:,2) == x, :), unique(R(:,2)), 'uniformoutput', false);
 
-for l=1:qas
-    if resultsArrayUARes(l,2) == 7 && resultsArrayUARes(l,1) >= 81 && resultsArrayUARes(l,1) <= 234
-        plotArray7(l,:) = resultsArrayUARes(l,:);
-    end
-end
-plotArray7 = plotArray7(any(plotArray7,2),:);  % Remove zero rows
-
-for l=1:qas
-    if resultsArrayUARes(l,2) == 8
-        plotArray8(l,:) = resultsArrayUARes(l,:);
-    end
-end
-plotArray8 = plotArray8(any(plotArray8,2),:);  % Remove zero rows
-
-for l=1:qas
-    if resultsArrayUARes(l,2) == 9
-        plotArray9(l,:) = resultsArrayUARes(l,:);
-    end
-end
-plotArray9 = plotArray9(any(plotArray9,2),:);  % Remove zero rows
-
-for l=1:qas
-    if resultsArrayUARes(l,2) == 10
-        plotArray10(l,:) = resultsArrayUARes(l,:);
-    end
-end
-plotArray10 = plotArray10(any(plotArray10,2),:);  % Remove zero rows
-
-for l=1:qas
-    if resultsArrayUARes(l,2) == 11
-        plotArray11(l,:) = resultsArrayUARes(l,:);
-    end
-end
-plotArray11 = plotArray11(any(plotArray11,2),:);  % Remove zero rows
-
-for l=1:qas
-    if resultsArrayUARes(l,2) == 12
-        plotArray12(l,:) = resultsArrayUARes(l,:);
-    end
-end
-plotArray12 = plotArray12(any(plotArray12,2),:);  % Remove zero rows
+plotArray7  = AA{1};
+plotArray8  = AA{2};
+plotArray9  = AA{3};
+plotArray10 = AA{4};
+plotArray11 = AA{5};
+plotArray12 = AA{6};
+plotArray13 = AA{7};
 
 %# ////////////////////////////////////////////////////////////////////////
 % Plots
 %# ////////////////////////////////////////////////////////////////////////
 
 %# ************************************************************************
-%# PLOT #1: Fr versus resistance coefficient, total uncertainty
+%# 1. Fr versus resistance coefficient, total uncertainty
 %# ************************************************************************
 
-figurename = sprintf('Total uncertainty U_{CT 15 deg C}:: Conditions %s to %s', num2str(7), num2str(12));
+figurename = sprintf('Plot 1: Total uncertainty U_{CT 15 deg C}:: Conditions %s to %s', num2str(7), num2str(12));
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ------------------------------------------------
@@ -1048,9 +946,9 @@ end
 
 % Fonts and colours ---------------------------------------------------
 setGeneralFontName = 'Helvetica';
-setGeneralFontSize = 14;
+setGeneralFontSize = 16;
 setBorderLineWidth = 2;
-setLegendFontSize  = 12;
+setLegendFontSize  = 14;
 
 %# Change default text fonts for plot title
 set(0,'DefaultTextFontname',setGeneralFontName);
@@ -1058,7 +956,7 @@ set(0,'DefaultTextFontSize',14);
 
 %# Box thickness, axes font size, etc. --------------------------------
 set(gca,'TickDir','in',...
-    'FontSize',12,...
+    'FontSize',14,...
     'LineWidth',2,...
     'FontName',setGeneralFontName,...
     'Clipping','off',...
@@ -1074,6 +972,19 @@ if enableBlackAndWhitePlot == 1
     setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
 end
 
+%# Line, colors and markers
+setMarkerSize      = 14;
+setLineWidthMarker = 1;
+setLineWidth       = 2;
+setLineWidthThin   = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+subplot(1,2,1)
+
 % X and Y values ----------------------------------------------------------
 
 setX1 = plotArray7(:,3);
@@ -1085,6 +996,62 @@ setY2 = plotArray8(:,9);
 setX3 = plotArray9(:,3);
 setY3 = plotArray9(:,9);
 
+setX4 = plotArray13(:,3);
+setY4 = plotArray13(:,9);
+
+% Plotting
+h = plot(setX1,setY1,'*',setX2,setY2,'*',setX3,setY3,'*',setX4,setY4,'*');
+xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf % of C_{T15 deg C} (-)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+%     title('{\bf 1,500 tonnes}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+axis square;
+
+% Colors and markers
+set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin
+set(h(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin
+set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle3,'linewidth',setLineWidthThin
+set(h(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 0.1;
+maxX  = 0.5;
+incrX = 0.05;
+minY  = 0;
+maxY  = 2;
+incrY = 0.5;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+%hleg1 = legend('Cond. 7: 1,500t (level trim)','Cond. 8: 1,500t (-0.5 deg by bow)','Cond. 9: 1,500t (0.5 deg by stern)');
+hleg1 = legend('1,500t (level trim)','1,500t (-0.5 deg by bow)','1,500t (0.5 deg by stern)','1,500t (deep transom for Prohaska runs)');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','none');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+subplot(1,2,2)
+
+% X and Y values ----------------------------------------------------------
+
 setX4 = plotArray10(:,3);
 setY4 = plotArray10(:,9);
 
@@ -1095,39 +1062,42 @@ setX6 = plotArray12(:,3);
 setY6 = plotArray12(:,9);
 
 % Plotting
-h = plot(setX1,setY1,'s',setX2,setY2,'x',setX3,setY3,'*',setX4,setY4,'v',setX5,setY5,'x',setX6,setY6,'*');
-xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-ylabel('{\bf % of C_{T15 deg C} [-]}','FontSize',setGeneralFontSize);
+h = plot(setX4,setY4,'*',setX5,setY5,'*',setX6,setY6,'*');
+xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf % of C_{T15 deg C} (-)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+%     title('{\bf 1,804 tonnes}','FontSize',setGeneralFontSize);
+% end
 grid on;
 box on;
 axis square;
 
 % Colors and markers
-setMarkerSize = 12;
-setLineWidth  = 1;
-setLineStyle  = '-.';
-setC=1;set(h(setC),'Color',setColor{setC},'Marker',setMarker{setC},'MarkerSize',setMarkerSize,'LineWidth',setLineWidth); %,'MarkerFaceColor',setColor{setC},'LineStyle',setLineStyle,'linewidth',setLineWidth
-setC=2;set(h(setC),'Color',setColor{setC},'Marker',setMarker{setC},'MarkerSize',setMarkerSize,'LineWidth',setLineWidth);
-setC=3;set(h(setC),'Color',setColor{setC},'Marker',setMarker{setC},'MarkerSize',setMarkerSize,'LineWidth',setLineWidth);
-setC=4;set(h(setC),'Color',setColor{setC},'Marker',setMarker{setC},'MarkerSize',setMarkerSize,'LineWidth',setLineWidth);
-setC=5;set(h(setC),'Color',setColor{setC},'Marker',setMarker{setC},'MarkerSize',setMarkerSize,'LineWidth',setLineWidth);
-setC=6;set(h(setC),'Color',setColor{setC},'Marker',setMarker{setC},'MarkerSize',setMarkerSize,'LineWidth',setLineWidth);
+set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin
+set(h(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin
+set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker); %,'LineStyle',setLineStyle3,'linewidth',setLineWidthThin
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
 set(gcf,'Color',[1,1,1]);
 
 %# Axis limitations
-set(gca,'XLim',[0.2 0.5]);
-set(gca,'XTick',[0.2:0.02:0.5]);
-set(gca,'YLim',[0.6 1.4]);
-set(gca,'YTick',[0.6:0.1:1.4]);
-% Limit decimals in X and Y axis numbers
-set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'))
-set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'))
+minX  = 0.2;
+maxX  = 0.5;
+incrX = 0.05;
+minY  = 0;
+maxY  = 2;
+incrY = 0.5;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 
 %# Legend
-hleg1 = legend('Cond. 7: 1,500t (level)','Cond. 8: 1,500t (-0.5 deg)','Cond. 9: 1,500t (0.5 deg)','Cond. 10: 1,804t (level)','Cond. 11: 1,804t (-0.5 deg)','Cond. 12: 1,804t (0.5 deg)');
+%hleg1 = legend('Cond. 10: 1,804t (level trim)','Cond. 11: 1,804t (-0.5 deg by bow)','Cond. 12: 1,804t (0.5 deg by stern)');
+hleg1 = legend('1,804t (level trim)','1,804t (-0.5 deg by bow)','1,804t (0.5 deg by stern)');
 set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
 set(hleg1,'LineWidth',1);
@@ -1146,419 +1116,20 @@ set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorde
 set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
 
 %# Figure size printed on paper
-set(gcf, 'PaperUnits','centimeters');
-set(gcf, 'PaperSize',[XPlot YPlot]);
-set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-set(gcf, 'PaperOrientation','portrait');
-
-%# Plot title ---------------------------------------------------------
-if enablePlotMainTitle == 1
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-end
-
-%# Save plots as PDF, PNG and EPS -----------------------------------------
-
-% Enable renderer for vector graphics output
-set(gcf, 'renderer', 'painters');
-setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
-setFileFormat = {'PDF' 'PNG' 'EPS'};
-for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Condition_7_to_12_Resistance_Uncertainty_Analysis_Plot.%s', '_uncertainty_analysis', setFileFormat{k}, setFileFormat{k});
-    print(gcf, setSaveFormat{k}, plotsavename);
-end
-%close;
-
-%# ************************************************************************
-%# PLOT #2: Resistance coefficient bias and precision limit
-%# ************************************************************************
-
-% Fr versus resistance coefficient, total uncertainty
-figurename = sprintf('Resistance Coefficient Bias and Precision Limits:: Conditions %s to %s', num2str(7), num2str(12));
-f = figure('Name',figurename,'NumberTitle','off');
-
-% Show plot title
-enablePlotTitle = 1;
-
-%# Paper size settings ------------------------------------------------
-
 if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-    
-    set(gcf, 'PaperUnits', 'centimeters');
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
 end
-
-% Fonts and colours ---------------------------------------------------
-setGeneralFontName = 'Helvetica';
-setGeneralFontSize = 14;
-setBorderLineWidth = 2;
-setLegendFontSize  = 12;
-
-%# Change default text fonts for plot title
-set(0,'DefaultTextFontname',setGeneralFontName);
-set(0,'DefaultTextFontSize',14);
-
-%# Box thickness, axes font size, etc. --------------------------------
-set(gca,'TickDir','in',...
-    'FontSize',12,...
-    'LineWidth',2,...
-    'FontName',setGeneralFontName,...
-    'Clipping','off',...
-    'Color',[1 1 1],...
-    'LooseInset',get(gca,'TightInset'));
-
-%# Markes and colors ------------------------------------------------------
-setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
-% Colored curves
-setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
-if enableBlackAndWhitePlot == 1
-    % Black and white curves
-    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
-end
-
-% Condition 7 -------------------------------------------------------------
-subplot(3,2,1)
-
-X = plotArray7(:,3);
-A = plotArray7(:,5);
-B = plotArray7(:,7);
-
-% Plotting
-bar(X,[A B])
-if enablePlotTitle == 1
-    title('{\bf Cond. 7: 1,500t, static trim level}','FontSize',setGeneralFontSize);
-end
-xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-ylabel('{\bf % of U_{CT15 deg C}}','FontSize',setGeneralFontSize);
-grid on;
-box on;
-
-% % Set marker size
-% setMarkerSize = 8;
-%
-% h = plot(X,A,'s',X,B,'o');
-% xlabel('{\bf Froude length number [-]}');
-% ylabel('{\bf % of U_{CT15 deg C}}');
-% title('{\bf Cond. 7: 1,500t, static trim level}');
-% grid on;
-% box on;
-% %axis square;
-
-% % Colors and markers
-% set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
-% set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
-
-%# Set plot figure background to a defined color
-%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-set(gcf,'Color',[1,1,1]);
-
-%# Axis limitations
-set(gca,'XLim',[0.2 0.5]);
-set(gca,'XTick',[0.2:0.05:0.5]);
-set(gca,'YLim',[0 100]);
-set(gca,'YTick',[0:20:100]);
-set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
-%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
-    
-%# Legend
-hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
-set(hleg1,'Location','NorthEast'); %SouthOutside
-set(hleg1,'Interpreter','none');
-set(hleg1,'LineWidth',1);
-set(hleg1,'FontSize',setLegendFontSize);
-%legend boxoff;
-
-%# Font sizes and border --------------------------------------------------
-
-set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-% Condition 8 -------------------------------------------------------------
-subplot(3,2,3)
-
-X = plotArray8(:,3);
-A = plotArray8(:,5);
-B = plotArray8(:,7);
-
-% Plotting
-bar(X,[A B])
-if enablePlotTitle == 1
-    title('{\bf Cond. 8: 1,500t, static trim 0.5}','FontSize',setGeneralFontSize);
-end
-xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-ylabel('{\bf % of U_{CT15 deg C}}','FontSize',setGeneralFontSize);
-grid on;
-box on;
-
-% % Set marker size
-% setMarkerSize = 8;
-%
-% h = plot(X,A,'s',X,B,'o');
-% xlabel('{\bf Froude length number [-]}');
-% ylabel('{\bf % of U_{CT15 deg C}}');
-% title('{\bf Cond. 8: 1,500t, static trim 0.5}');
-% grid on;
-% box on;
-% %axis square;
-
-% % Colors and markers
-% set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
-% set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
-
-%# Axis limitations
-set(gca,'XLim',[0.2 0.5]);
-set(gca,'XTick',[0.2:0.05:0.5]);
-set(gca,'YLim',[0 100]);
-set(gca,'YTick',[0:20:100]);
-set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
-%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
-
-%# Legend
-hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
-set(hleg1,'Location','NorthEast'); %SouthOutside
-set(hleg1,'Interpreter','none');
-set(hleg1,'LineWidth',1);
-set(hleg1,'FontSize',setLegendFontSize);
-set(hleg1, 'Box', 'on');
-
-%# Font sizes and border --------------------------------------------------
-
-set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-% Condition 9 -------------------------------------------------------------
-subplot(3,2,5)
-
-X = plotArray9(:,3);
-A = plotArray9(:,5);
-B = plotArray9(:,7);
-
-% Plotting
-bar(X,[A B])
-if enablePlotTitle == 1
-    title('{\bf Cond. 9: 1,500t, static trim -0.5}','FontSize',setGeneralFontSize);
-end
-xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-ylabel('{\bf % of U_{CT15 deg C}}','FontSize',setGeneralFontSize);
-grid on;
-box on;
-
-% % Set marker size
-% setMarkerSize = 8;
-%
-% h = plot(X,A,'s',X,B,'o');
-% xlabel('{\bf Froude length number [-]}');
-% ylabel('{\bf % of U_{CT15 deg C}}');
-% title('{\bf Cond. 9: 1,500t, static trim -0.5}');
-% grid on;
-% box on;
-% %axis square;
-
-% % Colors and markers
-% set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
-% set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
-
-%# Axis limitations
-set(gca,'XLim',[0.2 0.5]);
-set(gca,'XTick',[0.2:0.05:0.5]);
-set(gca,'YLim',[0 100]);
-set(gca,'YTick',[0:20:100]);
-set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
-%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
-
-%# Legend
-hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
-set(hleg1,'Location','NorthEast'); %SouthOutside
-set(hleg1,'Interpreter','none');
-set(hleg1,'LineWidth',1);
-set(hleg1,'FontSize',setLegendFontSize);
-set(hleg1, 'Box', 'on');
-
-%# Font sizes and border --------------------------------------------------
-
-set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-% Condition 10 ------------------------------------------------------------
-subplot(3,2,2)
-
-X = plotArray10(:,3);
-A = plotArray10(:,5);
-B = plotArray10(:,7);
-
-% Plotting
-bar(X,[A B])
-if enablePlotTitle == 1
-    title('{\bf Cond. 10: 1,804t, static trim level}','FontSize',setGeneralFontSize);
-end
-xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-ylabel('{\bf % of U_{CT15 deg C}}','FontSize',setGeneralFontSize);
-grid on;
-box on;
-
-% % Set marker size
-% setMarkerSize = 8;
-%
-% h = plot(X,A,'s',X,B,'o');
-% xlabel('{\bf Froude length number [-]}');
-% ylabel('{\bf % of U_{CT15 deg C}}');
-% title('{\bf Cond. 10: 1,804t, static trim level}');
-% grid on;
-% box on;
-% %axis square;
-
-% % Colors and markers
-% set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
-% set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
-
-%# Axis limitations
-set(gca,'XLim',[0.2 0.5]);
-set(gca,'XTick',[0.2:0.05:0.5]);
-set(gca,'YLim',[0 100]);
-set(gca,'YTick',[0:20:100]);
-set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
-%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
-
-%# Legend
-hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
-set(hleg1,'Location','NorthEast'); %SouthOutside
-set(hleg1,'Interpreter','none');
-set(hleg1,'LineWidth',1);
-set(hleg1,'FontSize',setLegendFontSize);
-set(hleg1, 'Box', 'on');
-
-%# Font sizes and border --------------------------------------------------
-
-set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-% Condition 11 ------------------------------------------------------------
-subplot(3,2,4)
-
-X = plotArray11(:,3);
-A = plotArray11(:,5);
-B = plotArray11(:,7);
-
-% Plotting
-bar(X,[A B])
-if enablePlotTitle == 1
-    title('{\bf Cond. 11: 1,804t, static trim 0.5}','FontSize',setGeneralFontSize);
-end
-xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-ylabel('{\bf % of U_{CT15 deg C}}','FontSize',setGeneralFontSize);
-grid on;
-box on;
-
-% % Set marker size
-% setMarkerSize = 8;
-%
-% h = plot(X,A,'s',X,B,'o');
-% xlabel('{\bf Froude length number [-]}');
-% ylabel('{\bf % of U_{CT15 deg C}}');
-% title('{\bf Cond. 11: 1,804t, static trim 0.5}');
-% grid on;
-% box on;
-% %axis square;
-
-% % Colors and markers
-% set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
-% set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
-
-%# Axis limitations
-set(gca,'XLim',[0.2 0.5]);
-set(gca,'XTick',[0.2:0.05:0.5]);
-set(gca,'YLim',[0 100]);
-set(gca,'YTick',[0:20:100]);
-set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
-%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
-
-%# Legend
-hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
-set(hleg1,'Location','NorthEast'); %SouthOutside
-set(hleg1,'Interpreter','none');
-set(hleg1,'LineWidth',1);
-set(hleg1,'FontSize',setLegendFontSize);
-set(hleg1, 'Box', 'on');
-
-%# Font sizes and border --------------------------------------------------
-
-set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-% Condition 12 ------------------------------------------------------------
-subplot(3,2,6)
-
-X = plotArray12(:,3);
-A = plotArray12(:,5);
-B = plotArray12(:,7);
-
-% Plotting
-bar(X,[A B])
-if enablePlotTitle == 1
-    title('{\bf Cond. 12: 1,804t, static trim -0.5}','FontSize',setGeneralFontSize);
-end
-xlabel('{\bf Froude length number [-]}','FontSize',setGeneralFontSize);
-ylabel('{\bf % of U_{CT15 deg C}}','FontSize',setGeneralFontSize);
-grid on;
-box on;
-
-% % Set marker size
-% setMarkerSize = 8;
-%
-% h = plot(X,A,'s',X,B,'o');
-% xlabel('{\bf Froude length number [-]}');
-% ylabel('{\bf % of U_{CT15 deg C}}');
-% title('{\bf Cond. 12: 1,804t, static trim -0.5}');
-% grid on;
-% box on;
-% %axis square;
-
-% % Colors and markers
-% set(h(1),'MarkerEdgeColor','k','MarkerFaceColor','b','MarkerSize',setMarkerSize);
-% set(h(2),'MarkerEdgeColor','k','MarkerFaceColor','r','MarkerSize',setMarkerSize);
-
-%# Axis limitations
-set(gca,'XLim',[0.2 0.5]);
-set(gca,'XTick',[0.2:0.05:0.5]);
-set(gca,'YLim',[0 100]);
-set(gca,'YTick',[0:20:100]);
-set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
-%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
-
-%# Legend
-hleg1 = legend('Resistance coefficient bias limit','Resistance coefficient precision limit');
-set(hleg1,'Location','NorthEast'); %SouthOutside
-set(hleg1,'Interpreter','none');
-set(hleg1,'LineWidth',1);
-set(hleg1,'FontSize',setLegendFontSize);
-set(hleg1, 'Box', 'on');
-
-%# Font sizes and border --------------------------------------------------
-
-set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-%# ************************************************************************
-%# Save plot as PNG
-%# ************************************************************************
-
-%# Figure size on screen (50% scaled, but same aspect ratio)
-set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-%# Figure size printed on paper
-set(gcf, 'PaperUnits','centimeters');
-set(gcf, 'PaperSize',[XPlot YPlot]);
-set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-set(gcf, 'PaperOrientation','portrait');
 
 %# Plot title ---------------------------------------------------------
-if enablePlotMainTitle == 1
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-end
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
 
 %# Save plots as PDF, PNG and EPS -----------------------------------------
 
@@ -1567,7 +1138,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Condition_7_to_12_Resistance_Coefficient_Bias_and_Precision_Limit_Plot.%s', '_uncertainty_analysis', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Plot_1_Condition_7_to_12_Resistance_Uncertainty_Analysis_Plot.%s', '_uncertainty_analysis', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
