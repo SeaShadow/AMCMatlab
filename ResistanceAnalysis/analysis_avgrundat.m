@@ -6,7 +6,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 10, 2015
+%# Date       :  March 13, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -1470,7 +1470,7 @@ y4 = cell2mat(Raw_Data);
 
 %# Plotting ---------------------------------------------------------------
 h = plot(x1,y1,'*-',x2,y2,'*-',x3,y3,'*-',x4,y4,'*-');
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Total resistance coefficient, C_{T}*10^{3} (-)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
     title('{\bf Blockage and depth corrections}','FontSize',setGeneralFontSize);
@@ -1629,7 +1629,7 @@ y4 = RACorrectedScott(1:17,8);
 
 %# Plotting ---------------------------------------------------------------
 h = plot(x1,y1,'*-',x2,y2,'*-',x3,y3,'*-',x4,y4,'*-');
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Residual resistance coefficient, C_{R} (-)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
     title('{\bf Residual resistance comparison}','FontSize',setGeneralFontSize);
@@ -1694,7 +1694,7 @@ y3 = RRArray(1:17,14);
 
 %# Plotting ---------------------------------------------------------------
 h = plot(x1,y1,'*-',x2,y2,'*-',x3,y3,'*-');
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
 ylabel('{\bf (CR(shallow)-CR(deep)) / CR(deep) (-)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
     title('{\bf Residual resistance comparison}','FontSize',setGeneralFontSize);
@@ -1850,7 +1850,7 @@ y3 = RRArray(1:17,14);
 
 %# Plotting ---------------------------------------------------------------
 h = plot(x1,y1,'*-',x2,y2,'*-',x3,y3,'*-');
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
 ylabel('{\bf (CR(shallow)-CR(deep)) / CR(deep) (-)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
     title('{\bf Residual resistance comparison}','FontSize',setGeneralFontSize);

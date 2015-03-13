@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 10, 2015
+%# Date       :  March 13, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -633,7 +633,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Plotting
     h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf RTm \\ \nabla \rho g (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -786,7 +786,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Plotting
     h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     %ylabel('$\frac{\bf{R_{Tm}}}{\bf{\nabla\;\rho\;g}}\;\frac{\bf{1}}{\bf{F_{r}^{2}}}$ (-)','Interpreter','LaTex','FontSize',setGeneralFontSize);
     ylabel('{\bf (RTm \\ \nabla \rho g) * (1 \\ Fr^2) (-)}','FontSize',setGeneralFontSize);
     grid on;
@@ -1034,7 +1034,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     else
         h = plot(x9,y9,'*',x7,y7,'*',x8,y8,'*',x12,y12,'*',x10,y10,'*',x11,y11,'*');
     end
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf (RTm \\ \nabla \rho g) * (1 \\ Fr^2) (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -1234,7 +1234,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Plotting
     h = plot(x9,y9,'*--',x7,y7,'*-.',x8,y8,'*:');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     %ylabel('$\frac{\bf{R_{Tm}}}{\bf{\nabla\;\rho\;g}}$ (-)','Interpreter','LaTex','FontSize',setGeneralFontSize);
     ylabel('{\bf RTm \\ \nabla \rho g (-)}','FontSize',setGeneralFontSize);
     grid on;
@@ -1334,7 +1334,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Plotting
     h = plot(x9,y9,'*--',x7,y7,'*-.',x8,y8,'*:');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     %ylabel('$\frac{\bf{R_{Tm}}}{\bf{\nabla\;\rho\;g}}\;\frac{\bf{1}}{\bf{F_{r}^{2}}}$ (-)','Interpreter','LaTex','FontSize',setGeneralFontSize);
     ylabel('{\bf (RTm \\ \nabla \rho g) * (1 \\ Fr^2) (-)}','FontSize',setGeneralFontSize);
     grid on;
@@ -1524,7 +1524,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Plotting
     h = plot(x12,y12,'*--',x10,y10,'*-.',x11,y11,'*:');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     %ylabel('$\frac{\bf{R_{Tm}}}{\bf{\nabla\;\rho\;g}}$ (-)','Interpreter','LaTex','FontSize',setGeneralFontSize);
     ylabel('{\bf RTm \\ \nabla \rho g (-)}','FontSize',setGeneralFontSize);
     grid on;
@@ -1624,7 +1624,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Plotting
     h = plot(x12,y12,'*--',x10,y10,'*-.',x11,y11,'*:');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf (RTm \\ \nabla \rho g) * (1 \\ Fr^2) (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;

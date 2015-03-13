@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 5, 2015
+%# Date       :  March 13, 2015
 %#
 %# Function   :  Resistance curve based on Froude Numbers (Fr)
 %#
@@ -256,6 +256,12 @@ end
 
 %# Define variables (ITTC 7.5-02-01-03 (2008)) ----------------------------
 
+% Full scale to model scale ratio (-)
+FStoMSratio = 21.6;
+
+% Gravitational constant (m/s^2)
+gravconst = 9.806;
+
 %# TODO: Kinematic viscosity could be established by look up table and
 %# dynamically read. Input would have to be extended by ResTemp and SPTTemp.
 
@@ -283,6 +289,7 @@ ResultsArray = [];
 %[1]  Froude length number             (-)
 %[2]  Resistance (uncorrected)         (N)
 %[3]  Resistance (corrected for temp.) (N) -> See ITTC 7.5-02-03-01.4 (2008)
+%[4]  Ship speed based on LWL and Fr   (knots)
 for k=1:m
     
     % Calculations
@@ -334,6 +341,9 @@ for k=1:m
     % Residual resistance coeff., CR=CT-(1+k)CF, from resistance test
     Crm = RESCtm-(FormFactor*RESCfm);
     ResultsArray(k,3) = (Form_Factor*SPTCfm+Crm)/(Form_Factor*RESCfm+Crm)*ResistanceByFit;
+    
+    % Ship speed (knots)
+    ResultsArray(k,4) = (FN*sqrt(gravconst*(LWL*FStoMSratio)))/0.51444;
     
 end
 

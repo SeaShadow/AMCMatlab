@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 10, 2015
+%# Date       :  March 13, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -533,7 +533,7 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
 %     if enablePlotTitle == 1
 %         title('{\bf Average of repeated runs}','FontSize',setGeneralFontSize);
 %     end
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Total resistance coefficient C_{Tm}*1000 (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -704,7 +704,7 @@ if enableTurbStimPlot == 1 && (length(cond1) ~= 0 || length(cond2) ~= 0 || lengt
     %# Plotting ---------------------------------------------------------------
     h = plot(fitobject,'k-.',x,y,'*');
     legendInfo{1} = 'Difference resistance using TS and without';
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Total reistaance, R_{Tm} (N)}','FontSize',setGeneralFontSize);
     % if enablePlotTitle == 1
     %     title('{\bf Thrust coefficient comparison)}','FontSize',setGeneralFontSize);
@@ -923,7 +923,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     %if enablePlotTitle == 1
     %    title('{\bf C_{Tm} vs. F_{r} (averaged runs)}','FontSize',setGeneralFontSize);
     %end
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Total resistance coefficient, C_{Tm}*1000 (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -1016,7 +1016,7 @@ if enableTrimTabPlot == 1 && (length(cond4) ~= 0 || length(cond5) ~= 0 || length
     %if enablePlotTitle == 1
     %    title('{\bf Trim vs. F_{r}}','FontSize',setGeneralFontSize);
     %end
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Running trim (deg)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -1226,7 +1226,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     if enablePlotTitle == 1
         title('{\bf Total resitance coefficient, C_{Tm}}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Total resistance coeff., C_{Tm}*1000 (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -1406,7 +1406,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     if enablePlotTitle == 1
         title('{\bf Heave}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Heave (mm)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -1509,7 +1509,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     if enablePlotTitle == 1
         title('{\bf Running trim}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Running trim (deg)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -1722,7 +1722,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
 %     if enablePlotTitle == 1
 %         title('{\bf Total resitance coefficient, C_{Tm}}','FontSize',setGeneralFontSize);
 %     end
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Total resistance coeff., C_{Tm}*1000 (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -2004,7 +2004,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
 %     if enablePlotTitle == 1
 %         title('{\bf Heave}','FontSize',setGeneralFontSize);
 %     end
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Heave (mm)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -2127,7 +2127,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
 %     if enablePlotTitle == 1
 %         title('{\bf Running trim}','FontSize',setGeneralFontSize);
 %     end
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Running trim (deg)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -2530,7 +2530,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     if enablePlotTitle == 1
         title('{\bf Total resistance, R_{Tm}}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf R_{Tm} (N)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -2626,7 +2626,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     if enablePlotTitle == 1
         title('{\bf Total resistance coeff., C_{Tm}}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf C_{Tm}*1000 (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -2722,7 +2722,7 @@ if enableResistancePlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || len
     if enablePlotTitle == 1
         title('{\bf Residual resistance coeff., C_{Rm}}','FontSize',setGeneralFontSize);
     end
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf C_{Rm}*1000 (-)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -3221,7 +3221,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x7,y71,'*',x7,y72,'*',x7,y73,'*',x7,y74,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 7: 1,500 tonnes, level}','FontSize',setGeneralFontSize);
@@ -3294,7 +3294,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x8,y81,'*',x8,y82,'*',x8,y83,'*',x8,y84,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 8: 1,500 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
@@ -3367,7 +3367,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x9,y91,'*',x9,y92,'*',x9,y93,'*',x9,y94,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 9: 1,500 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
@@ -3440,7 +3440,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x10,y101,'*',x10,y102,'*',x10,y103,'*',x10,y104,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 10: 1,804 tonnes, level}','FontSize',setGeneralFontSize);
@@ -3513,7 +3513,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x11,y111,'*',x11,y112,'*',x11,y113,'*',x11,y114,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 11: 1,804 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
@@ -3586,7 +3586,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x12,y121,'*',x12,y122,'*',x12,y123,'*',x12,y124,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 12: 1,804 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
@@ -3756,7 +3756,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x7,y71,'*',x7,y72,'*',x7,y73,'*',x7,y74,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 7: 1,500 tonnes, level}','FontSize',setGeneralFontSize);
@@ -3829,7 +3829,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x8,y81,'*',x8,y82,'*',x8,y83,'*',x8,y84,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 8: 1,500 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
@@ -3902,7 +3902,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x9,y91,'*',x9,y92,'*',x9,y93,'*',x9,y94,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 9: 1,500 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
@@ -3975,7 +3975,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x10,y101,'*',x10,y102,'*',x10,y103,'*',x10,y104,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 10: 1,804 tonnes, level}','FontSize',setGeneralFontSize);
@@ -4048,7 +4048,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x11,y111,'*',x11,y112,'*',x11,y113,'*',x11,y114,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 11: 1,804 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
@@ -4121,7 +4121,7 @@ if enableErrorPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(c
     
     % Plotting
     h = plot(x12,y121,'*',x12,y122,'*',x12,y123,'*',x12,y124,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Error to average [%]}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 12: 1,804 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
@@ -4275,7 +4275,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     
     % Plotting
     bar(x7,y7,0.5);
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Mean of standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 7: 1,500 tonnes, level}','FontSize',setGeneralFontSize);
@@ -4331,7 +4331,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     
     % Plotting
     bar(x8,y8,0.5);
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Mean of standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 8: 1,500 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
@@ -4387,7 +4387,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     
     % Plotting
     bar(x9,y9,0.5);
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Mean of standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 9: 1,500 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
@@ -4443,7 +4443,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     
     % Plotting
     bar(x10,y10,0.5);
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Mean of standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 10: 1,804 tonnes, level}','FontSize',setGeneralFontSize);
@@ -4499,7 +4499,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     
     % Plotting
     bar(x11,y11,0.5);
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Mean of standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 11: 1,804 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
@@ -4555,7 +4555,7 @@ if enableMeanStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length
     
     % Plotting
     bar(x12,y12,0.5);
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Mean of standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 12: 1,804 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
@@ -4709,7 +4709,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     
     % Plotting
     h = plot(x7sp,y7sp,'*',x7fl,y7fl,'*',x7al,y7al,'*',x7dr,y7dr,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 7: 1,500 tonnes, level}','FontSize',setGeneralFontSize);
@@ -4773,7 +4773,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     
     % Plotting
     h = plot(x8sp,y8sp,'*',x8fl,y8fl,'*',x8al,y8al,'*',x8dr,y8dr,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 8: 1,500 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
@@ -4837,7 +4837,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     
     % Plotting
     h = plot(x9sp,y9sp,'*',x9fl,y9fl,'*',x9al,y9al,'*',x9dr,y9dr,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 9: 1,500 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);
@@ -4901,7 +4901,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     
     % Plotting
     h = plot(x10sp,y10sp,'*',x10fl,y10fl,'*',x10al,y10al,'*',x10dr,y10dr,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 10: 1,804 tonnes, level}','FontSize',setGeneralFontSize);
@@ -4965,7 +4965,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     
     % Plotting
     h = plot(x11sp,y11sp,'*',x11fl,y11fl,'*',x11al,y11al,'*',x11dr,y11dr,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 11: 1,804 tonnes, -0.5 by bow}','FontSize',setGeneralFontSize);
@@ -5029,7 +5029,7 @@ if enableStdPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(con
     
     % Plotting
     h = plot(x12sp,y12sp,'*',x12fl,y12fl,'*',x12al,y12al,'*',x12dr,y12dr,'*');
-    xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Standard deviation (-)}','FontSize',setGeneralFontSize);
     if enablePlotTitle == 1
         title('{\bf Condition 12: 1,804 tonnes, 0.5 by stern}','FontSize',setGeneralFontSize);

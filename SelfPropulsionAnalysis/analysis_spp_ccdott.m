@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 10, 2015
+%# Date       :  March 13, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -4143,7 +4143,7 @@ h = plot(tx1,ty1,'*',tx4,ty4,'*',tx5,ty5,'*',tx2,ty2,'*',tx3,ty3,'*',xt,yt,'*',x
 if enablePlotTitle == 1
     title('{\bf Gross thrust defined as T_{G} = p Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Thrust deduction fraction, t (N)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
@@ -4391,7 +4391,7 @@ h = plot(tx1,ty1,'*',tx4,ty4,'*',tx5,ty5,'*',tx2,ty2,'*',tx3,ty3,'*',xt,yt,'*',x
 if enablePlotTitle == 1
     title('{\bf Gross thrust defined as T_{G} = p Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
 end
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Thrust deduction fraction, t (N)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
@@ -4479,176 +4479,6 @@ for k=1:3
 end
 %close;
 
-
-%# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-%# 4. Resistance vs. TG at Towing Force (FD) and F at zero Thrust (FT=0)
-%# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-%# Plotting gross thrust vs. towing force ---------------------------------
-figurename = 'Plot 4: Resistance vs. Gross Thrust at Towing Force F_{D} and Force at Zero Thrust F_{T=0}';
-f = figure('Name',figurename,'NumberTitle','off');
-
-%# Paper size settings ----------------------------------------------------
-
-if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-    
-    set(gcf, 'PaperUnits', 'centimeters');
-    set(gcf, 'PaperSize', [19 19]);
-    set(gcf, 'PaperPositionMode', 'manual');
-    set(gcf, 'PaperPosition', [0 0 19 19]);
-end
-
-% Fonts and colours -------------------------------------------------------
-setGeneralFontName = 'Helvetica';
-setGeneralFontSize = 14;
-setBorderLineWidth = 2;
-setLegendFontSize  = 12;
-
-%# Change default text fonts for plot title
-set(0,'DefaultTextFontname',setGeneralFontName);
-set(0,'DefaultTextFontSize',14);
-
-%# Box thickness, axes font size, etc. ------------------------------------
-set(gca,'TickDir','in',...
-    'FontSize',12,...
-    'LineWidth',2,...
-    'FontName',setGeneralFontName,...
-    'Clipping','off',...
-    'Color',[1 1 1],...
-    'LooseInset',get(gca,'TightInset'));
-
-%# Markes and colors ------------------------------------------------------
-setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
-% Colored curves
-setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
-if enableBlackAndWhitePlot == 1
-    % Black and white curves
-    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
-end
-
-%# Line, colors and markers
-setMarkerSize1     = 12;
-setMarkerSize2     = 11;
-setLineWidth       = 2;
-setLineWidthMarker = 1;
-setLineStyle       = '-';
-
-%# Gross thrust = TG = p Q (vj - vi) --------------------------------------
-
-%# X and Y axis data
-TA = TG_and_F_at_T0;
-
-% Resistance uncorrected
-%xr = resistance(:,1);
-%yr = resistance(:,2);
-
-% Resistance corrected for temp. diff. RES and SPT test
-xr = resistance(:,1);
-yr = resistance(:,3);
-
-% TG at zero drag
-x1 = TA(:,1);
-y1 = TA(:,2);
-
-% Towing force at zero thrust
-x2 = TA(:,1);
-y2 = TA(:,3);
-
-% Thrust at self-propulsion point TG=TG@F=0-FD
-x3 = TA(:,1);
-y3 = TA(:,4);
-
-% Towing force, FD
-x4 = TA(:,1);
-y4 = TA(:,5);
-
-%# Plotting
-h1 = plot(xr,yr,x1,y1,'s',x2,y2,'*',x3,y3,'o',x4,y4,'^');
-if enablePlotTitle == 1
-    title('{\bf Gross thrust defined as T_{G} = p Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
-end
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
-ylabel('{\bf Towing force, force at T=0 and gross thrust (N)}','FontSize',setGeneralFontSize);
-grid on;
-box on;
-axis square;
-
-%# Font sizes and border
-set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-%# Set plot figure background to a defined color
-%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-set(gcf,'Color',[1,1,1]);
-
-%# Line, colors and markers
-set(h1(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h1(2),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
-set(h1(3),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-set(h1(4),'Color',setColor{3},'Marker',setMarker{4},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-set(h1(5),'Color',setColor{4},'Marker',setMarker{8},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
-
-%# Axis limitations
-minX  = 0.22;
-maxX  = 0.42;
-incrX = 0.02;
-minY  = 0;
-maxY  = 40;
-incrY = 5;
-set(gca,'XLim',[minX maxX]);
-set(gca,'XTick',minX:incrX:maxX);
-set(gca,'YLim',[minY maxY]);
-set(gca,'YTick',minY:incrY:maxY);
-set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
-%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
-
-%# Legend
-%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-hleg1 = legend('Bare Hull Resistance (R_{C})','Thrust at zero drag (T_{F=0})','Towing force at zero thrust (F_{T=0})','Thrust at SPP (T_{SPP})','Towing force (F_{D})');
-set(hleg1,'Location','NorthWest');
-%set(hleg1,'Interpreter','none');
-set(hleg1,'Interpreter','tex');
-set(hleg1,'LineWidth',1);
-set(hleg1,'FontSize',setLegendFontSize);
-%legend boxoff;
-
-%# ************************************************************************
-%# Save plot as PNG
-%# ************************************************************************
-
-%# Figure size on screen (50% scaled, but same aspect ratio)
-set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-%# Figure size printed on paper
-if enableA4PaperSizePlot == 1
-    set(gcf, 'PaperUnits','centimeters');
-    set(gcf, 'PaperSize',[XPlot YPlot]);
-    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    set(gcf, 'PaperOrientation','portrait');
-end
-
-%# Plot title -------------------------------------------------------------
-if enablePlotMainTitle == 1
-    annotation('textbox', [0 0.9 1 0.1], ...
-        'String', strcat('{\bf ', figurename, '}'), ...
-        'EdgeColor', 'none', ...
-        'HorizontalAlignment', 'center');
-end
-
-%# Save plots as PDF, PNG and EPS -----------------------------------------
-minRun = min(resultsArraySPP(:,1));
-maxRun = max(resultsArraySPP(:,1));
-% Enable renderer for vector graphics output
-set(gcf, 'renderer', 'painters');
-setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
-setFileFormat = {'PDF' 'PNG' 'EPS'};
-for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_4_MS_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
-    print(gcf, setSaveFormat{k}, plotsavename);
-end
-%close;
 
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 %# 4. Extrapolation to full scale.
@@ -5488,6 +5318,180 @@ end % k=1:m
 %# ////////////////////////////////////////////////////////////////////////
 
 %# ************************************************************************
+%# 4. Resistance vs. TG at Towing Force (FD) and F at zero Thrust (FT=0)
+%# ************************************************************************
+figurename = 'Plot 4: Resistance vs. Gross Thrust at Towing Force F_{D} and Force at Zero Thrust F_{T=0}';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 12;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize1     = 12;
+setMarkerSize2     = 11;
+setLineWidth       = 2;
+setLineWidthThin   = 1;
+setLineWidthMarker = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+%# Gross thrust = TG = p Q (vj - vi) --------------------------------------
+
+%# X and Y axis data
+TA = TG_and_F_at_T0;
+
+% Fitted resistance corrected for temperature diff. RES and SPT test
+%xr = resistance(:,4);
+%yr = resistance(:,3);
+
+% TG at zero drag (TF=0)
+x1 = modelScaleDataArray(:,3); %resSPP_CCDoTT(:,1);
+y1 = resSPP_CCDoTT(:,20);
+
+% Towing force at zero thrust (FT=0)
+x2 = modelScaleDataArray(:,3); %resSPP_CCDoTT(:,1);
+y2 = resSPP_CCDoTT(:,21);
+
+% Thrust at self-propulsion point (TSPP)
+x3 = modelScaleDataArray(:,3); %resSPP_CCDoTT(:,1);
+y3 = resSPP_CCDoTT(:,11);
+
+% Towing force (FD)
+x4 = modelScaleDataArray(:,3); %resSPP_CCDoTT(:,1);
+y4 = resSPP_CCDoTT(:,2);
+
+% Resistance corrected for temperature and shallow water using Schuster
+x5 = ResResults(7:19,11);
+y5 = ResResults(7:19,26);
+
+%# Plotting
+h1 = plot(x5,y5,'-',x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*');
+if enablePlotTitle == 1
+    title('{\bf Gross thrust defined as T_{G} = p Q (v_{j} - v_{i})}','FontSize',setGeneralFontSize);
+end
+xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Towing force, force at T=0 and gross thrust (N)}','FontSize',setGeneralFontSize);
+grid on;
+box on;
+axis square;
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Line, colors and markers
+set(h1(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h1(2),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize1,'LineWidth',setLineWidthMarker);
+set(h1(3),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+set(h1(4),'Color',setColor{3},'Marker',setMarker{4},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+set(h1(5),'Color',setColor{4},'Marker',setMarker{8},'MarkerSize',setMarkerSize2,'LineWidth',setLineWidthMarker);
+
+%# Axis limitations
+minX  = 13;
+maxX  = 25;
+incrX = 1;
+minY  = 0;
+maxY  = 40;
+incrY = 5;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+%set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
+
+%# Legend
+%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
+hleg1 = legend('Bare Hull Resistance (R_{BH})','Thrust at zero drag (T_{F=0})','Towing force at zero thrust (F_{T=0})','Thrust at SPP (T_{SPP})','Towing force (F_{D})');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1,'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title -------------------------------------------------------------
+if enablePlotMainTitle == 1
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');
+end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+minRun = min(resultsArraySPP(:,1));
+maxRun = max(resultsArraySPP(:,1));
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_4_MS_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
 %# 5. Full scale overall propulsive efficiency, nD
 %# ************************************************************************
 figurename = 'Plot 5: Full Scale, Propulsive Efficiency';
@@ -5572,7 +5576,7 @@ Plot5LegendInfo{1} = '\eta_{D}=P_{E}/P_{D} where P_{E}=R_{BH}V, P_{D}=P_{PE}/(\e
 Plot5LegendInfo{2} = 'Bose (2008): Eqn. 10-28';
 Plot5LegendInfo{3} = 'Bulten (2006): Eqn. 2.61';
 Plot5LegendInfo{4} = '\eta_{D}=P_{E}/P_{D} where P_{E}=T_{F=0}V, P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})';
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
 %xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Overall propulsive efficiency, \eta_{D} (-)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
@@ -5656,206 +5660,6 @@ setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
     plotsavename = sprintf('_plots/%s/%s/SPP_Plot_5_FS_Overall_Propulsive_Efficiency_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
-    print(gcf, setSaveFormat{k}, plotsavename);
-end
-%close;
-
-
-%# ************************************************************************
-%# 5.1 Full scale overall propulsive efficiency, nD
-%# ************************************************************************
-figurename = 'Plot 5.1: Full Scale, Propulsive Efficiency';
-f = figure('Name',figurename,'NumberTitle','off');
-
-%# Paper size settings ----------------------------------------------------
-
-% if enableA4PaperSizePlot == 1
-%     set(gcf, 'PaperSize', [19 19]);
-%     set(gcf, 'PaperPositionMode', 'manual');
-%     set(gcf, 'PaperPosition', [0 0 19 19]);
-%
-%     set(gcf, 'PaperUnits', 'centimeters');
-%     set(gcf, 'PaperSize', [19 19]);
-%     set(gcf, 'PaperPositionMode', 'manual');
-%     set(gcf, 'PaperPosition', [0 0 19 19]);
-% end
-
-% Fonts and colours -------------------------------------------------------
-setGeneralFontName = 'Helvetica';
-setGeneralFontSize = 14;
-setBorderLineWidth = 2;
-setLegendFontSize  = 12;
-
-%# Change default text fonts for plot title
-set(0,'DefaultTextFontname',setGeneralFontName);
-set(0,'DefaultTextFontSize',14);
-
-%# Box thickness, axes font size, etc. ------------------------------------
-set(gca,'TickDir','in',...
-    'FontSize',12,...
-    'LineWidth',2,...
-    'FontName',setGeneralFontName,...
-    'Clipping','off',...
-    'Color',[1 1 1],...
-    'LooseInset',get(gca,'TightInset'));
-
-%# Markes and colors ------------------------------------------------------
-setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
-% Colored curves
-setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
-if enableBlackAndWhitePlot == 1
-    % Black and white curves
-    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
-end
-
-%# Line, colors and markers
-setMarkerSize      = 14;
-setLineWidthMarker = 1;
-setLineWidth       = 2;
-setLineWidthThin   = 1;
-setLineStyle       = '-';
-setLineStyle1      = '--';
-setLineStyle2      = '-.';
-setLineStyle3      = ':';
-
-%# SUBPLOT ////////////////////////////////////////////////////////////////
-%subplot(1,1,1)
-
-%# X and Y axis -----------------------------------------------------------
-
-%# Overall propulsive efficiency where nD = PE/PD where PD = PPE/hpump
-x1 = fullScaleDataArray(:,1);
-y1 = fullScaleDataArray(:,46);
-
-% See Ghadimi (2013), Eqn. 3. PE = TF=0 V = p QJ V (Vj-Vi) then nD = PE/PD
-x2 = fullScaleDataArray(:,1);
-y2 = fullScaleDataArray(:,84);
-
-% Bare hull resistance RBH
-x3 = fullScaleDataArray(:,1);
-y3 = fullScaleDataArray(:,12);
-
-Raw_Data = num2cell(y3);
-Raw_Data = cellfun(@(y) y/1000, Raw_Data, 'UniformOutput', false);
-y3 = cell2mat(Raw_Data);
-
-% Force at zero thrust FT=0 extrapolated to full scale using ITTC1978
-x4 = fullScaleDataArray(:,1);
-y4 = fullScaleDataArray(:,85);
-
-Raw_Data = num2cell(y4);
-Raw_Data = cellfun(@(y) y/1000, Raw_Data, 'UniformOutput', false);
-y4 = cell2mat(Raw_Data);
-
-%# Plotting ---------------------------------------------------------------
-[ax, h1, h2] = plotyy([x1 x2], [y1 y2], [x3 x4], [y3 y4], 'plot');
-Plot51LegendInfo{1} = '\eta_{D}=P_{E}/P_{D} where P_{E}=R_{BH}V, P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})';
-Plot51LegendInfo{2} = '\eta_{D}=P_{E}/P_{D} where P_{E}=T_{F=0}V, P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})';
-Plot51LegendInfo{3} = 'Bare hull resistance (R_{BH})';
-Plot51LegendInfo{4} = 'Force at zero thrust (F_{T=0})';
-% Left color black, right color black
-set(ax,{'ycolor'},{'k';'k'});
-% Add title and x axis label
-xlabel('Froude length number, F_{r} (-)','FontSize',setGeneralFontSize,'FontWeight','bold');
-% if enablePlotTitle == 1
-%title('Full scale overall propulsive efficiency','FontSize',setGeneralFontSize,'FontWeight','bold');
-% end
-% Use the axis handles to set the labels of the y axes
-set(get(ax(1), 'Ylabel'), 'String', 'Overall propulsive efficiency, \eta_{D} (-)','FontSize',setGeneralFontSize,'FontWeight','bold');
-set(get(ax(2), 'Ylabel'), 'String', 'Resistance R_{BH} and force at zero thrust F_{T=0} (kN)','FontSize',setGeneralFontSize,'FontWeight','bold');
-grid on;
-box on;
-axis(ax,'square');
-
-%# Axis positions
-set(ax(1),'Position', [0 0.085 0.97 0.9]); % [Left, bottom, right, top]
-set(ax(2),'Position', [0 0.085 0.97 0.9]); % [Left, bottom, right, top]
-
-%# Line, colors and markers
-% Left Y-axis
-set(h1(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin); 
-set(h1(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin); 
-% Right Y-axis
-set(h2(1),'Color',setColor{3},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth); 
-set(h2(2),'Color',setColor{4},'Marker','none','MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth); 
-
-%# Set plot figure background to a defined color
-%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-set(gcf,'Color',[1,1,1]);
-
-%# Axis limitations
-minX  = 0.22;
-maxX  = 0.42;
-incrX = 0.02;
-minY  = 0.2;
-maxY  = 0.8;
-incrY = 0.1;
-set(ax(1),'XLim',[minX maxX]);
-set(ax(1),'XTick',minX:incrX:maxX);
-set(ax(1),'YLim',[minY maxY]);
-set(ax(1),'YTick',minY:incrY:maxY);
-set(ax(1),'xticklabel',num2str(get(ax(1),'xtick')','%.2f'));
-set(ax(1),'yticklabel',num2str(get(ax(1),'ytick')','%.1f'));
-
-%# Axis limitations
-minX  = 0.22;
-maxX  = 0.42;
-incrX = 0.02;
-minY  = 60;
-maxY  = 300;
-incrY = 40;
-set(ax(2),'XLim',[minX maxX]);
-set(ax(2),'XTick',minX:incrX:maxX);
-set(ax(2),'YLim',[minY maxY]);
-set(ax(2),'YTick',minY:incrY:maxY);
-set(ax(2),'xticklabel',num2str(get(ax(2),'xtick')','%.2f'));
-%set(ax(2),'yticklabel',num2str(get(ax(2),'ytick')','%.1f'));
-
-%# Legend
-%hleg1 = legend('Overall propulsive efficiency (\eta_{D})','Residual resistance coefficient (C_{Rs})');
-hleg1 = legend(Plot51LegendInfo);
-set(hleg1,'Location','NorthWest');
-%set(hleg1,'Interpreter','none');
-set(hleg1, 'Interpreter','tex');
-set(hleg1,'LineWidth',1);
-set(hleg1,'FontSize',setLegendFontSize);
-%legend boxoff;
-
-%# Font sizes and border --------------------------------------------------
-
-set(ax(1),'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-set(ax(2),'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
-
-%# ************************************************************************
-%# Save plot as PNG
-%# ************************************************************************
-
-%# Figure size on screen (50% scaled, but same aspect ratio)
-set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
-
-%# Figure size printed on paper
-% if enableA4PaperSizePlot == 1
-%     set(gcf, 'PaperUnits','centimeters');
-%     set(gcf, 'PaperSize',[XPlot YPlot]);
-%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-%     set(gcf, 'PaperOrientation','portrait');
-% end
-
-%# Plot title -------------------------------------------------------------
-% if enablePlotMainTitle == 1
-%     annotation('textbox', [0 0.9 1 0.1], ...
-%         'String', strcat('{\bf ', figurename, '}'), ...
-%         'EdgeColor', 'none', ...
-%         'HorizontalAlignment', 'center');
-% end
-
-%# Save plots as PDF, PNG and EPS -----------------------------------------
-% Enable renderer for vector graphics output
-set(gcf, 'renderer', 'painters');
-setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
-setFileFormat = {'PDF' 'PNG' 'EPS'};
-for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_5_1_FS_Overall_Propulsive_Efficiency_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
@@ -6258,7 +6062,7 @@ if enableBlackAndWhitePlot == 1
 end
 
 %# Line, colors and markers
-setMarkerSize      = 12;
+setMarkerSize      = 14;
 setLineWidthMarker = 1;
 setLineWidth       = 2;
 setLineWidthThin   = 1;
@@ -6273,16 +6077,16 @@ setLineStyle3      = ':';
 %# X and Y axis -----------------------------------------------------------
 
 % Deep water: Corrected sea trials power
-x = SeaTrialsCorrectedPower(:,1);
-y = SeaTrialsCorrectedPower(:,3);
+x = SeaTrialsCorrectedPower(2:7,1);
+y = SeaTrialsCorrectedPower(2:7,3);
 
 % Shallow water: Corrected sea trials power
 x1 = SeaTrialsCorrectedPowerShallowWater(:,1);
 y1 = SeaTrialsCorrectedPowerShallowWater(:,3);
 
 % Fitting curve through sea trials delivered power
-fitobject = fit(x,y,'poly5');
-cvalues = coeffvalues(fitobject);
+[fitobject,gof,output] = fit(x,y,'poly4');
+cvalues                = coeffvalues(fitobject);
 
 % Sea Trials Data
 fittingSpeeds = [13:1:25];
@@ -6290,35 +6094,38 @@ fittingSpeeds = [13:1:25];
 delpowerMW = [];
 for k=1:nfs
     actSpeed = fittingSpeeds(k);
-    delpowerMW(k) = cvalues(1)*actSpeed^5+cvalues(2)*actSpeed^4+cvalues(3)*actSpeed^3+cvalues(4)*actSpeed^2+cvalues(5)*actSpeed+cvalues(6);
+    delpowerMW(k) = cvalues(1)*actSpeed^4+cvalues(2)*actSpeed^3+cvalues(3)*actSpeed^2+cvalues(4)*actSpeed+cvalues(5);
 end
 xst  = fittingSpeeds;
 yst  = delpowerMW;
 
 % Measured data (Port+Stbd)*2 for two demi hulls
-activeArray = fullScaleDataArray;
-[ma,na] = size(activeArray);
+[ma,na] = size(fullScaleDataArray);
 delpowerMW = [];
 for k=1:ma
-    delpowerMW(k) = ((activeArray(k,42)+activeArray(k,43))*2)/1000^2;
+    delpowerMW(k) = (((fullScaleDataArray(k,42)+fullScaleDataArray(k,43))/2)*4)/1000^2;
 end
-x  = fullScaleDataArray(:,3);
-y  = delpowerMW';
+x2  = fullScaleDataArray(:,3);
+y2  = delpowerMW';
 
 % Polynomial fit through points for m-th order least-squares regression analysis
 % See: http://stats.stackexchange.com/questions/56596/finding-uncertainty-in-coefficients-from-polyfit-in-matlab
-[p,S,mu]   = polyfit(x,y,4);
-[y2,delta] = polyval(p,x,S,mu);
+[p,S,mu]  = polyfit(x,y,4);
+[y,delta] = polyval(p,x,S,mu);
 
-% MANUAL OVERWRITE (TEST): Calculated STD based on Ca=0 to 0.00059 investigation
-% TODO: How TF do I automate STD for error bars!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-delta = [0.19,0.24,0.30,0.34,0.43,0.52,0.61,0.72,0.86,]';
+% MANUAL OVERWRITE OF STANDARD DEVIATIONS - EXPERIMENTAL
+% TODO: Automate StdDev calculation
+delta2 = [0.1391;0.1961;0.2124;0.2660;0.4124;0.4181;0.4986;0.6283;0.9084];
 
 %# Plotting ---------------------------------------------------------------
-h = plot(xst,yst,'-',x,y,'*-');
+h1 = plot(xst,yst,'-',x1,y1,'*-',x2,y2,'*-');
+% Error bar - Experimental
 hold on;
-h1 = errorbar(x,y,delta,'k');
-xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
+h2 = errorbar(x2,y2,delta2,'k');
+% Error bar - Sea Trials
+% hold on;
+% h3 = errorbar(x,y,delta,'k');
+xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Total delivered power, P_{D} (MW)}','FontSize',setGeneralFontSize);
 if enablePlotTitle == 1
     title('{\bf Catamaran (i.e. two demi hulls)}','FontSize',setGeneralFontSize);
@@ -6328,10 +6135,15 @@ box on;
 axis square;
 
 %# Line, colors and markers
-set(h(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-set(h(2),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
-set(h1,'marker','x');
-set(h1,'linestyle','none');
+set(h1(1),'Color',setColor{10},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+set(h1(2),'Color',setColor{10},'Marker',setMarker{3},'MarkerSize',setMarkerSize+2,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h1(3),'Color',setColor{10},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+% Error bar - Experimental
+set(h2,'marker','none');
+set(h2,'linestyle','none');
+% Error bar - Sea Trials
+% set(h3,'marker','none');
+% set(h3,'linestyle','none');
 
 %# Set plot figure background to a defined color
 %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -6342,7 +6154,7 @@ minX  = 13;
 maxX  = 25;
 incrX = 1;
 minY  = 0;
-maxY  = 14;
+maxY  = 18; %14
 incrY = 2;
 set(gca,'XLim',[minX maxX]);
 set(gca,'XTick',minX:incrX:maxX);
@@ -6352,8 +6164,8 @@ set(gca,'YTick',minY:incrY:maxY);
 %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
 
 %# Legend
-hleg1 = legend('Corrected power from sea trials (P_{D})','Measured delivered power (P_{D})');
-set(hleg1,'Location','NorthWest');
+hleg1 = legend('Deep water: Sea trials power (P_{D})','Shallow water: Sea trials power (P_{D})','2 x Measured delivered power (P_{D})');
+set(hleg1,'Location','SouthEast');
 %set(hleg1,'Interpreter','none');
 set(hleg1, 'Interpreter','tex');
 set(hleg1,'LineWidth',1);
@@ -6622,7 +6434,7 @@ y3 = fullScaleDataArray(:,72);
 %# Plotting ---------------------------------------------------------------
 h = plot(x1,y1,'*',x3,y3,'*');
 %xlabel('{\bf Ship speed, V_{s} (knots)}','FontSize',setGeneralFontSize);
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Overall propulsive efficiency, \eta_{D} (-)}','FontSize',setGeneralFontSize);
 % if enablePlotTitle == 1
 %     title('{\bf Catamaran (i.e. two demi hulls)}','FontSize',setGeneralFontSize);
@@ -7120,14 +6932,14 @@ setLineStyle3      = ':';
 %# X and Y axis -----------------------------------------------------------
 
 % Total resistance, RT
-%x1 = ResResults(7:19,11);
-%y1 = ResResults(7:19,24);
-x1 = fullScaleDataArray(:,3);
-y1 = fullScaleDataArray(:,12);
+x1 = ResResults(7:19,11);
+y1 = ResResults(7:19,24);
+%x1 = fullScaleDataArray(:,3);
+%y1 = fullScaleDataArray(:,12);
 
-Raw_Data = num2cell(y1);
-Raw_Data = cellfun(@(y) (y/1000)*2, Raw_Data, 'UniformOutput', false);
-y1 = cell2mat(Raw_Data);
+%Raw_Data = num2cell(y1);
+%Raw_Data = cellfun(@(y) (y/1000)*2, Raw_Data, 'UniformOutput', false);
+%y1 = cell2mat(Raw_Data);
 
 % Extrapolated thrust: total catamaran = (port thrust + stbd thrust) * 2
 x2  = fullScaleDataArray(:,3);
@@ -7176,6 +6988,22 @@ Raw_Data = num2cell(y4);
 Raw_Data = cellfun(@(y) (y/1000)*2, Raw_Data, 'UniformOutput', false);
 y4 = cell2mat(Raw_Data);
 
+% Curve fit force at zero thrust FT=0 in kN
+[fitobject111,gof111,output111] = fit(x4,y4,'poly4');
+cvalues111                      = coeffvalues(fitobject111);
+
+SA = ResResults(7:19,11);
+[m111,n111] = size(SA);
+t4A = [];
+for k111=1:m111
+    t4A(k111,1) = SA(k111);
+    t4A(k111,2) = cvalues111(1)*SA(k111)^4+cvalues111(2)*SA(k111)^3+cvalues111(3)*SA(k111)^2+cvalues111(4)*SA(k111)+cvalues111(5);
+end
+
+% Overwrite x4 and y4
+x4 = t4A(:,1);
+y4 = t4A(:,2);
+
 %# Plotting ---------------------------------------------------------------
 [ax, h1, h2] = plotyy([x2 x3], [y2t y3], [x1 x4], [y1 y4], 'plot');
 Plot111LegendInfo{1} = 'Extrapolated thrust from model tests (T_{Ext})';
@@ -7185,7 +7013,7 @@ Plot111LegendInfo{4} = 'Force at zero thrust (F_{T=0})';
 % Left color black, right color black
 set(ax,{'ycolor'},{'k';'k'});
 % Add title and x axis label
-xlabel('Froude length number, F_{r} (-)','FontSize',setGeneralFontSize,'FontWeight','bold');
+xlabel('Ship speed (knots)','FontSize',setGeneralFontSize,'FontWeight','bold');
 % if enablePlotTitle == 1
 %title('Full scale thrust and restistance','FontSize',setGeneralFontSize,'FontWeight','bold');
 % end
@@ -9449,7 +9277,6 @@ end % exist(SetAvgResistanceFilePath, 'file')
 %# ************************************************************************
 %# 14. Power comparison (NEW!!! 2 x Y-Axes Template)
 %# ************************************************************************
-
 figurename = 'Plot 14: Power comparison';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -9779,7 +9606,6 @@ end
 %# ************************************************************************
 %# 14.1 Port Full Scale Power Comparison (NEW!!! 2 x Y-Axes Template)
 %# ************************************************************************
-
 figurename = 'Plot 14.1: Port Full Scale Power Comparison';
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -10252,7 +10078,7 @@ y3 = cell2mat(Raw_Data);
 % Left color red, right color blue...
 set(ax,{'ycolor'},{'k';'k'});
 % Add title and x axis label
-xlabel('Froude length number, F_{r} (-)','FontSize',setGeneralFontSize,'FontWeight','bold');
+xlabel('Length Froude number, F_{r} (-)','FontSize',setGeneralFontSize,'FontWeight','bold');
 % if enablePlotTitle == 1
 %title('Full scale','FontSize',setGeneralFontSize,'FontWeight','bold');
 % end
@@ -10458,7 +10284,7 @@ y3 = cell2mat(Raw_Data);
 % Left color red, right color blue...
 set(ax,{'ycolor'},{'k';'k'});
 % Add title and x axis label
-xlabel('Froude length number, F_{r} (-)','FontSize',setGeneralFontSize,'FontWeight','bold');
+xlabel('Length Froude number, F_{r} (-)','FontSize',setGeneralFontSize,'FontWeight','bold');
 % if enablePlotTitle == 1
 %title('Full scale','FontSize',setGeneralFontSize,'FontWeight','bold');
 % end
@@ -10644,7 +10470,7 @@ y3 = cell2mat(Raw_Data);
 % Left color red, right color blue...
 set(ax,{'ycolor'},{'k';'k'});
 % Add title and x axis label
-xlabel('Froude length number, F_{r} (-)','FontSize',setGeneralFontSize,'FontWeight','bold');
+xlabel('Length Froude number, F_{r} (-)','FontSize',setGeneralFontSize,'FontWeight','bold');
 % if enablePlotTitle == 1
 %title('Full scale','FontSize',setGeneralFontSize,'FontWeight','bold');
 % end
@@ -10742,6 +10568,197 @@ setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
     plotsavename = sprintf('_plots/%s/%s/SPP_Plot_17_Full_Scale_Ship_Speed_OPE_and_CRs_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 14.1 Port Full Scale Power Comparison (NEW!!! 2 x Y-Axes Template)
+%# ************************************************************************
+figurename = 'Plot 14.1: Port Full Scale Power Comparison';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 12;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'<';'d';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 14;
+setLineWidthMarker = 1;
+setLineWidth       = 2;
+setLineWidthThin   = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+%subplot(1,1,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+% Bare hull resistance
+x1 = fullScaleDataArray(:,3);
+y1 = fullScaleDataArray(:,12);
+Raw_Data = num2cell(y1); Raw_Data = cellfun(@(y) y/1000, Raw_Data, 'UniformOutput', false);
+y1 = cell2mat(Raw_Data);
+
+% FT=0 extrapolated to full scale using ITTC1978
+x2 = fullScaleDataArray(:,3);
+y2 = fullScaleDataArray(:,85);
+Raw_Data = num2cell(y2); Raw_Data = cellfun(@(y) y/1000, Raw_Data, 'UniformOutput', false);
+y2 = cell2mat(Raw_Data);
+
+%# Overall propulsive efficiency where nD = PE/PD where PE=RBH V and where PD = PPE/nPumpnInst
+xOPE1 = fullScaleDataArray(:,3);
+yOPE1 = fullScaleDataArray(:,46);
+
+%# Overall propulsive efficiency where nD = PE/PD where PE=T V and where PD = PPE/nPumpnInst
+xOPE2 = fullScaleDataArray(:,3);
+yOPE2 = fullScaleDataArray(:,84);
+
+% Create a plot with 2 y axes using the plotyy function
+[ax, h1, h2] = plotyy([x1 x2], [y1 y2], [xOPE1 xOPE2], [yOPE1 yOPE2], 'plot');
+% Left color red, right color blue...
+set(ax,{'ycolor'},{'k';'k'});
+% Add title and x axis label
+xlabel('Ship speed (knots)','FontSize',setGeneralFontSize,'FontWeight','bold');
+% if enablePlotTitle == 1
+%title('Full scale','FontSize',setGeneralFontSize,'FontWeight','bold');
+% end
+% Use the axis handles to set the labels of the y axes
+set(get(ax(1), 'Ylabel'), 'String', 'Bare hull resistance and F_{T=0} (kN)','FontSize',setGeneralFontSize,'FontWeight','bold');
+set(get(ax(2), 'Ylabel'), 'String', 'Overall propulsive efficiency (-)','FontSize',setGeneralFontSize,'FontWeight','bold');
+grid on;
+box on;
+axis(ax,'square');
+
+%# Axis positions
+set(ax(1),'Position', [0 0.08 0.97 0.9]); % [Left, bottom, right, top]
+set(ax(2),'Position', [0 0.08 0.97 0.9]); % [Left, bottom, right, top]
+
+%# Line, colors and markers
+% Left Y-axis
+set(h1(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+set(h1(2),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin);
+% Right Y-axis
+set(h2(1),'Color',setColor{3},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h2(2),'Color',setColor{4},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 13;
+maxX  = 25;
+incrX = 1;
+minY  = 90;
+maxY  = 290;
+incrY = 20;
+set(ax(1),'XLim',[minX maxX]);
+set(ax(1),'XTick',minX:incrX:maxX);
+set(ax(1),'YLim',[minY maxY]);
+set(ax(1),'YTick',minY:incrY:maxY);
+% set(ax(1),'xticklabel',num2str(get(ax(1),'xtick')','%.2f'));
+% set(ax(1),'yticklabel',num2str(get(ax(1),'ytick')','%.1f'));
+
+%# Axis limitations
+minX  = 13;
+maxX  = 25;
+incrX = 1;
+minY  = 0;
+maxY  = 1;
+incrY = 0.1;
+set(ax(2),'XLim',[minX maxX]);
+set(ax(2),'XTick',minX:incrX:maxX);
+set(ax(2),'YLim',[minY maxY]);
+set(ax(2),'YTick',minY:incrY:maxY);
+% set(ax(2),'xticklabel',num2str(get(ax(2),'xtick')','%.2f'));
+set(ax(2),'yticklabel',num2str(get(ax(2),'ytick')','%.1f'));
+
+%# Legend
+hleg1 = legend('Bare hull resistance (R_{BH})','Extrapolated F_{T=0}','\eta_{D}=P_{E}/P_{D} where P_{E}=R_{BH}V and P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})','\eta_{D}=P_{E}/P_{D} where P_{E}=T_{F=0}V and P_{D}=P_{PE}/(\eta_{Pump}\eta_{Inst})');
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(ax(1),'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+set(ax(2),'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
+
+%# Plot title -------------------------------------------------------------
+% if enablePlotMainTitle == 1
+%     annotation('textbox', [0 0.9 1 0.1], ...
+%         'String', strcat('{\bf ', figurename, '}'), ...
+%         'EdgeColor', 'none', ...
+%         'HorizontalAlignment', 'center');
+% end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/SPP_Plot_18_Full_Scale_Overall_Propulsive_Efficiency_RBH_FT0_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
