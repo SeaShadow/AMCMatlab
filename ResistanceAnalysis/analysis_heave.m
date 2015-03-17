@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  October 29, 2014
+%# Date       :  March 16, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -234,6 +234,57 @@ if exist('results','var') == 0
 end
 
 
+%# ************************************************************************
+%# START: CREATE PLOTS AND RUN DIRECTORY
+%# ------------------------------------------------------------------------
+
+%# _plots directory -------------------------------------------------------
+fPath = '_plots/';
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# _heave directory -------------------------------------------------------
+setDirName = '_plots/_heave';
+
+fPath = setDirName;
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PDF directory
+fPath = sprintf('%s/%s', setDirName, 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('%s/%s', setDirName, 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('%s/%s', setDirName, 'EPS');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# ------------------------------------------------------------------------
+%# END: CREATE PLOTS AND RUN DIRECTORY
+%# ************************************************************************
+
+
 % *************************************************************************
 % START: PLOTTING AVERAGED DATA
 % *************************************************************************
@@ -291,6 +342,21 @@ for j=1:ma
     end
 end
 
+%# Calculate averages for conditions
+[avgcond1]  = stats_avg(1:15,results);
+[avgcond2]  = stats_avg(16:25,results);
+[avgcond3]  = stats_avg(26:35,results);
+[avgcond4]  = stats_avg(36:44,results);
+[avgcond5]  = stats_avg(45:53,results);
+[avgcond6]  = stats_avg(54:62,results);
+[avgcond7]  = stats_avg(63:141,results);
+[avgcond8]  = stats_avg(142:156,results);
+[avgcond9]  = stats_avg(157:171,results);
+[avgcond10] = stats_avg(172:201,results);
+[avgcond11] = stats_avg(202:216,results);
+[avgcond12] = stats_avg(217:231,results);
+[avgcond13] = stats_avg(232:249,results);
+
 %# *********************************************************************
 %# Testname
 %# *********************************************************************
@@ -337,7 +403,7 @@ testName = 'Heave Investigation';
 %                       0 = DISABLED
 % -------------------------------------------------------------------------
 
-enableHeaveMinMaxAvgPlot = 1; % Heave, min, max and averaged values
+enableHeaveMinMaxAvgPlot = 1;   % Heave, min, max and averaged values
 
 % -------------------------------------------------------------------------
 % END: PLOT SWITCHES
@@ -348,14 +414,11 @@ enableHeaveMinMaxAvgPlot = 1; % Heave, min, max and averaged values
 % 1,500 AND 1,804 TONNES: Heave, min, max and averages
 % *************************************************************************
 if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond10) ~= 0 || length(cond11) ~= 0 || length(cond12) ~= 0)
-    
-    startRun = 81;
-    endRun   = 231;
-    
+
     % *********************************************************************
-    % Averaged values using data from all repeat runs
+    % 1. Averaged values using data from all repeat runs
     % *********************************************************************
-    figurename = sprintf('%s (Repeated Runs):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    figurename = 'Plot 1: (Repeated Runs):: 1,500 and 1,804 tonnes';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -601,15 +664,15 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Heave_Data_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_1_Heave_Data_Plot.%s', '_heave', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
     
     % *********************************************************************
-    % Min, Max and Averaged min/max
+    % 2. Min, Max and Averaged min/max
     % *********************************************************************
-    figurename = sprintf('%s (Min, Max Only):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    figurename = 'Plot 2: (Min, Max Only):: 1,500 and 1,804 tonnes';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -1024,15 +1087,15 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Heave_Data_Plots_Min_Max_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_2_Heave_Data_Plots_Min_Max_Plot.%s', '_heave', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
     
     % *********************************************************************
-    % Fitting lines (level static trim)
+    % 3. Fitting lines (level static trim)
     % *********************************************************************
-    figurename = sprintf('%s (Curve Fitting, Level Static Trim):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    figurename = 'Plot 3: (Curve Fitting, Level Static Trim):: 1,500 and 1,804 tonnes';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -1249,15 +1312,15 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Heave_Data_Plots_Fitting_Curves_Level_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_3_Heave_Data_Plots_Fitting_Curves_Level_Plot.%s', '_heave', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
     
     % *********************************************************************
-    % Fitting lines (-0.5 degrees by bow)
+    % 4. Fitting lines (-0.5 degrees by bow)
     % *********************************************************************
-    figurename = sprintf('%s (Curve Fitting, -0.5 by Bow):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    figurename = 'Plot 4: (Curve Fitting, -0.5 by Bow):: 1,500 and 1,804 tonnes';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -1474,15 +1537,15 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Heave_Data_Plots_Fitting_Curves_05_By_Bow_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_4_Heave_Data_Plots_Fitting_Curves_05_By_Bow_Plot.%s', '_heave', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
     
     % *********************************************************************
-    % Fitting lines (0.5 degrees by stern)
+    % 5. Fitting lines (0.5 degrees by stern)
     % *********************************************************************
-    figurename = sprintf('%s (Curve Fitting, 0.5 by Stern):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    figurename = 'Plot 5: (Curve Fitting, 0.5 by Stern):: 1,500 and 1,804 tonnes';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -1702,15 +1765,15 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Heave_Data_Plots_Fitting_Curves_05_By_Stern_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_5_Heave_Data_Plots_Fitting_Curves_05_By_Stern_Plot.%s', '_heave', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
     
     % *********************************************************************
-    % Heave vs. Crm for conditions 7 - 12
+    % 6. Heave vs. Crm for conditions 7 - 12
     % *********************************************************************
-    figurename = sprintf('%s (Averaged Min, Max):: 1,500 and 1,804 tonnes, Run %s to %s', testName, num2str(startRun), num2str(endRun));
+    figurename = 'Plot 6: (Averaged Min, Max):: 1,500 and 1,804 tonnes';
     f = figure('Name',figurename,'NumberTitle','off');
     
     %# Paper size settings ------------------------------------------------
@@ -2108,9 +2171,317 @@ if enableHeaveMinMaxAvgPlot == 1 && (length(cond7) ~= 0 || length(cond8) ~= 0 ||
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/Run_%s_to_Run_%s_Heave_vs_Crm_Data_Plot.%s', '_averaged', setFileFormat{k}, num2str(startRun), num2str(endRun), setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/Plot_6_Heave_vs_Crm_Data_Plot.%s', '_heave', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
+    
+    
+    %# ************************************************************************
+    %# 7. Averaged forward and aft LVDT plots
+    %# ************************************************************************
+    
+    %# Plotting power ---------------------------------------------------------
+    figurename = 'Plot 7: Averaged forward and aft LVDT plots';
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ----------------------------------------------------
+    
+%     if enableA4PaperSizePlot == 1
+%         set(gcf, 'PaperSize', [19 19]);
+%         set(gcf, 'PaperPositionMode', 'manual');
+%         set(gcf, 'PaperPosition', [0 0 19 19]);
+%         
+%         set(gcf, 'PaperUnits', 'centimeters');
+%         set(gcf, 'PaperSize', [19 19]);
+%         set(gcf, 'PaperPositionMode', 'manual');
+%         set(gcf, 'PaperPosition', [0 0 19 19]);
+%     end
+    
+    % Fonts and colours -------------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 12;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. ------------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'x';'+';'*';'o';'s';'d';'*';'^';'<';'>';'x'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
+    
+    %# Line, colors and markers
+    setMarkerSize      = 12;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-';
+    setLineStyle1      = '--';
+    setLineStyle2      = '-.';
+    setLineStyle3      = ':';
+    
+    %# X and Y axis -----------------------------------------------------------
+
+    %# Forward LVDT
+    x1 = avgcond7(:,15);
+    y1 = avgcond7(:,6);
+
+    %# Forward LVDT
+    x2 = avgcond7(:,15);
+    y2 = avgcond7(:,7);
+    
+    %# Heave
+    x3 = avgcond7(:,15);
+    y3 = avgcond7(:,12);    
+    
+    %# Plotting ---------------------------------------------------------------
+    h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf LVDT output and calculated heave (mm)}','FontSize',setGeneralFontSize);
+    % if enablePlotTitle == 1
+    %     title('{\bf Averaged forward and aft LVDT}','FontSize',setGeneralFontSize);
+    % end
+    grid on;
+    box on;
+    axis square;
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize+2,'LineWidth',setLineWidthMarker);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize+2,'LineWidth',setLineWidthMarker);
+    set(h(3),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    minX  = 5;
+    maxX  = 30;
+    incrX = 5;
+    minY  = -20;
+    maxY  = 10;
+    incrY = 5;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
+    
+    %# Legend
+    hleg1 = legend('Forward LVDT','Aft LVDT','Heave');
+    set(hleg1,'Location','NorthWest');
+    %set(hleg1,'Interpreter','none');
+    set(hleg1, 'Interpreter','tex');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# ************************************************************************
+    %# Save plot as PNG
+    %# ************************************************************************
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+%     if enableA4PaperSizePlot == 1
+%         set(gcf, 'PaperUnits','centimeters');
+%         set(gcf, 'PaperSize',[XPlot YPlot]);
+%         set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%         set(gcf, 'PaperOrientation','portrait');
+%     end
+    
+    %# Plot title -------------------------------------------------------------
+%     if enablePlotMainTitle == 1
+%         annotation('textbox', [0 0.9 1 0.1], ...
+%             'String', strcat('{\bf ', figurename, '}'), ...
+%             'EdgeColor', 'none', ...
+%             'HorizontalAlignment', 'center');
+%     end
+    
+    %# Save plots as PDF, PNG and EPS -----------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Plot_7_Foward_and_Aft_Averaged_LVDT_Plot.%s', '_heave', setFileFormat{k}, setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;
+    
+    
+    %# ************************************************************************
+    %# 8. Forward and aft LVDT plots
+    %# ************************************************************************
+    
+    %# Plotting power ---------------------------------------------------------
+    figurename = 'Plot 8: Forward and aft LVDT plots';
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ----------------------------------------------------
+    
+%     if enableA4PaperSizePlot == 1
+%         set(gcf, 'PaperSize', [19 19]);
+%         set(gcf, 'PaperPositionMode', 'manual');
+%         set(gcf, 'PaperPosition', [0 0 19 19]);
+%         
+%         set(gcf, 'PaperUnits', 'centimeters');
+%         set(gcf, 'PaperSize', [19 19]);
+%         set(gcf, 'PaperPositionMode', 'manual');
+%         set(gcf, 'PaperPosition', [0 0 19 19]);
+%     end
+    
+    % Fonts and colours -------------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 16;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 14;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. ------------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'x';'+';'*';'o';'s';'d';'*';'^';'<';'>';'x'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
+    
+    %# Line, colors and markers
+    setMarkerSize      = 14;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-';
+    setLineStyle1      = '--';
+    setLineStyle2      = '-.';
+    setLineStyle3      = ':';
+    
+    %# X and Y axis -----------------------------------------------------------
+
+    %# Forward LVDT
+    x1 = cond7(:,15);
+    y1 = cond7(:,6);
+
+    %# Forward LVDT
+    x2 = cond7(:,15);
+    y2 = cond7(:,7);
+    
+    %# Heave
+    x3 = cond7(:,15);
+    y3 = cond7(:,12);    
+    
+    %# Plotting ---------------------------------------------------------------
+    h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf LVDT output and calculated heave (mm)}','FontSize',setGeneralFontSize);
+    % if enablePlotTitle == 1
+    %     title('{\bf Forward and aft LVDT}','FontSize',setGeneralFontSize);
+    % end
+    grid on;
+    box on;
+    axis square;
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize+2,'LineWidth',setLineWidthMarker);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize+2,'LineWidth',setLineWidthMarker);
+    set(h(3),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Axis limitations
+    minX  = 5;
+    maxX  = 30;
+    incrX = 5;
+    minY  = -20;
+    maxY  = 10;
+    incrY = 5;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'))
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'))
+    
+    %# Legend
+    hleg1 = legend('Forward LVDT','Aft LVDT','Heave');
+    set(hleg1,'Location','NorthWest');
+    %set(hleg1,'Interpreter','none');
+    set(hleg1, 'Interpreter','tex');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# ************************************************************************
+    %# Save plot as PNG
+    %# ************************************************************************
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+%     if enableA4PaperSizePlot == 1
+%         set(gcf, 'PaperUnits','centimeters');
+%         set(gcf, 'PaperSize',[XPlot YPlot]);
+%         set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%         set(gcf, 'PaperOrientation','portrait');
+%     end
+    
+    %# Plot title -------------------------------------------------------------
+%     if enablePlotMainTitle == 1
+%         annotation('textbox', [0 0.9 1 0.1], ...
+%             'String', strcat('{\bf ', figurename, '}'), ...
+%             'EdgeColor', 'none', ...
+%             'HorizontalAlignment', 'center');
+%     end
+    
+    %# Save plots as PDF, PNG and EPS -----------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/Plot_8_Foward_and_Aft_Averaged_LVDT_Plot.%s', '_heave', setFileFormat{k}, setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;    
     
 end

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 11, 2015
+%# Date       :  March 17, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -532,7 +532,7 @@ for condNo=7:13
         [mas,nas] = size(A{j});      % Array dimensions
         
         %# ////////////////////////////////////////////////////////////////
-        %# 4.0 Input variables
+        %# 4. Input variables
         %# ////////////////////////////////////////////////////////////////
         
         % Total Resistance Coefficient (average @ 15 deg C)
@@ -542,7 +542,7 @@ for condNo=7:13
         setCFtw       = 0.075/(log10((A{j}(1,5)*setModLwl)/MSKinVis)-2)^2;
         
         %# ////////////////////////////////////////////////////////////////
-        %# 3.0 Multiple test uncertainty
+        %# 3. Multiple test uncertainty
         %# ////////////////////////////////////////////////////////////////
         
         % Loop through individual array entries
@@ -574,7 +574,7 @@ for condNo=7:13
         stdDev      = std(resultsArrayRT(:,1));
         
         %# ////////////////////////////////////////////////////////////////
-        %# 4.0 Input variables (continued)
+        %# 4. Input variables (continued)
         %# ////////////////////////////////////////////////////////////////
         
         % Coverage factor for standard deviation:
@@ -596,7 +596,7 @@ for condNo=7:13
         setM = oas;
 
         %# ////////////////////////////////////////////////////////////////
-        %# 6.0 Bias limits
+        %# 6. Bias limits
         %# ////////////////////////////////////////////////////////////////
         
         % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -608,9 +608,11 @@ for condNo=7:13
         % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         
         % Bs1 (Assumed error in hull form)    (m^2)
+        % Note: 5% of wetted surface area
         setBs1       = setModWsa*0.005;
         
         % Bs2 (Error in displacement)         (m^2)
+        % Note: 1/2 of 5% of wetted surface area
         setBs2       = setBs1/2;
         
         % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -635,7 +637,8 @@ for condNo=7:13
         % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         
         % BV (Speed)   (m/s)
-        setBv       = 0.003;
+        % Note: Averaged standard deviation of spped using repeated runs
+        setBv       = 0.0004;
         
         % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         % END: Input Values <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -651,24 +654,28 @@ for condNo=7:13
         % START: Input Values >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         
-        % BMx1 (Calibration)                (Kg)
-        setBMx1 = 0.000006847;
+        % BMx1 (Calibration)                    (Kg)
+        % See: "Calibration - Sensor Errors.xlsx"
+        setBMx1 = 0.013;
         
-        % BMx2 (Curve fit bias)             (Kg)
-        setBMx2 = 0.000007174;
+        % BMx2 (Curve fit bias)                 (Kg)
+        % See: "Calibration - Sensor Errors.xlsx"
+        setBMx2 = 0.013;
         
-        % BMx3 (Load cell misalignment)     (Kg)
-        setBMx3 = 0.0008384;
+        % BMx3 (Load cell misalignment)         (Kg)
+        % Note: Educated guess
+        setBMx3 = 0.01;
         
-        % BMx4 (Towing force inclination)   (Kg)
+        % BMx4 (Towing force inclination)       (Kg)
+        % Note: Educated guess
         setBMx4 = 0;
         
         % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         % END: Input Values <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         
-        % Wetted surface bias
-        setBMx        = sqrt(setBMx1^2+setBMx2^2+setBMx3^2+setBMx4^2);  % Bs (Wetted Surface)    (Kg)
+        % Wetted surface bias - Bs (Wetted Surface) (Kg)
+        setBMx        = sqrt(setBMx1^2+setBMx2^2+setBMx3^2+setBMx4^2);
         percentOfBMx  = (setBMx/setMx)*100;
         
         % Percentage of (Bs)^2
@@ -755,7 +762,7 @@ for condNo=7:13
         percentOfCT15degC_2 = (setPCT/avgCT15degC)*100;
         
         %# ////////////////////////////////////////////////////////////////
-        %# 8.0 Total Uncertainty
+        %# 8. Total Uncertainty
         %# ////////////////////////////////////////////////////////////////
         
         % UCT15 deg C (Resistance Coefficient CT) (-)
@@ -897,9 +904,10 @@ for condNo=7:13
         resultsArrayUARes(counter1, 35) = percentOfCT15degC_2;
         
         counter1 = counter1 + 1;
-    end
+        
+    end % for j=1:ma
     
-end
+end % condNo=7:13
 
 
 %# ////////////////////////////////////////////////////////////////////
@@ -911,7 +919,7 @@ end
 
 R = resultsArrayUARes;
 AA = arrayfun(@(x) R(R(:,2) == x, :), unique(R(:,2)), 'uniformoutput', false);
-
+% 
 plotArray7  = AA{1};
 plotArray8  = AA{2};
 plotArray9  = AA{3};
@@ -927,7 +935,6 @@ plotArray13 = AA{7};
 %# ************************************************************************
 %# 1. Fr versus resistance coefficient, total uncertainty
 %# ************************************************************************
-
 figurename = sprintf('Plot 1: Total uncertainty U_{CT 15 deg C}:: Conditions %s to %s', num2str(7), num2str(12));
 f = figure('Name',figurename,'NumberTitle','off');
 
@@ -999,10 +1006,11 @@ setY3 = plotArray9(:,9);
 setX4 = plotArray13(:,3);
 setY4 = plotArray13(:,9);
 
-% Plotting
+% Plotting ----------------------------------------------------------------
 h = plot(setX1,setY1,'*',setX2,setY2,'*',setX3,setY3,'*',setX4,setY4,'*');
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
-ylabel('{\bf % of C_{T15 deg C} (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
+%ylabel('{\bf % of C_{T15 deg C} (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf % of C_{T} (-)}','FontSize',setGeneralFontSize);
 % if enablePlotTitle == 1
 %     title('{\bf 1,500 tonnes}','FontSize',setGeneralFontSize);
 % end
@@ -1021,7 +1029,7 @@ set(h(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'L
 set(gcf,'Color',[1,1,1]);
 
 %# Axis limitations
-minX  = 0.1;
+minX  = 0.25;
 maxX  = 0.5;
 incrX = 0.05;
 minY  = 0;
@@ -1061,10 +1069,10 @@ setY5 = plotArray11(:,9);
 setX6 = plotArray12(:,3);
 setY6 = plotArray12(:,9);
 
-% Plotting
+% Plotting ----------------------------------------------------------------
 h = plot(setX4,setY4,'*',setX5,setY5,'*',setX6,setY6,'*');
-xlabel('{\bf Froude length number, F_{r} (-)}','FontSize',setGeneralFontSize);
-ylabel('{\bf % of C_{T15 deg C} (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf % of C_{T} (-)}','FontSize',setGeneralFontSize);
 % if enablePlotTitle == 1
 %     title('{\bf 1,804 tonnes}','FontSize',setGeneralFontSize);
 % end
@@ -1082,7 +1090,7 @@ set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'L
 set(gcf,'Color',[1,1,1]);
 
 %# Axis limitations
-minX  = 0.2;
+minX  = 0.25;
 maxX  = 0.5;
 incrX = 0.05;
 minY  = 0;
@@ -1144,6 +1152,587 @@ end
 %close;
 
 
+%# ************************************************************************
+%# 2. Fr versus resistance coefficient, total uncertainty (1,500 tonnes)
+%# ************************************************************************
+figurename = 'Plot 2: Fr versus resistance coefficient, total uncertainty';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ------------------------------------------------
+
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%     
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
+
+% Fonts and colours ---------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 12;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. --------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+%setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 12;
+setLineWidthMarker = 1;
+setLineWidth       = 1;
+setLineStyle       = '-.';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+% SUBPLOT /////////////////////////////////////////////////////////////////
+subplot(2,2,1)
+
+% X and Y axis values -----------------------------------------------------
+
+x = plotArray7(:,3);
+y = plotArray7(:,9);
+
+% x = plotArray8(:,3);
+% y = plotArray8(:,9);
+ 
+% x = plotArray9(:,3);
+% y = plotArray9(:,9);
+ 
+% x = plotArray13(:,3);
+% y = plotArray13(:,9);
+
+% Plotting ----------------------------------------------------------------
+hb = bar(x,y,1,'r');
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf % of C_{T} (-)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+title('{\bf 1,500t (level trim)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+%axis square;
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 0.05;
+maxX  = 0.5;
+incrX = 0.15;
+minY  = 0;
+maxY  = 12;
+incrY = 2;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+% hleg1 = legend('Load cell');
+% set(hleg1,'Location','NorthWest');
+% set(hleg1,'Interpreter','none');
+% set(hleg1,'LineWidth',1);
+% set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+% SUBPLOT /////////////////////////////////////////////////////////////////
+subplot(2,2,2)
+
+% X and Y axis values -----------------------------------------------------
+
+% x = plotArray7(:,3);
+% y = plotArray7(:,9);
+
+% x = plotArray8(:,3);
+% y = plotArray8(:,9);
+ 
+% x = plotArray9(:,3);
+% y = plotArray9(:,9);
+ 
+x = plotArray13(:,3);
+y = plotArray13(:,9);
+
+% Plotting ----------------------------------------------------------------
+hb = bar(x,y,0.85,'c');
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf % of C_{T} (-)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+title('{\bf 1,500t (deep transom, Prohaska runs)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+%axis square;
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 0.05;
+maxX  = 0.5;
+incrX = 0.15;
+minY  = 0;
+maxY  = 16;
+incrY = 2;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+% hleg1 = legend('Load cell');
+% set(hleg1,'Location','NorthWest');
+% set(hleg1,'Interpreter','none');
+% set(hleg1,'LineWidth',1);
+% set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+% SUBPLOT /////////////////////////////////////////////////////////////////
+subplot(2,2,3)
+
+% X and Y axis values -----------------------------------------------------
+
+% x = plotArray7(:,3);
+% y = plotArray7(:,9);
+
+x = plotArray8(:,3);
+y = plotArray8(:,9);
+ 
+% x = plotArray9(:,3);
+% y = plotArray9(:,9);
+ 
+% x = plotArray13(:,3);
+% y = plotArray13(:,9);
+
+% Plotting ----------------------------------------------------------------
+hb = bar(x,y,0.15,'g');
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf % of C_{T} (-)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+title('{\bf 1,500t (-0.5 deg by bow)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+%axis square;
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 0.05;
+maxX  = 0.5;
+incrX = 0.15;
+minY  = 0;
+maxY  = 12;
+incrY = 2;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+% hleg1 = legend('Load cell');
+% set(hleg1,'Location','NorthWest');
+% set(hleg1,'Interpreter','none');
+% set(hleg1,'LineWidth',1);
+% set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+% SUBPLOT /////////////////////////////////////////////////////////////////
+subplot(2,2,4)
+
+% X and Y axis values -----------------------------------------------------
+
+% x = plotArray7(:,3);
+% y = plotArray7(:,9);
+
+% x = plotArray8(:,3);
+% y = plotArray8(:,9);
+ 
+x = plotArray9(:,3);
+y = plotArray9(:,9);
+ 
+% x = plotArray13(:,3);
+% y = plotArray13(:,9);
+
+% Plotting ----------------------------------------------------------------
+hb = bar(x,y,0.15,'b');
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf % of C_{T} (-)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+title('{\bf 1,500t (0.5 deg by stern)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+%axis square;
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 0.05;
+maxX  = 0.5;
+incrX = 0.15;
+minY  = 0;
+maxY  = 12;
+incrY = 2;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+% hleg1 = legend('Load cell');
+% set(hleg1,'Location','NorthWest');
+% set(hleg1,'Interpreter','none');
+% set(hleg1,'LineWidth',1);
+% set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
+
+%# Plot title -------------------------------------------------------------
+if enablePlotMainTitle == 1
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');
+end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Plot_2_Condition_7_to_12_1500_Tonnes_Resistance_Uncertainty_Analysis_Plot.%s', '_uncertainty_analysis', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 3. Fr versus resistance coefficient, total uncertainty (1,804 tonnes)
+%# ************************************************************************
+figurename = 'Plot 3: Fr versus resistance coefficient, total uncertainty';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+%     
+%     set(gcf, 'PaperUnits', 'centimeters');
+%     set(gcf, 'PaperSize', [19 19]);
+%     set(gcf, 'PaperPositionMode', 'manual');
+%     set(gcf, 'PaperPosition', [0 0 19 19]);
+% end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 12;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+%setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 12;
+setLineWidthMarker = 1;
+setLineWidth       = 1;
+setLineStyle       = '-.';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+% SUBPLOT /////////////////////////////////////////////////////////////////
+subplot(2,2,1)
+
+% X and Y axis values -----------------------------------------------------
+
+x = plotArray10(:,3);
+y = plotArray10(:,9);
+
+% x = plotArray11(:,3);
+% y = plotArray11(:,9);
+
+% x = plotArray12(:,3);
+% y = plotArray12(:,9);
+
+% Plotting ----------------------------------------------------------------
+hb = bar(x,y,0.4,'r');
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf % of C_{T} (-)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+title('{\bf 1,804t (level trim)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+%axis square;
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 0.05;
+maxX  = 0.5;
+incrX = 0.15;
+minY  = 0;
+maxY  = 12;
+incrY = 2;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+% hleg1 = legend('Load cell');
+% set(hleg1,'Location','NorthWest');
+% set(hleg1,'Interpreter','none');
+% set(hleg1,'LineWidth',1);
+% set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+% SUBPLOT /////////////////////////////////////////////////////////////////
+subplot(2,2,3)
+
+% X and Y axis values -----------------------------------------------------
+
+% x = plotArray10(:,3);
+% y = plotArray10(:,9);
+
+x = plotArray11(:,3);
+y = plotArray11(:,9);
+
+% x = plotArray12(:,3);
+% y = plotArray12(:,9);
+
+% Plotting ----------------------------------------------------------------
+hb = bar(x,y,0.2,'g');
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf % of C_{T} (-)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+title('{\bf 1,804t (-0.5 deg by bow)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+%axis square;
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 0.05;
+maxX  = 0.5;
+incrX = 0.15;
+minY  = 0;
+maxY  = 12;
+incrY = 2;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+% hleg1 = legend('Load cell');
+% set(hleg1,'Location','NorthWest');
+% set(hleg1,'Interpreter','none');
+% set(hleg1,'LineWidth',1);
+% set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+% SUBPLOT /////////////////////////////////////////////////////////////////
+subplot(2,2,4)
+
+% X and Y axis values -----------------------------------------------------
+
+% x = plotArray10(:,3);
+% y = plotArray10(:,9);
+
+% x = plotArray11(:,3);
+% y = plotArray11(:,9);
+
+x = plotArray12(:,3);
+y = plotArray12(:,9);
+
+% Plotting ----------------------------------------------------------------
+hb = bar(x,y,0.2,'b');
+xlabel('{\bf Length Froude number, F_{r} (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf % of C_{T} (-)}','FontSize',setGeneralFontSize);
+% if enablePlotTitle == 1
+title('{\bf 1,804t (0.5 deg by stern)}','FontSize',setGeneralFontSize);
+% end
+grid on;
+box on;
+%axis square;
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 0.05;
+maxX  = 0.5;
+incrX = 0.15;
+minY  = 0;
+maxY  = 12;
+incrY = 2;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+% hleg1 = legend('Load cell');
+% set(hleg1,'Location','NorthWest');
+% set(hleg1,'Interpreter','none');
+% set(hleg1,'LineWidth',1);
+% set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+% if enableA4PaperSizePlot == 1
+%     set(gcf, 'PaperUnits','centimeters');
+%     set(gcf, 'PaperSize',[XPlot YPlot]);
+%     set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%     set(gcf, 'PaperOrientation','portrait');
+% end
+
+%# Plot title -------------------------------------------------------------
+if enablePlotMainTitle == 1
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');
+end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Plot_3_Condition_7_to_12_1804_Tonnes_Resistance_Uncertainty_Analysis_Plot.%s', '_uncertainty_analysis', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
 %# ////////////////////////////////////////////////////////////////////////
 %# 1. Order resultsArrayUARes by Froude length number
 %# 2. Remove from factor related runs (i.e. Prohaska) from resultsArrayUARes
@@ -1173,21 +1762,3 @@ dlmwrite('resultsArrayUAResShort.txt', M, 'delimiter', '\t', 'precision', 4)  % 
 %# ------------------------------------------------------------------------
 %# END: Write results to CVS
 %# ////////////////////////////////////////////////////////////////////////
-
-
-%# ////////////////////////////////////////////////////////////////////////
-%# Clear variables
-%# ////////////////////////////////////////////////////////////////////////
-clearvars ttlength ttwidth ttwaterdepth ttcsa ttwatertemp gravconst modelkinviscosity fullscalekinvi freshwaterdensity saltwaterdensity distbetwposts FStoMSratio
-clearvars MSlwl1500 MSwsa1500 MSdraft1500 MSAx1500 BlockCoeff1500 FSlwl1500 FSwsa1500 FSdraft1500 MSlwl1500bybow MSwsa1500bybow MSdraft1500bybow MSAx1500bybow BlockCoeff1500bybow FSlwl1500bybow FSwsa1500bybow FSdraft1500bybow MSlwl1500bystern MSwsa1500bystern MSdraft1500bystern MSAx1500bystern BlockCoeff1500bystern FSlwl1500bystern FSwsa1500bystern FSdraft1500bystern MSbeam1500 MSbeam1500bybow MSbeam1500bystern
-clearvars MSlwl1804 MSwsa1804 MSdraft1804 MSAx1804 BlockCoeff1804 FSlwl1804 FSwsa1804 FSdraft1804 MSlwl1804bybow MSwsa1804bybow MSdraft1804bybow MSAx1804bybow BlockCoeff1804bybow FSlwl1804bybow FSwsa1804bybow FSdraft1804bybow MSlwl1804bystern MSwsa1804bystern MSdraft1804bystern MSAx1804bystern BlockCoeff1804bystern FSlwl1804bystern FSwsa1804bystern FSdraft1804bystern MSbeam1804 MSbeam1804bybow MSbeam1804bystern
-clearvars XPlot YPlot XPlotMargin YPlotMargin XPlotSize YPlotSize
-clearvars setFormFactor
-clearvars ma na mas nas oas pas qas ras n results setCond setCondNo condNo counter1 counter2 h l f j k m A R M allPlots testName
-clearvars setBeam setModWsa avgCT avgCT15degC setCF15degC setCFtw setCurrentCT setK setModKinVisc setModLwl setMx setRx setTw stdDev
-clearvars cond1 cond2 cond3 cond4 cond5 cond6 cond13
-clearvars setBs1 setBs2 setBs percentOfBs1 percentOfBs2 percentOfS setBv percentOfV setBMx1 setBMx2 setBMx3 setBMx4 setBMx percentOfBMx percentOfBMx1 percentOfBMx2 percentOfBMx3 percentOfBMx4 setBtw setBRho percentOfTw percentOfRho
-clearvars thetaS thetaV thetaMx thetaRho thetaRhoTw setBCT percentOfCT15degC percentOfCT15degC_2 setSCT setBCT setPCT setM setUCT152degC percentOfCT152degC percentOfUCT152degC1 percentOfUCT152degC2
-clearvars plotsavename fPath figurename hleg1 setMarkerSize
-clearvars plotArray7 plotArray8 plotArray9 plotArray10 plotArray11 plotArray12
-clearvars setX1 setX2 setX3 setX4 setX5 setX6 setY1 setY2 setY3 setY4 setY5 setY6
