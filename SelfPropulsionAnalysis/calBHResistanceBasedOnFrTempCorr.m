@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 13, 2015
+%# Date       :  March 20, 2015
 %#
 %# Function   :  Resistance curve based on Froude Numbers (Fr)
 %#

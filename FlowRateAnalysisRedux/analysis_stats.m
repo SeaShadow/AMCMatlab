@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 17, 2015
+%# Date       :  March 18, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -1329,18 +1329,18 @@ end
 %# Clear variables
 %# ------------------------------------------------------------------------
 
-clearvars x y f h h1 h2 k kj
-clearvars setPostDecimals setNeutDecimals
-clearvars m n mpaa npaa msaa nsaa maaa naaa meof neof
-clearvars minRun maxRun fPath figurename hleg1 plotsavename
-clearvars setGeneralFontSize setBorderLineWidth setMarkerSize setSpeed
-clearvars setMarker setColor setFileFormat setGeneralFontName setSaveFormat setLineStyle setLineWidth setLineWidthMarker setPolyOrder
-clearvars XPlot YPlot XPlotMargin YPlotMargin XPlotSize YPlotSize allPlots
-clearvars portSpeed1 portSpeed2 portSpeed3 portSpeed4 portSpeed5 portSpeed6 portSpeed7 portSpeed8 portSpeed9 portSpeed10 portSpeed11 portSpeed12 portSpeed13 portSpeed14
-clearvars stbdSpeed1 stbdSpeed2 stbdSpeed3 stbdSpeed4 stbdSpeed5 stbdSpeed6 stbdSpeed7 stbdSpeed8 stbdSpeed9 stbdSpeed10 stbdSpeed11 stbdSpeed12 stbdSpeed13 stbdSpeed14
-clearvars pfPort13 pvPort13 pfStbd13 pvStbd13 pfPort14 pvPort14 pfStbd14 pvStbd14 pfPortStbd14 pvPortStbd14
-clearvars EQoFit1 EQoFit2 EQoFit3 EQoFit4 EQoFit5 var1 var2 var3 var4 var5
-clearvars dev SST resid SSE rSquared fitEqn Rsq1 Rsq2 Rsq3 Rsq4 Rsq5
-clearvars June13Comb June13Port June13Stbd
-clearvars xPort13 yPort13 xStbd13 yStbd13 xPort14 yPort14 xStbd14 yStbd14 xPortStbdAvg14 yPortStbdAvg14 ypred
-clearvars EqnOfFitKP KPValue
+% clearvars x y f h h1 h2 k kj
+% clearvars setPostDecimals setNeutDecimals
+% clearvars m n mpaa npaa msaa nsaa maaa naaa meof neof
+% clearvars minRun maxRun fPath figurename hleg1 plotsavename
+% clearvars setGeneralFontSize setBorderLineWidth setMarkerSize setSpeed
+% clearvars setMarker setColor setFileFormat setGeneralFontName setSaveFormat setLineStyle setLineWidth setLineWidthMarker setPolyOrder
+% clearvars XPlot YPlot XPlotMargin YPlotMargin XPlotSize YPlotSize allPlots
+% clearvars portSpeed1 portSpeed2 portSpeed3 portSpeed4 portSpeed5 portSpeed6 portSpeed7 portSpeed8 portSpeed9 portSpeed10 portSpeed11 portSpeed12 portSpeed13 portSpeed14
+% clearvars stbdSpeed1 stbdSpeed2 stbdSpeed3 stbdSpeed4 stbdSpeed5 stbdSpeed6 stbdSpeed7 stbdSpeed8 stbdSpeed9 stbdSpeed10 stbdSpeed11 stbdSpeed12 stbdSpeed13 stbdSpeed14
+% clearvars pfPort13 pvPort13 pfStbd13 pvStbd13 pfPort14 pvPort14 pfStbd14 pvStbd14 pfPortStbd14 pvPortStbd14
+% clearvars EQoFit1 EQoFit2 EQoFit3 EQoFit4 EQoFit5 var1 var2 var3 var4 var5
+% clearvars dev SST resid SSE rSquared fitEqn Rsq1 Rsq2 Rsq3 Rsq4 Rsq5
+% clearvars June13Comb June13Port June13Stbd
+% clearvars xPort13 yPort13 xStbd13 yStbd13 xPort14 yPort14 xStbd14 yStbd14 xPortStbdAvg14 yPortStbdAvg14 ypred
+% clearvars EqnOfFitKP KPValue
