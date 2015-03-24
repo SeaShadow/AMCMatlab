@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 18, 2015
+%# Date       :  March 24, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -171,6 +171,41 @@ end
 
 %# _kp_vs_mass_flow_rate directory ----------------------------------------
 setDirName = '_plots/_kp_vs_mass_flow_rate';
+
+%# Repeat directory
+fPath = setDirName;
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PDF directory
+fPath = sprintf('%s/%s', setDirName, 'PDF');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# PNG directory
+fPath = sprintf('%s/%s', setDirName, 'PNG');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# EPS directory
+fPath = sprintf('%s/%s', setDirName, 'EPS');
+if isequal(exist(fPath, 'dir'),7)
+    % Do nothing as directory exists
+else
+    mkdir(fPath);
+end
+
+%# Torque directory ----------------------------------------
+setDirName = '_plots/Torque';
 
 %# Repeat directory
 fPath = setDirName;
@@ -1324,6 +1359,227 @@ for k=1:3
 end
 %close;
 
+
+%# ************************************************************************
+%# Torque investigation
+%# ************************************************************************
+
+%# ************************************************************************
+%# 1. Flow rate vs. torque
+%# ************************************************************************
+figurename = 'Plot 1: Flow rate vs. torque';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ----------------------------------------------------
+
+%     if enableA4PaperSizePlot == 1
+%         set(gcf, 'PaperSize', [19 19]);
+%         set(gcf, 'PaperPositionMode', 'manual');
+%         set(gcf, 'PaperPosition', [0 0 19 19]);
+%
+%         set(gcf, 'PaperUnits', 'centimeters');
+%         set(gcf, 'PaperSize', [19 19]);
+%         set(gcf, 'PaperPositionMode', 'manual');
+%         set(gcf, 'PaperPosition', [0 0 19 19]);
+%     end
+
+% Fonts and colours -------------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 12;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'x';'+';'*';'o';'s';'d';'*';'^';'<';'>'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize          = 14;
+setLineWidthMarker     = 2;
+setLineWidthMarkerThin = 1;
+setLineWidth           = 2;
+setLineWidthThin       = 1;
+setLineStyle           = '-';
+setLineStyle1          = '--';
+setLineStyle2          = '-.';
+setLineStyle3          = ':';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+%subplot(1,2,1)
+
+% Port
+x1 = AvgPortArray(:,5);
+y1 = AvgPortArray(:,11);
+
+% Curve fitting
+[fitobjectp,gofp,outputp] = fit(x1,y1,'poly3');
+cvaluesp                  = coeffvalues(fitobjectp);
+
+cval         = cvaluesp;
+setDecimals1 = '%0.4f';
+setDecimals2 = '+%0.4f';
+setDecimals3 = '+%0.4f';
+setDecimals4 = '+%0.4f';
+if cval(1) < 0
+    setDecimals1 = '%0.4f';
+end
+if cval(2) < 0
+    setDecimals2 = '%0.4f';
+end
+if cval(3) < 0
+    setDecimals3 = '%0.4f';
+end
+if cval(4) < 0
+    setDecimals4 = '%0.4f';
+end
+p1      = sprintf(setDecimals1,cval(1));
+p2      = sprintf(setDecimals2,cval(2));
+p3      = sprintf(setDecimals3,cval(3));
+p4      = sprintf(setDecimals4,cval(4));
+gofrs   = sprintf('%0.1f',gofp.rsquare);
+EoFEqnP = sprintf('\\bf Port: \\rm y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+disp(EoFEqnP);
+
+% Starboard
+x2 = AvgStbdArray(:,5);
+y2 = AvgStbdArray(:,10);
+
+% Curve fitting
+[fitobjects,gofs,outputs] = fit(x2,y2,'poly3');
+cvaluess                  = coeffvalues(fitobjects);
+
+cval         = cvaluess;
+setDecimals1 = '%0.4f';
+setDecimals2 = '+%0.4f';
+setDecimals3 = '+%0.4f';
+setDecimals4 = '+%0.4f';
+if cval(1) < 0
+    setDecimals1 = '%0.4f';
+end
+if cval(2) < 0
+    setDecimals2 = '%0.4f';
+end
+if cval(3) < 0
+    setDecimals3 = '%0.4f';
+end
+if cval(4) < 0
+    setDecimals4 = '%0.4f';
+end
+p1      = sprintf(setDecimals1,cval(1));
+p2      = sprintf(setDecimals2,cval(2));
+p3      = sprintf(setDecimals3,cval(3));
+p4      = sprintf(setDecimals4,cval(4));
+gofrs   = sprintf('%0.1f',gofs.rsquare);
+EoFEqnS = sprintf('\\bf Stbd: \\rm y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+disp(EoFEqnS);
+
+%# Plotting ---------------------------------------------------------------
+h = plot(x1,y1,'*',x2,y2,'*');
+% Port
+hold on;
+h1 = plot(fitobjectp,'r-',x1,y1,'x');
+% Stbd
+hold on;
+h2 = plot(fitobjects,'b-',x2,y2,'x');
+%     if enablePlotTitle == 1
+%         title('{\bf Torque}','FontSize',setGeneralFontSize);
+%     end
+xlabel('{\bf Flow rate (Kg/s)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Torque (Nm)}','FontSize',setGeneralFontSize);
+grid on;
+box on;
+axis square;
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Annotations - text on plot
+text(2.1,0.04,'Legend:','FontSize',12,'color','k','FontWeight','bold');
+text(2.1,0.025,EoFEqnP,'FontSize',12,'color','k','FontWeight','normal');
+text(2.1,0.01,EoFEqnS,'FontSize',12,'color','k','FontWeight','normal');
+
+%# Line, colors and markers
+set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h(2),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+
+%# Axis limitations
+minX  = 1;
+maxX  = 6;
+incrX = 1;
+minY  = 0;
+maxY  = 0.3;
+incrY = 0.05;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+% set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
+
+%# Legend
+hleg1 = legend('Port waterjet','Starboard waterjet');
+set(hleg1,'Location','NorthWest');
+set(hleg1,'Interpreter','Tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+%     if enableA4PaperSizePlot == 1
+%         set(gcf, 'PaperUnits','centimeters');
+%         set(gcf, 'PaperSize',[XPlot YPlot]);
+%         set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+%         set(gcf, 'PaperOrientation','portrait');
+%     end
+
+%# Plot title -------------------------------------------------------------
+if enablePlotMainTitle == 1
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');
+end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Plot_1_Torque_Investigation_Plot.%s', 'Torque', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
 
 %# ------------------------------------------------------------------------
 %# Clear variables
