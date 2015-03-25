@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 24, 2015
+%# Date       :  March 25, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -144,6 +144,7 @@ enablePlot18        = 0;    % Full_Scale_Overall_Propulsive_Efficiency_RBH_FT0_P
 enablePlot19        = 1;    % RTm_and_RTm-FD_vs_Speed_Plot
 enablePlot19_1      = 1;    % RTm_and_RTm-FD_vs_Speed_Plot
 enablePlot20        = 1;    % Torque comparison FRM and SPT
+enablePlot20_1      = 1;    % Power (P=Tw) comparison FRM and SPT
 
 % Check if Curve Fitting Toolbox is installed
 % See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
@@ -12870,8 +12871,8 @@ if enablePlot19 == 1
     clearvars MSSpeed FSSpeed1 FSSpeed2 setMSSpeed setFSSpeed1 setFSSpeed2 CalcMSReynoldsNo CalcFSReynoldsNo SetMSCFm SetFSCFs
     
     % Curve fitted resistance (R_Tm)
-    %x2 = TA19_1(:,1);
-    %y2 = TA19_1(:,2);
+    x2 = TA19_1(:,1);
+    y2 = TA19_1(:,2);
     
     % Resistance (R_TM-F_D)
     x3 = TA19_1(:,1);
@@ -13314,22 +13315,22 @@ if enablePlot20 == 1
     
     %# Paper size settings ----------------------------------------------------
     
-    %     if enableA4PaperSizePlot == 1
-    %         set(gcf, 'PaperSize', [19 19]);
-    %         set(gcf, 'PaperPositionMode', 'manual');
-    %         set(gcf, 'PaperPosition', [0 0 19 19]);
-    %
-    %         set(gcf, 'PaperUnits', 'centimeters');
-    %         set(gcf, 'PaperSize', [19 19]);
-    %         set(gcf, 'PaperPositionMode', 'manual');
-    %         set(gcf, 'PaperPosition', [0 0 19 19]);
-    %     end
+%     if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+%     end
     
     % Fonts and colours -------------------------------------------------------
     setGeneralFontName = 'Helvetica';
-    setGeneralFontSize = 16;
+    setGeneralFontSize = 14;
     setBorderLineWidth = 2;
-    setLegendFontSize  = 14;
+    setLegendFontSize  = 12;
     
     %# Change default text fonts for plot title
     set(0,'DefaultTextFontname',setGeneralFontName);
@@ -13365,57 +13366,58 @@ if enablePlot20 == 1
     setLineStyle3          = ':';
     
     %# SUBPLOT ////////////////////////////////////////////////////////////////
-    %subplot(1,1,1)
+    subplot(1,2,1)
+        
+    %# Flow rate measurement test (FRM) ---------------------------------------
+
+    %# Averaged run date based on analysis_stats.m for FRM Redux analysis -----
+    
+    % Torque
+    PortT = [0.0213660000000000;0.0294533333333333;0.0382330000000000;0.0512307500000000;0.0658120000000000;0.0852853333333333;0.100220000000000;0.124460000000000;0.143620000000000;0.168856666666667;0.192400000000000;0.222560000000000;0.254520000000000;0.282406666666667];
+    StbdT = [0.0239620000000000;0.0292280000000000;0.0424990000000000;0.0552043333333333;0.0666830000000000;0.0879870000000000;0.102755000000000;0.121530000000000;0.143660000000000;0.170846666666667;0.195810000000000;0.221286666666667;0.249250000000000;0.279970000000000];
+    
+    % Flow rate pQJ
+    PortQJ = [1.16470000000000;1.45993333333333;1.76970000000000;2.05907500000000;2.36820000000000;2.67006666666667;2.97860000000000;3.28790000000000;3.58440000000000;3.89433333333333;4.18510000000000;4.49146666666667;4.82360000000000;5.09990000000000];
+    StbdQJ = [1.20250000000000;1.50032500000000;1.80220000000000;2.11026666666667;2.41820000000000;2.71860000000000;3.03045000000000;3.32630000000000;3.64890000000000;3.97970000000000;4.32160000000000;4.64723333333333;4.97240000000000;5.30560000000000];
+    
+    % Flow rate measurement test (Port) (FRM)
+    x1 = PortT;
+    y1 = PortQJ;
+    
+    % Flow rate measurement test (Stbd) (FRM)
+    x2 = StbdT;
+    y2 = StbdQJ;
+    
+    %# Self-propulsion test (SPT) ---------------------------------------------
     
     [m20,n20] = size(resSPP_CCDoTT);
     
-    x3 = [];
-    x4 = [];
-    y1 = [];
-    y2 = [];
-
+    y3        = [];
+    y4        = [];
     setPortKP = resSPP_CCDoTT(:,6);
     setStbdKP = resSPP_CCDoTT(:,10);
     for k20=1:m20;
         EoFPort = cvaluesMFRvsKPSept2014Port;
         EoFStbd = cvaluesMFRvsKPSept2014Stbd;
-        x3(k20) = EoFPort(1)*setPortKP(k20)^4+EoFPort(2)*setPortKP(k20)^3+EoFPort(3)*setPortKP(k20)^2+EoFPort(4)*setPortKP(k20)+EoFPort(5);
-        x4(k20) = EoFStbd(1)*setStbdKP(k20)^4+EoFStbd(2)*setStbdKP(k20)^3+EoFStbd(3)*setStbdKP(k20)^2+EoFStbd(4)*setStbdKP(k20)+EoFStbd(5);
-    end
+        y3(k20) = EoFPort(1)*setPortKP(k20)^4+EoFPort(2)*setPortKP(k20)^3+EoFPort(3)*setPortKP(k20)^2+EoFPort(4)*setPortKP(k20)+EoFPort(5);
+        y4(k20) = EoFStbd(1)*setStbdKP(k20)^4+EoFStbd(2)*setStbdKP(k20)^3+EoFStbd(3)*setStbdKP(k20)^2+EoFStbd(4)*setStbdKP(k20)+EoFStbd(5);
+    end    
     
-    %# Flow rate measurement test (FRM) ---------------------------------------
-
-    % Check "analysis_stats.m" in Flow rate measurement Redux analysis
-    for k20=1:m20;
-        y1(k20) = -0.0003*x3(k20)^3+0.0127*x3(k20)^2-0.0047*x3(k20)+0.0096;
-        y2(k20) = -0.0007*x4(k20)^3+0.0144*x4(k20)^2-0.0076*x4(k20)+0.0124;
-    end
+    % Self-propulsion test (Port) (SPT)
+    x3 = resSPP_CCDoTT(:,5);
+    y3 = y3;
     
-    % Port: Flow rate measurement test (FRM)
-    x1 = x3;
-    y1 = y1;
-    
-    % Stbd: Flow rate measurement test (FRM)
-    x2 = x4;
-    y2 = y2;
-    
-    %# Self-propulsion test (SPT) ---------------------------------------------
-    
-    % Port: Self-propulsion test (SPT)
-    x3 = x3';
-    y3 = resSPP_CCDoTT(:,5);
-    
-    % Stbd: Flow rate measurement test (SPT)
-    x4 = x4';
-    y4 = resSPP_CCDoTT(:,9);
+    % Flow rate measurement test (Stbd) (SPT)
+    x4 = resSPP_CCDoTT(:,9);
+    y4 = y4;
     
     %# Plotting ---------------------------------------------------------------
     h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*');
     %     if enablePlotTitle == 1
     %         title('{\bf Torque comparison}','FontSize',setGeneralFontSize);
     %     end
-    xlabel('{\bf Flow rate (Kg/s)}','FontSize',setGeneralFontSize);
-    ylabel('{\bf Torque (Nm)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Torque (Nm)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Flow rate (Kg/s)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
@@ -13431,22 +13433,22 @@ if enablePlot20 == 1
     set(h(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin,'LineStyle',setLineStyle3,'linewidth',setLineWidthThin);
     
     %# Axis limitations
-    minX  = 2;
-    maxX  = 4.5;
-    incrX = 0.5;
-    minY  = 0.05;
-    maxY  = 0.45;
-    incrY = 0.1;
+    minX  = 0;
+    maxX  = 0.45;
+    incrX = 0.05;
+    minY  = 1;
+    maxY  = 5.5;
+    incrY = 0.5;
     set(gca,'XLim',[minX maxX]);
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
     set(gca,'YTick',minY:incrY:maxY);
-    % set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
-    set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    hleg1 = legend('Port: Flow rate measurement test','Stbd: Flow rate measurement test','Port: Self-propulsion test','Stbd: Self-propulsion test');
-    set(hleg1,'Location','NorthWest');
+    hleg1 = legend('Flow rate measurement test (Port)','Flow rate measurement test (Stbd)','Self-propulsion test (Port)','Self-propulsion test (Stbd)');
+    set(hleg1,'Location','SouthEast');
     set(hleg1,'Interpreter','Tex');
     set(hleg1,'LineWidth',1);
     set(hleg1,'FontSize',setLegendFontSize);
@@ -13456,6 +13458,74 @@ if enablePlot20 == 1
     
     set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
     
+    %# SUBPLOT ////////////////////////////////////////////////////////////////
+    subplot(1,2,2)
+    
+    %# X and Y axis -----------------------------------------------------------
+    
+    % Flow rate measurement test (Port) (FRM)
+    x1 = [798;997;1197;1397;1597;1798;1999;2199;2399;2600;2800;3000;3200;3379];
+    y1 = [1.16470000000000;1.45993333333333;1.76970000000000;2.05907500000000;2.36820000000000;2.67006666666667;2.97860000000000;3.28790000000000;3.58440000000000;3.89433333333333;4.18510000000000;4.49146666666667;4.82360000000000;5.09990000000000];
+    
+    % Flow rate measurement test (Stbd) (FRM)
+    x2 = [797;996;1197;1397;1598;1798;1999;2199;2399;2600;2800;3000;3200;3398];
+    y2 = [1.20250000000000;1.50032500000000;1.80220000000000;2.11026666666667;2.41820000000000;2.71860000000000;3.03045000000000;3.32630000000000;3.64890000000000;3.97970000000000;4.32160000000000;4.64723333333333;4.97240000000000;5.30560000000000];
+    
+    % Self-propulsion test (Port) (SPT)
+    x3 = modelScaleDataArray(:,5);
+    y3 = modelScaleDataArray(:,24);
+    
+    % Flow rate measurement test (Stbd) (SPT)
+    x4 = modelScaleDataArray(:,6);
+    y4 = modelScaleDataArray(:,25);
+    
+    %# Plotting ---------------------------------------------------------------
+    h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*');
+    %     if enablePlotTitle == 1
+    %         title('{\bf Torque comparison}','FontSize',setGeneralFontSize);
+    %     end
+    xlabel('{\bf Shaft speed (RPM)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Flow rate (Kg/s)}','FontSize',setGeneralFontSize);
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+    set(h(3),'Color',setColor{3},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin,'LineStyle',setLineStyle3,'linewidth',setLineWidthThin);
+    set(h(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin,'LineStyle',setLineStyle3,'linewidth',setLineWidthThin);
+    
+    %# Axis limitations
+    minX  = 500;
+    maxX  = 3500;
+    incrX = 500;
+    minY  = 1;
+    maxY  = 5.5;
+    incrY = 0.5;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend('Flow rate measurement test (Port)','Flow rate measurement test (Stbd)','Self-propulsion test (Port)','Self-propulsion test (Stbd)');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','Tex');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);    
+    
     %# ************************************************************************
     %# Save plot as PNG
     %# ************************************************************************
@@ -13464,12 +13534,12 @@ if enablePlot20 == 1
     set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
     
     %# Figure size printed on paper
-    %     if enableA4PaperSizePlot == 1
-    %         set(gcf, 'PaperUnits','centimeters');
-    %         set(gcf, 'PaperSize',[XPlot YPlot]);
-    %         set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
-    %         set(gcf, 'PaperOrientation','portrait');
-    %     end
+%     if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+%     end
     
     %# Plot title -------------------------------------------------------------
     if enablePlotMainTitle == 1
@@ -13490,6 +13560,417 @@ if enablePlot20 == 1
     end
     %close;
 end % if enablePlot20 == 1
+
+
+%# ************************************************************************
+%# 20.1 Power (P=Tw) comparison FRM and SPT
+%# ************************************************************************
+if enablePlot20_1 == 1
+    figurename = 'Plot 20.1: Power (P=Tw) comparison FRM and SPT';
+    f = figure('Name',figurename,'NumberTitle','off');
+    
+    %# Paper size settings ----------------------------------------------------
+    
+%     if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+        
+        set(gcf, 'PaperUnits', 'centimeters');
+        set(gcf, 'PaperSize', [19 19]);
+        set(gcf, 'PaperPositionMode', 'manual');
+        set(gcf, 'PaperPosition', [0 0 19 19]);
+%     end
+    
+    % Fonts and colours -------------------------------------------------------
+    setGeneralFontName = 'Helvetica';
+    setGeneralFontSize = 14;
+    setBorderLineWidth = 2;
+    setLegendFontSize  = 12;
+    
+    %# Change default text fonts for plot title
+    set(0,'DefaultTextFontname',setGeneralFontName);
+    set(0,'DefaultTextFontSize',14);
+    
+    %# Box thickness, axes font size, etc. ------------------------------------
+    set(gca,'TickDir','in',...
+        'FontSize',12,...
+        'LineWidth',2,...
+        'FontName',setGeneralFontName,...
+        'Clipping','off',...
+        'Color',[1 1 1],...
+        'LooseInset',get(gca,'TightInset'));
+    
+    %# Markes and colors ------------------------------------------------------
+    setMarker = {'x';'+';'*';'o';'s';'d';'*';'^';'<';'>'};
+    % Colored curves
+    setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k'};
+    if enableBlackAndWhitePlot == 1
+        % Black and white curves
+        setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+    end
+    
+    %# Line, colors and markers
+    setMarkerSize          = 14;
+    setLineWidthMarker     = 2;
+    setLineWidthMarkerThin = 1;
+    setLineWidth           = 2;
+    setLineWidthThin       = 1;
+    setLineStyle           = '-';
+    setLineStyle1          = '--';
+    setLineStyle2          = '-.';
+    setLineStyle3          = ':';
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////////
+    subplot(1,2,1)
+        
+    %# Flow rate measurement test (FRM) ---------------------------------------
+
+    %# Averaged run date based on analysis_stats.m for FRM Redux analysis -----
+    
+    % Torque (Nm)
+    PortTFRM  = [0.0213660000000000;0.0294533333333333;0.0382330000000000;0.0512307500000000;0.0658120000000000;0.0852853333333333;0.100220000000000;0.124460000000000;0.143620000000000;0.168856666666667;0.192400000000000;0.222560000000000;0.254520000000000;0.282406666666667];
+    StbdTFRM  = [0.0239620000000000;0.0292280000000000;0.0424990000000000;0.0552043333333333;0.0666830000000000;0.0879870000000000;0.102755000000000;0.121530000000000;0.143660000000000;0.170846666666667;0.195810000000000;0.221286666666667;0.249250000000000;0.279970000000000];
+    
+    % Flow rate pQJ (Kg/s)
+    PortQJFRM = [1.16470000000000;1.45993333333333;1.76970000000000;2.05907500000000;2.36820000000000;2.67006666666667;2.97860000000000;3.28790000000000;3.58440000000000;3.89433333333333;4.18510000000000;4.49146666666667;4.82360000000000;5.09990000000000];
+    StbdQJFRM = [1.20250000000000;1.50032500000000;1.80220000000000;2.11026666666667;2.41820000000000;2.71860000000000;3.03045000000000;3.32630000000000;3.64890000000000;3.97970000000000;4.32160000000000;4.64723333333333;4.97240000000000;5.30560000000000];
+    
+    % Shaft speed (RPM)
+    PortRPMFRM = [798;997;1197;1397;1597;1798;1999;2199;2399;2600;2800;3000;3200;3379];
+    StbdRPMFRM = [797;996;1197;1397;1598;1798;1999;2199;2399;2600;2800;3000;3200;3398];
+    
+    % Determine sample size for loop
+    [m20p,n20p] = size(PortTFRM);
+    [m20s,n20s] = size(StbdTFRM);
+
+    % Variables and loop
+    PortPFRM = [];
+    StbdPFRM = [];    
+    for k20=1:m20p
+        % PORT: Power (W) = P = T w =Nm * ((RPM*2*Pi)/60)
+        PortPFRM(k20,1) = PortTFRM(k20)*((PortRPMFRM(k20)*2*pi)/60);
+        % STBD: Power (W) = P = T w =Nm * ((RPM*2*Pi)/60)
+        StbdPFRM(k20,1) = StbdTFRM(k20)*((StbdRPMFRM(k20)*2*pi)/60);
+    end
+    
+    % Flow rate measurement test (Port) (FRM)
+    x1 = PortPFRM;
+    y1 = PortQJFRM;
+    
+    % Curve fitting
+    [fitobjectp,gofp,outputp] = fit(x1,y1,'poly3');
+    cvaluesp                  = coeffvalues(fitobjectp);
+    
+    cval         = cvaluesp;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1      = sprintf(setDecimals1,cval(1));
+    p2      = sprintf(setDecimals2,cval(2));
+    p3      = sprintf(setDecimals3,cval(3));
+    p4      = sprintf(setDecimals4,cval(4));
+    gofrs   = sprintf('%0.1f',gofp.rsquare);
+    EoFEqnP = sprintf('Port (FRM): y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    %disp(EoFEqnP);
+    
+    % Flow rate measurement test (Stbd) (FRM)
+    x2 = StbdPFRM;
+    y2 = StbdQJFRM;
+    
+    % Curve fitting
+    [fitobjects,gofs,outputs] = fit(x2,y2,'poly3');
+    cvaluess                  = coeffvalues(fitobjects);
+    
+    cval         = cvaluess;
+    setDecimals1 = '%0.4f';
+    setDecimals2 = '+%0.4f';
+    setDecimals3 = '+%0.4f';
+    setDecimals4 = '+%0.4f';
+    if cval(1) < 0
+        setDecimals1 = '%0.4f';
+    end
+    if cval(2) < 0
+        setDecimals2 = '%0.4f';
+    end
+    if cval(3) < 0
+        setDecimals3 = '%0.4f';
+    end
+    if cval(4) < 0
+        setDecimals4 = '%0.4f';
+    end
+    p1      = sprintf(setDecimals1,cval(1));
+    p2      = sprintf(setDecimals2,cval(2));
+    p3      = sprintf(setDecimals3,cval(3));
+    p4      = sprintf(setDecimals4,cval(4));
+    gofrs   = sprintf('%0.1f',gofs.rsquare);
+    EoFEqnP = sprintf('Stbd (FRM): y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
+    %disp(EoFEqnP);    
+    
+    %# Self-propulsion test (SPT) ---------------------------------------------
+    
+    % Kiel probe (V)
+    PortKPSPT = resSPP_CCDoTT(:,6);
+    StbdKPSPT = resSPP_CCDoTT(:,10);
+
+    % Torque (Nm)
+    PortTSPT = resSPP_CCDoTT(:,5);
+    PortTSPT = resSPP_CCDoTT(:,9);
+    
+    % Shaft speed (RPM)
+    PortRPMSPT = resSPP_CCDoTT(:,3);
+    StbdRPMSPT = resSPP_CCDoTT(:,7);
+    
+    % Determine sample size for loop
+    [m20,n20] = size(resSPP_CCDoTT);
+    
+    % Variables and loop
+    PortPSPT  = [];
+    StbdPSPT  = [];
+    PortQJSPT = [];
+    StbdQJSPT = [];
+    PortCFFRM = [];
+    StbdCFFRM = [];    
+    for k20=1:m20;
+        % x-axis: Power (W) = P = T w =Nm * ((RPM*2*Pi)/60)
+        PortPSPT(k20)  = PortTSPT(k20)*((PortRPMSPT(k20)*2*pi)/60);
+        StbdPSPT(k20)  = PortTSPT(k20)*((StbdRPMSPT(k20)*2*pi)/60);
+        % y-axis: Mass flow rate based on Kiel probe measurements
+        EoFPort        = cvaluesMFRvsKPSept2014Port;
+        EoFStbd        = cvaluesMFRvsKPSept2014Stbd;
+        PortQJSPT(k20) = EoFPort(1)*PortKPSPT(k20)^4+EoFPort(2)*PortKPSPT(k20)^3+EoFPort(3)*PortKPSPT(k20)^2+EoFPort(4)*PortKPSPT(k20)+EoFPort(5);
+        StbdQJSPT(k20) = EoFStbd(1)*StbdKPSPT(k20)^4+EoFStbd(2)*StbdKPSPT(k20)^3+EoFStbd(3)*StbdKPSPT(k20)^2+EoFStbd(4)*StbdKPSPT(k20)+EoFStbd(5);
+        % Curve fitted points
+        PortCFFRM(k20) = cvaluesp(1)*PortPSPT(k20)^3+cvaluesp(2)*PortPSPT(k20)^2+cvaluesp(3)*PortPSPT(k20)+cvaluesp(4);
+        StbdCFFRM(k20) = cvaluess(1)*StbdPSPT(k20)^3+cvaluess(2)*StbdPSPT(k20)^2+cvaluess(3)*StbdPSPT(k20)+cvaluess(4);
+    end    
+    
+    % Self-propulsion test (Port) (SPT)
+    x3 = PortPSPT;
+    y3 = PortQJSPT;
+    
+    % Flow rate measurement test (Stbd) (SPT)
+    x4 = StbdPSPT;
+    y4 = StbdQJSPT;
+    
+    % PORT: Curve fitted FRM using SPT power values for comparison
+    x5 = PortPSPT(:,1:8);
+    y5 = PortCFFRM(:,1:8);
+    
+    % STBD: Curve fitted FRM using SPT power values for comparison
+    x6 = StbdPSPT(:,1:8);
+    y6 = StbdCFFRM(:,1:8);
+    
+    % PORT: Delivered power, PD (W)
+    x7 = modelScaleDataArray(:,42);
+    y7 = modelScaleDataArray(:,24);
+    
+    % STBD: Delivered power, PD (W)
+    x8 = modelScaleDataArray(:,43);
+    y8 = modelScaleDataArray(:,25);
+    
+    %# Plotting ---------------------------------------------------------------
+    h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*',x4,y4,'*');
+    legendInfo201_1{1} = 'Flow rate measurement test (Port)';
+    legendInfo201_1{2} = 'Flow rate measurement test (Stbd)';
+    legendInfo201_1{3} = 'Self-propulsion test (Port)';
+    legendInfo201_1{4} = 'Self-propulsion test (Stbd)';
+    % Delivered power, PD
+    hold on;
+    h1 = plot(x7,y7,'*',x8,y8,'*');
+    legendInfo201_1{5} = 'Self-propulsion test, P_{D} (Port)';
+    legendInfo201_1{6} = 'Self-propulsion test, P_{D} (Stbd)';
+    % Curve fitted FRM
+%     hold on;
+%     h2 = plot(x5,y5,'*',x6,y6,'*');
+%     % Port curve fit
+%     hold on;
+%     h3 = plot(fitobjectp,'r--',x1,y1,'*');
+%     % Stbd curve fit
+%     hold on;
+%     h4 = plot(fitobjects,'b-.',x2,y2,'x');
+    %     if enablePlotTitle == 1
+    %         title('{\bf Power comparison}','FontSize',setGeneralFontSize);
+    %     end
+    xlabel('{\bf Shaft power (P=T\omega) or delivered power (P_{D}) (W)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Flow rate (Kg/s)}','FontSize',setGeneralFontSize);
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin); %,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin
+    set(h(2),'Color',setColor{2},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin); %,'LineStyle',setLineStyle1,'linewidth',setLineWidthThin
+    set(h(3),'Color',setColor{3},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin);
+    set(h(4),'Color',setColor{4},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin);
+    % Delivered power, P_D
+    set(h1(1),'Color',setColor{5},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin);
+    set(h1(2),'Color',setColor{6},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin);
+
+    %# Axis limitations
+    minX  = 0;
+    maxX  = 120;
+    incrX = 10;
+    minY  = 1;
+    maxY  = 5.5;
+    incrY = 0.5;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    %hleg1 = legend('Flow rate measurement test (Port)','Flow rate measurement test (Stbd)','Self-propulsion test (Port)','Self-propulsion test (Stbd)');
+    hleg1 = legend(legendInfo201_1);
+    set(hleg1,'Location','SouthEast');
+    set(hleg1,'Interpreter','Tex');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+    
+    %# SUBPLOT ////////////////////////////////////////////////////////////////
+    subplot(1,2,2)
+    
+    %# X and Y axis -----------------------------------------------------------
+    
+    % Determine sample size for loop
+    [m20,n20] = size(resSPP_CCDoTT);    
+    
+    MSRTFD = TA19_1(:,4);
+    MSTDF  = resSPP_CCDoTT(:,11);
+    
+    % Multiply T_F=0-FD * for two demihulls
+    Raw_Data = num2cell(MSTDF);
+    Raw_Data = cellfun(@(y) y*2, Raw_Data, 'UniformOutput', false);
+    MSTDF = cell2mat(Raw_Data);
+    
+    % Variables and loop
+    PortQJDiff = [];
+    StbdQJDiff = [];
+    RTtoTDiff  = [];
+    for k20=1:m20-1;
+        % Difference in flowe rate
+        PortQJDiff(k20) = (1-(PortQJSPT(k20)/PortCFFRM(k20)))*100;
+        StbdQJDiff(k20) = (1-(StbdQJSPT(k20)/StbdCFFRM(k20)))*100;
+        % Differences drag to thrust
+        RTtoTDiff(k20)  = (1-(MSTDF(k20)/MSRTFD(k20)))*100;
+    end
+    
+    % PORT: Flow rate difference at the same power from FRM and SPT (%)
+    x1 = TA19_1(1:8,1);
+    y1 = PortQJDiff';
+    
+    % STBD: Flow rate difference at the same power from FRM and SPT (%)
+    x2 = TA19_1(1:8,1);
+    y2 = StbdQJDiff';
+    
+    % Drag to thrust difference
+    x3 = TA19_1(1:8,1);
+    y3 = RTtoTDiff';
+    
+    %# Plotting ---------------------------------------------------------------
+    h = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
+    %     if enablePlotTitle == 1
+    %         title('{\bf Power difference}','FontSize',setGeneralFontSize);
+    %     end
+    xlabel('{\bf Ship speed (knots)}','FontSize',setGeneralFontSize);
+    ylabel('{\bf Differences in flow rate and drag to thrust (%)}','FontSize',setGeneralFontSize);
+    grid on;
+    box on;
+    axis square;
+    
+    %# Set plot figure background to a defined color
+    %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+    set(gcf,'Color',[1,1,1]);
+    
+    %# Line, colors and markers
+    set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin);
+    set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin);
+    
+    %# Axis limitations
+    minX  = 13;
+    maxX  = 23;
+    incrX = 1;
+    minY  = 0;
+    maxY  = 40;
+    incrY = 5;
+    set(gca,'XLim',[minX maxX]);
+    set(gca,'XTick',minX:incrX:maxX);
+    set(gca,'YLim',[minY maxY]);
+    set(gca,'YTick',minY:incrY:maxY);
+    %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
+    %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+    
+    %# Legend
+    hleg1 = legend('Port: Flow rate','Starboard: Flow rate','Drag and thrust');
+    set(hleg1,'Location','NorthWest');
+    set(hleg1,'Interpreter','Tex');
+    set(hleg1,'LineWidth',1);
+    set(hleg1,'FontSize',setLegendFontSize);
+    %legend boxoff;
+    
+    %# Font sizes and border --------------------------------------------------
+    
+    set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);    
+    
+    %# ************************************************************************
+    %# Save plot as PNG
+    %# ************************************************************************
+    
+    %# Figure size on screen (50% scaled, but same aspect ratio)
+    set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+    
+    %# Figure size printed on paper
+%     if enableA4PaperSizePlot == 1
+        set(gcf, 'PaperUnits','centimeters');
+        set(gcf, 'PaperSize',[XPlot YPlot]);
+        set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+        set(gcf, 'PaperOrientation','portrait');
+%     end
+    
+    %# Plot title -------------------------------------------------------------
+    if enablePlotMainTitle == 1
+        annotation('textbox', [0 0.9 1 0.1], ...
+            'String', strcat('{\bf ', figurename, '}'), ...
+            'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'center');
+    end
+    
+    %# Save plots as PDF, PNG and EPS -----------------------------------------
+    % Enable renderer for vector graphics output
+    set(gcf, 'renderer', 'painters');
+    setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+    setFileFormat = {'PDF' 'PNG' 'EPS'};
+    for k=1:3
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_20_1_Torque_Comparison_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        print(gcf, setSaveFormat{k}, plotsavename);
+    end
+    %close;
+end % if enablePlot20_1 == 1
 
 
 %# ************************************************************************
