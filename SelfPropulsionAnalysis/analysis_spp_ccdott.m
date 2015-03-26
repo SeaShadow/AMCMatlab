@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 25, 2015
+%# Date       :  March 26, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -120,7 +120,7 @@ enablePlot4         = 0;    % MS_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot
 enablePlot5         = 0;    % FS_Overall_Propulsive_Efficiency_Plot
 enablePlot6         = 0;    % FS_Power_Plot
 enablePlot7         = 0;    % FS_Speed_Plot
-enablePlot8         = 0;    % FS_Comparison_PD_to_Sea_Trials_Data_Plot
+enablePlot8         = 1;    % FS_Comparison_PD_to_Sea_Trials_Data_Plot
 enablePlot8_1       = 0;    % FS_Comparison_PD_to_Sea_Trials_Data_Plot
 enablePlot9         = 0;    % FS_Comparison_Propulsive_Efficiency_Plot
 enablePlot10        = 0;    % MS_And_FS_Thrust_Coefficient_Comparison_Plot
