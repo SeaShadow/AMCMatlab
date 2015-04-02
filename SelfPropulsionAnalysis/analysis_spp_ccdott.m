@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 26, 2015
+%# Date       :  April 2, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -6738,8 +6738,12 @@ for k=1:m
     % Nozzle and ideal efficiency
     MSPortNozzleEff = 0.98;
     MSStbdNozzleEff = 0.98;
+    % ni=2/(1+NVR)
     MSPortIdealEff  = 2/(1+(MSPortJetVel/MSPortInlVel));
     MSStbdIdealEff  = 2/(1+(MSStbdJetVel/MSStbdInlVel));
+    % ni=1-((VJ/V)-1)^2 --> Bose (2008) Equation 10-33
+    %MSPortIdealEff  = 1-((MSPortJetVel/MSSpeed)-1)^2;
+    %MSStbdIdealEff  = 1-((MSStbdJetVel/MSSpeed)-1)^2;
     
     % Pump effective power, PPE
     if enablePPEEstPumpCurveHead == 1
@@ -6783,8 +6787,12 @@ for k=1:m
     % Nozzle and ideal efficiency
     FSPortNozzleEff = 0.98;
     FSStbdNozzleEff = 0.98;
+    % ni=2/(1+NVR)
     FSPortIdealEff  = 2/(1+(FSPortJetVel/FSPortInlVel));
     FSStbdIdealEff  = 2/(1+(FSStbdJetVel/FSStbdInlVel));
+    % ni=1-((VJ/V)-1)^2 --> Bose (2008) Equation 10-33
+    %FSPortIdealEff  = 1-((FSPortJetVel/FSSpeed)-1)^2;
+    %FSStbdIdealEff  = 1-((FSStbdJetVel/FSSpeed)-1)^2;
     
     % Pump effective power, PPE
     if enablePPEEstPumpCurveHead == 1
