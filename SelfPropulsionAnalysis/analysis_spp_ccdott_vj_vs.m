@@ -1,6 +1,6 @@
 %# ------------------------------------------------------------------------
 %# Self-Propulsion: Test Analysis (SPP) - Using CCoTT method for SPP
-%#                  Thrust definition: T_G = p Q_J (V_J-(1-w)V_m)
+%#                  Thrust definition: T_G = p Q_J (V_J-V_m)
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
@@ -39,7 +39,7 @@
 %#                                    ==> Creates resultsArraySPP.dat
 %#
 %#               => analysis_spp_ccdott.m Self-propulsion points by CCDoTT
-%#                                    ==> Creates resultsArraySPP_CCDoTT.dat
+%#                                    ==> Creates resultsArraySPP_CCDoTT_VJ_VS.dat
 %#
 %#               => analysis_spt.m    Self-propulsion test
 %#                                    ==> Creates resultsArraySPT.dat
@@ -756,8 +756,8 @@ else
     mkdir(fPath);
 end
 
-%# SPP_CCDoTT directory ---------------------------------------------------
-setDirName = '_plots/SPP_CCDoTT';
+%# SPP_CCDoTT_VJ_VS directory ---------------------------------------------
+setDirName = '_plots/SPP_CCDoTT_VJ_VS';
 
 fPath = setDirName;
 if isequal(exist(fPath, 'dir'),7)
@@ -901,8 +901,8 @@ end
 %# LOOP THROUGH ALL RUN FILES (depending on startRun and endRun settings)
 %# ////////////////////////////////////////////////////////////////////////
 
-% If resultsArraySPP_CCDoTT.dat does NOT EXIST loop through DAQ files
-if exist('resultsArraySPP_CCDoTT.dat', 'file') == 0
+% If resultsArraySPP_CCDoTT_VJ_VS.dat does NOT EXIST loop through DAQ files
+if exist('resultsArraySPP_CCDoTT_VJ_VS.dat', 'file') == 0
     
     resultsArraySPP = [];
     %w = waitbar(0,'Processed run files');
@@ -1295,8 +1295,11 @@ if exist('resultsArraySPP_CCDoTT.dat', 'file') == 0
         StbdInlVel = resultsArraySPP(k, 39);         % Stbd inlet velocity (m/s)
         
         % Gross thrust = TG = p Q (vj - vi)
-        TG1Port = PortMfr*(PortJetVel-PortInlVel);
-        TG1Stbd = StbdMfr*(StbdJetVel-StbdInlVel);
+        %TG1Port = PortMfr*(PortJetVel-PortInlVel);
+        %TG1Stbd = StbdMfr*(StbdJetVel-StbdInlVel);
+        % Gross thrust = TG = p Q (vj - vm)
+        TG1Port = PortMfr*(PortJetVel-MSspeed);
+        TG1Stbd = StbdMfr*(StbdJetVel-MSspeed);
         resultsArraySPP(k, 40)  = TG1Port;           % PORT: Gross thrust, TG (N)
         resultsArraySPP(k, 41)  = TG1Stbd;           % STBD: Gross thrust, TG (N)
         resultsArraySPP(k, 42)  = TG1Port+TG1Stbd;   % TOTAL gross thrust, TG (N)
@@ -1353,16 +1356,16 @@ if exist('resultsArraySPP_CCDoTT.dat', 'file') == 0
     resultsArraySPP = resultsArraySPP(any(resultsArraySPP,2),:);                    % Remove zero rows
     M = resultsArraySPP;
     %M = M(any(M,2),:);                                                             % remove zero rows only in resultsArraySPP text file
-    csvwrite('resultsArraySPP_CCDoTT.dat', M)                                       % Export matrix M to a file delimited by the comma character
-    %dlmwrite('resultsArraySPP_CCDoTT.txt', M, 'delimiter', '\t', 'precision', 4)   % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
+    csvwrite('resultsArraySPP_CCDoTT_VJ_VS.dat', M)                                       % Export matrix M to a file delimited by the comma character
+    %dlmwrite('resultsArraySPP_CCDoTT_VJ_VS.txt', M, 'delimiter', '\t', 'precision', 4)   % Export matrix M to a file delimited by the tab character and using a precision of four significant digits
     % ---------------------------------------------------------------------
     % END Write results to DAT or TXT file
     % /////////////////////////////////////////////////////////////////////
     
 else
     
-    %# As we know that resultsArraySPP_CCDoTT.dat exits, read it
-    resultsArraySPP = csvread('resultsArraySPP_CCDoTT.dat');
+    %# As we know that resultsArraySPP_CCDoTT_VJ_VS.dat exits, read it
+    resultsArraySPP = csvread('resultsArraySPP_CCDoTT_VJ_VS.dat');
     
     %# Remove zero rows
     resultsArraySPP(all(resultsArraySPP==0,2),:)=[];
@@ -5350,7 +5353,7 @@ if enableAdjustedFitting == 1
         setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
         setFileFormat = {'PDF' 'PNG' 'EPS'};
         for kl=1:3
-            plotsavename = sprintf('_plots/%s/%s/SPP_Plot_1_MS_Thrust_at_F_0_vs_Slope_of_Linear_Fit_Plot.%s', 'SPP_CCDoTT', setFileFormat{kl}, setFileFormat{kl});
+            plotsavename = sprintf('_plots/%s/%s/SPP_Plot_1_MS_Thrust_at_F_0_vs_Slope_of_Linear_Fit_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{kl}, setFileFormat{kl});
             print(gcf, setSaveFormat{kl}, plotsavename);
         end
         close;
@@ -5677,7 +5680,7 @@ if ma == 9
         setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
         setFileFormat = {'PDF' 'PNG' 'EPS'};
         for k=1:3
-            plotsavename = sprintf('_plots/%s/%s/SPP_Plot_2_MS_Thrust_vs_Towing_Force_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+            plotsavename = sprintf('_plots/%s/%s/SPP_Plot_2_MS_Thrust_vs_Towing_Force_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
             print(gcf, setSaveFormat{k}, plotsavename);
         end
         %close;
@@ -5728,6 +5731,8 @@ else
     disp('!Plotting not possible as dataset is not complete (i.e. data for 9 speeds)!');
     disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 end
+
+break;
 
 %# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 %# 3. Thrust deduction fractions
@@ -6010,7 +6015,7 @@ if enablePlot3 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_3_MS_Fr_vs_Thrust_Deduction_Fraction_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_3_MS_Fr_vs_Thrust_Deduction_Fraction_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -6255,7 +6260,7 @@ if enablePlot3_1 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_3_1_MS_Fr_vs_Thrust_Deduction_Fraction_without_MARIN_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_3_1_MS_Fr_vs_Thrust_Deduction_Fraction_without_MARIN_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -7291,7 +7296,7 @@ if enablePlot3_2 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_3_2_MS_Fr_vs_Thrust_Deduction_Fraction_without_MARIN_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_3_2_MS_Fr_vs_Thrust_Deduction_Fraction_without_MARIN_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -7466,7 +7471,7 @@ if enablePlot4 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_4_MS_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_4_MS_Fr_vs_Towing_Force_and_F_at_Zero_Thrust_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -7641,7 +7646,7 @@ if enablePlot5 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_5_FS_Overall_Propulsive_Efficiency_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_5_FS_Overall_Propulsive_Efficiency_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -7830,7 +7835,7 @@ if enablePlot6 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_6_FS_Power_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_6_FS_Power_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -7990,7 +7995,7 @@ if enablePlot7 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_7_FS_Speed_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_7_FS_Speed_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -8188,7 +8193,7 @@ if enablePlot8 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_8_FS_Comparison_PD_to_Sea_Trials_Data_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_8_FS_Comparison_PD_to_Sea_Trials_Data_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -8299,7 +8304,7 @@ if enablePlot8_1 == 1
     % set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
     
     %# Legend
-    hleg1 = legend('Deep water (1,500t)','Shallow water (1,525t)');
+    hleg1 = legend('Deep water (1,500 tonnes)','Shallow water (1,525 tonnes)');
     set(hleg1,'Location','NorthWest');
     %set(hleg1,'Interpreter','none');
     set(hleg1, 'Interpreter','tex');
@@ -8340,7 +8345,7 @@ if enablePlot8_1 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_8_1_FS_Comparison_PD_to_Sea_Trials_Data_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_8_1_FS_Comparison_PD_to_Sea_Trials_Data_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -8501,7 +8506,7 @@ if enablePlot9 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_9_FS_Comparison_Propulsive_Efficiency_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_9_FS_Comparison_Propulsive_Efficiency_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -8662,7 +8667,7 @@ if enablePlot10 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_10_MS_And_FS_Thrust_Coefficient_Comparison_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_10_MS_And_FS_Thrust_Coefficient_Comparison_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -8850,7 +8855,7 @@ if enablePlot11 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_11_FS_Resistance_vs_Extrapolated_Thrust_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_11_FS_Resistance_vs_Extrapolated_Thrust_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -9100,7 +9105,7 @@ if enablePlot11_1 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_11_1_FS_Resistance_vs_Extrapolated_Thrust_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_11_1_FS_Resistance_vs_Extrapolated_Thrust_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -9326,7 +9331,7 @@ if enablePlot12 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_12_Ship_Speed_Jet_Inlet_Velocity_Mass_Flow_Rate_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_12_Ship_Speed_Jet_Inlet_Velocity_Mass_Flow_Rate_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -9493,7 +9498,7 @@ if enablePlot12_1 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_12_1_Full_Scale_Ship_Speed_Jet_Inlet_Velocity_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_12_1_Full_Scale_Ship_Speed_Jet_Inlet_Velocity_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -9680,7 +9685,7 @@ if enablePlot12_1_1 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_12_1_1_Averaged_Full_Scale_Ship_Speed_Jet_Inlet_Velocity_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_12_1_1_Averaged_Full_Scale_Ship_Speed_Jet_Inlet_Velocity_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -9898,7 +9903,7 @@ if enablePlot12_2 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_12_2_Full_Scale_Ship_Speed_Mass_Flow_Rate_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_12_2_Full_Scale_Ship_Speed_Mass_Flow_Rate_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -10126,7 +10131,7 @@ if enablePlot12_2_1 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_12_2_1_Full_Scale_Ship_Speed_Mass_Flow_Rate_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_12_2_1_Full_Scale_Ship_Speed_Mass_Flow_Rate_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -10535,7 +10540,7 @@ if enablePlot12_3 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_12_3_Full_Scale_RPS_vs_Mass_Flow_Rate_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_12_3_Full_Scale_RPS_vs_Mass_Flow_Rate_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -10893,7 +10898,7 @@ if exist(SetAvgResistanceFilePath, 'file') == 2
         setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
         setFileFormat = {'PDF' 'PNG' 'EPS'};
         for k=1:3
-            plotsavename = sprintf('_plots/%s/%s/SPP_Plot_13_Heave_And_Running_Trim_Comparison_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+            plotsavename = sprintf('_plots/%s/%s/SPP_Plot_13_Heave_And_Running_Trim_Comparison_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
             print(gcf, setSaveFormat{k}, plotsavename);
         end
         %close;
@@ -11262,7 +11267,7 @@ if exist(SetAvgResistanceFilePath, 'file') == 2
         setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
         setFileFormat = {'PDF' 'PNG' 'EPS'};
         for k=1:3
-            plotsavename = sprintf('_plots/%s/%s/SPP_Plot_13_1_Heave_And_Running_Trim_Comparison_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+            plotsavename = sprintf('_plots/%s/%s/SPP_Plot_13_1_Heave_And_Running_Trim_Comparison_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
             print(gcf, setSaveFormat{k}, plotsavename);
         end
         %close;
@@ -11595,7 +11600,7 @@ if enablePlot14 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_14_Power_Comparison_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_14_Power_Comparison_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -11825,7 +11830,7 @@ if enablePlot14_1 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_14_1_Full_Scale_Port_Power_Comparison_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_14_1_Full_Scale_Port_Power_Comparison_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -11977,7 +11982,7 @@ if enablePlot15 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_15_Thrust_at_SPP_vs_Ship_Speed_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_15_Thrust_at_SPP_vs_Ship_Speed_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -12175,7 +12180,7 @@ if enablePlot16 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_16_Full_Scale_Ship_Speed_CRs_and_Delivered_Power_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_16_Full_Scale_Ship_Speed_CRs_and_Delivered_Power_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -12382,7 +12387,7 @@ if enablePlot16_1 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_16_1_Averaged_Full_Scale_Ship_Speed_CRs_and_Delivered_Power_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_16_1_Averaged_Full_Scale_Ship_Speed_CRs_and_Delivered_Power_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -12570,7 +12575,7 @@ if enablePlot17 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_17_Full_Scale_Ship_Speed_OPE_and_CRs_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_17_Full_Scale_Ship_Speed_OPE_and_CRs_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -12762,7 +12767,7 @@ if enablePlot18 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_18_Full_Scale_Overall_Propulsive_Efficiency_RBH_FT0_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_18_Full_Scale_Overall_Propulsive_Efficiency_RBH_FT0_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -13105,7 +13110,7 @@ if enablePlot19 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_19_RTm_and_RTm-FD_vs_Speed_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_19_RTm_and_RTm-FD_vs_Speed_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -13308,7 +13313,7 @@ if enablePlot19_1 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_19_1_RTm_and_RTm-FD_vs_Speed_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_19_1_RTm_and_RTm-FD_vs_Speed_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -13564,7 +13569,7 @@ if enablePlot20 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_20_Torque_Comparison_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_20_Torque_Comparison_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
@@ -13975,7 +13980,7 @@ if enablePlot20_1 == 1
     setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
     setFileFormat = {'PDF' 'PNG' 'EPS'};
     for k=1:3
-        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_20_1_Torque_Comparison_Plot.%s', 'SPP_CCDoTT', setFileFormat{k}, setFileFormat{k});
+        plotsavename = sprintf('_plots/%s/%s/SPP_Plot_20_1_Torque_Comparison_Plot.%s', 'SPP_CCDoTT_VJ_VS', setFileFormat{k}, setFileFormat{k});
         print(gcf, setSaveFormat{k}, plotsavename);
     end
     %close;
