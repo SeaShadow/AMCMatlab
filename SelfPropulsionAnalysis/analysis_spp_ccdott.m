@@ -4,7 +4,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  April 6, 2015
+%# Date       :  May 12, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -142,10 +142,10 @@ enablePlot16        = 0;    % Full_Scale_Ship_Speed_CRs_and_Delivered_Power_Plot
 enablePlot16_1      = 0;    % Averaged_Full_Scale_Ship_Speed_CRs_and_Delivered_Power_Plot
 enablePlot17        = 0;    % Full_Scale_Ship_Speed_OPE_and_CRs_Plot
 enablePlot18        = 0;    % Full_Scale_Overall_Propulsive_Efficiency_RBH_FT0_Plot
-enablePlot19        = 1;    % RTm_and_RTm-FD_vs_Speed_Plot
-enablePlot19_1      = 1;    % RTm_and_RTm-FD_vs_Speed_Plot
-enablePlot20        = 1;    % Torque comparison FRM and SPT
-enablePlot20_1      = 1;    % Power (P=Tw) comparison FRM and SPT
+enablePlot19        = 0;    % RTm_and_RTm-FD_vs_Speed_Plot
+enablePlot19_1      = 0;    % RTm_and_RTm-FD_vs_Speed_Plot
+enablePlot20        = 0;    % Torque comparison FRM and SPT
+enablePlot20_1      = 0;    % Power (P=Tw) comparison FRM and SPT
 
 % Check if Curve Fitting Toolbox is installed
 % See: http://stackoverflow.com/questions/2060382/how-would-one-check-for-installed-matlab-toolboxes-in-a-script-function
@@ -3285,6 +3285,10 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData.dat', 'file') == 0
         resSPP_CCDoTT(klp,27) = 0;
         resSPP_CCDoTT(klp,28) = 0;
         
+        % Thrust coefficient, CT
+        resSPP_CCDoTT(klp,29) = 0;
+        resSPP_CCDoTT(klp,30) = 0;
+        
     end % klp=1:ma
     
 else
@@ -4955,6 +4959,10 @@ if exist('resultsArraySPP_CCDoTT_SelfPropPointsData_MS.dat', 'file') == 0
         resSPP_CCDoTT_MS(klp,27) = 0;
         resSPP_CCDoTT_MS(klp,28) = 0;
         
+        % Thrust coefficient, CT
+        resSPP_CCDoTT_MS(klp,29) = 0;
+        resSPP_CCDoTT_MS(klp,30) = 0; 
+        
     end % klp=1:ma
     
 else
@@ -6345,7 +6353,7 @@ for k=1:m
     ThrustCoeffArray(k,8)  = MSPortThrustCoeff;
     ThrustCoeffArray(k,9)  = MSStbdThrustCoeff;
     
-    % Full scale shaft speed
+    % Full scale shaft speed (RPS)
     FSPortSS = sqrt(FSPortGrosThrust/(saltwaterdensity*FS_ImpDia^4*MSPortThrustCoeff));
     FSStbdSS = sqrt(FSStbdGrosThrust/(saltwaterdensity*FS_ImpDia^4*MSStbdThrustCoeff));
     
@@ -6545,6 +6553,13 @@ for k=1:m
     MSStbdGrosThrust = MSThrustAtSPP*PortStbdRatio;
     modelScaleDataArray(k,20) = MSPortGrosThrust;
     modelScaleDataArray(k,21) = MSStbdGrosThrust;
+    
+    % Thrust coefficient, CT where SPP at TM-FD
+    resSPP_CCDoTT(k,29) = MSPortGrosThrust/(freshwaterdensity*MS_ImpDia^4*(MSPortSS/60)^2);
+    resSPP_CCDoTT(k,30) = MSStbdGrosThrust/(freshwaterdensity*MS_ImpDia^4*(MSStbdSS/60)^2);
+    % Thrust coefficient, CT where SPP at TM
+    resSPP_CCDoTT_MS(k,29) = (resSPP_CCDoTT_MS(k,11)*(A{k}(ratioRow,40)/A{k}(ratioRow,42)))/(freshwaterdensity*MS_ImpDia^4*(resSPP_CCDoTT_MS(k,3)/60)^2);
+    resSPP_CCDoTT_MS(k,30) = (resSPP_CCDoTT_MS(k,11)*(A{k}(ratioRow,41)/A{k}(ratioRow,42)))/(freshwaterdensity*MS_ImpDia^4*(resSPP_CCDoTT_MS(k,7)/60)^2);
     
     % Full Scale - Neglect run 70 and 71 (as faulty)
     PortStbdRatio    = A{k}(ratioRow,40)/A{k}(ratioRow,42);

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  April 6, 2015
+%# Date       :  May 16, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -384,8 +384,8 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
         p2 = polyval(p,x);
         
         % Equation of fit
-        [fitobject,gof,output] = fit(x,y,'poly1');
-        cvalues                = coeffvalues(fitobject);
+        [fitobjectfrt,goffrt,outputfrt] = fit(x,y,'poly1');
+        cvaluesfrt                      = coeffvalues(fitobjectfrt);
         
         % Slope of Linear fit => Y = (slope1 * X ) + slope2
         slope{i}   = polyfit(x,y,1);
@@ -537,7 +537,8 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             %# Line, colors and markers
             setMarkerSize      = 4;
             setLineWidthMarker = 1;
-            setLineWidth       = 1;
+            setLineWidth       = 2;
+            setLineWidthThin   = 1;
             setLineStyle       = '-';
             setLineStyle1      = '--';
             setLineStyle2      = '-.';
@@ -558,6 +559,9 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             %# Linear fit
             p  = polyfit(x,y,1);
             p2 = polyval(p,x);
+            
+            [fitobject,gof,output] = fit(x,y,'poly1');
+            cvalues     = coeffvalues(fitobject);            
             
             %# Calculate error bands based on scatter
             [mx,nx] = size(x);
@@ -585,38 +589,6 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             pf3 = polyfit(x,lowerBand,1);
             pv3 = polyval(pf3,x);
             
-            %# Plotting
-            h = plot(x,y,'-',x,p2,'-');
-            % Patch min/max area
-            patch([x;flipud(x)],[pv2;flipud(pv3)],[0.8,0.8,0.8],'EdgeColor','none'); %,'EdgeColor','none'
-%             hold on;
-%             h1 = plot(x,pv2,'-');
-%             hold on;
-%             h2 = plot(x,pv3,'-');
-%             if enablePlotTitle == 1
-%                 title('{\bf Wave Probe Output}','FontSize',setGeneralFontSize);
-%             end
-            xlabel('{\bf Time (s)}','FontSize',setGeneralFontSize);
-            ylabel('{\bf Mass flow rate (Kg)}','FontSize',setGeneralFontSize);
-            grid on;
-            box on;
-            axis square;
-            
-            %# Line, colors and markers
-            set(h(1),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-            set(h(2),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth+1);
-%             set(h1(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-%             set(h2(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-            
-            %# Set plot figure background to a defined color
-            %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
-            set(gcf,'Color',[1,1,1]);
-            
-            %# Axis limitations
-            xlim([x(1) x(end)]);
-            %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
-            %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
-            
             %# Add results to array for comparison and save as TXT and DAT file
             % Slope of Linear fit => Y = (slope1 * X ) + slope2
             slopesArray(k, 1) = k;              % Run number
@@ -637,8 +609,50 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             %disp(linfiteqntxt);
             
             %# Legend
-            linfittxt = sprintf('Linear fit: %s',linfiteqn);
-            hleg1 = legend('Wave probe output',linfittxt,'Minimum and maximum value');
+            linfittxt = sprintf('Linear fit: %s',linfiteqn);            
+            
+            %# Plotting
+            h = plot(x,y,'-',x,p2,'-');
+            legendInfo_FRT{1} = 'Wave probe output';
+            legendInfo_FRT{2} = linfittxt;
+            % Patch min/max area
+            patch([x;flipud(x)],[pv2;flipud(pv3)],[0.8,0.8,0.8],'EdgeColor','none'); %,'EdgeColor','none'
+            legendInfo_FRT{3} = 'Minimum and maximum value';
+%             h = plot(x,y,'-');
+%             legendInfo_FRT{1} = 'Wave probe output';
+%             % 95% propability range
+%             hold on;
+%             h3 = plot(fitobjectfrt,'predobs',0.95);
+%             legendInfo_FRT{4} = 'Fitted curve (poly1)';
+%             legendInfo_FRT{5} = '95% probability (lower)';
+%             legendInfo_FRT{6} = '95% probability (upper)';
+%             setGT = 0.4;
+%             set(h3(1),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidthThin);
+%             set(h3(2),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle3,'linewidth',setLineWidthThin);
+%             set(h3(3),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+            xlabel('{\bf Time (s)}','FontSize',setGeneralFontSize);
+            ylabel('{\bf Mass flow rate (Kg)}','FontSize',setGeneralFontSize);
+            grid on;
+            box on;
+            axis square;
+            
+            %# Line, colors and markers
+            set(h(1),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+%            set(h(2),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth+1);
+%             set(h1(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+%             set(h2(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
+            
+            %# Set plot figure background to a defined color
+            %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+            set(gcf,'Color',[1,1,1]);
+            
+            %# Axis limitations
+            xlim([x(1) x(end)]);
+            %set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+            %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
+            
+            % Legend
+            hleg1 = legend(legendInfo_FRT);
             set(hleg1,'Location','NorthWest');
             set(hleg1,'Interpreter','none');
             set(hleg1,'LineWidth',1);
@@ -753,15 +767,11 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
                 h = plot(x,y1,'-',xportstbd,ystbdmean,'-'); %,x,kppolyvalstbd,'-'
                 % Patch min/max area
                 patch([plotArray1(:,1);flipud(plotArray1(:,3))],[plotArray1(:,2);flipud(plotArray1(:,4))],[0.8,0.8,0.8],'EdgeColor','none'); %,'EdgeColor','none'
-%                 hold on;
-%                 h1 = plot(plotArray1(:,1),plotArray1(:,2),'r-',plotArray1(:,3),plotArray1(:,4),'g-');
             elseif ismember(k,portRuns)
                 %# PORT
                 h = plot(x,y2,'-',xportstbd,yportmean,'-'); %,x,kppolyvalport,'-'
                 % Patch min/max area
                 patch([plotArray2(:,1);flipud(plotArray2(:,3))],[plotArray2(:,2);flipud(plotArray2(:,4))],[0.8,0.8,0.8],'EdgeColor','none'); %,'EdgeColor','none'                
-%                 hold on;
-%                 h2 = plot(plotArray2(:,1),plotArray2(:,2),'b-',plotArray2(:,3),plotArray2(:,4),'k-');
             end
             xlabel('{\bf Time (s)}','FontSize',setGeneralFontSize);
             ylabel('{\bf Output [V]}','FontSize',setGeneralFontSize);
@@ -772,21 +782,6 @@ if exist('statisticsArrayAnalysis_copy.dat', 'file') ~= 2
             %# Line, colors and markers
             set(h(1),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
             set(h(2),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth+1);
-%             if ismember(k,stbdRuns) == 1
-%                 %# STBD
-%                 set(h(1),'Color',setColor{3},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-%                 set(h(2),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
-%                 set(h(3),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-%                 set(h1(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-%                 set(h1(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-%             elseif ismember(k,portRuns)
-%                 %# PORT
-%                 set(h(1),'Color',setColor{2},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-%                 set(h(2),'Color',setColor{10},'LineStyle',setLineStyle2,'linewidth',setLineWidth);
-%                 set(h(3),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-%                 set(h2(1),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-%                 set(h2(2),'Color',setColor{1},'LineStyle',setLineStyle,'linewidth',setLineWidth);
-%             end
             
             %# Axis limitations
             minX  = x(1);

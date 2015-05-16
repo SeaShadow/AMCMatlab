@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %# 
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 2, 2015
+%# Date       :  May 16, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -179,8 +179,16 @@ for k=startRun:endRun
     
     [RPMStbd RPMPort] = analysis_rpm(k,name,Fs,timeData,Raw_CH_5_RPMStbd,Raw_CH_6_RPMPort);
     
-    rpmStbdArray(k) = RPMStbd;
-    rpmPortArray(k) = RPMPort;
+%     rpmStbdArray(k) = RPMStbd;
+%     rpmPortArray(k) = RPMPort;
+    
+    if RPMStbd > RPMPort
+        setMeasuredRPM = RPMStbd;
+    elseif RPMPort > RPMStbd
+        setMeasuredRPM = RPMPort;
+    else
+        setMeasuredRPM = 0;
+    end
     
     %# --------------------------------------------------------------------
     %%# END: WRITE RESULT ARRAYS
@@ -200,19 +208,19 @@ resultsArrayTPort(all(resultsArrayTPort==0,2),:)=[];
 resultsArrayQStbd(all(resultsArrayQStbd==0,2),:)=[];
 resultsArrayQPort(all(resultsArrayQPort==0,2),:)=[];
 
-rpmStbdArray = rpmStbdArray.';
-rpmPortArray = rpmPortArray.';
-rpmStbdArray(all(rpmStbdArray==0,2),:)=[];
-rpmPortArray(all(rpmPortArray==0,2),:)=[];
-
-meanRPMStbd = round(mean(rpmStbdArray));
-meanRPMPort = round(mean(rpmPortArray));
+% rpmStbdArray = rpmStbdArray.';
+% rpmPortArray = rpmPortArray.';
+% rpmStbdArray(all(rpmStbdArray==0,2),:)=[];
+% rpmPortArray(all(rpmPortArray==0,2),:)=[];
+% 
+% meanRPMStbd = round(mean(rpmStbdArray));
+% meanRPMPort = round(mean(rpmPortArray));
 
 %# Plot repeats, save PNG files and execure single factor ANOVA
-repeat_plot(timeData,resultsArrayWP,runArray,0,'CH 0: Wave Probe','Kg','CH_0_Wave_Probe',name)
+repeat_plot(timeData,resultsArrayWP,runArray,setMeasuredRPM,'CH 0: Wave Probe','Kg','CH_0_Wave_Probe',name)
 %repeat_plot(timeData,resultsArrayKPStbd,runArray,meanRPMStbd,'CH 1: STBD Kiel Probe','V','CH_1_STBD_Kiel_Probe',name)
-repeat_plot(timeData,resultsArrayKPPort,runArray,meanRPMPort,'CH 2: PORT Kiel Probe','V','CH_2_PORT_Kiel_Probe',name)
+repeat_plot(timeData,resultsArrayKPPort,runArray,setMeasuredRPM,'CH 2: PORT Kiel Probe','V','CH_2_PORT_Kiel_Probe',name)
 %repeat_plot(timeData,resultsArrayTStbd,runArray,meanRPMStbd,'CH 5: STBD Thrust','g','CH_7_STBD_Thrust',name)
-repeat_plot(timeData,resultsArrayTPort,runArray,meanRPMPort,'CH 6: PORT Thrust','g','CH_8_PORT_Thrust',name)
+repeat_plot(timeData,resultsArrayTPort,runArray,setMeasuredRPM,'CH 6: PORT Thrust','g','CH_8_PORT_Thrust',name)
 %repeat_plot(timeData,resultsArrayQStbd,runArray,meanRPMStbd,'CH 7: STBD Torque','Nm','CH_9_STBD_Torque',name)
-repeat_plot(timeData,resultsArrayQPort,runArray,meanRPMPort,'CH 8: PORT Torque','Nm','CH_10_PORT_Torque',name)
+repeat_plot(timeData,resultsArrayQPort,runArray,setMeasuredRPM,'CH 8: PORT Torque','Nm','CH_10_PORT_Torque',name)

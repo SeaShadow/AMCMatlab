@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  April 6, 2015
+%# Date       :  May 16, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -171,41 +171,6 @@ end
 
 %# _kp_vs_mass_flow_rate directory ----------------------------------------
 setDirName = '_plots/_kp_vs_mass_flow_rate';
-
-%# Repeat directory
-fPath = setDirName;
-if isequal(exist(fPath, 'dir'),7)
-    % Do nothing as directory exists
-else
-    mkdir(fPath);
-end
-
-%# PDF directory
-fPath = sprintf('%s/%s', setDirName, 'PDF');
-if isequal(exist(fPath, 'dir'),7)
-    % Do nothing as directory exists
-else
-    mkdir(fPath);
-end
-
-%# PNG directory
-fPath = sprintf('%s/%s', setDirName, 'PNG');
-if isequal(exist(fPath, 'dir'),7)
-    % Do nothing as directory exists
-else
-    mkdir(fPath);
-end
-
-%# EPS directory
-fPath = sprintf('%s/%s', setDirName, 'EPS');
-if isequal(exist(fPath, 'dir'),7)
-    % Do nothing as directory exists
-else
-    mkdir(fPath);
-end
-
-%# Torque directory ----------------------------------------
-setDirName = '_plots/Torque';
 
 %# Repeat directory
 fPath = setDirName;
@@ -611,11 +576,11 @@ end
 
 
 %# ************************************************************************
-%# 3. Plot kiel probe voltage against Mass flow rate
+%# 1. Plot kiel probe voltage against Mass flow rate
 %# ************************************************************************
 
 %# Plotting gross thrust vs. towing force
-figurename = 'Flow Rate Measurement Test: Kiel Probe Voltage vs. Mass flow rate';
+figurename = 'Plot 1.1: Kiel Probe Voltage vs. Mass flow rate';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ------------------------------------------------
@@ -1247,7 +1212,7 @@ if enableCurveFittingToolboxPlot == 1
     end % enableErrorBarPlot
     
 else
-    
+
     h = plot(xPort13,yPort13,'*',xStbd13,yStbd13,'*',xPort14,yPort14,'*',xStbd14,yStbd14,'*');
     % Legend entries
     legendInfo{1} = 'Port WJ system (June 2013)';
@@ -1260,6 +1225,7 @@ else
     set(h(3),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     set(h(4),'Color',setColor{3},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     hold on;
+    
     % Curve fitting
     if enableCurveFittingPlot == 1
         % Patch min/max area
@@ -1354,20 +1320,513 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/MS_Kiel_Probe_vs_Mass_Flow_Rate_Plot.%s', '_kp_vs_mass_flow_rate', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Plot_1_MS_Kiel_Probe_vs_Mass_Flow_Rate_Plot.%s', '_kp_vs_mass_flow_rate', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
 
 
 %# ************************************************************************
-%# Torque investigation
+%# 1.1 Plot kiel probe voltage against Mass flow rate (95% probability range)
 %# ************************************************************************
 
+%# Plotting gross thrust vs. towing force
+figurename = 'Plot 1.1: Kiel Probe Voltage vs. Mass flow rate (95% probability range)';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ------------------------------------------------
+
+%if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+%end
+
+% Fonts and colours ---------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 14;
+setBorderLineWidth = 2;
+setLegendFontSize  = 12;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. --------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+%setMarker = {'+';'^';'s';'v';'>';'o';'<';'p';'h';'x';'*'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+% Markers sizes, etc.
+setMarkerSize      = 12;
+setLineWidthMarker = 1;
+setLineWidth       = 2;
+setLineWidthThin   = 1;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+%# Subplot ////////////////////////////////////////////////////////////////
+%subplot(1,1,1);
+
+% X and Y values ----------------------------------------------------------
+
+% Port WJ system (June 2013)
+xPort13 = June13Port(:,4);
+yPort13 = June13Port(:,3);
+
+% Stbd (June 2013)
+xStbd13 = June13Stbd(:,4);
+yStbd13 = June13Stbd(:,3);
+
+% Port WJ system (Sept. 2014)
+xPort14 = AvgPortArray(:,7);
+yPort14 = AvgPortArray(:,5);
+
+% Stbd WJ system (Sept. 2014)
+xStbd14 = AvgStbdArray(:,6);
+yStbd14 = AvgStbdArray(:,5);
+
+% Port and Stbd averaged (Sept. 2014)
+if enableAvgPortStbdPlot == 1
+    xPortStbdAvg14 = stbdAvgPortArray(:,4);
+    yPortStbdAvg14 = stbdAvgPortArray(:,3);
+end
+
+% Equation of fit
+EqnOfFitArray = [];
+EqnOfFitKP    = [1:0.2:4.4];
+[meof,neof]   = size(EqnOfFitKP);
+
+%# Columns:
+%[1]  Kiel probe output             (V)
+%[2]  Stbd Mass flow rate           (Kg/s}
+%[3]  Port Mass flow rate           (Kg/s}
+
+for kj=1:neof
+    KPValue = EqnOfFitKP(kj);
+    EqnOfFitArray(kj, 1) = KPValue;
+    EqnOfFitArray(kj, 2) = -0.0946*KPValue^4+1.1259*KPValue^3-5.0067*KPValue^2+11.0896*KPValue-6.8705;
+    EqnOfFitArray(kj, 3) = -0.0421*KPValue^4+0.5718*KPValue^3-2.9517*KPValue^2+7.8517*KPValue-5.1976;
+end
+
+% Polynomial fit ----------------------------------------------------------
+
+setPolyOrder = 4;
+
+% Port WJ system (June 2013)
+x = xPort13;
+y = yPort13;
+
+[fitobject1,gof1,output1] = fit(x,y,'poly4');
+cvalues1                  = coeffvalues(fitobject1);
+
+% Stbd (June 2013)
+x = xStbd13;
+y = yStbd13;
+
+[fitobject2,gof2,output2] = fit(x,y,'poly4');
+cvalues2                  = coeffvalues(fitobject2);
+
+% Port WJ system (Sept. 2014)
+x = xPort14;
+y = yPort14;
+
+[fitobject3,gof3,output3] = fit(x,y,'poly4');
+cvalues3                  = coeffvalues(fitobject3);
+
+% Stbd WJ system (Sept. 2014)
+x = xStbd14;
+y = yStbd14;
+
+% Curve Fitting Toolbox
+[fitobject4,gof4,output4] = fit(x,y,'poly4');
+cvalues4                  = coeffvalues(fitobject4);
+
 %# ************************************************************************
-%# 1. Flow rate vs. torque
+%# Display in command window
 %# ************************************************************************
-figurename = 'Plot 1: Flow rate vs. torque';
+
+% % Default number of decimals
+% setDec1 = '%0.4f';
+% setDec2 = '+%0.4f';
+% setDec3 = '+%0.4f';
+% setDec4 = '+%0.4f';
+% setDec5 = '+%0.4f';
+% 
+% % Port WJ system (June 2013)
+% cval = cvalues1;
+% gofa = gof1;
+% setDecimals1 = '%0.4f';
+% setDecimals2 = '+%0.4f';
+% setDecimals3 = '+%0.4f';
+% setDecimals4 = '+%0.4f';
+% setDecimals5 = '+%0.4f';
+% if cval(1) < 0
+%     setDecimals1 = '%0.4f';
+% end
+% if cval(2) < 0
+%     setDecimals2 = '%0.4f';
+% end
+% if cval(3) < 0
+%     setDecimals3 = '%0.4f';
+% end
+% if cval(4) < 0
+%     setDecimals4 = '%0.4f';
+% end
+% if cval(5) < 0
+%     setDecimals5 = '%0.4f';
+% end
+% p1   = sprintf(setDecimals1,cval(1));
+% p2   = sprintf(setDecimals2,cval(2));
+% p3   = sprintf(setDecimals3,cval(3));
+% p4   = sprintf(setDecimals4,cval(4));
+% p5   = sprintf(setDecimals5,cval(5));
+% gofa = sprintf('%0.2f',gofa.rsquare);
+% EoFEqn = sprintf('Port WJ system (June 2013): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
+% disp(EoFEqn);
+% 
+% % Stbd (June 2013)
+% cval = cvalues2;
+% gofa = gof2;
+% setDecimals1 = '%0.4f';
+% setDecimals2 = '+%0.4f';
+% setDecimals3 = '+%0.4f';
+% setDecimals4 = '+%0.4f';
+% setDecimals5 = '+%0.4f';
+% if cval(1) < 0
+%     setDecimals1 = '%0.4f';
+% end
+% if cval(2) < 0
+%     setDecimals2 = '%0.4f';
+% end
+% if cval(3) < 0
+%     setDecimals3 = '%0.4f';
+% end
+% if cval(4) < 0
+%     setDecimals4 = '%0.4f';
+% end
+% if cval(5) < 0
+%     setDecimals5 = '%0.4f';
+% end
+% p1   = sprintf(setDecimals1,cval(1));
+% p2   = sprintf(setDecimals2,cval(2));
+% p3   = sprintf(setDecimals3,cval(3));
+% p4   = sprintf(setDecimals4,cval(4));
+% p5   = sprintf(setDecimals5,cval(5));
+% gofa = sprintf('%0.2f',gofa.rsquare);
+% EoFEqn = sprintf('Stbd WJ system (June 2013): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
+% disp(EoFEqn);
+% 
+% % Port WJ system (Sept. 2014)
+% cval = cvalues3;
+% gofa = gof3;
+% setDecimals1 = '%0.4f';
+% setDecimals2 = '+%0.4f';
+% setDecimals3 = '+%0.4f';
+% setDecimals4 = '+%0.4f';
+% setDecimals5 = '+%0.4f';
+% if cval(1) < 0
+%     setDecimals1 = '%0.4f';
+% end
+% if cval(2) < 0
+%     setDecimals2 = '%0.4f';
+% end
+% if cval(3) < 0
+%     setDecimals3 = '%0.4f';
+% end
+% if cval(4) < 0
+%     setDecimals4 = '%0.4f';
+% end
+% if cval(5) < 0
+%     setDecimals5 = '%0.4f';
+% end
+% p1   = sprintf(setDecimals1,cval(1));
+% p2   = sprintf(setDecimals2,cval(2));
+% p3   = sprintf(setDecimals3,cval(3));
+% p4   = sprintf(setDecimals4,cval(4));
+% p5   = sprintf(setDecimals5,cval(5));
+% gofa = sprintf('%0.2f',gofa.rsquare);
+% EoFEqn = sprintf('Port WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
+% disp(EoFEqn);
+% 
+% % Stbd WJ system (Sept. 2014)
+% cval = cvalues4;
+% gofa = gof4;
+% setDecimals1 = '%0.4f';
+% setDecimals2 = '+%0.4f';
+% setDecimals3 = '+%0.4f';
+% setDecimals4 = '+%0.4f';
+% setDecimals5 = '+%0.4f';
+% if cval(1) < 0
+%     setDecimals1 = '%0.4f';
+% end
+% if cval(2) < 0
+%     setDecimals2 = '%0.4f';
+% end
+% if cval(3) < 0
+%     setDecimals3 = '%0.4f';
+% end
+% if cval(4) < 0
+%     setDecimals4 = '%0.4f';
+% end
+% if cval(5) < 0
+%     setDecimals5 = '%0.4f';
+% end
+% p1   = sprintf(setDecimals1,cval(1));
+% p2   = sprintf(setDecimals2,cval(2));
+% p3   = sprintf(setDecimals3,cval(3));
+% p4   = sprintf(setDecimals4,cval(4));
+% p5   = sprintf(setDecimals5,cval(5));
+% gofa = sprintf('%0.2f',gofa.rsquare);
+% EoFEqn = sprintf('Stbd WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
+% disp(EoFEqn);
+% 
+% % Port and Stbd averaged (Sept. 2014)
+% if enableAvgPortStbdPlot == 1
+%     cval = cvalues5;
+%     gofa = gof5;
+%     setDecimals1 = '%0.4f';
+%     setDecimals2 = '+%0.4f';
+%     setDecimals3 = '+%0.4f';
+%     setDecimals4 = '+%0.4f';
+%     setDecimals5 = '+%0.4f';
+%     if cval(1) < 0
+%         setDecimals1 = '%0.4f';
+%     end
+%     if cval(2) < 0
+%         setDecimals2 = '%0.4f';
+%     end
+%     if cval(3) < 0
+%         setDecimals3 = '%0.4f';
+%     end
+%     if cval(4) < 0
+%         setDecimals4 = '%0.4f';
+%     end
+%     if cval(5) < 0
+%         setDecimals5 = '%0.4f';
+%     end
+%     p1   = sprintf(setDecimals1,cval(1));
+%     p2   = sprintf(setDecimals2,cval(2));
+%     p3   = sprintf(setDecimals3,cval(3));
+%     p4   = sprintf(setDecimals4,cval(4));
+%     p5   = sprintf(setDecimals5,cval(5));
+%     gofa = sprintf('%0.2f',gofa.rsquare);
+%     EoFEqn = sprintf('Avg. Port/Stbd WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
+%     disp(EoFEqn);
+% end
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+subplot(1,2,1)
+
+% Plotting ----------------------------------------------------------------
+   
+% Port WJ system (June 2013)
+h = plot(xPort13,yPort13,'*');
+legendInfo_1_1_1{1} = 'Port WJ system (June 2013)';
+set(h(1),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+hold on;
+% 95% propability range
+hold on;
+h = plot(fitobject1,'predobs',0.95);
+legendInfo_1_1_1{2} = 'Fitted curve (poly4)';
+legendInfo_1_1_1{3} = '95% probability (lower)';
+legendInfo_1_1_1{4} = '95% probability (upper)';
+setGT = 0.4;
+set(h(1),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidthThin);
+set(h(2),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle3,'linewidth',setLineWidthThin);
+set(h(3),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+
+% Stbd (June 2013)
+h = plot(xStbd13,yStbd13,'*');
+legendInfo_1_1_1{5} = 'Stbd WJ system (June 2013)';
+set(h(1),'Color',setColor{5},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+hold on;
+% 95% propability range
+hold on;
+h = plot(fitobject2,'predobs',0.95);
+legendInfo_1_1_1{6} = 'Fitted curve (poly4)';
+legendInfo_1_1_1{7} = '95% probability (lower)';
+legendInfo_1_1_1{8} = '95% probability (upper)';
+setGT = 0.7;
+set(h(1),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidthThin);
+set(h(2),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle3,'linewidth',setLineWidthThin);
+set(h(3),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+
+if enablePlotTitle == 1
+    title('{\bf Kiel Probe Output vs. Mass flow rate}','FontSize',setGeneralFontSize);
+end
+xlabel('{\bf Kiel probe output (V)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Mass flow rate (Kg/s)}','FontSize',setGeneralFontSize);
+grid on;
+box on;
+axis square;
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 1;
+maxX  = 4.5;
+incrX = 0.5;
+minY  = 0;
+maxY  = 5.5;
+incrY = 0.5;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+hleg1 = legend(legendInfo_1_1_1);
+set(hleg1,'Location','SouthEast');
+set(hleg1,'Interpreter','none');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+subplot(1,2,2)
+
+% Plotting ----------------------------------------------------------------
+   
+% Port WJ system (Sept. 2014)
+h = plot(xPort14,yPort14,'*');
+legendInfo_1_1_2{1} = 'Port WJ system (Sept. 2014)';
+set(h(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+hold on;
+% 95% propability range
+hold on;
+h = plot(fitobject3,'predobs',0.95);
+legendInfo_1_1_2{2} = 'Fitted curve (poly4)';
+legendInfo_1_1_2{3} = '95% probability (lower)';
+legendInfo_1_1_2{4} = '95% probability (upper)';
+setGT = 0.4;
+set(h(1),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidthThin);
+set(h(2),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle3,'linewidth',setLineWidthThin);
+set(h(3),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+
+% Stbd WJ system (Sept. 2014)
+h = plot(xStbd14,yStbd14,'*');
+legendInfo_1_1_2{5} = 'Stbd WJ system (Sept. 2014)';
+set(h(1),'Color',setColor{3},'Marker',setMarker{8},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+hold on;
+% 95% propability range
+hold on;
+h = plot(fitobject4,'predobs',0.95);
+legendInfo_1_1_2{6} = 'Fitted curve (poly4)';
+legendInfo_1_1_2{7} = '95% probability (lower)';
+legendInfo_1_1_2{8} = '95% probability (upper)';
+setGT = 0.7;
+set(h(1),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidthThin);
+set(h(2),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle3,'linewidth',setLineWidthThin);
+set(h(3),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+
+if enablePlotTitle == 1
+    title('{\bf Kiel Probe Output vs. Mass flow rate}','FontSize',setGeneralFontSize);
+end
+xlabel('{\bf Kiel probe output (V)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Mass flow rate (Kg/s)}','FontSize',setGeneralFontSize);
+grid on;
+box on;
+axis square;
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+%# Axis limitations
+minX  = 1;
+maxX  = 4.5;
+incrX = 0.5;
+minY  = 0;
+maxY  = 5.5;
+incrY = 0.5;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+hleg1 = legend(legendInfo_1_1_2);
+set(hleg1,'Location','SouthEast');
+set(hleg1,'Interpreter','none');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+%if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+%end
+
+%# Plot title ---------------------------------------------------------
+if enablePlotMainTitle == 1
+    annotation('textbox', [0 0.9 1 0.1], ...
+        'String', strcat('{\bf ', figurename, '}'), ...
+        'EdgeColor', 'none', ...
+        'HorizontalAlignment', 'center');
+end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+minRun = min(portRuns(:,1));
+maxRun = max(stbdRuns(:,1));
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Plot_1_1_MS_Kiel_Probe_vs_Mass_Flow_Rate_Plot.%s', '_kp_vs_mass_flow_rate', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# 2. Flow rate vs. torque
+%# ************************************************************************
+figurename = 'Plot 2: Flow rate vs. torque';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ----------------------------------------------------
@@ -1492,16 +1951,35 @@ EoFEqnS = sprintf('\\bf Stbd: \\rm y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofr
 disp(EoFEqnS);
 
 %# Plotting ---------------------------------------------------------------
-h = plot(x1,y1,'*',x2,y2,'*');
-% Port
+%# Port waterjet
+h1 = plot(x1,y1,'*');
+legendInfo_2{1} = 'Port waterjet';
+% 95% propability range
 hold on;
-h1 = plot(fitobjectp,'r-',x1,y1,'x');
-% Stbd
+h2 = plot(fitobjectp,'predobs',0.95);
+legendInfo_2{2} = 'Fitted curve (poly3)';
+legendInfo_2{3} = '95% probability (lower)';
+legendInfo_2{4} = '95% probability (upper)';
+setGT = 0.4;
+set(h2(1),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidthThin);
+set(h2(2),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle3,'linewidth',setLineWidthThin);
+set(h2(3),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+%# Starboard waterjet
+h3 = plot(x2,y2,'*');
+legendInfo_2{5} = 'Starboard waterjet';
+% 95% propability range
 hold on;
-h2 = plot(fitobjects,'b-',x2,y2,'x');
-%     if enablePlotTitle == 1
-%         title('{\bf Torque}','FontSize',setGeneralFontSize);
-%     end
+h2 = plot(fitobjects,'predobs',0.95);
+legendInfo_2{6} = 'Fitted curve (poly3)';
+legendInfo_2{7} = '95% probability (lower)';
+legendInfo_2{8} = '95% probability (upper)';
+setGT = 0.7;
+set(h2(1),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle,'linewidth',setLineWidthThin);
+set(h2(2),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle3,'linewidth',setLineWidthThin);
+set(h2(3),'Color',[setGT,setGT,setGT],'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+% if enablePlotTitle == 1
+%     title('{\bf Torque}','FontSize',setGeneralFontSize);
+% end
 xlabel('{\bf Flow rate (Kg/s)}','FontSize',setGeneralFontSize);
 ylabel('{\bf Torque (Nm)}','FontSize',setGeneralFontSize);
 grid on;
@@ -1518,8 +1996,8 @@ text(2.1,0.025,EoFEqnP,'FontSize',12,'color','k','FontWeight','normal');
 text(2.1,0.01,EoFEqnS,'FontSize',12,'color','k','FontWeight','normal');
 
 %# Line, colors and markers
-set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
-set(h(2),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h1(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
+set(h3(1),'Color',setColor{2},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerThin,'LineStyle',setLineStyle2,'linewidth',setLineWidthThin);
 
 %# Axis limitations
 minX  = 1;
@@ -1536,7 +2014,7 @@ set(gca,'YTick',minY:incrY:maxY);
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
 
 %# Legend
-hleg1 = legend('Port waterjet','Starboard waterjet');
+hleg1 = legend(legendInfo_2);
 set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','Tex');
 set(hleg1,'LineWidth',1);
@@ -1576,7 +2054,7 @@ set(gcf, 'renderer', 'painters');
 setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
-    plotsavename = sprintf('_plots/%s/%s/Plot_1_Torque_Investigation_Plot.%s', 'Torque', setFileFormat{k}, setFileFormat{k});
+    plotsavename = sprintf('_plots/%s/%s/Plot_2_MS_Torque_vs_Flow_Rate_Plot.%s', '_kp_vs_mass_flow_rate', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;
