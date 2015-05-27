@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  May 16, 2015
+%# Date       :  May 22, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -133,8 +133,8 @@ cutSamplesFromEnd = 4000;
 startRun = 1;       % Start at run x
 endRun   = 67;      % Stop at run y
 
-startRun = 27;      % Start at run x
-endRun   = 27;      % Stop at run y
+%startRun = 27;      % Start at run x
+%endRun   = 27;      % Stop at run y
 
 %# ------------------------------------------------------------------------
 %# END File loop for runs, startRun to endRun

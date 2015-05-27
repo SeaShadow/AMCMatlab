@@ -1,9 +1,9 @@
 %# ------------------------------------------------------------------------
-%# Resistance Test Analysis - Custome Plots using Averaged Data
+%# Resistance Test Analysis - Custom Plots using Averaged Data
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  April 6, 2015
+%# Date       :  May 19, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)

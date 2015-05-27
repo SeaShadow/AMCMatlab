@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  May 16, 2015
+%# Date       :  May 22, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -18,6 +18,7 @@
 %#               dd/mm/yyyy - ...
 %#
 %# ------------------------------------------------------------------------
+
 
 %# ------------------------------------------------------------------------
 %# Clear workspace
@@ -143,6 +144,7 @@ if exist('resultsArray_copy.dat', 'file') == 2
     %[17] Mass flow rate (mean, 1s intervals)                       (Kg/s)
     %[18] Mass flow rate (overall, Q/t)                             (Kg/s)
     %[19] Diff. Mass flow rate (mean, 1s intervals)/(overall, Q/t)  (%)
+    %[20] Mass flow rate (CROSS-CHECK)                              (Kg/s)
     results = csvread('resultsArray_copy.dat');
     %# Remove zero rows
     results(all(results==0,2),:)=[];
@@ -467,7 +469,7 @@ repeatedRunsDescStatArray = [];
 %[39] Variance                              (V)
 %[40] Standard deviation                    (-)
 
-% PORT
+% PORT --------------------------------------------------------------------
 sortedByRPMPortArray = [];
 sortedByRPMPortArray{1}  = results(8,:);
 sortedByRPMPortArray{2}  = results(9:11,:);
@@ -485,7 +487,7 @@ sortedByRPMPortArray{13} = results(34,:);
 sortedByRPMPortArray{14} = results(35:37,:);
 sortedByRPMPortArray     = sortedByRPMPortArray';
 
-% STBD
+% STBD --------------------------------------------------------------------
 sortedByRPMStbdArray = [];
 sortedByRPMStbdArray{1}  = results(40,:);
 sortedByRPMStbdArray{2}  = results([38 41:43],:);
