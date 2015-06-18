@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  May 22, 2015
+%# Date       :  June 17, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -87,8 +87,8 @@ XPlot = 42.0;                           %# A3 paper size
 YPlot = 29.7;                           %# A3 paper size
 XPlotMargin = 1;                        %# left/right margins from page borders
 YPlotMargin = 1;                        %# bottom/top margins from page borders
-XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
-YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
+XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (width & height)
+YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (width & height)
 %# ------------------------------------------------------------------------
 %# END Define plot size
 %# ************************************************************************
@@ -582,7 +582,7 @@ end
 %# ************************************************************************
 
 %# Plotting gross thrust vs. towing force
-figurename = 'Plot 1.1: Kiel Probe Voltage vs. Mass flow rate';
+figurename = 'Plot 1: Kiel Probe Voltage vs. Mass flow rate';
 f = figure('Name',figurename,'NumberTitle','off');
 
 %# Paper size settings ------------------------------------------------
@@ -1001,8 +1001,8 @@ else
         var5 = sprintf(setNeutDecimals,fitEqn(5));
     end
     % Equation of fit (poly4)
-    rSquared = sprintf('%0.2f',Rsq1);
-    EQoFit1  = sprintf('Port WJ system (June 2013): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+    rSquared = sprintf('%0.1f',Rsq1);
+    EQoFit1  = sprintf('Port WJ (Series 1): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
     disp(EQoFit1);
     
     % Stbd (June 2013)
@@ -1033,8 +1033,8 @@ else
         var5 = sprintf(setNeutDecimals,fitEqn(5));
     end
     % Equation of fit (poly4)
-    rSquared = sprintf('%0.2f',Rsq2);
-    EQoFit2  = sprintf('Stbd WJ system (June 2013): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+    rSquared = sprintf('%0.1f',Rsq2);
+    EQoFit2  = sprintf('Stbd WJ (Series 1): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
     disp(EQoFit2);
     
     % Port WJ system (Sept. 2014)
@@ -1065,8 +1065,10 @@ else
         var5 = sprintf(setNeutDecimals,fitEqn(5));
     end
     % Equation of fit (poly4)
-    rSquared = sprintf('%0.2f',Rsq3);
-    EQoFit3  = sprintf('Port WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+    rSquared = sprintf('%0.1f',Rsq3);
+    RS3      = sprintf('R^2: %s',rSquared);
+    EoFit3   = sprintf('Curve fit: y=%sx^4%sx^3%sx^2%sx%s',var1,var2,var3,var4,var5);
+    EQoFit3  = sprintf('Port WJ (Series 2): %s | %s',EoFit3,RS3);    
     disp(EQoFit3);
     
     % Stbd WJ system (Sept. 2014)
@@ -1097,8 +1099,10 @@ else
         var5 = sprintf(setNeutDecimals,fitEqn(5));
     end
     % Equation of fit (poly4)
-    rSquared = sprintf('%0.2f',Rsq4);
-    EQoFit4  = sprintf('Stbd WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+    rSquared = sprintf('%0.1f',Rsq4);
+    RS4      = sprintf('R^2: %s',rSquared);
+    EoFit4   = sprintf('Curve fit: y=%sx^4%sx^3%sx^2%sx%s',var1,var2,var3,var4,var5);
+    EQoFit4  = sprintf('Stbd WJ (Series 2): %s | %s',EoFit4,RS4);
     disp(EQoFit4);
     
     % Port and Stbd averaged (Sept. 2014)
@@ -1131,7 +1135,7 @@ else
         end
         % Equation of fit (poly4)
         rSquared = sprintf('%0.2f',Rsq5);
-        EQoFit5  = sprintf('Avg. Port/Stbd WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
+        EQoFit5  = sprintf('Avg. Port/Stbd WJ (Series 2): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',var1,var2,var3,var4,var5,rSquared);
         disp(EQoFit5);
     end
 end
@@ -1217,10 +1221,10 @@ else
 
     h = plot(xPort13,yPort13,'*',xStbd13,yStbd13,'*',xPort14,yPort14,'*',xStbd14,yStbd14,'*');
     % Legend entries
-    legendInfo{1} = 'Port WJ system (June 2013)';
-    legendInfo{2} = 'Stbd WJ system (June 2013)';
-    legendInfo{3} = 'Port WJ system (Sept. 2014)';
-    legendInfo{4} = 'Stbd WJ system (Sept. 2014)';
+    legendInfo{1} = 'Series 1: Port waterjet system';
+    legendInfo{2} = 'Series 1: Stbd waterjet system';
+    legendInfo{3} = 'Series 2: Port waterjet system';
+    legendInfo{4} = 'Series 2: Stbd waterjet system';
     %# Line, colors and markers
     set(h(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
     set(h(2),'Color',setColor{5},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
@@ -1232,9 +1236,9 @@ else
     if enableCurveFittingPlot == 1
         % Patch min/max area
         patch([xStbd13;flipud(xPort13)],[pvStbd13;flipud(pvPort13)],[0.7,0.7,0.7],'EdgeColor','none'); %,'EdgeColor','none' [0.6,1,0.6]
-        legendInfo{5} = 'Values covered by June 2013 testing)';
+        legendInfo{5} = 'Values covered by series 1 testing';
         patch([xStbd14;flipud(xPort14)],[pvStbd14;flipud(pvPort14)],[0.9,0.9,0.9],'EdgeColor','none'); %,'EdgeColor','none' [0.6,0.8,1]
-        legendInfo{6} = 'Values covered by Sept. 2014 testing)';        
+        legendInfo{6} = 'Values covered by series 2 testing';        
         h1 = plot(xPort13,pvPort13,'-.',xStbd13,pvStbd13,'-.',xPort14,pvPort14,'-.',xStbd14,pvStbd14,'-.');
         %# Line, colors and markers
         set(h1(1),'Color',setColor{10},'LineStyle',setLineStyle1,'linewidth',setLineWidth);
@@ -1264,19 +1268,30 @@ set(gcf,'Color',[1,1,1]);
 
 %# Text on plot -----------------------------------------------------------
 if enableTextOnPlot == 1
-    text(1.5, 1.0, EQoFit1, 'Color', 'k');
-    text(1.5, 0.8, EQoFit2, 'Color', 'k');
-    text(1.5, 0.6, EQoFit3, 'Color', 'k');
-    text(1.5, 0.4, EQoFit4, 'Color', 'k');
+    %text(2.5, 3.7, EQoFit1, 'Color', 'k');
+    %text(2.5, 3.4, EQoFit2, 'Color', 'k');
+    text(1.8, 1.8, '\bfPort waterjet (Series 2):', 'Color', 'k');
+    text(1.8, 1.5, EoFit3, 'Color', 'k');
+    text(1.8, 1.2, RS3, 'Color', 'k');
+    text(1.8, 0.9, '\bfStbd waterjet (Series 2):', 'Color', 'k');
+    text(1.8, 0.6, EoFit4, 'Color', 'k');
+    text(1.8, 0.3, RS4, 'Color', 'k');
     if enableAvgPortStbdPlot == 1
-        text(1.5, 0.2, EQoFit5, 'Color', 'k');
+        text(1.8, 0.2, EQoFit5, 'Color', 'k');
     end
 end
 
 %# Axis limitations -------------------------------------------------------
-xlim([1 4.5]);
-%ylim([y(1) y(end)]);
-ylim([0 5.5]);
+minX  = 1;
+maxX  = 4.5;
+incrX = 0.5;
+minY  = 0;
+maxY  = 5.5;
+incrY = 0.5;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
 set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 
@@ -1464,179 +1479,6 @@ y = yStbd14;
 % Curve Fitting Toolbox
 [fitobject4,gof4,output4] = fit(x,y,'poly4');
 cvalues4                  = coeffvalues(fitobject4);
-
-%# ************************************************************************
-%# Display in command window
-%# ************************************************************************
-
-% % Default number of decimals
-% setDec1 = '%0.4f';
-% setDec2 = '+%0.4f';
-% setDec3 = '+%0.4f';
-% setDec4 = '+%0.4f';
-% setDec5 = '+%0.4f';
-% 
-% % Port WJ system (June 2013)
-% cval = cvalues1;
-% gofa = gof1;
-% setDecimals1 = '%0.4f';
-% setDecimals2 = '+%0.4f';
-% setDecimals3 = '+%0.4f';
-% setDecimals4 = '+%0.4f';
-% setDecimals5 = '+%0.4f';
-% if cval(1) < 0
-%     setDecimals1 = '%0.4f';
-% end
-% if cval(2) < 0
-%     setDecimals2 = '%0.4f';
-% end
-% if cval(3) < 0
-%     setDecimals3 = '%0.4f';
-% end
-% if cval(4) < 0
-%     setDecimals4 = '%0.4f';
-% end
-% if cval(5) < 0
-%     setDecimals5 = '%0.4f';
-% end
-% p1   = sprintf(setDecimals1,cval(1));
-% p2   = sprintf(setDecimals2,cval(2));
-% p3   = sprintf(setDecimals3,cval(3));
-% p4   = sprintf(setDecimals4,cval(4));
-% p5   = sprintf(setDecimals5,cval(5));
-% gofa = sprintf('%0.2f',gofa.rsquare);
-% EoFEqn = sprintf('Port WJ system (June 2013): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
-% disp(EoFEqn);
-% 
-% % Stbd (June 2013)
-% cval = cvalues2;
-% gofa = gof2;
-% setDecimals1 = '%0.4f';
-% setDecimals2 = '+%0.4f';
-% setDecimals3 = '+%0.4f';
-% setDecimals4 = '+%0.4f';
-% setDecimals5 = '+%0.4f';
-% if cval(1) < 0
-%     setDecimals1 = '%0.4f';
-% end
-% if cval(2) < 0
-%     setDecimals2 = '%0.4f';
-% end
-% if cval(3) < 0
-%     setDecimals3 = '%0.4f';
-% end
-% if cval(4) < 0
-%     setDecimals4 = '%0.4f';
-% end
-% if cval(5) < 0
-%     setDecimals5 = '%0.4f';
-% end
-% p1   = sprintf(setDecimals1,cval(1));
-% p2   = sprintf(setDecimals2,cval(2));
-% p3   = sprintf(setDecimals3,cval(3));
-% p4   = sprintf(setDecimals4,cval(4));
-% p5   = sprintf(setDecimals5,cval(5));
-% gofa = sprintf('%0.2f',gofa.rsquare);
-% EoFEqn = sprintf('Stbd WJ system (June 2013): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
-% disp(EoFEqn);
-% 
-% % Port WJ system (Sept. 2014)
-% cval = cvalues3;
-% gofa = gof3;
-% setDecimals1 = '%0.4f';
-% setDecimals2 = '+%0.4f';
-% setDecimals3 = '+%0.4f';
-% setDecimals4 = '+%0.4f';
-% setDecimals5 = '+%0.4f';
-% if cval(1) < 0
-%     setDecimals1 = '%0.4f';
-% end
-% if cval(2) < 0
-%     setDecimals2 = '%0.4f';
-% end
-% if cval(3) < 0
-%     setDecimals3 = '%0.4f';
-% end
-% if cval(4) < 0
-%     setDecimals4 = '%0.4f';
-% end
-% if cval(5) < 0
-%     setDecimals5 = '%0.4f';
-% end
-% p1   = sprintf(setDecimals1,cval(1));
-% p2   = sprintf(setDecimals2,cval(2));
-% p3   = sprintf(setDecimals3,cval(3));
-% p4   = sprintf(setDecimals4,cval(4));
-% p5   = sprintf(setDecimals5,cval(5));
-% gofa = sprintf('%0.2f',gofa.rsquare);
-% EoFEqn = sprintf('Port WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
-% disp(EoFEqn);
-% 
-% % Stbd WJ system (Sept. 2014)
-% cval = cvalues4;
-% gofa = gof4;
-% setDecimals1 = '%0.4f';
-% setDecimals2 = '+%0.4f';
-% setDecimals3 = '+%0.4f';
-% setDecimals4 = '+%0.4f';
-% setDecimals5 = '+%0.4f';
-% if cval(1) < 0
-%     setDecimals1 = '%0.4f';
-% end
-% if cval(2) < 0
-%     setDecimals2 = '%0.4f';
-% end
-% if cval(3) < 0
-%     setDecimals3 = '%0.4f';
-% end
-% if cval(4) < 0
-%     setDecimals4 = '%0.4f';
-% end
-% if cval(5) < 0
-%     setDecimals5 = '%0.4f';
-% end
-% p1   = sprintf(setDecimals1,cval(1));
-% p2   = sprintf(setDecimals2,cval(2));
-% p3   = sprintf(setDecimals3,cval(3));
-% p4   = sprintf(setDecimals4,cval(4));
-% p5   = sprintf(setDecimals5,cval(5));
-% gofa = sprintf('%0.2f',gofa.rsquare);
-% EoFEqn = sprintf('Stbd WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
-% disp(EoFEqn);
-% 
-% % Port and Stbd averaged (Sept. 2014)
-% if enableAvgPortStbdPlot == 1
-%     cval = cvalues5;
-%     gofa = gof5;
-%     setDecimals1 = '%0.4f';
-%     setDecimals2 = '+%0.4f';
-%     setDecimals3 = '+%0.4f';
-%     setDecimals4 = '+%0.4f';
-%     setDecimals5 = '+%0.4f';
-%     if cval(1) < 0
-%         setDecimals1 = '%0.4f';
-%     end
-%     if cval(2) < 0
-%         setDecimals2 = '%0.4f';
-%     end
-%     if cval(3) < 0
-%         setDecimals3 = '%0.4f';
-%     end
-%     if cval(4) < 0
-%         setDecimals4 = '%0.4f';
-%     end
-%     if cval(5) < 0
-%         setDecimals5 = '%0.4f';
-%     end
-%     p1   = sprintf(setDecimals1,cval(1));
-%     p2   = sprintf(setDecimals2,cval(2));
-%     p3   = sprintf(setDecimals3,cval(3));
-%     p4   = sprintf(setDecimals4,cval(4));
-%     p5   = sprintf(setDecimals5,cval(5));
-%     gofa = sprintf('%0.2f',gofa.rsquare);
-%     EoFEqn = sprintf('Avg. Port/Stbd WJ system (Sept. 2014): y=%sx^4%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,p5,gofa);
-%     disp(EoFEqn);
-% end
 
 %# SUBPLOT ////////////////////////////////////////////////////////////////
 subplot(1,2,1)
@@ -1917,7 +1759,7 @@ p3      = sprintf(setDecimals3,cval(3));
 p4      = sprintf(setDecimals4,cval(4));
 gofrs   = sprintf('%0.1f',gofp.rsquare);
 EoFEqnP = sprintf('\\bf Port: \\rm y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
-disp(EoFEqnP);
+%disp(EoFEqnP);
 
 % Starboard
 x2 = AvgStbdArray(:,5);
@@ -1950,7 +1792,7 @@ p3      = sprintf(setDecimals3,cval(3));
 p4      = sprintf(setDecimals4,cval(4));
 gofrs   = sprintf('%0.1f',gofs.rsquare);
 EoFEqnS = sprintf('\\bf Stbd: \\rm y=%sx^3%sx^2%sx%s | R^2: %s',p1,p2,p3,p4,gofrs);
-disp(EoFEqnS);
+%disp(EoFEqnS);
 
 %# Plotting ---------------------------------------------------------------
 %# Port waterjet

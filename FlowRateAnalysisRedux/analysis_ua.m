@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  May 26, 2015
+%# Date       :  June 18, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -80,8 +80,8 @@ XPlot = 42.0;                           %# A3 paper size
 YPlot = 29.7;                           %# A3 paper size
 XPlotMargin = 1;                        %# left/right margins from page borders
 YPlotMargin = 1;                        %# bottom/top margins from page borders
-XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (widht & hieght)
-YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (widht & hieght)
+XPlotSize = XPlot - 2*XPlotMargin;      %# figure size on paper (width & height)
+YPlotSize = YPlot - 2*YPlotMargin;      %# figure size on paper (width & height)
 %# ------------------------------------------------------------------------
 %# END Define plot size
 %# ************************************************************************
@@ -136,24 +136,6 @@ end
 %# ------------------------------------------------------------------------
 %# END: CREATE PLOTS AND RUN DIRECTORY
 %# ////////////////////////////////////////////////////////////////////////
-
-
-%# ************************************************************************
-%# START Load PORT Uncertainty Results
-%# ------------------------------------------------------------------------
-if exist('ASME_UA_Results_1000_3400_RPM_STBD.mat', 'file') == 2
-    % Load file into shaftSpeedList variable
-    load('ASME_UA_Results_1000_3400_RPM_STBD.mat');
-    resultsSTBD = AMSE_UA_Results_STBD;
-else
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    disp('WARNING: Required data file for uncertainty analysis (ASME_UA_Results_1000_3400_RPM_PORT.mat) does not exist!');
-    disp('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    break;
-end
-%# ------------------------------------------------------------------------
-%# END Load PORT Uncertainty Results
-%# ************************************************************************
 
 
 %# ************************************************************************

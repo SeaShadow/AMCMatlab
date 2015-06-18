@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 20, 2015
+%# Date       :  June 4, 2015
 %#
 %# Function   :  Resistance curve based on Froude Numbers (Fr)
 %#
@@ -276,7 +276,7 @@ SPTKinVisc = 0.0000010411;
 SPTDensity = 998.5048;
 
 % Form factor (by slow speed Prohaska runs)
-FormFactor = 1.18;      % Form factor (1+k)
+FormFactor = 1.14;      % Form factor (1+k)
 
 %# Array size -------------------------------------------------------------
 [m,n] = size(Froude_Numbers);

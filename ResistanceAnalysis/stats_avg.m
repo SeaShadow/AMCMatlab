@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 16, 2015
+%# Date       :  June 8, 2015
 %#
 %# Function   :  Averaged repeated run data
 %#

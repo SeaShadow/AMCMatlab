@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  March 26, 2015
+%# Date       :  June 10, 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -1925,15 +1925,15 @@ slopeInterceptArray(3,3) = cvalues3(2);
 % Plotting ----------------------------------------------------------------
 %# Fr=0.35
 h2 = plot(fitobject2,'-',x2,y2,'*');
-legendInfo11{1}  = 'Speed #2 (F_{r}=0.35)';
-legendInfo11{2}  = 'Speed #2 (F_{r}=0.35) linear fit';
+legendInfo11{1}  = 'Speed #2: F_{r}=0.35';
+legendInfo11{2}  = 'Speed #2: F_{r}=0.35, linear fit';
 set(h2(1),'Color',setColor{1},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
 set(h2(2),'Color',setColor{10},'Marker','none','LineStyle',setLineStyle2,'linewidth',setLineWidth);
 % if enablePlotTitle == 1
 %     title('{\bf Inboard}','FontSize',setGeneralFontSize);
 % end
-xlabel('{\bf log10(V/Vm) (-)}','FontSize',setGeneralFontSize);
-ylabel('{\bf log10(y) (-)}','FontSize',setGeneralFontSize);
+xlabel('{\bf log_{10}(V/V_{m}) (-)}','FontSize',setGeneralFontSize);
+ylabel('{\bf log_{10}(Y) (-)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;
@@ -1943,7 +1943,7 @@ axis square;
 set(gcf,'Color',[1,1,1]);
 
 %# Annotations
-text(-0.08,0.9,EoFEqn2,'FontSize',12,'color','k','FontWeight','normal');
+text(-0.09,0.9,EoFEqn2,'FontSize',12,'color','k','FontWeight','normal');
 
 % Axis limitations
 minX  = -0.2;
@@ -2430,9 +2430,9 @@ set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
 
 %# Legend
 if enableBLDepthMarker == 1
-    hleg1 = legend('Speed #1 (F_{r}=0.30)','Speed #2 (F_{r}=0.35)','Speed #3 (F_{r}=0.40)','Boundary layer thickness (\delta)');
+    hleg1 = legend('Speed #1: F_{r}=0.30','Speed #2: F_{r}=0.35','Speed #3: F_{r}=0.40','Boundary layer thickness (\delta)');
 else
-    hleg1 = legend('Speed #1 (F_{r}=0.30)','Speed #2 (F_{r}=0.35)','Speed #3 (F_{r}=0.40)');
+    hleg1 = legend('Speed #1: F_{r}=0.30','Speed #2: F_{r}=0.35','Speed #3: F_{r}=0.40');
 end
 set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','tex');
@@ -2911,7 +2911,7 @@ set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 %# Legend
 %# MARIN boundary layer data
 if enableMARINBLData == 1 && enableAMCLJ120EBLData == 0
-    hleg1 = legend('Speed #1 (F_{r}=0.30)','Speed #2 (F_{r}=0.35)','Speed #3 (F_{r}=0.40)','MARIN 112m JHSV Cond. T1');
+    hleg1 = legend('Speed #1: F_{r}=0.30, Re=8.05x10^{6}','Speed #2: F_{r}=0.35, Re=9.39x10^{6}','Speed #3: F_{r}=0.40, Re=1.07x10^{7}','MARIN 112m JHSV: F_{r}=0.57, Re=2.53x10^{7}');
 elseif enableMARINBLData == 0 && enableAMCLJ120EBLData == 1
     hleg1 = legend('Speed #1 (F_{r}=0.30)','Speed #2 (F_{r}=0.35)','Speed #3 (F_{r}=0.40)','AMC, Brandner (2007), Upstream BL','AMC, Brandner (2007), IVR 1.0','AMC, Brandner (2007), IVR 1.25','AMC, Brandner (2007), IVR 1.5','AMC, Brandner (2007), IVR 1.75','AMC, Brandner (2007), IVR 2.0');
 elseif enableMARINBLData == 1 && enableAMCLJ120EBLData == 1
@@ -3595,9 +3595,9 @@ yPL40 = Temp40YArray;
 
 % Plotting ----------------------------------------------------------------
 h1 = plot(x1,y1,'*',x2,y2,'*',x3,y3,'*');
-legendInfo2{1} = 'Speed #1 (F_{r}=0.30)';
-legendInfo2{2} = 'Speed #2 (F_{r}=0.35)';
-legendInfo2{3} = 'Speed #3 (F_{r}=0.40)';
+legendInfo2{1} = 'Speed #1: F_{r}=0.30';
+legendInfo2{2} = 'Speed #2: F_{r}=0.35';
+legendInfo2{3} = 'Speed #3: F_{r}=0.40';
 %# Boundary layer thickness marker
 hold on;
 h2 = plot(xBL,yBL,'*');
@@ -3612,7 +3612,7 @@ if enablePlotTitle == 1
     title('{\bf Speed vs. distance (Y) below hull}','FontSize',setGeneralFontSize);
 end
 xlabel('{\bf Measured speed (m/s)}','FontSize',setGeneralFontSize);
-ylabel('{\bf Vertical distance from model hull, Y (mm)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Vertical distance from hull, Y (mm)}','FontSize',setGeneralFontSize);
 grid on;
 box on;
 axis square;

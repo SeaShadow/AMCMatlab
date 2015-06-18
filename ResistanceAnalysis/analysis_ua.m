@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  May 14, 2015
+%# Date       :  June 11, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -2821,7 +2821,7 @@ if enablePlot1_5 == 1
     
     % Total uncertainty (Condition 9): 1,500t (0.5 deg by stern)
     y3 = fittedTUArray(6:20,4);
-
+    
     % Plotting ----------------------------------------------------------------
     h = bar(x, [y1 y2 y3], 1);
     legendInfo1_5_1{1} = '1,500t (level trim)';

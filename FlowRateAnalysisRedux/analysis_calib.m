@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  May 22, 2015
+%# Date       :  June 3, 2015
 %#
 %# Test date  :  September 1-4, 2014
 %# Facility   :  AMC, Model Test Basin (MTB)
@@ -308,8 +308,8 @@ SecondCalText = sprintf('\\bf Calibration #2: \\rm y = %sx+%s, R^2=%s',sprintf('
 %# Plotting ---------------------------------------------------------------
 % First calibration (02/09/2014) and second calibration (04/09/2014)
 h1 = plot(x1,y1,'*',x2,y2,'*');
-legendInfo{1} = 'Calibration #1 (02/09/2014)';
-legendInfo{2} = 'Calibration #2 (04/09/2014)';
+legendInfo{1} = 'Calibration #1';
+legendInfo{2} = 'Calibration #2';
 % Linear fit
 hold on;
 h2 = plot(fitobject1,'k--');
@@ -349,7 +349,7 @@ set(gca,'XLim',[minX maxX]);
 set(gca,'XTick',minX:incrX:maxX);
 set(gca,'YLim',[minY maxY]);
 set(gca,'YTick',minY:incrY:maxY);
-%%set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+%set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
 %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
 
 %# Legend
@@ -395,6 +395,182 @@ setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
 setFileFormat = {'PDF' 'PNG' 'EPS'};
 for k=1:3
     plotsavename = sprintf('_plots/%s/%s/Plot_1_Wave_Probe_Calibration_Plot.%s', '_calibrations', setFileFormat{k}, setFileFormat{k});
+    print(gcf, setSaveFormat{k}, plotsavename);
+end
+%close;
+
+
+%# ************************************************************************
+%# Plot 2: Wave Probe Calibrations 02/09/2014 and 04/09/2014
+%# ************************************************************************
+figurename = 'Plot 2: Wave Probe Calibrations 02/09/2014 and 04/09/2014';
+f = figure('Name',figurename,'NumberTitle','off');
+
+%# Paper size settings ------------------------------------------------
+
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+    
+    set(gcf, 'PaperUnits', 'centimeters');
+    set(gcf, 'PaperSize', [19 19]);
+    set(gcf, 'PaperPositionMode', 'manual');
+    set(gcf, 'PaperPosition', [0 0 19 19]);
+end
+
+% Fonts and colours ---------------------------------------------------
+setGeneralFontName = 'Helvetica';
+setGeneralFontSize = 16;
+setBorderLineWidth = 2;
+setLegendFontSize  = 14;
+
+%# Change default text fonts for plot title
+set(0,'DefaultTextFontname',setGeneralFontName);
+set(0,'DefaultTextFontSize',14);
+
+%# Box thickness, axes font size, etc. ------------------------------------
+set(gca,'TickDir','in',...
+    'FontSize',12,...
+    'LineWidth',2,...
+    'FontName',setGeneralFontName,...
+    'Clipping','off',...
+    'Color',[1 1 1],...
+    'LooseInset',get(gca,'TightInset'));
+
+%# Markes and colors ------------------------------------------------------
+setMarker = {'*';'+';'x';'o';'s';'d';'*';'^';'<';'>';'p'};
+% Colored curves
+setColor  = {'r';'g';'b';'c';'m';[0 0.75 0.75];[0.75 0 0.75];[0 0.8125 1];[0 0.1250 1];'k';'k'};
+if enableBlackAndWhitePlot == 1
+    % Black and white curves
+    setColor  = {'k';'k';'k';'k';'k';'k';'k';'k';'k';'k';'k'};
+end
+
+%# Line, colors and markers
+setMarkerSize      = 14;
+setLineWidthMarker = 1;
+setLineWidth       = 2;
+setLineStyle       = '-';
+setLineStyle1      = '--';
+setLineStyle2      = '-.';
+setLineStyle3      = ':';
+
+%# SUBPLOT ////////////////////////////////////////////////////////////////
+%subplot(1,1,1)
+
+%# X and Y axis -----------------------------------------------------------
+
+x1 = WPCalibration1(:,1);
+y1 = WPCalibration1(:,2);
+
+% Model data - Linear fit
+[fitobject1,gof1,output1] = fit(x1,y1,'poly1');
+cvalues1     = coeffvalues(fitobject1);
+cnames1      = coeffnames(fitobject1);
+output1      = formula(fitobject1);
+FirstCalText = sprintf('\\bf Calibration #1: \\rm y = %sx+%s, R^2=%s',sprintf('%.2f',cvalues1(1)),sprintf('%.2f',cvalues1(2)),sprintf('%.1f',gof1.rsquare));
+
+x2 = WPCalibration2(:,1);
+y2 = WPCalibration2(:,2);
+
+% Model data - Linear fit
+[fitobject2,gof2,output2] = fit(x2,y2,'poly1');
+cvalues2      = coeffvalues(fitobject2);
+cnames2       = coeffnames(fitobject2);
+output2       = formula(fitobject2);
+SecondCalText = sprintf('\\bf Calibration #2: \\rm y = %sx+%s, R^2=%s',sprintf('%.2f',cvalues2(1)),sprintf('%.2f',cvalues2(2)),sprintf('%.1f',gof2.rsquare));
+
+%# Plotting ---------------------------------------------------------------
+% First calibration (02/09/2014) and second calibration (04/09/2014)
+h1 = plot(x1,y1,'*',x2,y2,'*');
+legendInfo{1} = 'Calibration #1';
+legendInfo{2} = 'Calibration #2';
+% Linear fit
+hold on;
+h2 = plot(fitobject1,'k--');
+hold on;
+h3 = plot(fitobject2,'k-.');
+xlabel('{\bf Mass of water (Kg)}','FontSize',setGeneralFontSize);
+ylabel('{\bf Analog wave probe output (Volt)}','FontSize',setGeneralFontSize);
+%if enablePlotTitle == 1
+%    title('{\bf Wave Probe Calibration}','FontSize',setGeneralFontSize);
+%end
+grid on;
+box on;
+axis square;
+
+%# Line, colors and markers
+set(h1(1),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+set(h1(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize-2,'LineWidth',setLineWidthMarker);
+% set(h1,'marker','+');
+% set(h1,'linestyle','none');
+
+%# Annotations (i.e. custom text on plot)
+text(200,-6.5,FirstCalText,'FontSize',12,'color','k','FontWeight','normal');
+text(200,-7.5,SecondCalText,'FontSize',12,'color','k','FontWeight','normal');
+
+%# Set plot figure background to a defined color
+%# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
+set(gcf,'Color',[1,1,1]);
+
+% %# Axis limitations
+minX  = 0;
+maxX  = 550;
+incrX = 50;
+minY  = -10;
+maxY  = 4;
+incrY = 1;
+set(gca,'XLim',[minX maxX]);
+set(gca,'XTick',minX:incrX:maxX);
+set(gca,'YLim',[minY maxY]);
+set(gca,'YTick',minY:incrY:maxY);
+%set(gca,'xticklabel',num2str(get(gca,'xtick')','%.0f'));
+%set(gca,'yticklabel',num2str(get(gca,'ytick')','%.1f'));
+
+%# Legend
+hleg1 = legend(legendInfo);
+set(hleg1,'Location','NorthWest');
+%set(hleg1,'Interpreter','none');
+set(hleg1, 'Interpreter','tex');
+set(hleg1,'LineWidth',1);
+set(hleg1,'FontSize',setLegendFontSize);
+%legend boxoff;
+
+%# Font sizes and border --------------------------------------------------
+
+set(gca,'FontSize',setGeneralFontSize,'FontWeight','normal','linewidth',setBorderLineWidth);
+
+%# ************************************************************************
+%# Save plot as PNG
+%# ************************************************************************
+
+%# Figure size on screen (50% scaled, but same aspect ratio)
+set(gcf, 'Units','centimeters', 'Position',[5 5 XPlotSize YPlotSize]/2)
+
+%# Figure size printed on paper
+if enableA4PaperSizePlot == 1
+    set(gcf, 'PaperUnits','centimeters');
+    set(gcf, 'PaperSize',[XPlot YPlot]);
+    set(gcf, 'PaperPosition',[XPlotMargin YPlotMargin XPlotSize YPlotSize]);
+    set(gcf, 'PaperOrientation','portrait');
+end
+
+%# Plot title -------------------------------------------------------------
+% if enablePlotMainTitle == 1
+% annotation('textbox', [0 0.9 1 0.1], ...
+%    'String', strcat('{\bf ', figurename, '}'), ...
+%    'EdgeColor', 'none', ...
+%    'HorizontalAlignment', 'center');
+% end
+
+%# Save plots as PDF, PNG and EPS -----------------------------------------
+% Enable renderer for vector graphics output
+set(gcf, 'renderer', 'painters');
+setSaveFormat = {'-dpdf' '-dpng' '-depsc2'};
+setFileFormat = {'PDF' 'PNG' 'EPS'};
+for k=1:3
+    plotsavename = sprintf('_plots/%s/%s/Plot_2_Wave_Probe_Calibration_Plot.%s', '_calibrations', setFileFormat{k}, setFileFormat{k});
     print(gcf, setSaveFormat{k}, plotsavename);
 end
 %close;

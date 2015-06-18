@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  January 6, 2015
+%# Date       :  June 15, 2015
 %#
 %# Function   :  Extrapolate WJ benchmark data
 %#
@@ -142,7 +142,7 @@ distbetwposts       = 1150;                   % Distance between carriage posts 
 FStoMSratio         = 21.6;                   % Full scale to model scale ratio               (-)
 
 % Form factors and correlaction coefficient
-FormFactor = 1.18;                            % Form factor (1+k)
+FormFactor = 1.14;                            % Form factor (1+k)
 CorrCoeff  = 0;                               % Correlation coefficient, Ca
 
 % Waterjet constants (FS = full scale and MS = model scale)
@@ -510,7 +510,6 @@ box on;
 axis square;
 
 %# Axis limitations -------------------------------------------------------
-
 minX  = 1;
 maxX  = 17;
 incrX = 2;
@@ -525,9 +524,6 @@ set(gca,'YTick',minY:incrY:maxY);
 %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.0f'));
 
 %# Legend -----------------------------------------------------------------
-
-%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-%hleg1 = legend(ah,'1','2','3','4','5','6','7','8','9');
 hleg1 = legend(legendInfo1);
 set(hleg1,'Location','NorthWest');
 set(hleg1,'Interpreter','none');
@@ -692,7 +688,7 @@ for k=1:nac+1
         
         if enableCurveFittingToolboxPlot == 1
             % Fit: poly4
-            fitobject = fit(x,y,'poly4');
+            fitobject = fit(x,y,'poly3');
             cvalues   = coeffvalues(fitobject);
             cnames    = coeffnames(fitobject);
             output    = formula(fitobject);
@@ -703,7 +699,7 @@ for k=1:nac+1
             cfValuesEff(k, 3) = cvalues(2);
             cfValuesEff(k, 4) = cvalues(3);
             cfValuesEff(k, 5) = cvalues(4);
-            cfValuesEff(k, 6) = cvalues(5);
+            %cfValuesEff(k, 6) = cvalues(5);
             
             if enableCurveFittingToolboxCurvePlot == 1
                 % Plotting
@@ -748,7 +744,6 @@ box on;
 axis square;
 
 %# Axis limitations -------------------------------------------------------
-
 minX  = 5;
 maxX  = 17;
 incrX = 2;
@@ -763,9 +758,6 @@ set(gca,'YTick',minY:incrY:maxY);
 set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
 
 %# Legend -----------------------------------------------------------------
-
-%hleg1 = legend(h([1,3,5]),'Fr=0.24','Fr=0.26','Fr=0.28','Fr=0.30','Fr=0.32','Fr=0.34','Fr=0.36','Fr=0.38','Fr=0.40');
-%hleg1 = legend(ah,'1','2','3','4','5','6','7','8','9');
 hleg1 = legend(legendInfo2);
 set(hleg1,'Location','SouthEast');
 set(hleg1,'Interpreter','none');

@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  February 2, 2015
+%# Date       :  June 4, 2015
 %#
 %# Function   :  Averaged repeated run data
 %#
@@ -91,7 +91,7 @@ distbetwposts       = 1150;                   % Distance between carriage posts 
 FStoMSratio         = 21.6;                   % Full scale to model scale ratio               (-)
 
 % Form factors and correlaction coefficient
-FormFactor = 1.18;                            % Form factor (1+k)
+FormFactor = 1.14;                            % Form factor (1+k)
 
 % Correlation coefficients: No Ca (AMC), typical Ca (Bose 2008) and MARIN Ca
 CorrCoeff  = 0.00035;                                           % Ca value as used by MARIN for JHSV testing (USE AS DEFAULT)

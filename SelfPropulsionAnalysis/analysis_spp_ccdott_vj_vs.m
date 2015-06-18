@@ -4,7 +4,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  April 6, 2015
+%# Date       :  June 4 2015
 %#
 %# Test date  :  November 5 to November 18, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -231,7 +231,7 @@ FSdraft         = MSdraft*FStoMSratio;           % Full scale draft             
 %# ************************************************************************
 
 % Form factor (by slow speed Prohaska runs)
-FormFactor = 1.18;                            % Form factor (1+k)
+FormFactor = 1.14;                            % Form factor (1+k)
 
 % Correlation coefficients: No Ca (AMC), typical Ca (Bose 2008) and MARIN Ca
 CorrCoeff  = 0.00035;                                           % Ca value as used by MARIN for JHSV testing (USE AS DEFAULT)

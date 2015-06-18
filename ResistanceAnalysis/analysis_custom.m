@@ -3,7 +3,7 @@
 %# ------------------------------------------------------------------------
 %#
 %# Author     :  K. Zürcher (Konrad.Zurcher@utas.edu.au)
-%# Date       :  May 19, 2015
+%# Date       :  June 8, 2015
 %#
 %# Test date  :  August 27 to September 6, 2013
 %# Facility   :  AMC, Towing Tank (TT)
@@ -519,11 +519,13 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     end
     
     %# Line, colors and markers
-    setMarkerSize           = 10;
-    setLineWidthMarker      = 1;
-    setLineWidthMarkerCond7 = 1;
-    setLineWidth            = 1;
-    setLineStyle            = '-.';
+    setMarkerSize      = 12;
+    setLineWidthMarker = 1;
+    setLineWidth       = 1;
+    setLineStyle       = '-';
+    setLineStyle1      = '--';
+    setLineStyle2      = '-.';
+    setLineStyle3      = ':';
     
     %# SUBPLOT 1 //////////////////////////////////////////////////////////
     subplot(1,2,1)
@@ -640,12 +642,12 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     axis square;
     
     %# Line, colors and markers
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerCond7);
-    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -654,7 +656,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# Axis limitations
     minX  = 0.1;
     maxX  = 0.5;
-    incrX = 0.1;
+    incrX = 0.05;
     minY  = 0;
     maxY  = 0.07;
     incrY = 0.01;
@@ -662,12 +664,11 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
     set(gca,'YTick',minY:incrY:maxY);
-    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
-    %hleg1 = legend('1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,500t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)');
-    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
+    hleg1 = legend('1,500t (0.5 deg. by stern)','1,500t (0 deg.)','1,500t (-0.5 deg. by bow)','1,804t (0.5 deg. by stern)','1,804t (0 deg.)','1,804t (-0.5 deg. by bow)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -794,12 +795,12 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     axis square;
     
     %# Line, colors and markers
-    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarkerCond7);
-    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
-    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker);
+    setCurveNo=1;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{2},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    setCurveNo=2;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    setCurveNo=3;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    setCurveNo=4;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    setCurveNo=5;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    setCurveNo=6;set(h(setCurveNo),'Color',setColor{setCurveNo},'Marker',setMarker{6},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -808,7 +809,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %# Axis limitations
     minX  = 0.1;
     maxX  = 0.5;
-    incrX = 0.1;
+    incrX = 0.05;
     minY  = 0.2;
     maxY  = 0.35;
     incrY = 0.03;
@@ -816,11 +817,11 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gca,'XTick',minX:incrX:maxX);
     set(gca,'YLim',[minY maxY]);
     set(gca,'YTick',minY:incrY:maxY);
-    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.1f'));
+    set(gca,'xticklabel',num2str(get(gca,'xtick')','%.2f'));
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
-    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
+    hleg1 = legend('1,500t (0.5 deg. by stern)','1,500t (0 deg.)','1,500t (-0.5 deg. by bow)','1,804t (0.5 deg. by stern)','1,804t (0 deg.)','1,804t (-0.5 deg. by bow)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -1076,7 +1077,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
-    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
+    hleg1 = legend('1,500t (0.5 deg. by stern)','1,500t (0 deg.)','1,500t (-0.5 deg. by bow)','1,804t (0.5 deg. by stern)','1,804t (0 deg.)','1,804t (-0.5 deg. by bow)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -1265,8 +1266,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
-    %hleg1 = legend('1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,500t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)');
-    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)');
+    %hleg1 = legend('1,500t (0 deg.)','1,500t (-0.5 deg. by bow)','1,500t (0.5 deg. by stern)','1,804t (0 deg.)','1,804t (-0.5 deg. by bow)','1,804t (0.5 deg. by stern)');
+    hleg1 = legend('1,500t (0.5 deg. by stern)','1,500t (0 deg.)','1,500t (-0.5 deg. by bow)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -1365,8 +1366,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
-    %hleg1 = legend('1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,500t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)');
-    hleg1 = legend('1,500t (0.5 deg. static trim)','1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)');
+    %hleg1 = legend('1,500t (0 deg.)','1,500t (-0.5 deg. by bow)','1,500t (0.5 deg. by stern)','1,804t (0 deg.)','1,804t (-0.5 deg. by bow)','1,804t (0.5 deg. by stern)');
+    hleg1 = legend('1,500t (0.5 deg. by stern)','1,500t (0 deg.)','1,500t (-0.5 deg. by bow)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -1555,8 +1556,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
-    %hleg1 = legend('1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,500t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)');
-    hleg1 = legend('1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
+    %hleg1 = legend('1,500t (0 deg.)','1,500t (-0.5 deg. by bow)','1,500t (0.5 deg. by stern)','1,804t (0 deg.)','1,804t (-0.5 deg. by bow)','1,804t (0.5 deg. by stern)');
+    hleg1 = legend('1,804t (0.5 deg. by stern)','1,804t (0 deg.)','1,804t (-0.5 deg. by bow)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -1654,8 +1655,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
-    %hleg1 = legend('1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,500t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)');
-    hleg1 = legend('1,804t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)');
+    %hleg1 = legend('1,500t (0 deg.)','1,500t (-0.5 deg. by bow)','1,500t (0.5 deg. by stern)','1,804t (0 deg.)','1,804t (-0.5 deg. by bow)','1,804t (0.5 deg. by stern)');
+    hleg1 = legend('1,804t (0.5 deg. by stern)','1,804t (0 deg.)','1,804t (-0.5 deg. by bow)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -1817,7 +1818,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
-    hleg1 = legend('1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,500t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)');
+    hleg1 = legend('1,500t (0 deg.)','1,500t (-0.5 deg. by bow)','1,500t (0.5 deg. by stern)','1,804t (0 deg.)','1,804t (-0.5 deg. by bow)','1,804t (0.5 deg. by stern)');
     set(hleg1,'Location','NorthEast');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -1853,7 +1854,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     
     % Plotting ------------------------------------------------------------
     h = plot(x9,y9,'*-',x7,y7,'*-',x8,y8,'*-',x12,y12,'*-',x10,y10,'*-',x11,y11,'*-');
-    xlabel('{\bf Trim, \tau (deg)}','FontSize',setGeneralFontSize);
+    xlabel('{\bf Running trim, \tau (deg)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Resistance (N)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -1886,7 +1887,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
-    hleg1 = legend('1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,500t (0.5 deg. static trim)','1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)');
+    hleg1 = legend('1,500t (0 deg.)','1,500t (-0.5 deg. by bow)','1,500t (0.5 deg. by stern)','1,804t (0 deg.)','1,804t (-0.5 deg. by bow)','1,804t (0.5 deg. by stern)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -2005,7 +2006,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     y9 = avgcond9(:,9);
     
     % Plotting ------------------------------------------------------------
-    h = plot(x9,y9,'*-',x7,y7,'*-',x8,y8,'*-');
+    h = plot(x8,y8,'*-',x9,y9,'*-',x7,y7,'*-');
     xlabel('{\bf Sinkage, \sigma (mm)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Resistance (N)}','FontSize',setGeneralFontSize);
     grid on;
@@ -2036,7 +2037,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
-    hleg1 = legend('1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,500t (0.5 deg. static trim)');
+    hleg1 = legend('1,500t (0.5 deg. by stern)','1,500t (0 deg.)','1,500t (-0.5 deg. by bow)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -2062,8 +2063,8 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     y9 = avgcond9(:,9);
     
     % Plotting ------------------------------------------------------------
-    h = plot(x9,y9,'*-',x7,y7,'*-',x8,y8,'*-');
-    xlabel('{\bf Trim, \tau (deg)}','FontSize',setGeneralFontSize);
+    h = plot(x8,y8,'*-',x9,y9,'*-',x7,y7,'*-');
+    xlabel('{\bf Running trim, \tau (deg)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Resistance (N)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
@@ -2093,7 +2094,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
-    hleg1 = legend('1,500t (0 deg. static trim)','1,500t (-0.5 deg. static trim)','1,500t (0.5 deg. static trim)');
+    hleg1 = legend('1,500t (0.5 deg. by stern)','1,500t (0 deg.)','1,500t (-0.5 deg. by bow)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -2211,7 +2212,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     y12 = avgcond12(:,9);
     
     % Plotting ------------------------------------------------------------
-    h = plot(x12,y12,'*-',x10,y10,'*-',x11,y11,'*-');
+    h = plot(x11,y11,'*-',x12,y12,'*-',x10,y10,'*-');
     xlabel('{\bf Sinkage, \sigma (mm)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Resistance (N)}','FontSize',setGeneralFontSize);
     grid on;
@@ -2219,9 +2220,9 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     axis square;
     
     %# Line, colors and markers
-    set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-    set(h(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -2242,7 +2243,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
-    hleg1 = legend('1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)');
+    hleg1 = legend('1,804t (0.5 deg. by stern)','1,804t (0 deg.)','1,804t (-0.5 deg. by bow)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
@@ -2268,17 +2269,17 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     y12 = avgcond12(:,9);
     
     % Plotting ------------------------------------------------------------
-    h = plot(x12,y12,'*-',x10,y10,'*-',x11,y11,'*-');
-    xlabel('{\bf Trim, \tau (deg)}','FontSize',setGeneralFontSize);
+    h = plot(x11,y11,'*-',x12,y12,'*-',x10,y10,'*-');
+    xlabel('{\bf Running trim, \tau (deg)}','FontSize',setGeneralFontSize);
     ylabel('{\bf Resistance (N)}','FontSize',setGeneralFontSize);
     grid on;
     box on;
     axis square;
     
     %# Line, colors and markers
-    set(h(1),'Color',setColor{1},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
-    set(h(2),'Color',setColor{2},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth);
-    set(h(3),'Color',setColor{3},'Marker',setMarker{3},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
+    set(h(1),'Color',setColor{1},'Marker',setMarker{4},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle1,'linewidth',setLineWidth);
+    set(h(2),'Color',setColor{2},'Marker',setMarker{1},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle,'linewidth',setLineWidth);
+    set(h(3),'Color',setColor{3},'Marker',setMarker{5},'MarkerSize',setMarkerSize,'LineWidth',setLineWidthMarker,'LineStyle',setLineStyle2,'linewidth',setLineWidth);
     
     %# Set plot figure background to a defined color
     %# See: http://www.mathworks.com.au/help/matlab/ref/colorspec.html
@@ -2299,7 +2300,7 @@ if length(cond7) ~= 0 || length(cond8) ~= 0 || length(cond9) ~= 0 || length(cond
     %set(gca,'yticklabel',num2str(get(gca,'ytick')','%.2f'));
     
     %# Legend
-    hleg1 = legend('1,804t (0 deg. static trim)','1,804t (-0.5 deg. static trim)','1,804t (0.5 deg. static trim)');
+    hleg1 = legend('1,804t (0.5 deg. by stern)','1,804t (0 deg.)','1,804t (-0.5 deg. by bow)');
     set(hleg1,'Location','NorthWest');
     set(hleg1,'Interpreter','none');
     set(hleg1,'LineWidth',1);
